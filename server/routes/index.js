@@ -40,28 +40,38 @@
 	router.post('/upload',function(req, res) {
 		var form = new formidable.IncomingForm();
 		var files = [];
-    var fields = [];
+		var tags = [];
 
     form.uploadDir = uploadDir;
 
     form
-      .on('field', function(field, value) {
-        console.log(field, value);
-        fields.push([field, value]);
-      })
       .on('file', function(field, file) {
-        console.log(field, file);
-        files.push([field, file]);
+        files.push(file);
       })
       .on('end', function() {
         console.log('-> upload done');
-        res.writeHead(200, {'content-type': 'text/plain'});
-        res.write('received fields:\n\n '+util.inspect(fields));
-        res.write('\n\n');
-        res.end('received files:\n\n '+util.inspect(files));
+				for (var i = 0; i < files.length; i++) {
+					getTags(i, files, tags, res);
+				}
       });
     form.parse(req);
 	});
+
+	function getTags(i, files, tags, res) {
+		var file = files[i];
+		
+		exec('perl ' + perlScript + ' ' + file.path, function (error, stdout, stderr) {
+			if (error !== null) {
+				console.log('exec error: ' + error);
+			}
+			tags.push(JSON.parse(stdout));
+			if (tags.length == files.length) {
+				res.writeHead(200, {'content-type': 'text/plain'});
+				res.write('received files:\n\n '+util.inspect(files));
+				res.end('tags:\n\n '+util.inspect(tags));
+			}
+		});
+	}
 
   module.exports = router;
 }());
