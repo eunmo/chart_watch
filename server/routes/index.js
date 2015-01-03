@@ -25,8 +25,6 @@
 			list.forEach(function(name) {
 				var filePath = path.join(uploadDir, name);
 				exec('perl ' + perlScript + ' ' + filePath, function (error, stdout, stderr) {
-					console.log('stdout: ' + stdout);
-					console.log('stderr: ' + stderr);
 					if (error !== null) {
 						console.log('exec error: ' + error);
 					}
@@ -34,7 +32,6 @@
 					if (stats.length == list.length) {
 						res.status(200).send(stats);
 					}
-
 				});
 			});
 		});
