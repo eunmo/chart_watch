@@ -68,7 +68,8 @@
 		var filename = filePath.substr(index);
 		var imgPath = path.join(imageDir, filename + '.jpg');
 
-		var execStr = 'perl ' + perlScript + ' ' + filePath + ' ' + imgPath;
+		//var execStr = 'perl ' + perlScript + ' ' + filePath + ' ' + imgPath;
+		var execStr = 'perl ' + perlScript + ' ' + filePath;
 		
 		exec(execStr, function (error, stdout, stderr) {
 			if (error !== null) {

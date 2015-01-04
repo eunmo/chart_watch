@@ -24,7 +24,7 @@ print "\"year\": ", convert_number($mp3->year()), ", ";
 print "\"genre\": \"", convert_text($mp3->genre()), "\"";
 print "}";
 
-save_img($id3v2, $imgfile) if defined $imgfile;
+#save_img($id3v2, $imgfile) if defined $imgfile;
 
 $mp3->close();
 
