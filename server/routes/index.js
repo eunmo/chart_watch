@@ -7,6 +7,7 @@
 	var path = require('path');
 	var fs = require('fs');
 	var exec = require('child_process').exec;
+	var AWS = require('aws-sdk');
 
   var router = express.Router();
 
@@ -14,6 +15,18 @@
   router.get('/', function(req, res) {
     res.render('index');
   });
+
+	router.get('/s3', function(req, res) {
+		var buckets = [];
+		var s3 = new AWS.S3();
+		s3.listBuckets(function(err, data) {
+			for (var index in data.Buckets) {
+				var bucket = data.Buckets[index];
+				buckets.push(bucket);
+			}
+			res.status(200).send(buckets);
+		});
+	});
 
 	var uploadDir = path.resolve('uploads/mp3');
 	var imageDir = path.resolve('uploads/img');
