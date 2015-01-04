@@ -27,8 +27,11 @@
 				res.status(200).send(objects);
 			}
 			data.Contents.forEach(function(content) {
-				console.log(content);
-				objects.push(content);
+				var s3 = new AWS.S3();
+				var params = { Bucket: mp3Bucket, Key: content.Key };
+				var url = s3.getSignedUrl('getObject', params);
+				console.log(url);
+				objects.push(url);
 				if (objects.length === data.Contents.length) {
 					res.status(200).send(objects);
 				}
