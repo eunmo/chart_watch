@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 use MP3::Tag;
+use MP3::Info;
+use POSIX;
 use Encode;
 use Encode::KR;
 use Encode::Guess;
@@ -13,6 +15,8 @@ my $mp3 = MP3::Tag->new($mp3file) or die "no file";
 $mp3->get_tags;
 my $id3v2 = $mp3->{ID3v2};
 
+my $info = get_mp3info($mp3file);
+
 print "{";
 print "\"title\": \"", convert_text($mp3->title()), "\", ";
 print "\"track\": ", convert_number($mp3->track1()), ", ";
@@ -21,7 +25,9 @@ print "\"artist\": \"", convert_text($mp3->artist()), "\", ";
 print "\"album\": \"", convert_text($mp3->album()), "\", ";
 print "\"albumArtist\": \"", convert_text($id3v2->get_frame("TPE2")), "\", ";
 print "\"year\": ", convert_number($mp3->year()), ", ";
-print "\"genre\": \"", convert_text($mp3->genre()), "\"";
+print "\"genre\": \"", convert_text($mp3->genre()), "\", ";
+print "\"time\": ", ceil($info->{SECS}), ", ";
+print "\"bitrate\": ", $info->{BITRATE}, " ";
 print "}";
 
 #save_img($id3v2, $imgfile) if defined $imgfile;
