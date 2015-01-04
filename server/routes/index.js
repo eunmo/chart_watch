@@ -16,15 +16,23 @@
     res.render('index');
   });
 
+	var mp3Bucket = 'mp3-tokyo';
+
 	router.get('/s3', function(req, res) {
-		var buckets = [];
+		var objects = [];
 		var s3 = new AWS.S3();
-		s3.listBuckets(function(err, data) {
-			for (var index in data.Buckets) {
-				var bucket = data.Buckets[index];
-				buckets.push(bucket);
+		s3.listObjects({ Bucket: mp3Bucket }, function(err, data) {
+			console.log(data);
+			if (data.Contents.length === 0) {
+				res.status(200).send(objects);
 			}
-			res.status(200).send(buckets);
+			data.Contents.forEach(function(content) {
+				console.log(content);
+				objects.push(content);
+				if (objects.length === data.Contents.length) {
+					res.status(200).send(objects);
+				}
+			});
 		});
 	});
 
@@ -41,7 +49,7 @@
 			}
 			list.forEach(function(name) {
 				var filePath = path.join(uploadDir, name);
-				exec('perl ' + perlScript + ' ' + filePath, function (error, stdout, stderr) {
+				exec('perl ' + perlScript + ' ' + filePath, function(error, stdout, stderr) {
 					if (error !== null) {
 						console.log('exec error: ' + error);
 					}
@@ -68,13 +76,13 @@
       .on('end', function() {
         console.log('-> upload done');
 				for (var i = 0; i < files.length; i++) {
-					getTags(i, files, tags, res);
+					getTagsAndMoveToS3(i, files, tags, res);
 				}
       });
     form.parse(req);
 	});
 
-	function getTags(i, files, tags, res) {
+	function getTagsAndMoveToS3(i, files, tags, res) {
 		var file = files[i];
 		var filePath = file.path;
 		var index = filePath.lastIndexOf('/') + 1;
@@ -88,12 +96,19 @@
 			if (error !== null) {
 				console.log('exec error: ' + error);
 			}
-			tags.push(JSON.parse(stdout));
-			if (tags.length === files.length) {
-				res.writeHead(200, {'content-type': 'text/plain'});
-				res.write('received files:\n\n '+util.inspect(files));
-				res.end('tags:\n\n '+util.inspect(tags));
-			}
+
+			var fileBuffer = fs.readFileSync(filePath);
+			var s3 = new AWS.S3();
+			var param = { Bucket: mp3Bucket, Key: filename, Body: fileBuffer };
+			s3.putObject(param, function(error, response) {
+				fs.unlinkSync(filePath);
+				tags.push(JSON.parse(stdout));
+				if (tags.length === files.length) {
+					res.writeHead(200, {'content-type': 'text/plain'});
+					res.write('received files:\n\n '+util.inspect(files));
+					res.end('tags:\n\n '+util.inspect(tags));
+				}
+			});
 		});
 	}
 
