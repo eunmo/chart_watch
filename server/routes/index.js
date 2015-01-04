@@ -8,6 +8,8 @@
 	var fs = require('fs');
 	var exec = require('child_process').exec;
 	var AWS = require('aws-sdk');
+	var Sequelize = require('sequelize');
+	var dbconfig = require(process.env.PWD + '/db.json');
 
   var router = express.Router();
 
@@ -15,6 +17,22 @@
   router.get('/', function(req, res) {
     res.render('index');
   });
+	
+	router.get('/db', function(req, res) {
+		console.log(dbconfig);
+		var sequelize = new Sequelize(dbconfig.uri);
+
+		sequelize
+			.authenticate()
+			.complete(function(err) {
+				if (!!err) {
+					console.log('Unable to connect to the database:', err);
+				} else {
+					console.log('Connection has been established successfully.');
+				}
+				res.status(200).send([]);
+			});
+	});
 
 	var mp3Bucket = 'mp3-tokyo';
 
