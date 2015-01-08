@@ -18,7 +18,7 @@
 
 	app.use('/', routes);
 
-	models.sequelize.sync().then(function() {
+	models.sequelize.sync({force: false}).then(function() {
 		var server = app.listen(3000, function() {
 			console.log('Express server listening on port ' + server.address().port);
 		});

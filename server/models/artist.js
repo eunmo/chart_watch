@@ -9,6 +9,10 @@
 			gender: DataTypes.ENUM('Male', 'Female', 'Mixed')
 		});
 
+		Artist.associate = function(models) {
+			Artist.hasMany(models.Artist);
+		};
+
 		// hasMany albums
 		// hasMany artists: affiliation
 		// hasMany songs (order): main

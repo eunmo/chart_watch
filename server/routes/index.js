@@ -8,8 +8,7 @@
 	var fs = require('fs');
 	var exec = require('child_process').exec;
 	var AWS = require('aws-sdk');
-	var Sequelize = require('sequelize');
-	var dbconfig = require(process.env.PWD + '/db.json');
+	var models = require('../models/index');
 
   var router = express.Router();
 
@@ -18,20 +17,22 @@
     res.render('index');
   });
 	
-	router.get('/db', function(req, res) {
-		console.log(dbconfig);
-		var sequelize = new Sequelize(dbconfig.uri);
-
-		sequelize
-			.authenticate()
-			.complete(function(err) {
-				if (!!err) {
-					console.log('Unable to connect to the database:', err);
-				} else {
-					console.log('Connection has been established successfully.');
-				}
-				res.status(200).send([]);
-			});
+	router.get('/db/album', function(req, res) {
+		models.Album.findAll().then(function(albums) {
+			res.status(200).send(albums);
+		});
+	});
+	
+	router.get('/db/artist', function(req, res) {
+		models.Artist.findAll().then(function(artists) {
+			res.status(200).send(artists);
+		});
+	});
+	
+	router.get('/db/song', function(req, res) {
+		models.Song.findAll().then(function(songs) {
+			res.status(200).send(songs);
+		});
 	});
 
 	var mp3Bucket = 'mp3-tokyo';
@@ -117,13 +118,30 @@
 			if (error !== null) {
 				console.log('exec error: ' + error);
 			}
+			var tag = JSON.parse(stdout);
+			console.log(tag);
+
+			models.Artist.findOrCreate({ where: { name: tag.albumArtist } })
+			.then(function(artist) {
+				models.Album.findOrCreate({ where: { title: tag.album } })
+				.then(function(album) {
+					models.Song.create({
+						file: filename,
+						title: tag.title,
+						time: tag.time,
+						bitrate: tag.bitrate
+					}).then(function(song) {
+						song.createAlbum(album, {disk: tag.disk, track: tag.track});
+					});
+				});
+			});
 
 			var fileBuffer = fs.readFileSync(filePath);
 			var s3 = new AWS.S3();
 			var param = { Bucket: mp3Bucket, Key: filename, Body: fileBuffer };
 			s3.putObject(param, function(error, response) {
 				fs.unlinkSync(filePath);
-				tags.push(JSON.parse(stdout));
+				tags.push(tag);
 				if (tags.length === files.length) {
 					res.writeHead(200, {'content-type': 'text/plain'});
 					res.write('received files:\n\n '+util.inspect(files));

@@ -9,8 +9,13 @@
 			type: DataTypes.ENUM('Single', 'EP', 'Studio', 'Compilation')
 		});
 
+		Album.associate = function(models) {
+			Album.hasOne(models.Album, {as: 'Deluxe', foreignKey: 'DeluxeId'});
+			Album.belongsToMany(models.Song, {as: 'Track', through: models.Track});
+		};
+
 		// hasOne album: deluxe
-		// belongsToMany artists (order)
+		// hasMany artists (order)
 		// hasMany songs (disk, track)
 
 		return Album;

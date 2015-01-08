@@ -12,10 +12,14 @@
 			bitrate: DataTypes.INTEGER
 		});
 
+		Song.associate = function(models) {
+			Song.belongsToMany(models.Album, {through: models.Track});			
+		};
+
 		// (tentative) hasOne song (for skits)
-		// belongsToMany albums
-		// belongsToMany artists (order): main
-		// belongsToMany artists (order): feat 
+		// hasMany albums
+		// hasMany artists (order): main
+		// hasMany artists (order): feat 
 
 		return Song;
 	};
