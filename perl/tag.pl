@@ -86,7 +86,7 @@ sub parse_tags {
 
 	$tag{"artist"} = \@artist_arr;
 	$tag{"feat"} = \@feat_arr;
-	$tag{"albumAritst"} = \@album_artist_arr;
+	$tag{"albumArtist"} = \@album_artist_arr;
 	$tag{"title"} = normalize(remove_feat($title));
 	$tag{"album"} = normalize(convert_text($mp3->album()));
 	$tag{"track"} = convert_number($mp3->track1()) + 0;

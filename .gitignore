@@ -2,3 +2,5 @@ node_modules/
 uploads/
 *.swp
 db.json
+*.mp3
+*.sh
