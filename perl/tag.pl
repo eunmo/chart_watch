@@ -5,6 +5,7 @@ use POSIX;
 use Encode;
 use Encode::KR;
 use Encode::Guess;
+use JSON;
 use utf8;
 binmode(STDOUT, ":utf8");
 
@@ -19,18 +20,8 @@ my $info = get_mp3info($mp3file);
 
 my %tag = parse_tags($mp3, $id3v2, $info);
 
-print "{";
-print "\"title\": \"$tag{title}\", ";
-print "\"track\": $tag{track}, ";
-print "\"disk\": $tag{disk}, ";
-print "\"artist\": \"$tag{artist}\", ";
-print "\"album\": \"$tag{album}\", ";
-print "\"albumArtist\": \"$tag{albumArtist}\", ";
-print "\"year\": $tag{year}, ";
-print "\"genre\": \"$tag{genre}\", ";
-print "\"time\": $tag{time}, ";
-print "\"bitrate\": $tag{bitrate} ";
-print "}";
+my $json = encode_json \%tag;
+print $json;
 
 #save_img($id3v2, $imgfile) if defined $imgfile;
 
