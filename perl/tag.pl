@@ -17,25 +17,51 @@ my $id3v2 = $mp3->{ID3v2};
 
 my $info = get_mp3info($mp3file);
 
+my %tag = parse_tags($mp3, $id3v2, $info);
+
 print "{";
-print "\"title\": \"", convert_text($mp3->title()), "\", ";
-print "\"track\": ", convert_number($mp3->track1()), ", ";
-print "\"disk\": ", convert_number($mp3->disk1()), ", ";
-print "\"artist\": \"", convert_text($mp3->artist()), "\", ";
-print "\"album\": \"", convert_text($mp3->album()), "\", ";
-print "\"albumArtist\": \"", convert_text($id3v2->get_frame("TPE2")), "\", ";
-print "\"year\": ", convert_number($mp3->year()), ", ";
-print "\"genre\": \"", convert_text($mp3->genre()), "\", ";
-print "\"time\": ", ceil($info->{SECS}), ", ";
-print "\"bitrate\": ", $info->{BITRATE}, " ";
+print "\"title\": \"$tag{title}\", ";
+print "\"track\": $tag{track}, ";
+print "\"disk\": $tag{disk}, ";
+print "\"artist\": \"$tag{artist}\", ";
+print "\"album\": \"$tag{album}\", ";
+print "\"albumArtist\": \"$tag{albumArtist}\", ";
+print "\"year\": $tag{year}, ";
+print "\"genre\": \"$tag{genre}\", ";
+print "\"time\": $tag{time}, ";
+print "\"bitrate\": $tag{bitrate} ";
 print "}";
 
 #save_img($id3v2, $imgfile) if defined $imgfile;
 
 $mp3->close();
 
+sub parse_tags {
+	my $mp3 = shift;
+	my $id3v2 = shift;
+	my $info = shift;
+
+	my %tag;
+
+	$tag{"title"} = convert_text($mp3->title());
+	$tag{"track"} = convert_number($mp3->track1());
+	$tag{"disk"} = convert_number($mp3->disk1());
+	$tag{"artist"} = convert_text($mp3->artist());
+	$tag{"album"} = convert_text($mp3->album());
+	$tag{"albumAritst"} = convert_text($id3v2->get_frame("TPE2"));
+	$tag{"year"} = convert_number($mp3->year());
+	$tag{"genre"} = convert_text($mp3->genre());
+	$tag{"time"} = ceil($info->{SECS});
+	$tag{"bitrate"} = $info->{BITRATE};
+
+	$tag{"albumArtist"} = $tag{"artist"} if ($tag{"albumArstist"} eq "");
+
+	return %tag;
+}
+
 sub convert_number {
 	my $num = shift;
+	chomp $num;
 
 	return 0 if (!defined $num || $num eq "");
 	return $num;
@@ -43,6 +69,7 @@ sub convert_number {
 
 sub convert_text {
 	my $text = shift;
+	chomp $text;
 
 	return "" if (!defined $text || $text eq "");
 
