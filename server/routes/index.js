@@ -35,6 +35,12 @@
 		});
 	});
 
+	router.get('/db/track', function(req, res) {
+		models.Track.findAll().then(function(tracks) {
+			res.status(200).send(tracks);
+		});
+	});
+
 	var mp3Bucket = 'mp3-tokyo';
 
 	router.get('/s3', function(req, res) {
@@ -122,18 +128,24 @@
 			console.log(tag);
 
 			models.Artist.findOrCreate({ where: { name: tag.albumArtist } })
-			.then(function(artist) {
-				models.Album.findOrCreate({ where: { title: tag.album } })
-				.then(function(album) {
-					models.Song.create({
-						file: filename,
-						title: tag.title,
-						time: tag.time,
-						bitrate: tag.bitrate
-					}).then(function(song) {
-						song.createAlbum(album, {disk: tag.disk, track: tag.track});
-					});
+			.spread(function(artist, artistCreated) {
+				console.log(artist);
+				return models.Album.findOrCreate({ where: { title: tag.album } });
+			})
+			.bind({})
+			.spread(function(album, albumCreated) {
+				console.log(album);
+				this.album = album;
+				return models.Song.create({
+					file: filename,
+					title: tag.title,
+					time: tag.time,
+					bitrate: tag.bitrate
 				});
+			})
+			.then(function(song) {
+				console.log(song);
+				song.addAlbum(this.album, {disk: tag.disk, track: tag.track});
 			});
 
 			var fileBuffer = fs.readFileSync(filePath);
