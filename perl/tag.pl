@@ -20,12 +20,53 @@ my $info = get_mp3info($mp3file);
 
 my %tag = parse_tags($mp3, $id3v2, $info);
 
-my $json = encode_json \%tag;
+my $json = to_json \%tag;
 print $json;
 
 #save_img($id3v2, $imgfile) if defined $imgfile;
 
 $mp3->close();
+
+sub remove_feat {
+	my $str = shift;
+
+	$str =~ s/\s+\(feat.*?\)//i;
+	$str =~ s/^Title,\s+//; #don't know why some files are parsed like this
+
+	return $str;
+}
+
+sub get_feat {
+	my $str = shift;
+
+	if ($str =~ /\(feat(.*?)\)/i) {
+		my $feat_str = $1;
+
+		$feat_str =~ s/^\.//;
+		$feat_str =~ s/^uring//i;
+		
+		return get_artist_array($feat_str);
+	} else {
+		return ();
+	}
+}
+
+sub get_artist_array {
+	my $str = shift;
+
+	my @rough_split = split(/[＆&,]/, $str);
+	my @arr = ();
+
+	foreach $artist (@rough_split) {
+		while ($artist =~ /(.*?) And (.*)/) {
+			push(@arr, normalize($1));
+			$artist = $2;
+		}
+		push(@arr, normalize($artist));
+	}
+
+	return @arr;
+}
 
 sub parse_tags {
 	my $mp3 = shift;
@@ -34,25 +75,32 @@ sub parse_tags {
 
 	my %tag;
 
-	$tag{"title"} = convert_text($mp3->title());
-	$tag{"track"} = convert_number($mp3->track1());
-	$tag{"disk"} = convert_number($mp3->disk1());
-	$tag{"artist"} = convert_text($mp3->artist());
-	$tag{"album"} = convert_text($mp3->album());
-	$tag{"albumAritst"} = convert_text($id3v2->get_frame("TPE2"));
-	$tag{"year"} = convert_number($mp3->year());
-	$tag{"genre"} = convert_text($mp3->genre());
+	my $title = convert_text($mp3->title());
+	my @artist_arr = get_artist_array(convert_text($mp3->artist()));
+	my @feat_arr = get_feat($title);
+	my @album_artist_arr = get_artist_array(convert_text($id3v2->get_frame("TPE2")));
+
+	if (!@album_artist_arr) {
+		@album_artist_arr = @artist_arr;
+	}
+
+	$tag{"artist"} = \@artist_arr;
+	$tag{"feat"} = \@feat_arr;
+	$tag{"albumAritst"} = \@album_artist_arr;
+	$tag{"title"} = normalize(remove_feat($title));
+	$tag{"album"} = normalize(convert_text($mp3->album()));
+	$tag{"track"} = convert_number($mp3->track1()) + 0;
+	$tag{"disk"} = convert_number($mp3->disk1()) + 0;
+	$tag{"year"} = convert_number($mp3->year()) + 0;
+	$tag{"genre"} = normalize(convert_text($mp3->genre()));
 	$tag{"time"} = ceil($info->{SECS});
 	$tag{"bitrate"} = $info->{BITRATE};
-
-	$tag{"albumArtist"} = $tag{"artist"} if ($tag{"albumArstist"} eq "");
 
 	return %tag;
 }
 
 sub convert_number {
 	my $num = shift;
-	chomp $num;
 
 	return 0 if (!defined $num || $num eq "");
 	return $num;
@@ -60,7 +108,6 @@ sub convert_number {
 
 sub convert_text {
 	my $text = shift;
-	chomp $text;
 
 	return "" if (!defined $text || $text eq "");
 
@@ -79,4 +126,16 @@ sub save_img {
 	binmode SAVE;
 	print SAVE $pic->{_Data};
 	close SAVE;
+}
+
+sub normalize {
+	my $str = shift;
+
+	$str =~ s/^\s+//;
+	$str =~ s/\s+$//;
+	$str =~ s/\'/`/g;
+	$str =~ s/\"/`/g;
+	$str =~ s/ :/:/g;
+
+	return $str;
 }
