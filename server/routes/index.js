@@ -11,36 +11,22 @@
 	var models = require('../models/index');
 
   var router = express.Router();
+	
+	var routeDir = path.resolve('server/routes');
+
+	fs.readdirSync(routeDir)
+		.filter(function(file) {
+			return (file.indexOf(".") !== 0) && (file !== "index.js");
+		})
+		.forEach(function(file) {
+			require(path.join(routeDir, file))(router, models);
+		});
 
   /* GET home page. */
   router.get('/', function(req, res) {
     res.render('index');
   });
 	
-	router.get('/db/album', function(req, res) {
-		models.Album.findAll().then(function(albums) {
-			res.status(200).send(albums);
-		});
-	});
-	
-	router.get('/db/artist', function(req, res) {
-		models.Artist.findAll().then(function(artists) {
-			res.status(200).send(artists);
-		});
-	});
-	
-	router.get('/db/song', function(req, res) {
-		models.Song.findAll().then(function(songs) {
-			res.status(200).send(songs);
-		});
-	});
-
-	router.get('/db/track', function(req, res) {
-		models.Track.findAll().then(function(tracks) {
-			res.status(200).send(tracks);
-		});
-	});
-
 	var mp3Bucket = 'mp3-tokyo';
 
 	router.get('/s3', function(req, res) {
