@@ -13,6 +13,12 @@
 				res.status(200).send(albumArtists);
 			});
 		});
+		
+		router.get('/db/albumSong', function(req, res) {
+			models.AlbumSong.findAll().then(function(albumSongs) {
+				res.status(200).send(albumSongs);
+			});
+		});
 
 		router.get('/db/artist', function(req, res) {
 			models.Artist.findAll().then(function(artists) {
@@ -25,10 +31,10 @@
 				res.status(200).send(songs);
 			});
 		});
-
-		router.get('/db/track', function(req, res) {
-			models.Track.findAll().then(function(tracks) {
-				res.status(200).send(tracks);
+		
+		router.get('/db/songArtist', function(req, res) {
+			models.SongArtist.findAll().then(function(songArtists) {
+				res.status(200).send(songArtists);
 			});
 		});
 	};

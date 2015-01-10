@@ -86,9 +86,9 @@
 					.then(function(albums) {
 						var matchingAlbum = null;
 
-						for (var album in albums) {
-							if (tag.album === album.title) {
-								matchingAlbum = album;
+						for (i in albums) {
+							if (tag.album === albums[i].title) {
+								matchingAlbum = albums[i];
 							}
 						}
 
