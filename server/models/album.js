@@ -4,7 +4,7 @@
 	module.exports = function(sequelize, DataTypes) {
 		var Album = sequelize.define('Album', {
 			title: { type: DataTypes.STRING, allowNull: false },
-			realease: DataTypes.DATE,
+			release: DataTypes.DATEONLY,
 			type: DataTypes.ENUM('Single', 'EP', 'Studio', 'Compilation'),
 			genre: DataTypes.STRING
 		});

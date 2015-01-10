@@ -91,7 +91,21 @@ sub parse_tags {
 	$tag{"album"} = normalize(convert_text($mp3->album()));
 	$tag{"track"} = convert_number($mp3->track1()) + 0;
 	$tag{"disk"} = convert_number($mp3->disk1()) + 0;
-	$tag{"year"} = convert_number($mp3->year()) + 0;
+
+	my $date = convert_number($mp3->year()) + 0;
+
+	if ($date < 10000) {
+		$tag{"day"} = 1;
+		$tag{"month"} = 0;
+		$tag{"year"} = $date;
+	} else {
+		$tag{"day"} = $date % 100;
+		$date = floor($date / 100);
+		$tag{"month"} = $date % 100;
+		$date = floor($date / 100);
+		$tag{"year"} = $date;
+	}
+	
 	$tag{"genre"} = normalize(convert_text($mp3->genre()));
 	$tag{"time"} = ceil($info->{SECS});
 	$tag{"bitrate"} = $info->{BITRATE};
