@@ -7,6 +7,7 @@
 	var fs = require('fs');
 	var exec = require('child_process').exec;
 	var AWS = require('aws-sdk');
+	var promise = require('bluebird');
 
 	var uploadDir = path.resolve('uploads/mp3');
 	var imageDir = path.resolve('uploads/img');
@@ -35,6 +36,13 @@
 			form.parse(req);
 		});
 
+		function getArtist(name, array, i) {
+			return models.Artist.findOrCreate({ where: { name: name } })
+			.spread(function(artist, artistCreated) {
+				array[i] = artist;
+			});
+		}
+
 		function getTagsAndMoveToS3(i, files, tags, res) {
 			var file = files[i];
 			var filePath = file.path;
@@ -52,9 +60,15 @@
 				var tag = JSON.parse(stdout);
 				console.log(tag);
 
-				models.Artist.findOrCreate({ where: { name: tag.albumArtist[0] } })
-				.spread(function(artist, artistCreated) {
-					console.log(artist);
+				var artist_promises = [];
+				var artist_array = [];
+
+				for (var i = 0; i < tag.albumArtist.length; i++) {
+					artist_promises[i] = getArtist(tag.albumArtist[i], artist_array, i);
+				}
+
+				promise.all(artist_promises)
+				.then(function() {
 					return models.Album.findOrCreate({ where: { title: tag.album } });
 				})
 				.bind({})

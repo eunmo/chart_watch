@@ -14,7 +14,8 @@
     "express": "~4.10.6",
     "aws-sdk": "~2.1.4",
     "mysql": "~2.5.4",
-    "sequelize": "~2.0.0-rc5"
+    "sequelize": "~2.0.0-rc5",
+    "bluebird": "~2.6.2"
   },
   "devDependencies": {
     "gulp-watch": "~3.0.0",
