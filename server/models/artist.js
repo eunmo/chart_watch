@@ -13,12 +13,11 @@
 			Artist.belongsToMany(models.Album, {through: models.AlbumArtist});
 
 			Artist.hasMany(models.Artist);
+			
+			Artist.belongsToMany(models.Song, {through: models.SongArtist});
 		};
 
-		// hasMany albums
 		// hasMany artists: affiliation
-		// hasMany songs (order): main
-		// hasMany songs (order): feat
 
 		// need views to show notable songs
 

@@ -14,12 +14,8 @@
 
 			Album.belongsToMany(models.Artist, {through: models.AlbumArtist});
 
-			Album.belongsToMany(models.Song, {as: 'Track', through: models.Track});
+			Album.belongsToMany(models.Song, {through: models.AlbumSong});
 		};
-
-		// hasOne album: deluxe
-		// hasMany artists (order)
-		// hasMany songs (disk, track)
 
 		return Album;
 	};

@@ -30,7 +30,7 @@
 			.on('end', function() {
 				console.log('-> upload done');
 				for (var i = 0; i < files.length; i++) {
-					getTagsAndMoveToS3(i, files, tags, res);
+					handleUpload(i, files, tags, res);
 				}
 			});
 			form.parse(req);
@@ -43,7 +43,7 @@
 			});
 		}
 
-		function getTagsAndMoveToS3(i, files, tags, res) {
+		function handleUpload(i, files, tags, res) {
 			var file = files[i];
 			var filePath = file.path;
 			var index = filePath.lastIndexOf('/') + 1;
@@ -60,25 +60,53 @@
 				var tag = JSON.parse(stdout);
 				console.log(tag);
 
-				var artist_promises = [];
-				var artist_array = [];
+				var i, index;
+				var artistPromises = [];
+				var albumArtistArray = [];
+				var songArtistArray = [];
+				var featArtistArray = [];
 
-				for (var i = 0; i < tag.albumArtist.length; i++) {
-					artist_promises[i] = getArtist(tag.albumArtist[i], artist_array, i);
+				for (i = 0; i < tag.albumArtist.length; i++) {
+					artistPromises[i] = getArtist(tag.albumArtist[i], albumArtistArray, i);
+				}
+				
+				for (i = 0; i < tag.artist.length; i++) {
+					index = i + tag.albumArtist.length;
+					artistPromises[index] = getArtist(tag.artist[i], songArtistArray, i);
+				}
+				
+				for (i = 0; i < tag.feat.length; i++) {
+					index = i + tag.albumArtist.length + tag.artist.length;
+					artistPromises[index] = getArtist(tag.feat[i], featArtistArray, i);
 				}
 
-				promise.all(artist_promises)
+				promise.all(artistPromises)
 				.then(function() {
-					return models.Album.findOrCreate({ where: { title: tag.album } });
+					return albumArtistArray[0].getAlbums()
+					.then(function(albums) {
+						var matchingAlbum = null;
+
+						for (var album in albums) {
+							if (tag.album === album.title) {
+								matchingAlbum = album;
+							}
+						}
+
+						if (matchingAlbum !== null) {
+							return matchingAlbum;
+						} else {
+							return models.Album.create({ title: tag.album })
+							.then(function(album) {
+								for (var i = 0; i < tag.albumArtist.length; i++) {
+									album.addArtist(albumArtistArray[i], {order: i});
+								}
+								return album;
+							});
+						}
+					});
 				})
 				.bind({})
-				.spread(function(album, albumCreated) {
-					console.log(album);
-
-					for (var i = 0; i < tag.albumArtist.length; i++) {
-						album.addArtist(artist_array[i], {order: i});
-					}
-
+				.then(function(album) {
 					this.album = album;
 					return models.Song.create({
 						file: filename,
@@ -88,8 +116,13 @@
 					});
 				})
 				.then(function(song) {
-					console.log(song);
 					song.addAlbum(this.album, {disk: tag.disk, track: tag.track});
+					for (i = 0; i < songArtistArray.length; i++) {
+						song.addArtist(songArtistArray[i], {order: i});
+					}
+					for (i = 0; i < featArtistArray.length; i++) {
+						song.addArtist(featArtistArray[i], {order: i, feat: true});
+					}
 					var fileBuffer = fs.readFileSync(filePath);
 					var s3 = new AWS.S3();
 					var param = { Bucket: mp3Bucket, Key: filename, Body: fileBuffer };

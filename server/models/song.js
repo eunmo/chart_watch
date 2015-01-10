@@ -13,13 +13,12 @@
 		});
 
 		Song.associate = function(models) {
-			Song.belongsToMany(models.Album, {through: models.Track});			
+			Song.belongsToMany(models.Album, {through: models.AlbumSong});			
+			
+			Song.belongsToMany(models.Artist, {through: models.SongArtist});			
 		};
 
 		// (tentative) hasOne song (for skits)
-		// hasMany albums
-		// hasMany artists (order): main
-		// hasMany artists (order): feat 
 
 		return Song;
 	};
