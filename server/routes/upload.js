@@ -11,7 +11,7 @@
 
 	var uploadDir = path.resolve('uploads/mp3');
 	var imageDir = path.resolve('uploads/img');
-	var perlScript = path.resolve('perl/tag.pl');
+	var tagScript = path.resolve('perl/tag.pl');
 	var mp3Bucket = 'mp3-tokyo';
 
 	module.exports = function (router, models) {
@@ -47,11 +47,9 @@
 			var file = files[i];
 			var filePath = file.path;
 			var index = filePath.lastIndexOf('/') + 1;
-			var filename = filePath.substr(index);
-			var imgPath = path.join(imageDir, filename + '.jpg');
 
 			//var execStr = 'perl ' + perlScript + ' ' + filePath + ' ' + imgPath;
-			var execStr = 'perl ' + perlScript + ' ' + filePath;
+			var execStr = 'perl ' + tagScript + ' ' + filePath;
 
 			exec(execStr, function (error, stdout, stderr) {
 				if (error !== null) {
@@ -110,7 +108,6 @@
 				.then(function(album) {
 					this.album = album;
 					return models.Song.create({
-						file: filename,
 						title: tag.title,
 						time: tag.time,
 						bitrate: tag.bitrate
@@ -126,8 +123,11 @@
 					}
 					var fileBuffer = fs.readFileSync(filePath);
 					var s3 = new AWS.S3();
-					var param = { Bucket: mp3Bucket, Key: filename, Body: fileBuffer };
+					var param = { Bucket: mp3Bucket, Key: song.id.toString(), Body: fileBuffer };
 					s3.putObject(param, function(error, response) {
+						if (error !== null) {
+							console.log('s3 error: ' + error);
+						}
 						fs.unlinkSync(filePath);
 						tags.push(tag);
 						if (tags.length === files.length) {
