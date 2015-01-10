@@ -95,7 +95,7 @@
 						if (matchingAlbum !== null) {
 							return matchingAlbum;
 						} else {
-							return models.Album.create({ title: tag.album })
+							return models.Album.create({ title: tag.album, genre: tag.genre })
 							.then(function(album) {
 								for (var i = 0; i < tag.albumArtist.length; i++) {
 									album.addArtist(albumArtistArray[i], {order: i});
