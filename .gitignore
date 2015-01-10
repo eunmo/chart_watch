@@ -1,6 +1,8 @@
 node_modules/
 uploads/
 *.swp
+resetdb.js
 db.json
 *.mp3
+*.jpg
 *.sh

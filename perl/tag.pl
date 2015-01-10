@@ -10,7 +10,6 @@ use utf8;
 binmode(STDOUT, ":utf8");
 
 my $mp3file = $ARGV[0];
-my $imgfile = $ARGV[1];
 
 my $mp3 = MP3::Tag->new($mp3file) or die "no file";
 $mp3->get_tags;
@@ -22,8 +21,6 @@ my %tag = parse_tags($mp3, $id3v2, $info);
 
 my $json = to_json \%tag;
 print $json;
-
-#save_img($id3v2, $imgfile) if defined $imgfile;
 
 $mp3->close();
 
@@ -129,17 +126,6 @@ sub convert_text {
 
 	$text = decode($enc->name, $text) unless utf8::is_utf8($text);
 	return $text;
-}
-
-sub save_img {
-	my $id3v2 = shift;
-	my $imgfile = shift;
-
-	my $pic = $id3v2->get_frame("APIC");
-	open (SAVE, ">$imgfile");
-	binmode SAVE;
-	print SAVE $pic->{_Data};
-	close SAVE;
 }
 
 sub normalize {
