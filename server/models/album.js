@@ -10,7 +10,10 @@
 		});
 
 		Album.associate = function(models) {
-			Album.hasOne(models.Album, {as: 'Deluxe', foreignKey: 'DeluxeId'});
+			Album.hasOne(models.Album, {as: 'Reissue', foreignKey: 'ReissueId'});
+
+			Album.belongsToMany(models.Artist, {through: models.AlbumArtist});
+
 			Album.belongsToMany(models.Song, {as: 'Track', through: models.Track});
 		};
 

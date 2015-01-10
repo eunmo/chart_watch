@@ -74,6 +74,11 @@
 				.bind({})
 				.spread(function(album, albumCreated) {
 					console.log(album);
+
+					for (var i = 0; i < tag.albumArtist.length; i++) {
+						album.addArtist(artist_array[i], {order: i});
+					}
+
 					this.album = album;
 					return models.Song.create({
 						file: filename,

@@ -7,6 +7,12 @@
 				res.status(200).send(albums);
 			});
 		});
+		
+		router.get('/db/albumArtist', function(req, res) {
+			models.AlbumArtist.findAll().then(function(albumArtists) {
+				res.status(200).send(albumArtists);
+			});
+		});
 
 		router.get('/db/artist', function(req, res) {
 			models.Artist.findAll().then(function(artists) {

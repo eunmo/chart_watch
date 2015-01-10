@@ -10,6 +10,8 @@
 		});
 
 		Artist.associate = function(models) {
+			Artist.belongsToMany(models.Album, {through: models.AlbumArtist});
+
 			Artist.hasMany(models.Artist);
 		};
 
