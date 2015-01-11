@@ -1,0 +1,10 @@
+<div class="container" ng-controller="MusicCtrl">
+	<div class="row col-md-12">
+		<div class="alert alert-info text-center" ng-hide="songs.length > 0">
+			<h3>No Songs yet!</h3>
+		</div>
+		<div ng-repeat="song in songs" class="col-md-12 col-sm-12 col-xs-12">
+			{{song.id}}: {{song.title}} ({{song.time}} secs)
+		</div>
+	</div>
+</div>

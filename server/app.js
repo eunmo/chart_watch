@@ -16,6 +16,8 @@
 	app.engine('html', ejs.renderFile);
 	app.set('view engine', 'html');
 
+	app.use(express.static(path.join(__dirname, '../client')));
+
 	app.use('/', routes);
 
 	models.sequelize.sync({force: false}).then(function() {
