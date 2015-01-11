@@ -36,8 +36,11 @@
 			form.parse(req);
 		});
 
-		function getArtist(name, array, i) {
-			return models.Artist.findOrCreate({ where: { name: name } })
+		function getArtist(name, nameNorm, array, i) {
+			return models.Artist.findOrCreate({
+				where: { name: name },
+				defaults: { nameNorm: nameNorm }
+			})
 			.spread(function(artist, artistCreated) {
 				array[i] = artist;
 			});
@@ -65,17 +68,23 @@
 				var featArtistArray = [];
 
 				for (i = 0; i < tag.albumArtist.length; i++) {
-					artistPromises[i] = getArtist(tag.albumArtist[i], albumArtistArray, i);
+					artistPromises[i] = getArtist(tag.albumArtist[i],
+																				tag.albumArtistNorm[i],
+																				albumArtistArray, i);
 				}
 				
 				for (i = 0; i < tag.artist.length; i++) {
 					index = i + tag.albumArtist.length;
-					artistPromises[index] = getArtist(tag.artist[i], songArtistArray, i);
+					artistPromises[index] = getArtist(tag.artist[i],
+																						tag.artistNorm[i],
+																						songArtistArray, i);
 				}
 				
 				for (i = 0; i < tag.feat.length; i++) {
 					index = i + tag.albumArtist.length + tag.artist.length;
-					artistPromises[index] = getArtist(tag.feat[i], featArtistArray, i);
+					artistPromises[index] = getArtist(tag.feat[i],
+																						tag.featNorm[i],
+																						featArtistArray, i);
 				}
 
 				promise.all(artistPromises)
@@ -94,7 +103,12 @@
 							return matchingAlbum;
 						} else {
 							var releaseDate = new Date(tag.year, tag.month, tag.day);
-							return models.Album.create({ title: tag.album, release: releaseDate, genre: tag.genre })
+							return models.Album.create({
+								title: tag.album,
+								titleNorm: tag.albumNorm,
+								release: releaseDate,
+								genre: tag.genre
+							})
 							.then(function(album) {
 								for (var i = 0; i < tag.albumArtist.length; i++) {
 									album.addArtist(albumArtistArray[i], {order: i});
@@ -109,6 +123,7 @@
 					this.album = album;
 					return models.Song.create({
 						title: tag.title,
+						titleNorm: tag.titleNorm,
 						time: tag.time,
 						bitrate: tag.bitrate
 					});

@@ -81,11 +81,27 @@ sub parse_tags {
 		@album_artist_arr = @artist_arr;
 	}
 
+	my @norm_artist_arr = normalize_array_for_sort(@artist_arr); 
+	my @norm_feat_arr = normalize_array_for_sort(@feat_arr); 
+	my @norm_album_artist_arr = normalize_array_for_sort(@album_artist_arr); 
+
 	$tag{"artist"} = \@artist_arr;
 	$tag{"feat"} = \@feat_arr;
 	$tag{"albumArtist"} = \@album_artist_arr;
-	$tag{"title"} = normalize(remove_feat($title));
-	$tag{"album"} = normalize(convert_text($mp3->album()));
+	$tag{"artistNorm"} = \@norm_artist_arr;
+	$tag{"featNorm"} = \@norm_feat_arr;
+	$tag{"albumArtistNorm"} = \@norm_album_artist_arr;
+
+	my $title_wo_feat = normalize(remove_feat($title));
+
+	$tag{"title"} = $title_wo_feat;
+	$tag{"titleNorm"} = normalize_for_sort($title_wo_feat);
+	
+	my $album = normalize(convert_text($mp3->album()));
+
+	$tag{"album"} = $album;
+	$tag{"albumNorm"} = normalize_for_sort($album);
+
 	$tag{"track"} = convert_number($mp3->track1()) + 0;
 	$tag{"disk"} = convert_number($mp3->disk1()) + 0;
 
@@ -126,6 +142,26 @@ sub convert_text {
 
 	$text = decode($enc->name, $text) unless utf8::is_utf8($text);
 	return $text;
+}
+
+sub normalize_array_for_sort {
+	my @in_arr = @_;
+	my @out_arr  = ();
+
+	foreach $str (@in_arr) {
+		push(@out_arr, normalize_for_sort($str));
+	}
+
+	return @out_arr;
+}
+
+sub normalize_for_sort {
+	my $str = shift;
+
+	$str =~ s/^a\s+//i;
+	$str =~ s/^the\s+//i;
+
+	return $str;
 }
 
 sub normalize {
