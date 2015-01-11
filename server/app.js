@@ -17,6 +17,7 @@
 	app.set('view engine', 'html');
 
 	app.use(express.static(path.join(__dirname, '../client')));
+	app.use(express.static(path.join(__dirname, '../uploads/img')));
 
 	app.use('/', routes);
 

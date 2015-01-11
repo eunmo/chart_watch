@@ -7,11 +7,13 @@
 	var fs = require('fs');
 	var exec = require('child_process').exec;
 	var AWS = require('aws-sdk');
-	var promise = require('bluebird');
+	var Promise = require('bluebird');
+	var pexec = Promise.promisify(require('child_process').exec);
 
 	var uploadDir = path.resolve('uploads/mp3');
 	var imageDir = path.resolve('uploads/img');
 	var tagScript = path.resolve('perl/tag.pl');
+	var imgScript = path.resolve('perl/img.pl');
 	var mp3Bucket = 'mp3-tokyo';
 
 	module.exports = function (router, models) {
@@ -51,10 +53,9 @@
 			var filePath = file.path;
 			var index = filePath.lastIndexOf('/') + 1;
 
-			//var execStr = 'perl ' + perlScript + ' ' + filePath + ' ' + imgPath;
-			var execStr = 'perl ' + tagScript + ' ' + filePath;
+			var execTagStr = 'perl ' + tagScript + ' ' + filePath;
 
-			exec(execStr, function (error, stdout, stderr) {
+			exec(execTagStr, function (error, stdout, stderr) {
 				if (error !== null) {
 					console.log('exec error: ' + error);
 				}
@@ -87,7 +88,7 @@
 																						featArtistArray, i);
 				}
 
-				promise.all(artistPromises)
+				Promise.all(artistPromises)
 				.then(function() {
 					return albumArtistArray[0].getAlbums()
 					.then(function(albums) {
@@ -114,6 +115,13 @@
 									album.addArtist(albumArtistArray[i], {order: i});
 								}
 								return album;
+							})
+							.then(function(album) {
+								var imgPath = path.resolve(imageDir, album.id + '.jpg');
+								var execImgStr = 'perl ' + imgScript + ' ' + filePath + ' ' + imgPath;
+								return pexec(execImgStr).then(function() {
+									Promise.resolve(album);
+								});
 							});
 						}
 					});
