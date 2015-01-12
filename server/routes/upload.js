@@ -167,7 +167,7 @@
 							fs.unlinkSync(filePath);
 							tags.push(tag);
 							resolve(tag);
-					});
+						});
 					});
 				});
 			});
