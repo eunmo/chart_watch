@@ -5,10 +5,9 @@
 	var util = require('util');
 	var path = require('path');
 	var fs = require('fs');
-	var exec = require('child_process').exec;
-	var AWS = require('aws-sdk');
 	var Promise = require('bluebird');
-	var pexec = Promise.promisify(require('child_process').exec);
+	var AWS = require('aws-sdk');
+	var exec = Promise.promisify(require('child_process').exec);
 
 	var uploadDir = path.resolve('uploads/mp3');
 	var imageDir = path.resolve('uploads/img');
@@ -27,12 +26,23 @@
 
 			form
 			.on('file', function(field, file) {
-				files.push(file);
+				if (file.size > 0)
+					files.push(file);
 			})
 			.on('end', function() {
 				console.log('-> upload done');
-				for (var i = 0; i < files.length; i++) {
-					handleUpload(i, files, tags, res);
+				if (files.length === 0) {
+					res.json(null);
+				} else {
+					var promises = [];
+					Promise.map(files, function (file) {
+						return handleUpload(file, tags);
+					}, {concurrency: 1})
+					.then(function() {
+						res.writeHead(200, {'content-type': 'text/plain'});
+						res.write('received files:\n\n '+util.inspect(files));
+						res.end('tags:\n\n '+util.inspect(tags));
+					});
 				}
 			});
 			form.parse(req);
@@ -48,17 +58,16 @@
 			});
 		}
 
-		function handleUpload(i, files, tags, res) {
-			var file = files[i];
+		function handleUpload(file, tags) {
+			console.log(file);
+			
 			var filePath = file.path;
 			var index = filePath.lastIndexOf('/') + 1;
 
 			var execTagStr = 'perl ' + tagScript + ' ' + filePath;
 
-			exec(execTagStr, function (error, stdout, stderr) {
-				if (error !== null) {
-					console.log('exec error: ' + error);
-				}
+			return exec(execTagStr)
+			.spread(function (stdout, stderr) {
 				var tag = JSON.parse(stdout);
 				console.log(tag);
 
@@ -73,14 +82,14 @@
 																				tag.albumArtistNorm[i],
 																				albumArtistArray, i);
 				}
-				
+
 				for (i = 0; i < tag.artist.length; i++) {
 					index = i + tag.albumArtist.length;
 					artistPromises[index] = getArtist(tag.artist[i],
 																						tag.artistNorm[i],
 																						songArtistArray, i);
 				}
-				
+
 				for (i = 0; i < tag.feat.length; i++) {
 					index = i + tag.albumArtist.length + tag.artist.length;
 					artistPromises[index] = getArtist(tag.feat[i],
@@ -88,7 +97,7 @@
 																						featArtistArray, i);
 				}
 
-				Promise.all(artistPromises)
+				return Promise.all(artistPromises)
 				.then(function() {
 					return albumArtistArray[0].getAlbums()
 					.then(function(albums) {
@@ -111,16 +120,18 @@
 								genre: tag.genre
 							})
 							.then(function(album) {
+								var albumArtistPromises = [];
+
 								for (var i = 0; i < tag.albumArtist.length; i++) {
-									album.addArtist(albumArtistArray[i], {order: i});
+									albumArtistPromises[i] = album.addArtist(albumArtistArray[i], {order: i});
 								}
-								return album;
+								return Promise.all(albumArtistPromises).then(function() {return album;});
 							})
 							.then(function(album) {
 								var imgPath = path.resolve(imageDir, album.id + '.jpg');
 								var execImgStr = 'perl ' + imgScript + ' ' + filePath + ' ' + imgPath;
-								return pexec(execImgStr).then(function() {
-									Promise.resolve(album);
+								return exec(execImgStr).then(function() {
+									return album;
 								});
 							});
 						}
@@ -147,17 +158,16 @@
 					var fileBuffer = fs.readFileSync(filePath);
 					var s3 = new AWS.S3();
 					var param = { Bucket: mp3Bucket, Key: song.id.toString(), Body: fileBuffer };
-					s3.putObject(param, function(error, response) {
-						if (error !== null) {
-							console.log('s3 error: ' + error);
-						}
-						fs.unlinkSync(filePath);
-						tags.push(tag);
-						if (tags.length === files.length) {
-							res.writeHead(200, {'content-type': 'text/plain'});
-							res.write('received files:\n\n '+util.inspect(files));
-							res.end('tags:\n\n '+util.inspect(tags));
-						}
+					return new Promise(function (resolve, reject) {
+						s3.putObject(param, function(error, response) {
+							if (error !== null) {
+								console.log('s3 error: ' + error);
+								return reject();
+							}
+							fs.unlinkSync(filePath);
+							tags.push(tag);
+							resolve(tag);
+					});
 					});
 				});
 			});
