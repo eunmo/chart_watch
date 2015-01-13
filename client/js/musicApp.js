@@ -1,10 +1,15 @@
 musicApp = angular.module('musicApp', ['ngRoute'])
 .config(function($routeProvider) {
 	$routeProvider
-	.when('/', {
+	.when('/music', {
 		templateUrl: '/partials/music.html',
 		controller: 'MusicCtrl'
-	}).otherwise({
-		redirectTo: '/'
+	})
+	.when('/artist', {
+		templateUrl: '/partials/artist-list.html',
+		controller: 'ArtistCtrl'
+	})
+	.otherwise({
+		redirectTo: '/music'
 	});
 });

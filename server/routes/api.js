@@ -9,7 +9,10 @@
 		});
 		
 		router.get('/api/artist', function(req, res) {
-			models.Artist.findAll({order: '`nameNorm`'}).then(function(artists) {
+			models.Artist.findAll({
+				include: [ {model: models.Album}, {model: models.Song} ],
+				order: '`nameNorm`'
+			}).then(function(artists) {
 				res.json(artists);
 			});
 		});

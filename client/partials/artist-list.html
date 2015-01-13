@@ -4,14 +4,15 @@
 			<table class="table table-striped">
 				<thead>
 				<tr>
-					<td>#</td><td>title</td><td>time</td>
+					<td>#</td><td>name</td>
 				</tr>
 				</thead>
 				<tbody>
-				<tr ng-repeat="song in songs">
-					<td>{{song.id}}</td>
-					<td>{{song.title | normalizeString}}</td>
-					<td>{{song.time | songDuration}}</td>
+				<tr ng-repeat="artist in artists">
+					<td>{{artist.id}}</td>
+					<td>{{artist.name | normalizeString}}</td>
+					<td>{{artist.Albums.length}} albums</td>
+					<td>{{artist.Songs.length}} songs</td>
 				</tr>
 				</tbody>
 			</table>
