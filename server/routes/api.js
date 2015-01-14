@@ -17,6 +17,23 @@
 			});
 		});
 		
+		router.get('/api/artist/:_id', function(req, res) {
+			var id = req.params._id;
+			var sql = 'SELECT * FROM ViewAlbumIArtistISongIArtistI V ' +
+								'WHERE V.AlbumArtistId = ' + id + ' ' +
+								'OR V.SongArtistId = ' + id + ' ' +
+								'ORDER BY V.release';
+
+			// should also fetch artist object
+			// should group by albums
+			// -> albumArtist (id, name) array
+			// -> song (id, title, time, track, [artist], [feat artist]) array
+
+			models.sequelize.query(sql).success(function(data) {
+				res.json(data);
+			});
+		});
+		
 		router.get('/api/initial/:_initial', function(req, res) {
 			var initial = req.params._initial;
 			var queryOption = {};

@@ -35,6 +35,7 @@ ON A.id = SA.ArtistId;
 CREATE OR REPLACE VIEW ViewSongIArtistI AS
 SELECT
 S.title,
+S.time,
 SA.SongId,
 SA.name,
 SA.ArtistId,
@@ -70,6 +71,7 @@ AAS.SongId,
 AAS.track,
 SA.title as songTitle,
 SA.name as songArtistName,
+SA.time,
 SA.ArtistId as songArtistId,
 SA.order as songArtistOrder,
 SA.feat
