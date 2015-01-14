@@ -9,7 +9,11 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		templateUrl: '/partials/artist-list.html',
 		controller: 'ArtistCtrl'
 	})
+	.when('/', {
+		templateUrl: '/partials/initials.html',
+		controller: 'InitialCtrl'
+	})
 	.otherwise({
-		redirectTo: '/music'
+		redirectTo: '/'
 	});
 });

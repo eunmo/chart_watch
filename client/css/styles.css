@@ -1,3 +1,18 @@
 body {
 	font-family: 나눔고딕, sans-serif;
 }
+
+.initial {
+	padding: 15px;
+}
+
+.btn-initial {
+	padding: 0px;
+	border: 7px solid;
+	border-radius: 20px;
+}
+
+.h1-initial {
+	padding: 10px;
+	margin: 10px;
+}
