@@ -24,3 +24,14 @@ body {
 .td-img {
 	width: 330px;
 }
+
+.song-desc {
+	width: 300px;
+}
+
+.song-desc-track {
+	display: inline-block;
+	text-align: right;
+	width: 20px;
+	margin-right: 10px;
+}

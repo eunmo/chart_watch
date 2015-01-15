@@ -20,9 +20,22 @@ musicApp.controller('ArtistCtrl', function($rootScope, $scope, $routeParams, $ht
 
 	$scope.artists = [];
 
-	$http.get('api/artist/' + $routeParams.id).success(function(data) {
-		console.log(data);
-		$scope.artists.push(data);
+	$http.get('api/artist/' + $routeParams.id).success(function(artist) {
+		// format songs into rows
+		for (var j in artist.albums) {
+			var album = artist.albums[j];
+			album.songRows = [];
+			for (var k in album.songs) {
+				if (k % 2 === 0) {
+					album.songRows.push([]);
+				}
+				var row = Math.floor(k / 2);
+				var col = k % 2;
+				album.songRows[row][col] = album.songs[k];
+			}
+		}
+		console.log(artist);
+		$scope.artists.push(artist);
 	});
 });
 

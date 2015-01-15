@@ -22,10 +22,14 @@
 										</span>
 									</h4>
 									<table class="table">
-										<tr	ng-repeat="song in album.songs">
-											<td>{{song.track}}</td>
-											<td>{{song.title}}</td>
-											<td>{{song.time | songDuration}}</td>	
+										<tr	ng-repeat="cols in album.songRows">
+											<td ng-repeat="song in cols">
+												<div class="song-desc">
+													<span class="song-desc-track">{{song.track}}</span>
+													{{song.title}}
+													<span class="pull-right">{{song.time | songDuration}}</span>
+												</div>
+											</td>
 										</tr>
 									</table>
 								</td>

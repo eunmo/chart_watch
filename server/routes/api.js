@@ -41,9 +41,8 @@
 
 			promises[1] = models.sequelize.query(sql)
 			.then(function(rows) {
-				var row;
-				var album, song;
-				for (var i in rows) {
+				var i, row, album, song;
+				for (i in rows) {
 					row = rows[i];
 
 					// album
@@ -90,7 +89,7 @@
 				}
 
 				albums = albums.filter(function(n) { return n; });
-				for (var i in albums) {
+				for (i in albums) {
 					album = albums[i];
 					album.songs = album.songs.filter(function(n) { return n; });
 				}
