@@ -24,13 +24,14 @@ musicApp.controller('ArtistCtrl', function($rootScope, $scope, $routeParams, $ht
 		// format songs into rows
 		for (var j in artist.albums) {
 			var album = artist.albums[j];
+			var length = album.songs.length;
 			album.songRows = [];
 			for (var k in album.songs) {
-				if (k * 2 < album.songs.length) {
+				if (k * 2 < length) {
 					album.songRows.push([]);
 				}
-				var row = k % Math.floor(album.songs.length / 2);
-				var col = (k * 2 < album.songs.length) ? 0 : 1;
+				var row = (length == 1) ? 0 : k % Math.floor(length / 2);
+				var col = (k * 2 < length) ? 0 : 1;
 				album.songRows[row][col] = album.songs[k];
 			}
 		}
