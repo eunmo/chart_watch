@@ -4,7 +4,7 @@ musicApp.filter('songDuration', function () {
 		var min = Math.floor(secs / 60);
 		var sec = secs % 60;
 		var str = (hour > 0 ? (hour + ':') : '') +
-							(min >= 10 ? '' : '0') + min + ':' +
+							((hour > 0 && min < 10) ? '0' : '') + min + ':' +
 							(sec >= 10 ? '' : '0') + sec;
 
 		return str;
