@@ -1,4 +1,4 @@
-musicApp.controller('ArtistCtrl', function($rootScope, $scope, $http) {
+musicApp.controller('ArtistListCtrl', function($rootScope, $scope, $http) {
  
   $scope.artists = [];
 
@@ -13,6 +13,16 @@ musicApp.controller('ArtistInitialCtrl', function($rootScope, $scope, $routePara
 
 	$http.get('api/initial/' + $routeParams.initial).success(function(data) {
     $scope.artists = data;
+	});
+});
+
+musicApp.controller('ArtistCtrl', function($rootScope, $scope, $routeParams, $http) {
+
+	$scope.artists = [];
+
+	$http.get('api/artist/' + $routeParams.id).success(function(data) {
+		console.log(data);
+		$scope.artists.push(data);
 	});
 });
 

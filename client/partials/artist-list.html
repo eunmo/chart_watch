@@ -10,7 +10,7 @@
 				<tbody>
 				<tr ng-repeat="artist in artists">
 					<td>{{artist.id}}</td>
-					<td>{{artist.name | normalizeString}}</td>
+					<td><a href="#/artist/{{artist.id}}">{{artist.name | normalizeString}}</a></td>
 					<td>{{artist.Albums.length}} albums</td>
 					<td>{{artist.Songs.length}} songs</td>
 				</tr>

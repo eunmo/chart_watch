@@ -1,0 +1,40 @@
+<div class="container" ng-controller="ArtistCtrl">
+	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			<div ng-repeat="artist in artists">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h1>{{artist.name}} <small>{{artist.albums.length}} albums</small></h1>
+					</div>
+					<div class"panel-body">
+						<table class="table" ng-repeat="album in artist.albums">
+							<tbody>
+							<tr>
+								<td class="td-img">
+									<img src="/{{album.id}}.jpg" class="img-thumbnail img-album">
+								</td>
+								<td>
+									<h3>{{album.title}}</h3>
+									<h4>
+										<small>by</small>
+										<span ng-repeat="artist in album.albumArtists">
+											{{artist.name}}
+										</span>
+									</h4>
+									<table class="table">
+										<tr	ng-repeat="song in album.songs">
+											<td>{{song.track}}</td>
+											<td>{{song.title}}</td>
+											<td>{{song.time | songDuration}}</td>	
+										</tr>
+									</table>
+								</td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

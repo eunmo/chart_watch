@@ -1,5 +1,7 @@
 (function() {
 	'use strict';
+	
+	var Promise = require('bluebird');
 
 	module.exports = function (router, models) {
 		router.get('/api/music', function(req, res) {
@@ -23,14 +25,83 @@
 								'WHERE V.AlbumArtistId = ' + id + ' ' +
 								'OR V.SongArtistId = ' + id + ' ' +
 								'ORDER BY V.release';
+			var artist;
+			var albums = [];
+			var promises = [];
 
 			// should also fetch artist object
 			// should group by albums
 			// -> albumArtist (id, name) array
 			// -> song (id, title, time, track, [artist], [feat artist]) array
 
-			models.sequelize.query(sql).success(function(data) {
-				res.json(data);
+			promises[0] = models.Artist.findOne({where: {id: id} })
+			.then(function(a) {
+				artist = a.dataValues;
+			});
+
+			promises[1] = models.sequelize.query(sql)
+			.then(function(rows) {
+				var row;
+				var album, song;
+				for (var i in rows) {
+					row = rows[i];
+
+					// album
+					if (albums[row.AlbumId] === undefined) {
+						albums[row.AlbumId] = {
+							id: row.AlbumId,
+							title: row.albumTitle,
+							release: row.release,
+							albumArtists: [],
+							songs: []
+						};
+					}
+					album = albums[row.AlbumId];
+					album.albumArtists[row.albumArtistOrder] = {
+						id: row.albumArtistId,
+						name: row.albumArtistName
+					};
+
+					// song
+					if (album.songs[row.track] === undefined) {
+						album.songs[row.track] = {
+							id: row.SongId,
+							title: row.songTitle,
+							time: row.time,
+							track: row.track,
+							artists: [],
+							features: []
+						};
+					}
+					song = album.songs[row.track];
+
+					// song artist
+					if (row.feat === 0) {
+						song.artists[row.songArtistOrder] = {
+							id: row.songArtistId,
+							name: row.songArtistName
+						};
+					} else {
+						song.features[row.songArtistOrder] = {
+							id: row.songArtistId,
+							name: row.songArtistName
+						};
+					}
+				}
+
+				albums = albums.filter(function(n) { return n; });
+				for (var i in albums) {
+					album = albums[i];
+					album.songs = album.songs.filter(function(n) { return n; });
+				}
+			});
+
+			Promise.all(promises)
+			.then(function() {
+				if (artist !== null) {
+					artist.albums = albums;
+				}
+				res.json(artist);
 			});
 		});
 		

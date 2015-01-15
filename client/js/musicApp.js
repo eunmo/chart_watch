@@ -7,7 +7,11 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 	})
 	.when('/artist', {
 		templateUrl: '/partials/artist-list.html',
-		controller: 'ArtistCtrl'
+		controller: 'ArtistListCtrl'
+	})
+	.when('/artist/:id', {
+		templateUrl: '/partials/artist.html',
+		controller: 'ArtistListCtrl'
 	})
 	.when('/initial/:initial', {
 		templateUrl: '/partials/artist-list.html',
