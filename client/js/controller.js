@@ -26,11 +26,11 @@ musicApp.controller('ArtistCtrl', function($rootScope, $scope, $routeParams, $ht
 			var album = artist.albums[j];
 			album.songRows = [];
 			for (var k in album.songs) {
-				if (k % 2 === 0) {
+				if (k * 2 < album.songs.length) {
 					album.songRows.push([]);
 				}
-				var row = Math.floor(k / 2);
-				var col = k % 2;
+				var row = k % Math.floor(album.songs.length / 2);
+				var col = (k * 2 < album.songs.length) ? 0 : 1;
 				album.songRows[row][col] = album.songs[k];
 			}
 		}
