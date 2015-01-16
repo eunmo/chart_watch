@@ -26,12 +26,22 @@ body {
 }
 
 .song-desc {
-	width: 300px;
+	width: 350px;
+	height: 20px;
 }
 
 .song-desc-track {
 	display: inline-block;
 	text-align: right;
+	position: relative;
 	width: 20px;
 	margin-right: 10px;
+}
+
+.song-desc-title {
+	display: inline-block;
+	width: 300px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }

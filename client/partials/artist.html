@@ -4,7 +4,7 @@
 			<div ng-repeat="artist in artists">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h1>{{artist.name}} <small>{{artist.albums.length}} albums</small></h1>
+						<h1>{{artist.name}} <small>{{artist.albums.length | numAlbums}}</small></h1>
 					</div>
 					<div class"panel-body">
 						<table class="table" ng-repeat="album in artist.albums">
@@ -17,17 +17,25 @@
 									<h3>{{album.title}}</h3>
 									<h4>
 										<small>by</small>
-										<span ng-repeat="artist in album.albumArtists">
-											{{artist.name}}
-										</span>
+										<span ng-repeat="artist in album.albumArtists">{{artist.name}}<span ng-show="!$last">, <span></span>
 									</h4>
 									<table class="table">
 										<tr	ng-repeat="cols in album.songRows">
 											<td ng-repeat="song in cols">
 												<div class="song-desc">
-													<span class="song-desc-track">{{song.track}}</span>
-													{{song.title}}
+													<span class="song-desc-title">
+														<span class="song-desc-track">{{song.track}}</span>
+														{{song.title}}
+													</span>
 													<span class="pull-right">{{song.time | songDuration}}</span>
+												</div>
+												<div ng-show="{{song.features.length}}">
+													<span class="song-desc-track"></span>
+													<span ng-repeat="artist in song.features"><span ng-show="$first">Feat. </span>{{artist.name}}<span ng-hide="$last">, </span></span>
+												</div>
+												<div ng-show="{{song.artists.length}}">
+													<span class="song-desc-track"></span>
+													<span ng-repeat="artist in song.artists"><span ng-show="$first">by </span>{{artist.name}}<span ng-hide="$last">, <span></span>
 												</div>
 											</td>
 										</tr>

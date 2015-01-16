@@ -16,3 +16,11 @@ musicApp.filter('normalizeString', function () {
 		return str.replace(/`/g, '\'');
 	};
 });
+
+musicApp.filter('numAlbums', function () {
+	return function(num) {
+		if (num <= 1)
+			return num + ' album';
+		return num + ' albums';
+	};
+});
