@@ -33,9 +33,9 @@ body {
 .song-desc-track {
 	display: inline-block;
 	text-align: right;
-	position: relative;
 	width: 20px;
 	margin-right: 10px;
+	font-size: 12px;
 }
 
 .song-desc-title {
@@ -44,4 +44,10 @@ body {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	font-size: 16px;
+}
+
+.song-desc-time {
+	margin-top: 4px;
+	font-size: 12px;
 }

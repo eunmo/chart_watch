@@ -27,15 +27,15 @@
 														<span class="song-desc-track">{{song.track}}</span>
 														{{song.title}}
 													</span>
-													<span class="pull-right">{{song.time | songDuration}}</span>
+													<span class="song-desc-time pull-right">{{song.time | songDuration}}</span>
 												</div>
 												<div ng-show="{{song.features.length}}">
 													<span class="song-desc-track"></span>
-													<span ng-repeat="artist in song.features"><span ng-show="$first">Feat. </span>{{artist.name}}<span ng-hide="$last">, </span></span>
+													<span ng-repeat="artist in song.features"><small ng-show="$first">Feat. </small>{{artist.name}}<span ng-hide="$last">, </span></span>
 												</div>
 												<div ng-show="{{song.artists.length}}">
 													<span class="song-desc-track"></span>
-													<span ng-repeat="artist in song.artists"><span ng-show="$first">by </span>{{artist.name}}<span ng-hide="$last">, <span></span>
+													<span ng-repeat="artist in song.artists"><small ng-show="$first">by </small>{{artist.name}}<span ng-hide="$last">, <span></span>
 												</div>
 											</td>
 										</tr>
