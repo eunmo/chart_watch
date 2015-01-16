@@ -17,7 +17,8 @@
 									<h3>{{album.title}}</h3>
 									<h4>
 										<small>by</small>
-										<span ng-repeat="artist in album.albumArtists">{{artist.name}}<span ng-show="!$last">, <span></span>
+										<span ng-repeat="artist in album.albumArtists">{{artist.name}}<span ng-show="!$last">, </span></span>
+										<small class="pull-right">{{album.release | date}}</small>
 									</h4>
 									<table class="table">
 										<tr	ng-repeat="cols in album.songRows">
@@ -35,7 +36,7 @@
 												</div>
 												<div ng-show="{{song.artists.length}}">
 													<span class="song-desc-track"></span>
-													<span ng-repeat="artist in song.artists"><small ng-show="$first">by </small>{{artist.name}}<span ng-hide="$last">, <span></span>
+													<span ng-repeat="artist in song.artists"><small ng-show="$first">by </small>{{artist.name}}<span ng-hide="$last">, </span></span>
 												</div>
 											</td>
 										</tr>
