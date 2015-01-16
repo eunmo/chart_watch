@@ -41,7 +41,7 @@
 
 			promises[1] = models.sequelize.query(sql)
 			.then(function(rows) {
-				var i, row, album, song;
+				var i, row, album, song, artist, match;
 				for (i in rows) {
 					row = rows[i];
 
@@ -92,6 +92,23 @@
 				for (i in albums) {
 					album = albums[i];
 					album.songs = album.songs.filter(function(n) { return n; });
+
+					for (var j in album.songs) {
+						song = album.songs[j];
+
+						if (album.albumArtists.length !== song.artists.length)
+							continue;
+
+						match = true;
+						for (var k in song.artists) {
+							if (album.albumArtists[k].id !== song.artists[k].id) {
+								match = false;
+								break;
+							}
+						}
+						if (match)
+							delete song.artists;
+					}
 				}
 			});
 
