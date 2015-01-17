@@ -24,3 +24,19 @@ musicApp.filter('numAlbums', function () {
 		return num + ' albums';
 	};
 });
+
+musicApp.filter('numSongs', function () {
+	return function(num) {
+		if (num <= 1)
+			return num + ' song';
+		return num + ' songs';
+	};
+});
+
+musicApp.filter('numFeatures', function () {
+	return function(num) {
+		if (num <= 1)
+			return num + ' feature';
+		return num + ' features';
+	};
+});

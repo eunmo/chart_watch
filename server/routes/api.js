@@ -4,6 +4,39 @@
 	var Promise = require('bluebird');
 
 	module.exports = function (router, models) {
+		router.get('/api/all', function(req, res) {
+			var promises = [];
+			var json = {};
+
+			promises.push(models.Album.findAll().then(function(data) {
+				json.albums = data;
+			}));
+			
+			promises.push(models.Artist.findAll().then(function(data) {
+				json.artists = data;
+			}));
+
+			promises.push(models.AlbumArtist.findAll().then(function(data) {
+				json.albumArtists = data;
+			}));
+
+			promises.push(models.Song.findAll().then(function(data) {
+				json.songs = data;
+			}));
+
+			promises.push(models.AlbumSong.findAll().then(function(data) {
+				json.albumSongs = data;
+			}));
+
+			promises.push(models.SongArtist.findAll().then(function(data) {
+				json.songArtists = data;
+			}));
+
+			Promise.all(promises).then(function () {
+				res.json(json);
+			});
+		});
+
 		router.get('/api/music', function(req, res) {
 			models.Song.findAll().then(function(songs) {
 				res.json(songs);

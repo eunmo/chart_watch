@@ -8,11 +8,12 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr ng-repeat="artist in artists">
+				<tr ng-repeat="artist in artists | orderBy:'nameNorm'">
 					<td>{{artist.id}}</td>
 					<td><a href="#/artist/{{artist.id}}">{{artist.name | normalizeString}}</a></td>
-					<td>{{artist.Albums.length}} albums</td>
-					<td>{{artist.Songs.length}} songs</td>
+					<td>{{artist.albums.length | numAlbums}}</td>
+					<td>{{artist.songs.length | numSongs}}</td>
+					<td>{{artist.features.length | numFeatures}}</td>
 				</tr>
 				</tbody>
 			</table>

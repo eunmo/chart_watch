@@ -17,9 +17,13 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		templateUrl: '/partials/artist-list.html',
 		controller: 'ArtistInitialCtrl'
 	})
-	.when('/', {
+	.when('/initial', {
 		templateUrl: '/partials/initials.html',
 		controller: 'InitialCtrl'
+	})
+	.when('/', {
+		templateUrl: '/partials/artist-list.html',
+		controller: 'Controller'
 	})
 	.otherwise({
 		redirectTo: '/'
