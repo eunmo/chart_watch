@@ -36,12 +36,6 @@
 				res.json(json);
 			});
 		});
-
-		router.get('/api/music', function(req, res) {
-			models.Song.findAll().then(function(songs) {
-				res.json(songs);
-			});
-		});
 		
 		router.get('/api/artist', function(req, res) {
 			models.Artist.findAll({

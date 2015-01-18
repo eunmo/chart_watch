@@ -141,7 +141,7 @@ musicApp.controller('ArtistCtrl', function($rootScope, $scope, $routeParams, $ht
 		};
 		addSongService.addSongs([sendSong]);
 
-	}
+	};
 });
 
 musicApp.controller('InitialCtrl', function($rootScope, $scope) {

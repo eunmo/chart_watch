@@ -10,8 +10,6 @@
 	<script type="text/javascript" src="/lib/angular/angular.min.js"></script>
 	<script type="text/javascript" src="/lib/angular-route/angular-route.min.js"></script>
 	<script type="text/javascript" src="/js/musicApp.js"></script>
-	<script type="text/javascript" src="/js/musicFactory.js"></script>
-	<script type="text/javascript" src="/js/musicCtrl.js"></script>
 	<script type="text/javascript" src="/js/controller.js"></script>
 	<script type="text/javascript" src="/js/directive.js"></script>
 	<script type="text/javascript" src="/js/factory.js"></script>
@@ -19,14 +17,19 @@
 </head>
 
 <body>
-	<h1><a href="#/">Test</a></h1>
-	<p>
-	<a href="#/music">songs</a>
-	</p>
-	<p>
-	<a href="#/artist">artists</a>
-	</p>
 	<div class="container">
+		<div class="row">
+			<div class="col-md-12 col-lg-12">
+				<div class="jumbotron">
+					<h1>Chart Watch</h1>
+					<p>Free at last from iTunes</p>
+					<form action="/upload" enctype="multipart/form-data" method="post">
+						<input type="file" name="file" multiple="multiple">
+						<input type="submit" value="Upload">
+					</form>
+				</div>
+			</div>
+		</div>
 		<div class="row">
 			<div class="col-md-3 col-lg-3">
 				<div ng-controller="upNextController">
@@ -37,11 +40,6 @@
 				<ng-view></ng-view>
 			</div>
 	</div>
-	<form action="/upload" enctype="multipart/form-data" method="post">
-		<input type="file" name="file" multiple="multiple">
-		<input type="submit" value="Upload">
-	</form>
-	<a href='/upload'>See list</a>
 </body>
 
 </html>
