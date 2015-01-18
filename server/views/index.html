@@ -27,6 +27,11 @@
 						<input type="file" name="file" multiple="multiple">
 						<input type="submit" value="Upload">
 					</form>
+					<div ng-controller="PlayerController">
+						<button ng-click="play()" class="btn btn-default" ng-show="!playing">Play</button>
+						<button ng-click="stop()" class="btn btn-default" ng-show="playing">Stop</button>
+						Playing audio: <b>{{ playing }}</b> {{ time | songDuration }} / {{ duration | songDuration }}
+					</div>
 				</div>
 			</div>
 		</div>

@@ -152,3 +152,35 @@ musicApp.controller('InitialCtrl', function($rootScope, $scope) {
 	$scope.initials.push.apply($scope.initials, 'ABCDEFGHIJLKMNOPQRSTUVWXYZ'.split(''));
 	$scope.initials.push('0-9');
 });
+
+musicApp.controller('PlayerController', ['$scope', function($scope) {
+	$scope.playing = false;
+	$scope.audio = document.createElement('audio');
+	$scope.audio.src = '/1.mp3';
+	$scope.time = 0;
+	$scope.duration = 0;
+	$scope.play = function() {
+		$scope.audio.play();
+		$scope.playing = true;
+		console.log($scope.audio);
+	};
+	$scope.stop = function() {
+		$scope.audio.pause();
+		$scope.playing = false;
+	};
+	$scope.audio.addEventListener('ended', function() {
+		$scope.$apply(function() {
+			$scope.stop()
+		});
+	});
+	$scope.audio.addEventListener('timeupdate', function() {
+		$scope.$apply(function() {
+			$scope.time = $scope.audio.currentTime;
+		});
+	});
+	$scope.audio.addEventListener('canplaythrough', function() {
+		$scope.$apply(function() {
+			$scope.duration = $scope.audio.duration;
+		});
+	});
+}]);

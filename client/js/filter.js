@@ -1,5 +1,6 @@
 musicApp.filter('songDuration', function () {
 	return function(secs) {
+		secs = Math.floor(secs);
 		var hour = Math.floor(secs / 3600);
 		var min = Math.floor(secs / 60);
 		var sec = secs % 60;
