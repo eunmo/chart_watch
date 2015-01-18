@@ -19,14 +19,18 @@
 								<small class="pull-right">{{album.release | date}}</small>
 							</h4>
 							<table class="table">
-								<tr	ng-repeat="cols in album.songRows">
-									<td ng-repeat="song in cols">
+								<tr	ng-repeat="song in album.songs">
+									<td>
 										<div class="song-desc">
 											<span class="song-desc-title">
 												<span class="song-desc-track">{{song.track}}</span>
 												{{song.title}}
 											</span>
-											<span class="song-desc-time pull-right">{{song.time | songDuration}}</span>
+											<span class="pull-right">
+												<span class="song-desc-time">{{song.time | songDuration}}</span>
+												<span class="glyphicon glyphicon-plus" aria-hidden="true"
+													ng-click="addSong(song, album.id)"></span>
+											</span>
 										</div>
 										<div ng-show="{{song.features.length}}">
 											<span class="song-desc-track"></span>

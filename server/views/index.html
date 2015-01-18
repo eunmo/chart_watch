@@ -13,6 +13,8 @@
 	<script type="text/javascript" src="/js/musicFactory.js"></script>
 	<script type="text/javascript" src="/js/musicCtrl.js"></script>
 	<script type="text/javascript" src="/js/controller.js"></script>
+	<script type="text/javascript" src="/js/directive.js"></script>
+	<script type="text/javascript" src="/js/factory.js"></script>
 	<script type="text/javascript" src="/js/filter.js"></script>
 </head>
 
@@ -26,9 +28,12 @@
 	</p>
 	<div class="container">
 		<div class="row">
-			<div class="col-md-2 col-lg-2">
+			<div class="col-md-3 col-lg-3">
+				<div ng-controller="upNextController">
+					<up-next><up-next>
+				</div>
 			</div>
-			<div class="col-md-10 col-lg-10">
+			<div class="col-md-9 col-lg-9">
 				<ng-view></ng-view>
 			</div>
 	</div>

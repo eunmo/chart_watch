@@ -7,7 +7,23 @@ musicApp.controller('ArtistListCtrl', function($rootScope, $scope, $http) {
 	});
 });
 
-musicApp.controller('Controller', function($rootScope, $scope, $http) {
+musicApp.controller('upNextController', function($rootScope, $scope, addSongService) {
+	$scope.songs = [];
+
+	$scope.$on('handleAddSong', function () {
+		var song, listSong;
+		for (var i in addSongService.songs) {
+			$scope.songs.push(addSongService.songs[i]);
+		}
+	});
+
+	$scope.removeSong = function (song) {
+		var index = $scope.songs.indexOf(song);
+		$scope.songs.splice(index, 1);
+	};
+});
+
+musicApp.controller('ListController', function($rootScope, $scope, $http) {
  
   $scope.artists = [];
   $scope.albums = [];
@@ -102,29 +118,30 @@ musicApp.controller('ArtistInitialCtrl', function($rootScope, $scope, $routePara
 	});
 });
 
-musicApp.controller('ArtistCtrl', function($rootScope, $scope, $routeParams, $http) {
+musicApp.controller('ArtistCtrl', function($rootScope, $scope, $routeParams, $http, addSongService) {
 
 	$scope.artists = [];
 
 	$http.get('api/artist/' + $routeParams.id).success(function(artist) {
 		// format songs into rows
-		for (var j in artist.albums) {
-			var album = artist.albums[j];
-			var length = album.songs.length;
-			var maxRow = Math.max(5, Math.round(length / 2));
-			album.songRows = [];
-			for (var k in album.songs) {
-				if (k < maxRow) {
-					album.songRows.push([]);
-				}
-				var row = (k < maxRow) ? k : k - maxRow;
-				var col = (k < maxRow) ? 0 : 1;
-				album.songRows[row][col] = album.songs[k];
+		for (var i in artist.albums) {
+			var album = artist.albums[i];
+			for (var j in album.songs) {
+				album.songs[j].albumId = album.id;
 			}
 		}
-		console.log(artist);
 		$scope.artists.push(artist);
 	});
+
+	$scope.addSong = function (song, albumId) {
+		var sendSong = {
+			id: song.id,
+			title: song.title,
+			albumId: albumId
+		};
+		addSongService.addSongs([sendSong]);
+
+	}
 });
 
 musicApp.controller('InitialCtrl', function($rootScope, $scope) {
