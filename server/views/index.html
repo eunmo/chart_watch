@@ -25,7 +25,12 @@
 	<a href="#/artist">artists</a>
 	</p>
 	<div class="container">
-		<ng-view></ng-view>
+		<div class="row">
+			<div class="col-md-2 col-lg-2">
+			</div>
+			<div class="col-md-10 col-lg-10">
+				<ng-view></ng-view>
+			</div>
 	</div>
 	<form action="/upload" enctype="multipart/form-data" method="post">
 		<input type="file" name="file" multiple="multiple">

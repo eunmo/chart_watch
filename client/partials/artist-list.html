@@ -1,22 +1,18 @@
-<div class="container" ng-controller="MusicCtrl">
-	<div class="row">
-		<div class="col-md-12 col-sm-12 col-xs-12">
-			<table class="table table-striped">
-				<thead>
-				<tr>
-					<td>#</td><td>name</td>
-				</tr>
-				</thead>
-				<tbody>
-				<tr ng-repeat="artist in artists | orderBy:'nameNorm'">
-					<td>{{artist.id}}</td>
-					<td><a href="#/artist/{{artist.id}}">{{artist.name | normalizeString}}</a></td>
-					<td>{{artist.albums.length | numAlbums}}</td>
-					<td>{{artist.songs.length | numSongs}}</td>
-					<td>{{artist.features.length | numFeatures}}</td>
-				</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
+<div ng-controller="MusicCtrl">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<td>#</td><td>name</td>
+			</tr>
+		</thead>
+		<tbody>
+		<tr ng-repeat="artist in artists | orderBy:'nameNorm'">
+			<td>{{artist.id}}</td>
+			<td><a href="#/artist/{{artist.id}}">{{artist.name | normalizeString}}</a></td>
+			<td>{{artist.albums.length | numAlbums}}</td>
+			<td>{{artist.songs.length | numSongs}}</td>
+			<td>{{artist.features.length | numFeatures}}</td>
+		</tr>
+		</tbody>
+	</table>
 </div>

@@ -1,52 +1,48 @@
-<div class="container" ng-controller="ArtistCtrl">
-	<div class="row">
-		<div class="col-md-12 col-sm-12 col-xs-12">
-			<div ng-repeat="artist in artists">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h1>{{artist.name}} <small>{{artist.albums.length | numAlbums}}</small></h1>
-					</div>
-					<div class"panel-body">
-						<table class="table" ng-repeat="album in artist.albums">
-							<tbody>
-							<tr>
-								<td class="td-img">
-									<img src="/{{album.id}}.jpg" class="img-thumbnail img-album">
-								</td>
-								<td>
-									<h3>{{album.title}}</h3>
-									<h4>
-										<small>by</small>
-										<span ng-repeat="artist in album.albumArtists">{{artist.name}}<span ng-show="!$last">, </span></span>
-										<small class="pull-right">{{album.release | date}}</small>
-									</h4>
-									<table class="table">
-										<tr	ng-repeat="cols in album.songRows">
-											<td ng-repeat="song in cols">
-												<div class="song-desc">
-													<span class="song-desc-title">
-														<span class="song-desc-track">{{song.track}}</span>
-														{{song.title}}
-													</span>
-													<span class="song-desc-time pull-right">{{song.time | songDuration}}</span>
-												</div>
-												<div ng-show="{{song.features.length}}">
-													<span class="song-desc-track"></span>
-													<span ng-repeat="artist in song.features"><small ng-show="$first">Feat. </small>{{artist.name}}<span ng-hide="$last">, </span></span>
-												</div>
-												<div ng-show="{{song.artists.length}}">
-													<span class="song-desc-track"></span>
-													<span ng-repeat="artist in song.artists"><small ng-show="$first">by </small>{{artist.name}}<span ng-hide="$last">, </span></span>
-												</div>
-											</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
+<div ng-controller="ArtistCtrl">
+	<div ng-repeat="artist in artists">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h1>{{artist.name}} <small>{{artist.albums.length | numAlbums}}</small></h1>
+			</div>
+			<div class"panel-body">
+				<table class="table" ng-repeat="album in artist.albums">
+					<tbody>
+					<tr>
+						<td class="td-img">
+							<img src="/{{album.id}}.jpg" class="img-thumbnail img-album">
+						</td>
+						<td>
+							<h3>{{album.title}}</h3>
+							<h4>
+								<small>by</small>
+								<span ng-repeat="artist in album.albumArtists">{{artist.name}}<span ng-show="!$last">, </span></span>
+								<small class="pull-right">{{album.release | date}}</small>
+							</h4>
+							<table class="table">
+								<tr	ng-repeat="cols in album.songRows">
+									<td ng-repeat="song in cols">
+										<div class="song-desc">
+											<span class="song-desc-title">
+												<span class="song-desc-track">{{song.track}}</span>
+												{{song.title}}
+											</span>
+											<span class="song-desc-time pull-right">{{song.time | songDuration}}</span>
+										</div>
+										<div ng-show="{{song.features.length}}">
+											<span class="song-desc-track"></span>
+											<span ng-repeat="artist in song.features"><small ng-show="$first">Feat. </small>{{artist.name}}<span ng-hide="$last">, </span></span>
+										</div>
+										<div ng-show="{{song.artists.length}}">
+											<span class="song-desc-track"></span>
+											<span ng-repeat="artist in song.artists"><small ng-show="$first">by </small>{{artist.name}}<span ng-hide="$last">, </span></span>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
