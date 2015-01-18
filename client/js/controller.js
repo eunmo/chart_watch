@@ -17,7 +17,7 @@ musicApp.controller('Controller', function($rootScope, $scope, $http) {
   $scope.songMap = [];
 
 	$http.get('api/all').success(function(data) {
-		var i;
+		var i, j;
 		var artist, album, song;
 		var ass;
 
