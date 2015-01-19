@@ -156,31 +156,62 @@ musicApp.controller('InitialCtrl', function($rootScope, $scope) {
 musicApp.controller('PlayerController', ['$scope', function($scope) {
 	$scope.playing = false;
 	$scope.audio = document.createElement('audio');
+	
+	// jquery for slider (dirty, but works)
+	$scope.playhead = document.getElementById('playhead');
+	$scope.timeline = document.getElementById('timeline');
+	$scope.playheadRadius = $scope.playhead.offsetWidth / 2;
+	$scope.timelineWidth = $scope.timeline.offsetWidth - $scope.playhead.offsetWidth;
 	$scope.audio.src = '/1.mp3';
 	$scope.time = 0;
 	$scope.duration = 0;
+
 	$scope.play = function() {
 		$scope.audio.play();
 		$scope.playing = true;
-		console.log($scope.audio);
 	};
+
 	$scope.stop = function() {
 		$scope.audio.pause();
 		$scope.playing = false;
 	};
+
 	$scope.audio.addEventListener('ended', function() {
 		$scope.$apply(function() {
 			$scope.stop()
 		});
 	});
+
 	$scope.audio.addEventListener('timeupdate', function() {
+		var playPercent = 100 * ($scope.audio.currentTime / $scope.audio.duration);
+		$scope.movePlayhead(playPercent);
 		$scope.$apply(function() {
 			$scope.time = $scope.audio.currentTime;
 		});
 	});
+
 	$scope.audio.addEventListener('canplaythrough', function() {
 		$scope.$apply(function() {
 			$scope.duration = $scope.audio.duration;
 		});
 	});
+
+	$scope.timeline.addEventListener('click', function (event) {
+		if ($scope.playing) {
+			var clickRatio =
+				(event.pageX - $("#timeline").offset().left - $scope.playheadRadius)
+				/ $scope.timelineWidth;
+			clickRatio = (clickRatio < 0 ? 0 : (clickRatio > 1 ? 1 : clickRatio));
+			$scope.movePlayhead(clickRatio * 100);
+			$scope.audio.currentTime = $scope.audio.duration * clickRatio;
+		}
+	}, false);
+
+	$scope.movePlayhead = function (percent) {
+		percent = (percent < 0 ? 0 : (percent > 100 ? 100 : percent));
+		percent = percent * $scope.timelineWidth / $scope.timeline.offsetWidth;
+
+		console.log(percent);
+		$scope.playhead.style.marginLeft = percent + '%';
+	};
 }]);

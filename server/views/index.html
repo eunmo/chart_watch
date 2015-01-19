@@ -9,6 +9,7 @@
 
 	<script type="text/javascript" src="/lib/angular/angular.min.js"></script>
 	<script type="text/javascript" src="/lib/angular-route/angular-route.min.js"></script>
+	<script type="text/javascript" src="/lib/jquery/dist/jquery.min.js"></script>
 	<script type="text/javascript" src="/js/musicApp.js"></script>
 	<script type="text/javascript" src="/js/controller.js"></script>
 	<script type="text/javascript" src="/js/directive.js"></script>
@@ -28,9 +29,14 @@
 						<input type="submit" value="Upload">
 					</form>
 					<div ng-controller="PlayerController">
-						<button ng-click="play()" class="btn btn-default" ng-show="!playing">Play</button>
-						<button ng-click="stop()" class="btn btn-default" ng-show="playing">Stop</button>
-						Playing audio: <b>{{ playing }}</b> {{ time | songDuration }} / {{ duration | songDuration }}
+						<div>
+							<button ng-click="play()" class="btn btn-default" ng-show="!playing">Play</button>
+							<button ng-click="stop()" class="btn btn-default" ng-show="playing">Stop</button>
+							Playing audio: <b>{{ playing }}</b> {{ time | songDuration }} / {{ duration | songDuration }}
+						</div>
+						<div id="timeline">
+							<div id="playhead"></div>
+						</div>
 					</div>
 				</div>
 			</div>
