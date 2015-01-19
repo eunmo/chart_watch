@@ -178,7 +178,7 @@ musicApp.controller('PlayerController', ['$scope', function($scope) {
 
 	$scope.audio.addEventListener('ended', function() {
 		$scope.$apply(function() {
-			$scope.stop()
+			$scope.stop();
 		});
 	});
 
@@ -198,9 +198,8 @@ musicApp.controller('PlayerController', ['$scope', function($scope) {
 
 	$scope.timeline.addEventListener('click', function (event) {
 		if ($scope.playing) {
-			var clickRatio =
-				(event.pageX - $("#timeline").offset().left - $scope.playheadRadius)
-				/ $scope.timelineWidth;
+			var xCoord = event.pageX - $("#timeline").offset().left - $scope.playheadRadius;
+			var clickRatio = xCoord / $scope.timelineWidth;
 			clickRatio = (clickRatio < 0 ? 0 : (clickRatio > 1 ? 1 : clickRatio));
 			$scope.movePlayhead(clickRatio * 100);
 			$scope.audio.currentTime = $scope.audio.duration * clickRatio;
