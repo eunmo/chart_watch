@@ -3,40 +3,174 @@
 	
 	var Promise = require('bluebird');
 
-	module.exports = function (router, models) {
-		router.get('/api/all', function(req, res) {
-			var promises = [];
-			var json = {};
+	var artistCmpId = function(a, b) {
+		return a.id - b.id;
+	};
 
-			promises.push(models.Album.findAll().then(function(data) {
-				json.albums = data;
-			}));
+	var artistCmpOrder = function(a, b) {
+		return a.order - b.order;
+	};
+
+	var songCmp = function(a, b) {
+		if (a.disk === b.disk)
+			return a.track - b.track;
+		return a.disk - b.disk;
+	};
+
+	var removeDuplicateArtistOrSort = function(album, song) {
+		var i, match = true;
+
+		if (album.albumArtists.length === song.artists.length) {
+
+			for (i in album.albumArtists) {
+				if (album.albumArtists[i].id !== song.artists[i].id) {
+					match = false;
+					break;
+				}
+			}
+
+			if (match)
+				delete song.artists;
+		} else {
+			song.artists.sort(artistCmpOrder);
+		}
+	};
+
+	var findSongInAlbums = function (id, albums) {
+		var album;
+		var i, j;
+
+		for (i in albums) {
+			album = albums[i];
 			
-			promises.push(models.Artist.findAll().then(function(data) {
-				json.artists = data;
-			}));
+			for (j in album.songs) {
+				if (id === album.songs[j].id) {
+					return true;
+				}
+			}
+		}
 
-			promises.push(models.AlbumArtist.findAll().then(function(data) {
-				json.albumArtists = data;
-			}));
+		return false;
+	};
 
-			promises.push(models.Song.findAll().then(function(data) {
-				json.songs = data;
-			}));
+	var findAlbumInAlbums = function (id, albums) {
+		var i;
 
-			promises.push(models.AlbumSong.findAll().then(function(data) {
-				json.albumSongs = data;
-			}));
+		for (i in albums) {
+			if (albums[i].id === id)
+				return albums[i];
+		}
 
-			promises.push(models.SongArtist.findAll().then(function(data) {
-				json.songArtists = data;
-			}));
+		return null;
+	};
 
-			Promise.all(promises).then(function () {
-				res.json(json);
+	var createAlbum = function (albumRow) {
+		var i;
+		var artistRow;
+		var album = { 
+			id: albumRow.id,
+			title: albumRow.title,
+			release: albumRow.release,
+			albumArtists: [],
+			songs: []
+		};
+
+		for (i in albumRow.Artists) {
+			artistRow = albumRow.Artists[i];
+			album.albumArtists.push({
+				id: artistRow.id,
+				name: artistRow.name,
+				order: artistRow.order
 			});
-		});
-		
+		}
+
+		album.albumArtists.sort(artistCmpId);
+
+		return album;
+	};
+
+	var createSong = function (songRow, albumSong, album) {
+		var i;
+		var artistRow;
+		var songArtist;
+		var song = {
+			id: songRow.id,
+			title: songRow.title,
+			time: songRow.time,
+			disk: albumSong.disk,
+			track: albumSong.track,
+			artists: [],
+			features: []
+		};
+
+		for (i in songRow.Artists) {
+			artistRow = songRow.Artists[i];
+			songArtist = {
+				id: artistRow.id,
+				name: artistRow.name,
+				order: artistRow.SongArtist.order
+			};
+			if (artistRow.SongArtist.feat) {
+				song.features.push(songArtist);
+			} else {
+				song.artists.push(songArtist);
+			}
+		}
+
+		song.features.sort(artistCmpOrder);
+		removeDuplicateArtistOrSort(album, song);
+		album.songs.push(song);
+	};
+	
+	var extractAlbums = function (result) {
+		var albums = [];
+		var albumRow, songRow;
+		var album;
+		var i, j;
+
+		for (i in result.Albums) {
+			albumRow = result.Albums[i];
+			album = createAlbum(albumRow);
+
+			for (j in albumRow.Songs) {
+				songRow = albumRow.Songs[j];
+				createSong(songRow, songRow.AlbumSong, album);
+			}
+
+			album.albumArtists.sort(artistCmpOrder);
+			album.songs.sort(songCmp);
+			albums.push(album);
+		}
+
+		return albums;
+	};
+
+	var getOtherAlbums = function (result, albums) {
+		var songRow, albumRow;
+		var album;
+		var i, j;
+
+		for (i in result.Songs) {
+			songRow = result.Songs[i];
+			
+			if (!findSongInAlbums(songRow.id, albums)) {
+				for (j in songRow.Albums) {
+					albumRow = songRow.Albums[j];
+					album = findAlbumInAlbums(albumRow.id, albums);
+					if (album === null) {
+						album = createAlbum(albumRow);
+						albums.push(album);
+					}
+					album.albumArtists.sort(artistCmpId);
+					createSong(songRow, albumRow.AlbumSong, album);
+					album.albumArtists.sort(artistCmpOrder);
+					album.songs.sort(songCmp);
+				}
+			}
+		}
+	};
+
+	module.exports = function (router, models) {
 		router.get('/api/artist', function(req, res) {
 			models.Artist.findAll({
 				include: [ {model: models.Album}, {model: models.Song} ],
@@ -45,105 +179,30 @@
 				res.json(artists);
 			});
 		});
-		
+
 		router.get('/api/artist/:_id', function(req, res) {
 			var id = req.params._id;
-			var sql = 'SELECT * FROM ViewAlbumIArtistISongIArtistI V ' +
-								'WHERE V.AlbumArtistId = ' + id + ' ' +
-								'OR V.SongArtistId = ' + id + ' ' +
-								'ORDER BY V.release';
-			var artist;
-			var albums = [];
-			var promises = [];
-
-			// should also fetch artist object
-			// should group by albums
-			// -> albumArtist (id, name) array
-			// -> song (id, title, time, track, [artist], [feat artist]) array
-
-			promises[0] = models.Artist.findOne({where: {id: id} })
-			.then(function(a) {
-				artist = a.dataValues;
-			});
-
-			promises[1] = models.sequelize.query(sql)
-			.then(function(rows) {
-				var i, row, album, song, artist, match;
-				for (i in rows) {
-					row = rows[i];
-
-					// album
-					if (albums[row.AlbumId] === undefined) {
-						albums[row.AlbumId] = {
-							id: row.AlbumId,
-							title: row.albumTitle,
-							release: row.release,
-							albumArtists: [],
-							songs: []
-						};
-					}
-					album = albums[row.AlbumId];
-					album.albumArtists[row.albumArtistOrder] = {
-						id: row.albumArtistId,
-						name: row.albumArtistName
-					};
-
-					// song
-					if (album.songs[row.track] === undefined) {
-						album.songs[row.track] = {
-							id: row.SongId,
-							title: row.songTitle,
-							time: row.time,
-							track: row.track,
-							artists: [],
-							features: []
-						};
-					}
-					song = album.songs[row.track];
-
-					// song artist
-					if (row.feat === 0) {
-						song.artists[row.songArtistOrder] = {
-							id: row.songArtistId,
-							name: row.songArtistName
-						};
-					} else {
-						song.features[row.songArtistOrder] = {
-							id: row.songArtistId,
-							name: row.songArtistName
-						};
-					}
-				}
-
-				albums = albums.filter(function(n) { return n; });
-				for (i in albums) {
-					album = albums[i];
-					album.songs = album.songs.filter(function(n) { return n; });
-
-					for (var j in album.songs) {
-						song = album.songs[j];
-
-						if (album.albumArtists.length !== song.artists.length)
-							continue;
-
-						match = true;
-						for (var k in song.artists) {
-							if (album.albumArtists[k].id !== song.artists[k].id) {
-								match = false;
-								break;
-							}
-						}
-						if (match)
-							delete song.artists;
-					}
-				}
-			});
-
-			Promise.all(promises)
-			.then(function() {
-				if (artist !== null) {
-					artist.albums = albums;
-				}
+			models.Artist.findOne({
+				where: {id: id},
+				include: [
+					{ model: models.Album, include: [
+						{ model: models.Artist},
+						{ model: models.Song, include: [
+							{ model: models.Artist }
+						]}
+					]},
+					{ model: models.Song, include: [
+						{ model: models.Artist },
+						{ model: models.Album, include: [
+							{ model: models.Artist }
+						]}
+					]}
+				]
+			}).then(function(result) {
+				var artist = { name: result.name };
+				var albums = extractAlbums(result);
+				getOtherAlbums(result, albums);
+				artist.albums = albums;
 				res.json(artist);
 			});
 		});
