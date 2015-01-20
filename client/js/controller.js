@@ -7,22 +7,6 @@ musicApp.controller('ArtistListCtrl', function($rootScope, $scope, $http) {
 	});
 });
 
-musicApp.controller('upNextController', function($rootScope, $scope, addSongService) {
-	$scope.songs = [];
-
-	$scope.$on('handleAddSong', function () {
-		var song, listSong;
-		for (var i in addSongService.songs) {
-			$scope.songs.push(addSongService.songs[i]);
-		}
-	});
-
-	$scope.removeSong = function (song) {
-		var index = $scope.songs.indexOf(song);
-		$scope.songs.splice(index, 1);
-	};
-});
-
 musicApp.controller('ListController', function($rootScope, $scope, $http) {
  
   $scope.artists = [];
@@ -153,18 +137,28 @@ musicApp.controller('InitialCtrl', function($rootScope, $scope) {
 	$scope.initials.push('0-9');
 });
 
-musicApp.controller('PlayerController', ['$scope', function($scope) {
+musicApp.controller('PlayerController', function($rootScope, $scope, $interval, addSongService) {
+	$scope.songs = [];
+
+	$scope.$on('handleAddSong', function () {
+		var song, listSong;
+		for (var i in addSongService.songs) {
+			$scope.songs.push(addSongService.songs[i]);
+		}
+	});
+
+	$scope.removeSong = function (song) {
+		var index = $scope.songs.indexOf(song);
+		$scope.songs.splice(index, 1);
+	};
+
 	$scope.playing = false;
 	$scope.audio = document.createElement('audio');
 	
-	// jquery for slider (dirty, but works)
-	$scope.playhead = document.getElementById('playhead');
-	$scope.timeline = document.getElementById('timeline');
-	$scope.playheadRadius = $scope.playhead.offsetWidth / 2;
-	$scope.timelineWidth = $scope.timeline.offsetWidth - $scope.playhead.offsetWidth;
 	$scope.audio.src = '/1.mp3';
 	$scope.time = 0;
 	$scope.duration = 0;
+	$scope.bindDone = false;
 
 	$scope.play = function() {
 		$scope.audio.play();
@@ -182,9 +176,16 @@ musicApp.controller('PlayerController', ['$scope', function($scope) {
 		});
 	});
 
+	$scope.updateTime = function () {
+		if ($scope.playing) {
+			var playPercent = 100 * ($scope.audio.currentTime / $scope.audio.duration);
+			$scope.movePlayhead(playPercent);
+		}
+	};
+
+	$interval(function () { $scope.updateTime(); }, 10);
+
 	$scope.audio.addEventListener('timeupdate', function() {
-		var playPercent = 100 * ($scope.audio.currentTime / $scope.audio.duration);
-		$scope.movePlayhead(playPercent);
 		$scope.$apply(function() {
 			$scope.time = $scope.audio.currentTime;
 		});
@@ -194,23 +195,25 @@ musicApp.controller('PlayerController', ['$scope', function($scope) {
 		$scope.$apply(function() {
 			$scope.duration = $scope.audio.duration;
 		});
-	});
-
-	$scope.timeline.addEventListener('click', function (event) {
-		if ($scope.playing) {
-			var xCoord = event.pageX - $("#timeline").offset().left - $scope.playheadRadius;
-			var clickRatio = xCoord / $scope.timelineWidth;
-			clickRatio = (clickRatio < 0 ? 0 : (clickRatio > 1 ? 1 : clickRatio));
-			$scope.movePlayhead(clickRatio * 100);
-			$scope.audio.currentTime = $scope.audio.duration * clickRatio;
+		if (!$scope.bindDone) {
+			$("#timeline").bind('click', function (event) {
+				if ($scope.playing) {
+					var xCoord = event.pageX - $("#timeline").offset().left - ($("#playhead").width() / 2);
+					var clickRatio = xCoord / ($("#timeline").width() - $("#playhead").width());
+					clickRatio = (clickRatio < 0 ? 0 : (clickRatio > 1 ? 1 : clickRatio));
+					$scope.movePlayhead(clickRatio * 100);
+					$scope.audio.currentTime = $scope.audio.duration * clickRatio;
+				}
+			});
+			$scope.bindDone = true;
 		}
-	}, false);
-
+	});
+	
+	// jquery for slider (dirty, but works)
 	$scope.movePlayhead = function (percent) {
 		percent = (percent < 0 ? 0 : (percent > 100 ? 100 : percent));
-		percent = percent * $scope.timelineWidth / $scope.timeline.offsetWidth;
+		percent = percent * ($("#timeline").width() - $("#playhead").width()) / $("#timeline").width();
 
-		console.log(percent);
-		$scope.playhead.style.marginLeft = percent + '%';
+		$("#playhead").css("margin-left", percent + '%');
 	};
-}]);
+});

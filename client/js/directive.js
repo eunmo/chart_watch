@@ -4,3 +4,11 @@ musicApp.directive('upNext', function() {
 		templateUrl: 'partials/up-next.html'
 	};
 });
+
+musicApp.directive('player', function() {
+	return {
+		restrict: 'E',
+		transclude: true,
+		templateUrl: 'partials/player.html'
+	};
+});
