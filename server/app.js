@@ -1,4 +1,4 @@
-(function() {
+(function () {
 	'use strict';
 
 	var express = require('express');
@@ -21,8 +21,8 @@
 
 	app.use('/', routes);
 
-	models.sequelize.sync({force: false}).then(function() {
-		var server = app.listen(3000, function() {
+	models.sequelize.sync({force: false}).then(function () {
+		var server = app.listen(3000, function () {
 			console.log('Express server listening on port ' + server.address().port);
 		});
 	});

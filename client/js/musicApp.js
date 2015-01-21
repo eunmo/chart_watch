@@ -1,5 +1,5 @@
 musicApp = angular.module('musicApp', ['ngRoute'])
-.config(function($routeProvider) {
+.config(function ($routeProvider) {
 	$routeProvider
 	.when('/', {
 		templateUrl: '/partials/initials.html',

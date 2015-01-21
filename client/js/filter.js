@@ -1,5 +1,5 @@
 musicApp.filter('songDuration', function () {
-	return function(secs) {
+	return function (secs) {
 		secs = Math.floor(secs);
 		var hour = Math.floor(secs / 3600);
 		var min = Math.floor(secs / 60);
@@ -13,13 +13,13 @@ musicApp.filter('songDuration', function () {
 });
 
 musicApp.filter('normalizeString', function () {
-	return function(str) {
+	return function (str) {
 		return str.replace(/`/g, '\'');
 	};
 });
 
 musicApp.filter('numAlbums', function () {
-	return function(num) {
+	return function (num) {
 		if (num <= 1)
 			return num + ' album';
 		return num + ' albums';
@@ -27,7 +27,7 @@ musicApp.filter('numAlbums', function () {
 });
 
 musicApp.filter('numSongs', function () {
-	return function(num) {
+	return function (num) {
 		if (num <= 1)
 			return num + ' song';
 		return num + ' songs';
@@ -35,7 +35,7 @@ musicApp.filter('numSongs', function () {
 });
 
 musicApp.filter('numFeatures', function () {
-	return function(num) {
+	return function (num) {
 		if (num <= 1)
 			return num + ' feature';
 		return num + ' features';

@@ -1,7 +1,7 @@
-(function() {
+(function () {
 	'use strict';
 
-	module.exports = function(sequelize, DataTypes) {
+	module.exports = function (sequelize, DataTypes) {
 		var Artist = sequelize.define('Artist', {
 			name: { type: DataTypes.STRING, allowNull: false, unique: true },
 			nameNorm: { type: DataTypes.STRING, allowNull: false, unique: true },
@@ -10,7 +10,7 @@
 			gender: DataTypes.ENUM('Male', 'Female', 'Mixed')
 		});
 
-		Artist.associate = function(models) {
+		Artist.associate = function (models) {
 			Artist.belongsToMany(models.Album, {through: models.AlbumArtist});
 
 			Artist.hasMany(models.Artist);

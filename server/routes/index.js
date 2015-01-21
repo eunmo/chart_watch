@@ -1,4 +1,4 @@
-(function() {
+(function () {
   'use strict';
 
   var express = require('express');
@@ -12,29 +12,29 @@
 	var routeDir = path.resolve('server/routes');
 
 	fs.readdirSync(routeDir)
-		.filter(function(file) {
-			return (file.indexOf(".") !== 0) && (file !== "index.js");
+		.filter(function (file) {
+			return (file.indexOf('.') !== 0) && (file !== 'index.js');
 		})
-		.forEach(function(file) {
+		.forEach(function (file) {
 			require(path.join(routeDir, file))(router, models);
 		});
 
   /* GET home page. */
-  router.get('/', function(req, res) {
+  router.get('/', function (req, res) {
     res.render('index');
   });
 	
 	var mp3Bucket = 'mp3-tokyo';
 
-	router.get('/s3', function(req, res) {
+	router.get('/s3', function (req, res) {
 		var objects = [];
 		var s3 = new AWS.S3();
-		s3.listObjects({ Bucket: mp3Bucket }, function(err, data) {
+		s3.listObjects({ Bucket: mp3Bucket }, function (err, data) {
 			console.log(data);
 			if (data.Contents.length === 0) {
 				res.status(200).send(objects);
 			}
-			data.Contents.forEach(function(content) {
+			data.Contents.forEach(function (content) {
 				var s3 = new AWS.S3();
 				var params = { Bucket: mp3Bucket, Key: content.Key };
 				var url = s3.getSignedUrl('getObject', params);

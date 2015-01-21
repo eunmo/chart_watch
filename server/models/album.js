@@ -1,7 +1,7 @@
-(function() {
+(function () {
 	'use strict';
 
-	module.exports = function(sequelize, DataTypes) {
+	module.exports = function (sequelize, DataTypes) {
 		var Album = sequelize.define('Album', {
 			title: { type: DataTypes.STRING, allowNull: false },
 			titleNorm: { type: DataTypes.STRING, allowNull: false },
@@ -10,7 +10,7 @@
 			genre: DataTypes.STRING
 		});
 
-		Album.associate = function(models) {
+		Album.associate = function (models) {
 			Album.hasOne(models.Album, {as: 'Reissue', foreignKey: 'ReissueId'});
 
 			Album.belongsToMany(models.Artist, {through: models.AlbumArtist});

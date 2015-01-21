@@ -1,7 +1,7 @@
-(function() {
+(function () {
 	'use strict';
 
-	module.exports = function(sequelize, DataTypes) {
+	module.exports = function (sequelize, DataTypes) {
 		var Song = sequelize.define('Song', {
 			title: { type: DataTypes.STRING, allowNull: false },
 			titleNorm: { type: DataTypes.STRING, allowNull: false },
@@ -12,7 +12,7 @@
 			bitrate: DataTypes.INTEGER
 		});
 
-		Song.associate = function(models) {
+		Song.associate = function (models) {
 			Song.belongsToMany(models.Album, {through: models.AlbumSong});			
 			
 			Song.belongsToMany(models.Artist, {through: models.SongArtist});			

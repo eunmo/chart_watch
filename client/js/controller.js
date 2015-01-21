@@ -1,4 +1,4 @@
-musicApp.controller('InitialCtrl', function($rootScope, $scope) {
+musicApp.controller('InitialCtrl', function ($rootScope, $scope) {
  
   $scope.initials = [];
 
@@ -7,20 +7,20 @@ musicApp.controller('InitialCtrl', function($rootScope, $scope) {
 	$scope.initials.push('0-9');
 });
 
-musicApp.controller('ArtistInitialCtrl', function($rootScope, $scope, $routeParams, $http) {
+musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routeParams, $http) {
  
   $scope.artists = [];
 
-	$http.get('api/initial/' + $routeParams.initial).success(function(data) {
+	$http.get('api/initial/' + $routeParams.initial).success(function (data) {
     $scope.artists = data;
 	});
 });
 
-musicApp.controller('ArtistCtrl', function($rootScope, $scope, $routeParams, $http, addSongService) {
+musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $http, addSongService) {
 
 	$scope.artists = [];
 
-	$http.get('api/artist/' + $routeParams.id).success(function(artist) {
+	$http.get('api/artist/' + $routeParams.id).success(function (artist) {
 		// format songs into rows
 		for (var i in artist.albums) {
 			var album = artist.albums[i];
@@ -42,7 +42,7 @@ musicApp.controller('ArtistCtrl', function($rootScope, $scope, $routeParams, $ht
 	};
 });
 
-musicApp.controller('PlayerController', function($rootScope, $scope, $interval, addSongService) {
+musicApp.controller('PlayerController', function ($rootScope, $scope, $interval, addSongService) {
 	
 	$scope.songs = [];
 
@@ -66,18 +66,18 @@ musicApp.controller('PlayerController', function($rootScope, $scope, $interval, 
 	$scope.duration = 0;
 	$scope.bindDone = false;
 
-	$scope.play = function() {
+	$scope.play = function () {
 		$scope.audio.play();
 		$scope.playing = true;
 	};
 
-	$scope.stop = function() {
+	$scope.stop = function () {
 		$scope.audio.pause();
 		$scope.playing = false;
 	};
 
-	$scope.audio.addEventListener('ended', function() {
-		$scope.$apply(function() {
+	$scope.audio.addEventListener('ended', function () {
+		$scope.$apply(function () {
 			$scope.stop();
 		});
 	});
@@ -91,21 +91,21 @@ musicApp.controller('PlayerController', function($rootScope, $scope, $interval, 
 
 	$interval(function () { $scope.updateTime(); }, 10);
 
-	$scope.audio.addEventListener('timeupdate', function() {
-		$scope.$apply(function() {
+	$scope.audio.addEventListener('timeupdate', function () {
+		$scope.$apply(function () {
 			$scope.time = $scope.audio.currentTime;
 		});
 	});
 
-	$scope.audio.addEventListener('canplaythrough', function() {
-		$scope.$apply(function() {
+	$scope.audio.addEventListener('canplaythrough', function () {
+		$scope.$apply(function () {
 			$scope.duration = $scope.audio.duration;
 		});
 		if (!$scope.bindDone) {
-			$("#timeline").bind('click', function (event) {
+			$('#timeline').bind('click', function (event) {
 				if ($scope.playing) {
-					var xCoord = event.pageX - $("#timeline").offset().left - ($("#playhead").width() / 2);
-					var clickRatio = xCoord / ($("#timeline").width() - $("#playhead").width());
+					var xCoord = event.pageX - $('#timeline').offset().left - ($('#playhead').width() / 2);
+					var clickRatio = xCoord / ($('#timeline').width() - $('#playhead').width());
 					clickRatio = (clickRatio < 0 ? 0 : (clickRatio > 1 ? 1 : clickRatio));
 					$scope.movePlayhead(clickRatio * 100);
 					$scope.audio.currentTime = $scope.audio.duration * clickRatio;
@@ -118,8 +118,8 @@ musicApp.controller('PlayerController', function($rootScope, $scope, $interval, 
 	// jquery for slider (dirty, but works)
 	$scope.movePlayhead = function (percent) {
 		percent = (percent < 0 ? 0 : (percent > 100 ? 100 : percent));
-		percent = percent * ($("#timeline").width() - $("#playhead").width()) / $("#timeline").width();
+		percent = percent * ($('#timeline').width() - $('#playhead').width()) / $('#timeline').width();
 
-		$("#playhead").css("margin-left", percent + '%');
+		$('#playhead').css('margin-left', percent + '%');
 	};
 });

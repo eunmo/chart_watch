@@ -1,4 +1,4 @@
-(function() {
+(function () {
 	'use strict';
   
 	var formidable = require('formidable');
@@ -17,7 +17,7 @@
 
 	module.exports = function (router, models) {
 
-		router.post('/upload',function(req, res) {
+		router.post('/upload',function (req, res) {
 			var form = new formidable.IncomingForm();
 			var files = [];
 			var tags = [];
@@ -25,11 +25,11 @@
 			form.uploadDir = uploadDir;
 
 			form
-			.on('file', function(field, file) {
+			.on('file', function (field, file) {
 				if (file.size > 0)
 					files.push(file);
 			})
-			.on('end', function() {
+			.on('end', function () {
 				console.log('-> upload done');
 				if (files.length === 0) {
 					res.json(null);
@@ -38,7 +38,7 @@
 					Promise.map(files, function (file) {
 						return handleUpload(file, tags);
 					}, {concurrency: 1})
-					.then(function() {
+					.then(function () {
 						res.writeHead(200, {'content-type': 'text/plain'});
 						res.write('received files:\n\n '+util.inspect(files));
 						res.end('tags:\n\n '+util.inspect(tags));
@@ -53,7 +53,7 @@
 				where: { name: name },
 				defaults: { nameNorm: nameNorm }
 			})
-			.spread(function(artist, artistCreated) {
+			.spread(function (artist, artistCreated) {
 				array[i] = artist;
 			});
 		}
@@ -98,9 +98,9 @@
 				}
 
 				return Promise.all(artistPromises)
-				.then(function() {
+				.then(function () {
 					return albumArtistArray[0].getAlbums()
-					.then(function(albums) {
+					.then(function (albums) {
 						var matchingAlbum = null;
 
 						for (i in albums) {
@@ -119,18 +119,18 @@
 								release: releaseDate,
 								genre: tag.genre
 							})
-							.then(function(album) {
+							.then(function (album) {
 								var albumArtistPromises = [];
 
 								for (var i = 0; i < tag.albumArtist.length; i++) {
 									albumArtistPromises[i] = album.addArtist(albumArtistArray[i], {order: i});
 								}
-								return Promise.all(albumArtistPromises).then(function() {return album;});
+								return Promise.all(albumArtistPromises).then(function () {return album;});
 							})
-							.then(function(album) {
+							.then(function (album) {
 								var imgPath = path.resolve(imageDir, album.id + '.jpg');
 								var execImgStr = 'perl ' + imgScript + ' ' + filePath + ' ' + imgPath;
-								return exec(execImgStr).then(function() {
+								return exec(execImgStr).then(function () {
 									return album;
 								});
 							});
@@ -138,7 +138,7 @@
 					});
 				})
 				.bind({})
-				.then(function(album) {
+				.then(function (album) {
 					this.album = album;
 					return models.Song.create({
 						title: tag.title,
@@ -147,7 +147,7 @@
 						bitrate: tag.bitrate
 					});
 				})
-				.then(function(song) {
+				.then(function (song) {
 					song.addAlbum(this.album, {disk: tag.disk, track: tag.track});
 					for (i = 0; i < songArtistArray.length; i++) {
 						song.addArtist(songArtistArray[i], {order: i});
@@ -159,7 +159,7 @@
 					var s3 = new AWS.S3();
 					var param = { Bucket: mp3Bucket, Key: song.id.toString(), Body: fileBuffer };
 					return new Promise(function (resolve, reject) {
-						s3.putObject(param, function(error, response) {
+						s3.putObject(param, function (error, response) {
 							if (error !== null) {
 								console.log('s3 error: ' + error);
 								return reject();

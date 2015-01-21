@@ -1,23 +1,23 @@
-(function() {
+(function () {
 	'use strict';
 	
 	var Promise = require('bluebird');
 
-	var artistCmpId = function(a, b) {
+	var artistCmpId = function (a, b) {
 		return a.id - b.id;
 	};
 
-	var artistCmpOrder = function(a, b) {
+	var artistCmpOrder = function (a, b) {
 		return a.order - b.order;
 	};
 
-	var songCmp = function(a, b) {
+	var songCmp = function (a, b) {
 		if (a.disk === b.disk)
 			return a.track - b.track;
 		return a.disk - b.disk;
 	};
 
-	var removeDuplicateArtistOrSort = function(album, song) {
+	var removeDuplicateArtistOrSort = function (album, song) {
 		var i, match = true;
 
 		if (album.albumArtists.length === song.artists.length) {
@@ -171,16 +171,16 @@
 	};
 
 	module.exports = function (router, models) {
-		router.get('/api/artist', function(req, res) {
+		router.get('/api/artist', function (req, res) {
 			models.Artist.findAll({
 				include: [ {model: models.Album}, {model: models.Song} ],
 				order: '`nameNorm`'
-			}).then(function(artists) {
+			}).then(function (artists) {
 				res.json(artists);
 			});
 		});
 
-		router.get('/api/artist/:_id', function(req, res) {
+		router.get('/api/artist/:_id', function (req, res) {
 			var id = req.params._id;
 			models.Artist.findOne({
 				where: {id: id},
@@ -198,7 +198,7 @@
 						]}
 					]}
 				]
-			}).then(function(result) {
+			}).then(function (result) {
 				var artist = { name: result.name };
 				var albums = extractAlbums(result);
 				getOtherAlbums(result, albums);
@@ -207,7 +207,7 @@
 			});
 		});
 		
-		router.get('/api/initial/:_initial', function(req, res) {
+		router.get('/api/initial/:_initial', function (req, res) {
 			var initial = req.params._initial;
 			var queryOption = {};
 
@@ -229,7 +229,7 @@
 				queryOption = { nameNorm: { like: initial + '%'}};
 			}
 
-			models.Artist.findAll({ where: queryOption }).then(function(artists) {
+			models.Artist.findAll({ where: queryOption }).then(function (artists) {
 				res.json(artists);
 			});
 		});

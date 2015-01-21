@@ -1,4 +1,4 @@
-(function() {
+(function () {
 	"use strict";
 
 	var fs        = require('fs');
@@ -11,16 +11,16 @@
 	var modelDir = path.resolve('server/models');
 
 	fs.readdirSync(modelDir)
-		.filter(function(file) {
+		.filter(function (file) {
 			return (file.indexOf('.') !== 0) && (file !== 'index.js') &&
 				(path.extname(file) !== '.sql');
 		})
-		.forEach(function(file) {
+		.forEach(function (file) {
 			var model = sequelize['import'](path.join(modelDir, file));
 			db[model.name] = model;
 		});
 
-	Object.keys(db).forEach(function(modelName) {
+	Object.keys(db).forEach(function (modelName) {
 		if ('associate' in db[modelName]) {
 			db[modelName].associate(db);
 		}
