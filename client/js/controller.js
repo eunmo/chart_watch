@@ -48,22 +48,25 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $in
 	$scope.songLoading = false;
 	$scope.songLoaded = false;
 
-	$scope.$on('handleAddSong', function () {
-		var song, listSong;
-		for (var i in addSongService.songs) {
-			$scope.songs.push(addSongService.songs[i]);
-		}
-		console.log('added');
-		if (!$scope.songLoaded && !$scope.songLoading && $scope.songs.length >= 1) {
+	$scope.loadSong = function (index) {
+		if (!$scope.songLoaded && !$scope.songLoading && index in $scope.songs) {
 			$scope.songLoading = true;
-			console.log($scope.songs[0]);
-			$http.get('api/s3/' + $scope.songs[0].id).success(function (data) {
-				console.log(data.url);
+			var song = $scope.songs[index];
+			$scope.songs.splice(index, 1);
+			$http.get('api/s3/' + song.id).success(function (data) {
 				$scope.audio.src = data.url;
 				$scope.songLoading = true;
 				$scope.songLoaded = true;
 			});
 		}
+	};
+
+	$scope.$on('handleAddSong', function () {
+		var song, listSong;
+		for (var i in addSongService.songs) {
+			$scope.songs.push(addSongService.songs[i]);
+		}
+		$scope.loadSong(0);
 	});
 
 	$scope.removeSong = function (song) {
@@ -84,18 +87,18 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $in
 		$scope.playing = true;
 	};
 
-	$scope.stop = function () {
+	$scope.pause = function () {
 		$scope.audio.pause();
 		$scope.playing = false;
 	};
 
 	$scope.audio.addEventListener('ended', function () {
+		$scope.$apply(function () {
+			$scope.pause();
+		});
 		$scope.songLoading = false;
 		$scope.songLoaded = false;
-
-		$scope.$apply(function () {
-			$scope.stop();
-		});
+		$scope.loadSong(0);
 	});
 
 	$scope.updateTime = function () {
@@ -115,6 +118,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $in
 
 	$scope.audio.addEventListener('canplaythrough', function () {
 		$scope.$apply(function () {
+			$scope.time = $scope.audio.currentTime;
 			$scope.duration = $scope.audio.duration;
 		});
 		if (!$scope.bindDone) {
@@ -129,6 +133,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $in
 			});
 			$scope.bindDone = true;
 		}
+		$scope.play();
 	});
 	
 	// jquery for slider (dirty, but works)
