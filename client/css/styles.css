@@ -30,7 +30,7 @@ body {
 }
 
 .song-desc {
-	width: 400px;
+	width: 480px;
 	height: 20px;
 }
 
@@ -40,37 +40,47 @@ body {
 	width: 20px;
 	margin-right: 10px;
 	font-size: 12px;
+	position: relative;
+	top: -2px;
 }
 
 .song-desc-title {
 	display: inline-block;
-	width: 300px;
+	width: 380px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	font-size: 16px;
 }
 
+.song-desc-right {
+	height: 20px;
+	font-size: 18px;
+}
+
 .song-desc-time {
-	margin-top: 4px;
 	font-size: 12px;
-	margin-right: 10px;
+	margin-right: 5px;
+	position: relative;
+	top: -4px;
 }
 
 .media-body-up-next {
-	width: 180px;
+	width: 190px;
 }
 
 .media-desc-up-next {
 	height: 20px;
+	font-size: 18px;
 }
 
 .song-desc-up-next {
 	display: inline-block;
-	width: 160px;
+	width: 170px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	font-size: 14px;
 }
 
 #timeline{

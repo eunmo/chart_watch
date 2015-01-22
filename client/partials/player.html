@@ -1,7 +1,11 @@
 <div>
-	<button ng-click="play()" class="btn btn-default" ng-show="!playing">Play</button>
-	<button ng-click="stop()" class="btn btn-default" ng-show="playing">Stop</button>
-	Playing audio: <b>{{ playing }}</b> {{ time | songDuration }} / {{ duration | songDuration }}
+	<button ng-click="play()" class="btn btn-default" ng-show="!playing">
+		<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+	</button>
+	<button ng-click="pause()" class="btn btn-default" ng-show="playing">
+		<span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+	</button>
+	{{ time | songDuration }} / {{ duration | songDuration }}
 </div>
 <div id="timeline">
 	<div id="playhead"></div>
