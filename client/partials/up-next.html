@@ -1,11 +1,11 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h2>Up Next <span ng-show="songs.length"><small>{{songs.length | numSongs}}</small></span></h2>
+		<h2>Up Next <span ng-show="songs.length"><small>{{songs.length - 1 | numSongs}}</small></span></h2>
 	</div>
 	<div class"panel-body">
 		<table class="table table-condensed">
 			<tr ng-repeat="song in songs">
-				<td>
+				<td ng-hide="$first">
 					<div class="media">
 						<a class="media-left" href="#">
 							<img src="/{{song.albumId}}.jpg" class="img-rounded img-album-up-next">
@@ -16,7 +16,7 @@
 								<span class="glyphicon glyphicon-minus pull-right" ng-click="removeSong(song)"></span>
 							</div>
 						</div>
-				</div>
+					</div>
 				</td>
 			</tr>
 		</table>

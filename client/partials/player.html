@@ -1,10 +1,8 @@
-<div ng-controller="PlayerController">
-	<div>
-		<button ng-click="play()" class="btn btn-default" ng-show="!playing">Play</button>
-		<button ng-click="stop()" class="btn btn-default" ng-show="playing">Stop</button>
-		Playing audio: <b>{{ playing }}</b> {{ time | songDuration }} / {{ duration | songDuration }}
-	</div>
-	<div id="timeline">
-		<div id="playhead"></div>
-	</div>
+<div>
+	<button ng-click="play()" class="btn btn-default" ng-show="!playing">Play</button>
+	<button ng-click="stop()" class="btn btn-default" ng-show="playing">Stop</button>
+	Playing audio: <b>{{ playing }}</b> {{ time | songDuration }} / {{ duration | songDuration }}
+</div>
+<div id="timeline">
+	<div id="playhead"></div>
 </div>
