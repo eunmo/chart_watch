@@ -36,7 +36,6 @@ body {
 }
 
 .song-desc {
-	width: 480px;
 	height: 20px;
 }
 
@@ -52,7 +51,7 @@ body {
 
 .song-desc-title {
 	display: inline-block;
-	width: 380px;
+	width: 70%;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
