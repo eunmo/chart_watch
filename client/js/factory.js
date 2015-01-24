@@ -1,12 +1,17 @@
-musicApp.factory('addSongService', function ($rootScope) {
+musicApp.factory('songService', function ($rootScope) {
 	return {
 		songs: [],
+		random: [],
 		addSongs: function (songs) {
 			this.songs = songs;
-			this.broadcastSongs();
+			this.broadcast('handleAddSong');
 		},
-		broadcastSongs: function () {
-			$rootScope.$broadcast('handleAddSong');
+		addRandom: function (random) {
+			this.random = random;
+			this.broadcast('handleRandom');
+		},
+		broadcast: function (name) {
+			$rootScope.$broadcast(name);
 		}
 	};
 });

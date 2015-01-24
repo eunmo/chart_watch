@@ -1,10 +1,28 @@
-musicApp.controller('InitialCtrl', function ($rootScope, $scope) {
+musicApp.controller('InitialCtrl', function ($rootScope, $scope, $http, songService) {
  
   $scope.initials = [];
 
 	$scope.initials.push.apply($scope.initials, '가나다라마바사아자차카타파하'.split(''));
 	$scope.initials.push.apply($scope.initials, 'ABCDEFGHIJLKMNOPQRSTUVWXYZ'.split(''));
 	$scope.initials.push('0-9');
+
+	$scope.shuffle = function () {
+		console.log('shuffle called');
+		$http.get('api/shuffle').success(function (data) {
+			var songs = [];
+			var song, songRow;
+			for (var i in data) {
+				songRow = data[i];
+				song = {
+					id: songRow.id,
+					title: songRow.title,
+					albumId: songRow.Albums[0].id
+				};
+				songs.push(song);
+			}
+			songService.addRandom(songs);
+		});
+	};
 });
 
 musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routeParams, $http) {
@@ -16,7 +34,7 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
 	});
 });
 
-musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $http, addSongService) {
+musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
 
 	$scope.artists = [];
 
@@ -37,17 +55,30 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 			title: song.title,
 			albumId: albumId
 		};
-		addSongService.addSongs([sendSong]);
+		songService.addSongs([sendSong]);
 	};
 });
 
-musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $interval, addSongService) {
+musicApp.controller('PlayerController', function ($rootScope, $scope, $http, songService) {
 	
 	$scope.songs = [];
+	$scope.randomSource = [];
 	$scope.songLoading = false;
 	$scope.songLoaded = false;
 
+	$scope.playing = false;
+	$scope.audio = document.createElement('audio');
+	
+	$scope.time = 0;
+	$scope.duration = 0;
+	$scope.bindDone = false;
+
 	$scope.loadSong = function (index) {
+		while ($scope.songs.length <= 16 && $scope.randomSource.length > 0) {
+			var randomIndex = Math.floor((Math.random() * $scope.randomSource.length));
+			$scope.songs.push($scope.randomSource[randomIndex]);
+			$scope.randomSource.splice(randomIndex, 1);
+		}
 		if (!$scope.songLoaded && !$scope.songLoading && index in $scope.songs) {
 			$scope.songLoading = true;
 			var song = $scope.songs[index];
@@ -63,9 +94,15 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $in
 	};
 
 	$scope.$on('handleAddSong', function () {
-		var song, listSong;
-		for (var i in addSongService.songs) {
-			$scope.songs.push(addSongService.songs[i]);
+		for (var i in songService.songs) {
+			$scope.songs.push(songService.songs[i]);
+		}
+		$scope.loadSong(0);
+	});
+
+	$scope.$on('handleRandom', function () {
+		for (var i in songService.random) {
+			$scope.randomSource.push(songService.random[i]);
 		}
 		$scope.loadSong(0);
 	});
@@ -74,14 +111,6 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $in
 		var index = $scope.songs.indexOf(song);
 		$scope.songs.splice(index, 1);
 	};
-
-	$scope.playing = false;
-	$scope.audio = document.createElement('audio');
-	
-	// $scope.audio.src = '/1.mp3';
-	$scope.time = 0;
-	$scope.duration = 0;
-	$scope.bindDone = false;
 
 	$scope.play = function () {
 		$scope.audio.play();

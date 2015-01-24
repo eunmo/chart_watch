@@ -17,6 +17,12 @@ body {
 	margin: 10px;
 }
 
+.h1-shuffle {
+	padding: 10px;
+	margin: 10px;
+	margin-bottom: 7px;
+}
+
 .img-album {
 	width: 300px;
 }

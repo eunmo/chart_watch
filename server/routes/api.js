@@ -233,5 +233,16 @@
 				res.json(artists);
 			});
 		});
+
+		router.get('/api/shuffle', function (req, res) {
+			models.Song.findAll({
+				include: [
+					{ model: models.Album },
+					{ model: models.Artist }
+				]
+			}).then(function (result) {
+				res.json(result);
+			});
+		});
 	};
 }());
