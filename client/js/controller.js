@@ -37,7 +37,6 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 			title: song.title,
 			albumId: albumId
 		};
-		console.log('adding');
 		addSongService.addSongs([sendSong]);
 	};
 });
@@ -57,6 +56,8 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $in
 				$scope.audio.src = data.url;
 				$scope.songLoading = true;
 				$scope.songLoaded = true;
+				$scope.title = song.title;
+				$scope.albumId = song.albumId;
 			});
 		}
 	};
@@ -96,6 +97,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $in
 		$scope.$apply(function () {
 			$scope.pause();
 		});
+		$scope.updateTime(0);
 		$scope.songLoading = false;
 		$scope.songLoaded = false;
 		$scope.loadSong(0);
@@ -104,15 +106,14 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $in
 	$scope.updateTime = function () {
 		if ($scope.playing) {
 			var playPercent = 100 * ($scope.audio.currentTime / $scope.audio.duration);
-			$scope.movePlayhead(playPercent);
+			$scope.updateProgress(playPercent);
 		}
 	};
-
-	$interval(function () { $scope.updateTime(); }, 10);
 
 	$scope.audio.addEventListener('timeupdate', function () {
 		$scope.$apply(function () {
 			$scope.time = $scope.audio.currentTime;
+			$scope.updateTime();
 		});
 	});
 
@@ -124,10 +125,10 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $in
 		if (!$scope.bindDone) {
 			$('#timeline').bind('click', function (event) {
 				if ($scope.playing) {
-					var xCoord = event.pageX - $('#timeline').offset().left - ($('#playhead').width() / 2);
-					var clickRatio = xCoord / ($('#timeline').width() - $('#playhead').width());
+					var xCoord = event.pageX - $('#timeline').offset().left;
+					var clickRatio = xCoord / $('#timeline').width();
 					clickRatio = (clickRatio < 0 ? 0 : (clickRatio > 1 ? 1 : clickRatio));
-					$scope.movePlayhead(clickRatio * 100);
+					$scope.updateProgress(clickRatio * 100);
 					$scope.audio.currentTime = $scope.audio.duration * clickRatio;
 				}
 			});
@@ -137,10 +138,9 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $in
 	});
 	
 	// jquery for slider (dirty, but works)
-	$scope.movePlayhead = function (percent) {
+	$scope.updateProgress = function (percent) {
 		percent = (percent < 0 ? 0 : (percent > 100 ? 100 : percent));
-		percent = percent * ($('#timeline').width() - $('#playhead').width()) / $('#timeline').width();
 
-		$('#playhead').css('margin-left', percent + '%');
+		$('#timeline-bar').css('width', percent + '%');
 	};
 });

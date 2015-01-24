@@ -83,19 +83,17 @@ body {
 	font-size: 14px;
 }
 
-#timeline{
-	width: 400px;
-	height: 20px;
-	background: #4200f7;
-	margin-top: 20px;
-	float: left;
-	border-radius: 15px;
+.progress-music {
+	display: inline-block;
+	width: 300px;
+	height: 10px;
+	margin-bottom: 0px;
 }
 
-#playhead{
-	width: 18px;
-	height: 18px;
-	border-radius: 50%;
-	margin-top: 1px;
-	background: rgba(0, 255, 196, 0.82);
+.progress-bar-music {
+	-webkit-transition: none;
+	-moz-transition: none;
+	-ms-transition: none;
+	-o-transition: none;
+	transition: none;
 }
