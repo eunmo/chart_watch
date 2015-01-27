@@ -7,7 +7,6 @@ musicApp.controller('InitialCtrl', function ($rootScope, $scope, $http, songServ
 	$scope.initials.push('0-9');
 
 	$scope.shuffle = function () {
-		console.log('shuffle called');
 		$http.get('api/shuffle').success(function (data) {
 			var songs = [];
 			var song, songRow;
@@ -111,6 +110,13 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 		var index = $scope.songs.indexOf(song);
 		$scope.songs.splice(index, 1);
 	};
+
+	$scope.clearAll = function () {
+		var randomSourceSize = $scope.randomSource.length;
+		var songSize = $scope.songs.length;
+		$scope.randomSource.splice(0, randomSourceSize);
+		$scope.songs.splice(0, songSize);
+	}
 
 	$scope.play = function () {
 		$scope.audio.play();

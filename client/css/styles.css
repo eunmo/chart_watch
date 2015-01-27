@@ -102,3 +102,7 @@ body {
 	-o-transition: none;
 	transition: none;
 }
+
+.label-clear {
+	font-size: 14px;
+}

@@ -1,5 +1,10 @@
 <div>
-	<h2>Up Next <span ng-show="songs.length"><small>{{songs.length | numSongs}}</small></span></h2>
+	<h2>Up Next
+		<span ng-show="songs.length">
+			<small>{{songs.length | numSongs}}</small>
+			<span class="label label-default label-clear" ng-click="clearAll()">Clear</span>
+		</span>
+	</h2>
 </div>
 <table class="table table-condensed">
 	<tr ng-repeat="song in songs">
