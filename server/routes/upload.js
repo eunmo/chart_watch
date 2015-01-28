@@ -157,7 +157,12 @@
 					}
 					var fileBuffer = fs.readFileSync(filePath);
 					var s3 = new AWS.S3();
-					var param = { Bucket: mp3Bucket, Key: song.id.toString(), Body: fileBuffer };
+					var param = {
+						Bucket: mp3Bucket,
+						Key: song.id.toString(),
+						ContentType: 'audio/mpeg',
+						Body: fileBuffer
+					};
 					return new Promise(function (resolve, reject) {
 						s3.putObject(param, function (error, response) {
 							if (error !== null) {

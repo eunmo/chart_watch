@@ -73,7 +73,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 	$scope.bindDone = false;
 
 	$scope.loadSong = function (index) {
-		while ($scope.songs.length <= 16 && $scope.randomSource.length > 0) {
+		while ($scope.songs.length < 16 && $scope.randomSource.length > 0) {
 			var randomIndex = Math.floor((Math.random() * $scope.randomSource.length));
 			$scope.songs.push($scope.randomSource[randomIndex]);
 			$scope.randomSource.splice(randomIndex, 1);
@@ -84,6 +84,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 			$scope.songs.splice(index, 1);
 			$http.get('api/s3/' + song.id).success(function (data) {
 				$scope.audio.src = data.url;
+				$scope.audio.load();
 				$scope.songLoading = true;
 				$scope.songLoaded = true;
 				$scope.title = song.title;
@@ -116,7 +117,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 		var songSize = $scope.songs.length;
 		$scope.randomSource.splice(0, randomSourceSize);
 		$scope.songs.splice(0, songSize);
-	}
+	};
 
 	$scope.play = function () {
 		$scope.audio.play();
