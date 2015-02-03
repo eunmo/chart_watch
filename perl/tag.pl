@@ -28,6 +28,7 @@ sub remove_feat {
 	my $str = shift;
 
 	$str =~ s/\s+\(feat.*?\)//i;
+	$str =~ s/\s+\(with.*?\)//i;
 	$str =~ s/^Title,\s+//; #don't know why some files are parsed like this
 
 	return $str;
@@ -36,8 +37,8 @@ sub remove_feat {
 sub get_feat {
 	my $str = shift;
 
-	if ($str =~ /\(feat(.*?)\)/i) {
-		my $feat_str = $1;
+	if ($str =~ /\((feat|with)(.*?)\)/i) {
+		my $feat_str = $2;
 
 		$feat_str =~ s/^\.//;
 		$feat_str =~ s/^uring//i;
