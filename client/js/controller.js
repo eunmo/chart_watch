@@ -60,18 +60,39 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 
 musicApp.controller('PlayerController', function ($rootScope, $scope, $http, songService) {
 
+	// internal class for manipulating audio element
 	var Audio = function ($scope) {
 		var elem = document.createElement('audio');
 		var song;
+		var loading = false;
+		var loaded = false;
+		var selected = false;
 
-		this.setSong = function (url, song) {
-			this.song = song;
-			elem.src = url;
-			elem.load();
-			$scope.title = song.title;
-			$scope.albumId = song.albumId;
-			$scope.songLoading = true;
-			$scope.songLoaded = true;
+		var start = function () {
+			if (selected && loaded) {
+				$scope.$apply(function () {
+					$scope.time = elem.currentTime;
+					$scope.duration = elem.duration;
+					$scope.title = song.title;
+					$scope.albumId = song.albumId;
+				});
+				$scope.play();
+			}
+		}
+
+		this.setSelected = function (bool) {
+			selected = bool;
+			start();
+		};
+
+		this.load = function (s) {
+			song = s;
+			loading = true;
+			loaded = false;
+			$http.get('api/s3/' + song.id).success(function (data) {
+				elem.src = data.url;
+				elem.load();
+			});
 		};
 
 		this.play = function () {
@@ -86,56 +107,102 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 			elem.currentTime = elem.duration * ratio;
 		};
 
+		this.getLoading = function () {
+			return loading;
+		};
+		
+		this.getLoaded = function () {
+			return loaded;
+		};
+		
+		elem.addEventListener('canplaythrough', function () {
+			alert(song.title);
+			loaded = true;
+			start();
+		});
+
 		elem.addEventListener('timeupdate', function () {
 			$scope.$apply(function () {
 				$scope.time = elem.currentTime;
-				$scope.updateTime(elem.currentTime / elem.duration);
+				$scope.updateProgress(elem.currentTime / elem.duration);
 			});
-		});
-
-		elem.addEventListener('canplaythrough', function () {
-			$scope.$apply(function () {
-				$scope.time = elem.currentTime;
-				$scope.duration = elem.duration;
-			});
-			$scope.play();
 		});
 
 		elem.addEventListener('ended', function () {
 			$scope.pause();
-			$scope.updateTime(0);
-			$scope.songLoading = false;
-			$scope.songLoaded = false;
-			$scope.loadSong(0);
+			$scope.updateProgress(0);
+			loading = false;
+			$scope.playNext();
 		});
 	};
 	
 	$scope.songs = [];
 	$scope.randomSource = [];
-	$scope.songLoading = false;
-	$scope.songLoaded = false;
+	$scope.loaded = false;
 
 	$scope.playing = false;
-	$scope.audio = new Audio($scope);
+	$scope.audios = [];
+	$scope.audios[0] = new Audio($scope);
+	$scope.audios[1] = new Audio($scope);
+	$scope.selectedIndex = 0;
+	$scope.selectedAudio = $scope.audios[$scope.selectedIndex];
+	$scope.selectedAudio.setSelected(true);
 	
 	$scope.time = 0;
 	$scope.duration = 0;
 	$scope.bindDone = false;
+	$scope.preloaded = false;
 
-	$scope.loadSong = function (index) {
+	$scope.getRandom = function () {
+		// add songs from selected random source
+		// TODO add customized random here.
 		while ($scope.songs.length < 16 && $scope.randomSource.length > 0) {
 			var randomIndex = Math.floor((Math.random() * $scope.randomSource.length));
 			$scope.songs.push($scope.randomSource[randomIndex]);
 			$scope.randomSource.splice(randomIndex, 1);
 		}
-		if (!$scope.songLoaded && !$scope.songLoading && index in $scope.songs) {
-			$scope.songLoading = true;
+	};
+
+	$scope.preload = function () {
+		if (0 in $scope.songs) {
+			var song = $scope.songs[0];
+			var nextIndex = 1 - $scope.selectedIndex;
+			var nextAudio = $scope.audios[nextIndex];
+			nextAudio.load(song);
+			$scope.preloaded = true;
+		}
+	}
+
+	$scope.playNext = function () {
+		var nextIndex = 1 - $scope.selectedIndex;
+		var nextAudio = $scope.audios[nextIndex];
+		$scope.getRandom();
+
+		if ($scope.preloaded) {
+			$scope.preloaded = false;
+			$scope.selectedAudio.setSelected(false);
+			$scope.selectedAudio = nextAudio;
+			$scope.selectedIndex = nextIndex;
+			nextAudio.setSelected(true);
+
+			$scope.songs.splice(0, 1);
+			$scope.preload();
+		} else {
+			loadSong(0);
+		}
+	};
+
+	$scope.loadSong = function (index) {
+		$scope.getRandom();
+
+		if (index in $scope.songs && !$scope.selectedAudio.getLoading()) {
 			var song = $scope.songs[index];
 			$scope.songs.splice(index, 1);
-			$http.get('api/s3/' + song.id).success(function (data) {
-				$scope.audio.setSong(data.url, song);
-			});
+			$scope.selectedAudio.load(song);
+			$scope.loaded = true;
 		}
+
+		$scope.preload();
 	};
 
 	$scope.$on('handleAddSong', function () {
@@ -155,6 +222,9 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 	$scope.removeSong = function (song) {
 		var index = $scope.songs.indexOf(song);
 		$scope.songs.splice(index, 1);
+
+		if (index == 0)
+			$scope.preloaded = false;
 	};
 
 	$scope.clearAll = function () {
@@ -162,10 +232,11 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 		var songSize = $scope.songs.length;
 		$scope.randomSource.splice(0, randomSourceSize);
 		$scope.songs.splice(0, songSize);
+		$scope.preloaded = false;
 	};
 
 	$scope.play = function () {
-		$scope.audio.play();
+		$scope.selectedAudio.play();
 		$scope.playing = true;
 		
 		if (!$scope.bindDone) {
@@ -175,7 +246,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 					var clickRatio = xCoord / $('#timeline').width();
 					clickRatio = (clickRatio < 0 ? 0 : (clickRatio > 1 ? 1 : clickRatio));
 					$scope.updateProgress(clickRatio);
-					$scope.audio.seek(clickRatio);
+					$scope.selectedAudio.seek(clickRatio);
 				}
 			});
 			$scope.bindDone = true;
@@ -183,14 +254,8 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 	};
 
 	$scope.pause = function () {
-		$scope.audio.pause();
+		$scope.selectedAudio.pause();
 		$scope.playing = false;
-	};
-
-	$scope.updateTime = function (ratio) {
-		if ($scope.playing) {
-			$scope.updateProgress(ratio);
-		}
 	};
 
 	// jquery for slider (dirty, but works)
