@@ -11,6 +11,8 @@ musicApp.factory('songService', function ($rootScope) {
 			this.broadcast('handleRandom');
 		},
 		broadcast: function (name) {
+			$rootScope.audios[0].init();
+			$rootScope.audios[1].init();
 			$rootScope.$broadcast(name);
 		}
 	};

@@ -64,6 +64,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 	var Audio = function ($scope) {
 		var elem = document.createElement('audio');
 		var song;
+		var initialized = false;
 		var loading = false;
 		var loaded = false;
 		var selected = false;
@@ -77,6 +78,14 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 					$scope.albumId = song.albumId;
 				});
 				$scope.play();
+			}
+		};
+
+		this.init = function () {
+			if (!initialized) {
+				elem.play();
+				elem.pause();
+				initialized = true;
 			}
 		};
 
@@ -116,7 +125,6 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 		};
 		
 		elem.addEventListener('canplaythrough', function () {
-			alert(song.title);
 			loaded = true;
 			start();
 		});
@@ -141,11 +149,11 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 	$scope.loaded = false;
 
 	$scope.playing = false;
-	$scope.audios = [];
-	$scope.audios[0] = new Audio($scope);
-	$scope.audios[1] = new Audio($scope);
+	$rootScope.audios = [];
+	$rootScope.audios[0] = new Audio($scope);
+	$rootScope.audios[1] = new Audio($scope);
 	$scope.selectedIndex = 0;
-	$scope.selectedAudio = $scope.audios[$scope.selectedIndex];
+	$scope.selectedAudio = $rootScope.audios[$scope.selectedIndex];
 	$scope.selectedAudio.setSelected(true);
 	
 	$scope.time = 0;
@@ -167,7 +175,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 		if (0 in $scope.songs) {
 			var song = $scope.songs[0];
 			var nextIndex = 1 - $scope.selectedIndex;
-			var nextAudio = $scope.audios[nextIndex];
+			var nextAudio = $rootScope.audios[nextIndex];
 			nextAudio.load(song);
 			$scope.preloaded = true;
 		}
@@ -175,7 +183,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 
 	$scope.playNext = function () {
 		var nextIndex = 1 - $scope.selectedIndex;
-		var nextAudio = $scope.audios[nextIndex];
+		var nextAudio = $rootScope.audios[nextIndex];
 		$scope.getRandom();
 
 		if ($scope.preloaded) {
@@ -223,8 +231,9 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 		var index = $scope.songs.indexOf(song);
 		$scope.songs.splice(index, 1);
 
-		if (index === 0)
-			$scope.preloaded = false;
+		if (index === 0) {
+			$scope.preload();
+		}
 	};
 
 	$scope.clearAll = function () {
