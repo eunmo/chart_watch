@@ -78,7 +78,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 				});
 				$scope.play();
 			}
-		}
+		};
 
 		this.setSelected = function (bool) {
 			selected = bool;
@@ -171,7 +171,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 			nextAudio.load(song);
 			$scope.preloaded = true;
 		}
-	}
+	};
 
 	$scope.playNext = function () {
 		var nextIndex = 1 - $scope.selectedIndex;
@@ -223,7 +223,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 		var index = $scope.songs.indexOf(song);
 		$scope.songs.splice(index, 1);
 
-		if (index == 0)
+		if (index === 0)
 			$scope.preloaded = false;
 	};
 
