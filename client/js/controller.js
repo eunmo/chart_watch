@@ -59,6 +59,56 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 });
 
 musicApp.controller('PlayerController', function ($rootScope, $scope, $http, songService) {
+
+	var Audio = function ($scope) {
+		var elem = document.createElement('audio');
+		var song;
+
+		this.setSong = function (url, song) {
+			this.song = song;
+			elem.src = url;
+			elem.load();
+			$scope.title = song.title;
+			$scope.albumId = song.albumId;
+			$scope.songLoading = true;
+			$scope.songLoaded = true;
+		};
+
+		this.play = function () {
+			elem.play();
+		};
+
+		this.pause = function () {
+			elem.pause();
+		};
+
+		this.seek = function (ratio) {
+			elem.currentTime = elem.duration * ratio;
+		};
+
+		elem.addEventListener('timeupdate', function () {
+			$scope.$apply(function () {
+				$scope.time = elem.currentTime;
+				$scope.updateTime(elem.currentTime / elem.duration);
+			});
+		});
+
+		elem.addEventListener('canplaythrough', function () {
+			$scope.$apply(function () {
+				$scope.time = elem.currentTime;
+				$scope.duration = elem.duration;
+			});
+			$scope.play();
+		});
+
+		elem.addEventListener('ended', function () {
+			$scope.pause();
+			$scope.updateTime(0);
+			$scope.songLoading = false;
+			$scope.songLoaded = false;
+			$scope.loadSong(0);
+		});
+	};
 	
 	$scope.songs = [];
 	$scope.randomSource = [];
@@ -66,7 +116,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 	$scope.songLoaded = false;
 
 	$scope.playing = false;
-	$scope.audio = document.createElement('audio');
+	$scope.audio = new Audio($scope);
 	
 	$scope.time = 0;
 	$scope.duration = 0;
@@ -83,12 +133,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 			var song = $scope.songs[index];
 			$scope.songs.splice(index, 1);
 			$http.get('api/s3/' + song.id).success(function (data) {
-				$scope.audio.src = data.url;
-				$scope.audio.load();
-				$scope.songLoading = true;
-				$scope.songLoaded = true;
-				$scope.title = song.title;
-				$scope.albumId = song.albumId;
+				$scope.audio.setSong(data.url, song);
 			});
 		}
 	};
@@ -122,6 +167,19 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 	$scope.play = function () {
 		$scope.audio.play();
 		$scope.playing = true;
+		
+		if (!$scope.bindDone) {
+			$('#timeline').bind('click', function (event) {
+				if ($scope.playing) {
+					var xCoord = event.pageX - $('#timeline').offset().left;
+					var clickRatio = xCoord / $('#timeline').width();
+					clickRatio = (clickRatio < 0 ? 0 : (clickRatio > 1 ? 1 : clickRatio));
+					$scope.updateProgress(clickRatio);
+					$scope.audio.seek(clickRatio);
+				}
+			});
+			$scope.bindDone = true;
+		}
 	};
 
 	$scope.pause = function () {
@@ -129,53 +187,15 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 		$scope.playing = false;
 	};
 
-	$scope.audio.addEventListener('ended', function () {
-		$scope.$apply(function () {
-			$scope.pause();
-		});
-		$scope.updateTime(0);
-		$scope.songLoading = false;
-		$scope.songLoaded = false;
-		$scope.loadSong(0);
-	});
-
-	$scope.updateTime = function () {
+	$scope.updateTime = function (ratio) {
 		if ($scope.playing) {
-			var playPercent = 100 * ($scope.audio.currentTime / $scope.audio.duration);
-			$scope.updateProgress(playPercent);
+			$scope.updateProgress(ratio);
 		}
 	};
 
-	$scope.audio.addEventListener('timeupdate', function () {
-		$scope.$apply(function () {
-			$scope.time = $scope.audio.currentTime;
-			$scope.updateTime();
-		});
-	});
-
-	$scope.audio.addEventListener('canplaythrough', function () {
-		$scope.$apply(function () {
-			$scope.time = $scope.audio.currentTime;
-			$scope.duration = $scope.audio.duration;
-		});
-		if (!$scope.bindDone) {
-			$('#timeline').bind('click', function (event) {
-				if ($scope.playing) {
-					var xCoord = event.pageX - $('#timeline').offset().left;
-					var clickRatio = xCoord / $('#timeline').width();
-					clickRatio = (clickRatio < 0 ? 0 : (clickRatio > 1 ? 1 : clickRatio));
-					$scope.updateProgress(clickRatio * 100);
-					$scope.audio.currentTime = $scope.audio.duration * clickRatio;
-				}
-			});
-			$scope.bindDone = true;
-		}
-		$scope.play();
-	});
-	
 	// jquery for slider (dirty, but works)
-	$scope.updateProgress = function (percent) {
-		percent = (percent < 0 ? 0 : (percent > 100 ? 100 : percent));
+	$scope.updateProgress = function (ratio) {
+		percent = (ratio < 0 ? 0 : (ratio > 1 ? 1 : ratio)) * 100;
 
 		$('#timeline-bar').css('width', percent + '%');
 	};
