@@ -161,6 +161,12 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 	$scope.bindDone = false;
 	$scope.preloaded = false;
 
+	$scope.initAudio = function () {
+		alert('init audio for iOS');
+		$rootScope.audios[0].init();
+		$rootScope.audios[1].init();
+	};
+
 	$scope.getRandom = function () {
 		// add songs from selected random source
 		// TODO add customized random here.
