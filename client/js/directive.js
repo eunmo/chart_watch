@@ -11,3 +11,13 @@ musicApp.directive('player', function () {
 		templateUrl: 'partials/player.html'
 	};
 });
+
+musicApp.directive('artistArray', function () {
+	return {
+		restrict: 'E',
+		scope: {
+			array: '=array'
+		},
+		templateUrl: 'partials/artist-array.html'
+	};
+});
