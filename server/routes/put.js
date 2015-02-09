@@ -14,17 +14,32 @@
 				console.log(artist);
 				if (artist !== null) {
 					id = artist.id;
-					return new Promise(function (resolve, reject) {
-						resolve();
+					return models.AlbumArtist.update({
+						ArtistId: id,
+					},
+					{ where: {ArtistId: input.id}
+					})
+					.then(function () {
+						return models.SongArtist.update({
+							ArtistId: id,
+						},
+						{ where: {ArtistId: input.id}
+						});
+					})
+					.then(function () {
+						return models.Artist.destroy({
+							where: {id: input.id}
+						});
 					});
+				} else {
+					return models.Artist.update({
+						name: input.name,
+						origin: input.origin,
+						type: input.type,
+						gender: input.gender
+					},
+					{	where: { id: id }	});
 				}
-				return models.Artist.update({
-					name: input.name,
-					origin: input.origin,
-					type: input.type,
-					gender: input.gender
-				},
-				{	where: { id: id }	});
 			}).then(function (array) {
 				res.json(id);
 			});
