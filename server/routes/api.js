@@ -80,7 +80,7 @@
 			album.albumArtists.push({
 				id: artistRow.id,
 				name: artistRow.name,
-				order: artistRow.order
+				order: artistRow.AlbumArtist.order
 			});
 		}
 
