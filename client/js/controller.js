@@ -78,7 +78,6 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 
 	$http.get('api/edit/artist/' + $routeParams.id).success(function (artist) {
 		$scope.artist = artist;
-		console.log(artist);
 	});
 
 	$scope.edit = function () {
