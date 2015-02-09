@@ -67,8 +67,25 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 				albumId: album.id
 			};
 			songs.push(sendSong);
-		};
+		}
 		songService.addSongs(songs);
+	};
+});
+
+musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams, $http, $location) {
+
+	$scope.artist = {};
+
+	$http.get('api/edit/artist/' + $routeParams.id).success(function (artist) {
+		$scope.artist = artist;
+		console.log(artist);
+	});
+
+	$scope.edit = function () {
+		$http.put('api/edit/artist', $scope.artist)
+		.then(function (res) {
+			$location.url('/artist/' + res.data);
+		});
 	};
 });
 

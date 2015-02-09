@@ -180,6 +180,15 @@
 			});
 		});
 
+		router.get('/api/edit/artist/:_id', function (req, res) {
+			var id = req.params._id;
+			models.Artist.findOne({
+				where: {id: id}
+			}).then(function (artist) {
+				res.json(artist);
+			});
+		});
+
 		router.get('/api/artist/:_id', function (req, res) {
 			var id = req.params._id;
 			models.Artist.findOne({
@@ -199,7 +208,13 @@
 					]}
 				]
 			}).then(function (result) {
-				var artist = { name: result.name };
+				var artist = {
+					name: result.name,
+					id: id,
+					gender: result.gender,
+					type: result.type,
+					origin: result.origin
+				};
 				var albums = extractAlbums(result);
 				getOtherAlbums(result, albums);
 				artist.albums = albums;

@@ -1,7 +1,16 @@
 <div>
 	<div ng-repeat="artist in artists">
 		<div>
-			<h1>{{artist.name}} <small>{{artist.albums.length | numAlbums}}</small></h1>
+			<h1>
+				{{artist.name}}
+				<small>
+					{{artist.gender}}
+					{{artist.type}}
+					<span ng-show="artist.origin">from </span>{{artist.origin}}
+					{{artist.albums.length | numAlbums}}
+				</small>
+				<a class="btn btn-edit pull-right" href="#/edit/artist/{{artist.id}}">edit</a>
+			</h1>
 		</div>
 		<table class="table" ng-repeat="album in artist.albums">
 			<tbody>

@@ -5,6 +5,7 @@
 	var http = require('http');
 	var path = require('path');
 	var ejs = require('ejs');
+	var bodyParser = require('body-parser');
 
 	var routes = require('./routes/index');
 	var models = require('./models/index');
@@ -15,6 +16,8 @@
 	app.set('views', path.join(__dirname, 'views'));
 	app.engine('html', ejs.renderFile);
 	app.set('view engine', 'html');
+	
+	app.use(bodyParser.json());
 
 	app.use(express.static(path.join(__dirname, '../client')));
 	app.use(express.static(path.join(__dirname, '../uploads/img')));

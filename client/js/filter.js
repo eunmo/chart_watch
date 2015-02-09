@@ -21,8 +21,8 @@ musicApp.filter('normalizeString', function () {
 musicApp.filter('numAlbums', function () {
 	return function (num) {
 		if (num <= 1)
-			return num + ' album';
-		return num + ' albums';
+			return '(' + num + ' album)';
+		return '(' + num + ' albums)';
 	};
 });
 
