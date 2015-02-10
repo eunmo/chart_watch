@@ -44,5 +44,43 @@
 				res.json(id);
 			});
 		});
+		
+		router.put('/api/edit/song', function (req, res) {
+			var input = req.body;
+			var id = input.id;
+
+			models.Song.update({
+				title: input.title,
+				plays: input.plays
+			},
+			{ where: { id: id } })
+			.then(function (array) {
+				return models.SongArtist.findAll({
+					where: { SongId: id }
+				});
+			})
+			.then(function (songArtistArray) {
+				for (var i in songArtistArray) {
+					var songArtistRow = songArtistArray[i];
+					if (!songArtistRow.feat && songArtistRow.order === 0) {
+						res.json(songArtistRow.ArtistId);
+					}
+				}
+			});
+		});
+
+		router.put('/api/play/song', function (req, res) {
+			var input = req.body;
+			var id = input.id;
+
+			console.log(id);
+			models.Song.findOne({
+				where: {id: id}
+			})
+			.then(function (song) {
+				song.increment('plays');
+				res.sendStatus(200);
+			});
+		});
 	};
 }());

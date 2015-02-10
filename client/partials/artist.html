@@ -34,6 +34,7 @@
 										{{song.title}}
 									</span>
 									<span class="pull-right song-desc-right">
+										<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>
 										<span class="song-desc-time">{{song.time | songDuration}}</span>
 										<div class="btn-group">
 											<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"

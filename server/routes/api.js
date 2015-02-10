@@ -97,6 +97,7 @@
 			id: songRow.id,
 			title: songRow.title,
 			time: songRow.time,
+			plays: songRow.plays,
 			disk: albumSong.disk,
 			track: albumSong.track,
 			artists: [],

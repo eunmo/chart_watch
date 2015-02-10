@@ -2,3 +2,23 @@
 	<small>Editing</small>
 	{{song.title}}
 </h1>
+<form class="form-horizontal">
+	<div class="form-group">
+		<label class="col-sm-3 control-label">Song Title</label>
+		<div class="col-sm-8">
+			<input class="form-control" ng-model="song.title" />
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">Play Count</label>
+		<div class="col-sm-8">
+			<input class="form-control" ng-model="song.plays" />
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-8">
+			<button class="btn btn-default" ng-click="edit()">Edit</button>
+			<button class="btn btn-danger">Delete</button>
+		</div>
+	</div>
+</form>

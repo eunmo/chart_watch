@@ -195,6 +195,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 			$scope.pause();
 			$scope.updateProgress(0);
 			loading = false;
+			$http.put('api/play/song', song);
 			$scope.playNext();
 		});
 	};
@@ -257,7 +258,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 			$scope.songs.splice(0, 1);
 			$scope.preload();
 		} else {
-			loadSong(0);
+			$scope.loadSong(0);
 		}
 	};
 

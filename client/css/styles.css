@@ -123,3 +123,9 @@ body {
 .dropdown-song {
 	min-width: 0px;
 }
+
+.badge-plays {
+	position: relative;
+	top: -4px;
+	margin-left: 5px;
+}
