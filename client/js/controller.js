@@ -48,6 +48,15 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 		$scope.artists.push(artist);
 	});
 
+	$scope.addNext = function (song, albumId) {
+		var sendSong = {
+			id: song.id,
+			title: song.title,
+			albumId: albumId
+		};
+		songService.addNext([sendSong]);
+	};
+
 	$scope.addSong = function (song, albumId) {
 		var sendSong = {
 			id: song.id,
@@ -248,6 +257,13 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 
 		$scope.preload();
 	};
+	
+	$scope.$on('handleAddNext', function () {
+		for (var i in songService.next) {
+			$scope.songs.splice(i, 0, songService.next[i]);
+		}
+		$scope.loadSong(0);
+	});
 
 	$scope.$on('handleAddSong', function () {
 		for (var i in songService.songs) {

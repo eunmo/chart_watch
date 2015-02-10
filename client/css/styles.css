@@ -110,3 +110,16 @@ body {
 .btn-edit {
 	font-size: 14px;
 }
+
+.btn-song-dropdown {
+	padding-top: 0px;
+	padding-bottom: 4px;
+	padding-right: 4px;
+	padding-left: 4px;
+	position: relative;
+	top: -5px;
+}
+
+.dropdown-song {
+	min-width: 0px;
+}
