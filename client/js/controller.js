@@ -97,6 +97,22 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 	};
 });
 
+musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, $http, $location) {
+
+	$scope.song = {};
+
+	$http.get('api/edit/song/' + $routeParams.id).success(function (song) {
+		$scope.song = song;
+	});
+
+	$scope.edit = function () {
+		$http.put('api/edit/song', $scope.song)
+		.then(function (res) {
+			$location.url('/artist/' + res.data);
+		});
+	};
+});
+
 musicApp.controller('PlayerController', function ($rootScope, $scope, $http, songService) {
 
 	// internal class for manipulating audio element

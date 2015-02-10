@@ -189,6 +189,15 @@
 			});
 		});
 
+		router.get('/api/edit/song/:_id', function (req, res) {
+			var id = req.params._id;
+			models.Song.findOne({
+				where: {id: id}
+			}).then(function (song) {
+				res.json(song);
+			});
+		});
+
 		router.get('/api/artist/:_id', function (req, res) {
 			var id = req.params._id;
 			models.Artist.findOne({
