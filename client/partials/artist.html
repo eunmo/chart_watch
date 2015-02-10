@@ -5,7 +5,7 @@
 				{{artist.name}}
 				<small>
 					{{artist.gender}}
-					{{artist.type}}
+					{{artist.type | artistType}}
 					<span ng-show="artist.origin">from </span>{{artist.origin}}
 					{{artist.albums.length | numAlbums}}
 				</small>

@@ -41,3 +41,11 @@ musicApp.filter('numFeatures', function () {
 		return num + ' features';
 	};
 });
+
+musicApp.filter('artistType', function () {
+	return function (string) {
+		if (string === 'Duet')
+			return 'Duo';
+		return string;
+	};
+});
