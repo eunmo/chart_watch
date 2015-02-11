@@ -34,6 +34,7 @@
 				} else {
 					return models.Artist.update({
 						name: input.name,
+						nameNorm: input.nameNorm,
 						origin: input.origin,
 						type: input.type,
 						gender: input.gender
@@ -51,6 +52,7 @@
 
 			models.Song.update({
 				title: input.title,
+				titleNorm: input.titleNorm,
 				plays: input.plays
 			},
 			{ where: { id: id } })
