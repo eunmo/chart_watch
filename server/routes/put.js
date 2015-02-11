@@ -53,6 +53,7 @@
 			models.Album.update({
 				title: input.title,
 				titleNorm: input.titleNorm,
+				release: input.release,
 				type: input.type
 			},
 			{ where: { id: id } })
