@@ -72,13 +72,15 @@
 		router.put('/api/play/song', function (req, res) {
 			var input = req.body;
 			var id = input.id;
+			var date = new Date();
 
-			console.log(id);
 			models.Song.findOne({
 				where: {id: id}
 			})
 			.then(function (song) {
 				song.increment('plays');
+				song.setDataValue('lastPlayed', date);
+				song.save();
 				res.sendStatus(200);
 			});
 		});
