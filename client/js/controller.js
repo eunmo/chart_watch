@@ -167,6 +167,10 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 			elem.pause();
 		};
 
+		this.stop = function () {
+			loaded = loading = false;
+		};
+
 		this.seek = function (ratio) {
 			elem.currentTime = elem.duration * ratio;
 		};
@@ -265,6 +269,10 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 	$scope.loadSong = function (index) {
 		$scope.getRandom();
 
+		if ($scope.songs.length === 0) {
+			$scope.loaded = false;
+		}
+
 		if (index in $scope.songs && !$scope.selectedAudio.getLoading()) {
 			var song = $scope.songs[index];
 			$scope.songs.splice(index, 1);
@@ -334,6 +342,12 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 	$scope.pause = function () {
 		$scope.selectedAudio.pause();
 		$scope.playing = false;
+	};
+
+	$scope.next = function () {
+		$scope.pause();
+		$scope.selectedAudio.stop();
+		$scope.playNext();
 	};
 
 	// jquery for slider (dirty, but works)
