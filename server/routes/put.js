@@ -46,6 +46,31 @@
 			});
 		});
 		
+		router.put('/api/edit/album', function (req, res) {
+			var input = req.body;
+			var id = input.id;
+
+			models.Album.update({
+				title: input.title,
+				titleNorm: input.titleNorm,
+				type: input.type
+			},
+			{ where: { id: id } })
+			.then(function (array) {
+				return models.AlbumArtist.findAll({
+					where: { AlbumId: id }
+				});
+			})
+			.then(function (albumArtistArray) {
+				for (var i in albumArtistArray) {
+					var albumArtistRow = albumArtistArray[i];
+					if (albumArtistRow.order === 0) {
+						res.json(albumArtistRow.ArtistId);
+					}
+				}
+			});
+		});
+		
 		router.put('/api/edit/song', function (req, res) {
 			var input = req.body;
 			var id = input.id;

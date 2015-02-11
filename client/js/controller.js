@@ -97,6 +97,22 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 	};
 });
 
+musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams, $http, $location) {
+
+	$scope.album = {};
+
+	$http.get('api/edit/album/' + $routeParams.id).success(function (album) {
+		$scope.album = album;
+	});
+
+	$scope.edit = function () {
+		$http.put('api/edit/album', $scope.album)
+		.then(function (res) {
+			$location.url('/artist/' + res.data);
+		});
+	};
+});
+
 musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, $http, $location) {
 
 	$scope.song = {};

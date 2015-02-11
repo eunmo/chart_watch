@@ -19,7 +19,11 @@
 					<img src="/{{album.id}}.jpg" class="img-rounded img-album">
 				</td>
 				<td>
-					<h3 ng-click="addAlbum(album)">{{album.title}}</h3>
+					<h3>
+						<span ng-click="addAlbum(album)">{{album.title}}</span>
+						<small>{{album.type}}</small>
+						<a class="btn btn-edit pull-right" href="#/edit/album/{{album.id}}">edit</a>
+					</h3>
 					<h4>
 						<small>by</small>
 						<artist-array array="album.albumArtists"></artist-array>

@@ -70,6 +70,7 @@
 		var album = { 
 			id: albumRow.id,
 			title: albumRow.title,
+			type: albumRow.type,
 			release: albumRow.release,
 			albumArtists: [],
 			songs: []
@@ -187,6 +188,15 @@
 				where: {id: id}
 			}).then(function (artist) {
 				res.json(artist);
+			});
+		});
+
+		router.get('/api/edit/album/:_id', function (req, res) {
+			var id = req.params._id;
+			models.Album.findOne({
+				where: {id: id}
+			}).then(function (album) {
+				res.json(album);
 			});
 		});
 
