@@ -46,17 +46,61 @@
 			});
 		});
 		
+		function addAlbumArtist(albumId, artistName, order, feat) {
+			return models.Artist.findOrCreate({
+				where: { name: artistName },
+				defaults: { nameNorm: artistName }
+			})
+			.spread(function (artist, created) {
+				return models.AlbumArtist.findOrCreate({
+					where: { AlbumId: albumId, ArtistId: artist.id },
+					defaults: { order: order }
+				});
+			});
+		}
+
+		function deleteAlbumArtist(albumId, artistId) {
+			return models.AlbumArtist.destroy({
+				where: { AlbumId: albumId, ArtistId: artistId }
+			});
+		}
+
+		function updateAlbumArtist(albumId, artistId, order, feat) {
+			return models.AlbumArtist.update({
+				order: order
+			},
+			{ where: { AlbumId: albumId, ArtistId: artistId }
+			});
+		}
+		
 		router.put('/api/edit/album', function (req, res) {
 			var input = req.body;
 			var id = input.id;
+			var promises = [];
+			
+			for (var i in input.editArtists) {
+				var editArtist = input.editArtists[i];
+				if (editArtist.created) {
+					if (editArtist.name !== null) {
+						promises.push(addAlbumArtist(id, editArtist.name, editArtist.order));
+					}
+				} else if (editArtist.deleted) {
+					promises.push(deleteAlbumArtist(id, editArtist.id));
+				} else {
+					promises.push(updateAlbumArtist(id, editArtist.id, editArtist.order));
+				}
+			}
 
-			models.Album.update({
-				title: input.title,
-				titleNorm: input.titleNorm,
-				release: input.release,
-				type: input.type
-			},
-			{ where: { id: id } })
+			Promise.all(promises)
+			.then(function () {
+				return models.Album.update({
+					title: input.title,
+					titleNorm: input.titleNorm,
+					release: input.release,
+					type: input.type
+				},
+				{ where: { id: id } });
+			})
 			.then(function (array) {
 				return models.AlbumArtist.findAll({
 					where: { AlbumId: id }
@@ -82,9 +126,6 @@
 					where: { SongId: songId, ArtistId: artist.id },
 					defaults: { order: order, feat: feat }
 				});
-			})
-			.spread(function (songArtist, created) {
-				console.log(songArtist);
 			});
 		}
 
@@ -108,7 +149,6 @@
 			var id = input.id;
 			var promises = [];
 
-			console.log(input.editArtists);
 			for (var i in input.editArtists) {
 				var editArtist = input.editArtists[i];
 				if (editArtist.created) {
@@ -116,9 +156,9 @@
 						promises.push(addSongArtist(id, editArtist.name, editArtist.order, editArtist.feat));
 					}
 				} else if (editArtist.deleted) {
-						promises.push(deleteSongArtist(id, editArtist.id));
+					promises.push(deleteSongArtist(id, editArtist.id));
 				} else {
-						promises.push(updateSongArtist(id, editArtist.id, editArtist.order, editArtist.feat));
+					promises.push(updateSongArtist(id, editArtist.id, editArtist.order, editArtist.feat));
 				}
 			}
 

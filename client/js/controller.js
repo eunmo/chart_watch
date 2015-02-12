@@ -109,6 +109,19 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 	$scope.album = {};
 
 	$http.get('api/edit/album/' + $routeParams.id).success(function (album) {
+		album.editArtists = [];
+
+		for (var i in album.Artists) {
+			var artist = album.Artists[i];
+			var albumArtist = artist.AlbumArtist;
+			album.editArtists[i] = {
+				order: albumArtist.order,
+				name: artist.name,
+				id: artist.id,
+				deleted: false,
+				created: false,
+			};
+		}
 		$scope.album = album;
 	});
 
@@ -117,6 +130,17 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 		.then(function (res) {
 			$location.url('/artist/' + res.data);
 		});
+	};
+	
+	$scope.addArtist = function () {
+		if ($scope.album.editArtists[$scope.album.editArtists.length - 1].name !== null) {
+			var artist = {
+				name: null,
+				deleted: false,
+				created: true
+			};
+			$scope.album.editArtists.push(artist);
+		}
 	};
 });
 
@@ -137,7 +161,6 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 				feat: songArtist.feat,
 				deleted: false,
 				created: false,
-				orig: artist
 			};
 		}
 		$scope.song = song;
