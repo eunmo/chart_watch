@@ -13,7 +13,6 @@
 			</h1>
 		</div>
 		<table class="table" ng-repeat="album in artist.albums | orderBy : 'release' : true">
-			<tbody>
 			<tr>
 				<td class="td-img">
 					<img src="/{{album.id}}.jpg" class="img-rounded img-album">
@@ -38,7 +37,7 @@
 						<artist-array array="album.albumArtists"></artist-array>
 						<small class="pull-right">{{album.release | date}}</small>
 					</h4>
-					<table class="table">
+					<table class="table table-hover">
 						<tr	ng-repeat="song in album.songs">
 							<td>
 								<div class="song-desc">
@@ -76,7 +75,6 @@
 					</table>
 				</td>
 			</tr>
-			</tbody>
 		</table>
 	</div>
 </div>
