@@ -19,7 +19,7 @@
 				</td>
 				<td>
 					<h3>
-						<span ng-click="addAlbum(album)">{{album.title}}</span>
+						<span ng-click="addAlbum(album)">{{album.title | normalizeString}}</span>
 						<small>{{album.type}}</small>
 						<div class="btn-group pull-right">
 							<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"
@@ -43,7 +43,7 @@
 								<div class="song-desc">
 									<span class="song-desc-title" ng-click="addSong(song, album.id)">
 										<span class="song-desc-track">{{song.track}}</span>
-										{{song.title}}
+										{{song.title | normalizeString}}
 									</span>
 									<span class="pull-right song-desc-right">
 										<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>

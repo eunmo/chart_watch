@@ -44,7 +44,6 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
 					if (songArtist.feat)
 						count++;
 				}
-				console.log(count);
 				if (count > 0 && count === artist.Songs.length) {
 					$scope.features.push(artist);
 				} else if (artist.Songs.length > 0) {

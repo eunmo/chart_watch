@@ -115,7 +115,7 @@ sub parse_tags {
 	} else {
 		$tag{"day"} = $date % 100;
 		$date = floor($date / 100);
-		$tag{"month"} = $date % 100;
+		$tag{"month"} = ($date % 100) - 1;
 		$date = floor($date / 100);
 		$tag{"year"} = $date;
 	}
