@@ -237,7 +237,13 @@
 				queryOption = { nameNorm: { like: initial + '%'}};
 			}
 
-			models.Artist.findAll({ where: queryOption }).then(function (artists) {
+			models.Artist.findAll({
+				where: queryOption,
+				include: [
+					{ model: models.Album },
+					{ model: models.Song }
+				]
+		 	}).then(function (artists) {
 				res.json(artists);
 			});
 		});

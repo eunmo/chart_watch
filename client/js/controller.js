@@ -25,11 +25,36 @@ musicApp.controller('InitialCtrl', function ($rootScope, $scope, $http, songServ
 });
 
 musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routeParams, $http) {
- 
+
+	$scope.initial = $routeParams.initial;	
+  $scope.albumArtists = [];
   $scope.artists = [];
+	$scope.features = [];
+	$scope.others = [];
 
 	$http.get('api/initial/' + $routeParams.initial).success(function (data) {
-    $scope.artists = data;
+		for (var i in data) {
+			var artist = data[i];
+			if (artist.Albums.length > 0) {
+				$scope.albumArtists.push(artist);
+			} else {
+				var count = 0;
+				for (var j in artist.Songs) {
+					var songArtist = artist.Songs[j].SongArtist;
+					if (songArtist.feat)
+						count++;
+				}
+				console.log(count);
+				if (count > 0 && count === artist.Songs.length) {
+					$scope.features.push(artist);
+				} else if (artist.Songs.length > 0) {
+					$scope.artists.push(artist);
+				} else {
+					$scope.others.push(artist);
+				}
+			}
+		}
+    // $scope.artists = data;
 	});
 });
 
