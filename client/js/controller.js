@@ -95,6 +95,13 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 			$location.url('/artist/' + res.data);
 		});
 	};
+
+	$scope.deleteArtist = function () {
+		$http.delete('api/artist/' + $routeParams.id)
+		.then(function (res) {
+			$location.url('/');
+		});
+	};
 });
 
 musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams, $http, $location) {
