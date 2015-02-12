@@ -22,7 +22,16 @@
 					<h3>
 						<span ng-click="addAlbum(album)">{{album.title}}</span>
 						<small>{{album.type}}</small>
-						<a class="btn btn-edit pull-right" href="#/edit/album/{{album.id}}">edit</a>
+						<div class="btn-group pull-right">
+							<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"
+								data-toggle="dropdown" aria-expanded="false">
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-right dropdown-song" role="menu">
+								<li role="presentation"><a ng-click="addNextAlbum(album)">Play next</a></li>
+								<li role="presentation"><a href="#/edit/album/{{album.id}}">Edit album</a></li>
+							</ul>
+						</div>
 					</h3>
 					<h4>
 						<small>by</small>

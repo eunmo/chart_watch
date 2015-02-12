@@ -65,6 +65,20 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 		};
 		songService.addSongs([sendSong]);
 	};
+	
+	$scope.addNextAlbum = function (album) {
+		var songs = [];
+		for (var i in album.songs) {
+			var song = album.songs[i];
+			var sendSong = {
+				id: song.id,
+				title: song.title,
+				albumId: album.id
+			};
+			songs.push(sendSong);
+		}
+		songService.addNext(songs);
+	};
 
 	$scope.addAlbum = function (album) {
 		var songs = [];
