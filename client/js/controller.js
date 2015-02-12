@@ -36,7 +36,17 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
 		for (var i in data) {
 			var artist = data[i];
 			if (artist.Albums.length > 0) {
-				$scope.albumArtists.push(artist);
+				var count = 0;
+				for (var j in artist.Albums) {
+					var album = artist.Albums[j];
+					if (album.type === 'EP' || album.type === 'Studio' || album.type === 'LP')
+						count++;
+				}
+				if (count > 0) {
+					$scope.albumArtists.push(artist);
+				} else {
+					$scope.artists.push(artist);
+				}
 			} else {
 				var count = 0;
 				for (var j in artist.Songs) {
