@@ -21,9 +21,36 @@
 			<input class="form-control" ng-model="song.plays" />
 		</div>
 	</div>
+	<div ng-repeat="artist in song.editArtists">
+		<div class="form-group">
+			<label class="col-sm-3 control-label">
+				<span ng-hide="artist.feat">Main</span>
+				<span ng-show="artist.feat">Featuring</span>
+				Artist
+			</label>
+			<div class="col-sm-1">
+				<input class="form-control" ng-model="artist.order" />
+			</div>
+			<div class="col-sm-5">
+				<input class="form-control" ng-model="artist.name" ng-show="artist.created" />
+				<input class="form-control" ng-model="artist.name" ng-hide="artist.created" disabled />
+			</div>
+			<div class="col-sm-1">
+				<label class="checkbox-inline">
+					<input type="checkbox" ng-model="artist.feat" /> Feat.
+				</label>
+			</div>
+			<div class="col-sm-1">
+				<label class="checkbox-inline">
+					<input type="checkbox" ng-model="artist.deleted" /> Delete
+				</label>
+			</div>
+		</div>
+	</div>
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-8">
 			<button class="btn btn-default" ng-click="edit()">Edit</button>
+			<button class="btn btn-default" ng-click="addArtist()">Add Artist</button>
 			<button class="btn btn-danger">Delete</button>
 		</div>
 	</div>
