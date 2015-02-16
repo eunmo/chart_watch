@@ -268,6 +268,7 @@
 				where: queryOption,
 				include: [
 					{ model: models.Artist, as: 'Group' },
+					{ model: models.Artist, as: 'Member' },
 					{ model: models.Album },
 					{ model: models.Song }
 				]

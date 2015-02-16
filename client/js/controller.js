@@ -30,6 +30,7 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
   $scope.albumArtists = [];
   $scope.artists = [];
 	$scope.features = [];
+	$scope.groups = [];
 	$scope.others = [];
 
 	var getPrimaryGroup = function (artist) {
@@ -76,7 +77,11 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
 				} else if (artist.Songs.length > 0) {
 					$scope.artists.push(artist);
 				} else {
-					$scope.others.push(artist);
+					if (artist.Member.length > 0) {
+						$scope.groups.push(artist);
+					} else {
+						$scope.others.push(artist);
+					}
 				}
 			}
 		}
