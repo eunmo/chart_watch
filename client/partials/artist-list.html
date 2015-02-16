@@ -15,7 +15,7 @@
 			<div class="row">
 				<div class="col-sm-6" ng-repeat="artist in albumArtists | orderBy:'nameNorm'">
 					<h1>
-						<a href="#/artist/{{artist.id}}">{{artist.name | normalizeString}}</a>
+						<artist-link artist="artist"></artist-link>
 					</h1>
 				</div>
 			</div>
@@ -30,7 +30,7 @@
 			<div class="row">
 				<div class="col-sm-6" ng-repeat="artist in artists | orderBy:'nameNorm'">
 					<h1>
-						<a href="#/artist/{{artist.id}}">{{artist.name | normalizeString}}</a>
+						<artist-link artist="artist"></artist-link>
 					</h1>
 				</div>
 			</div>
@@ -45,7 +45,7 @@
 			<div class="row">
 				<div class="col-sm-6" ng-repeat="artist in features | orderBy:'nameNorm'">
 					<h1>
-						<a href="#/artist/{{artist.id}}">{{artist.name | normalizeString}}</a>
+						<artist-link artist="artist"></artist-link>
 					</h1>
 				</div>
 			</div>
@@ -60,7 +60,7 @@
 			<div class="row">
 				<div class="col-sm-6" ng-repeat="artist in others | orderBy:'nameNorm'">
 					<h1>
-						<a href="#/artist/{{artist.id}}">{{artist.name | normalizeString}}</a>
+						<artist-link artist="artist"></artist-link>
 					</h1>
 				</div>
 			</div>

@@ -21,3 +21,14 @@ musicApp.directive('artistArray', function () {
 		templateUrl: 'partials/artist-array.html'
 	};
 });
+
+musicApp.directive('artistLink', function () {
+	return {
+		restrict: 'E',
+		scope: {
+			artist: '=artist',
+			suffix: '=suffix'
+		},
+		templateUrl: 'partials/artist-link.html'
+	};
+});

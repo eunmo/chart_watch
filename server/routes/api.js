@@ -64,6 +64,21 @@
 		return null;
 	};
 
+	var getPrimaryGroup = function (artist) {
+		var primaryGroup = null;
+		for (var i in artist.Group) {
+			var group = artist.Group[i];
+			if (group.ArtistGroup.primary) {
+				primaryGroup = {
+					name: group.name,
+					id: group.id
+				};
+				break;
+			}
+		}
+		return primaryGroup;
+	};
+
 	var createAlbum = function (albumRow) {
 		var i;
 		var artistRow;
@@ -81,7 +96,8 @@
 			album.albumArtists.push({
 				id: artistRow.id,
 				name: artistRow.name,
-				order: artistRow.AlbumArtist.order
+				order: artistRow.AlbumArtist.order,
+				primaryGroup: getPrimaryGroup(artistRow)
 			});
 		}
 
@@ -110,7 +126,8 @@
 			songArtist = {
 				id: artistRow.id,
 				name: artistRow.name,
-				order: artistRow.SongArtist.order
+				order: artistRow.SongArtist.order,
+				primaryGroup: getPrimaryGroup(artistRow)
 			};
 			if (artistRow.SongArtist.feat) {
 				song.features.push(songArtist);
@@ -187,16 +204,25 @@
 			models.Artist.findOne({
 				where: {id: id},
 				include: [
+					{ model: models.Artist, as: 'Group' },
 					{ model: models.Album, include: [
-						{ model: models.Artist},
+						{ model: models.Artist, include: [
+							{ model: models.Artist, as: 'Group' }
+						]},
 						{ model: models.Song, include: [
-							{ model: models.Artist }
+							{ model: models.Artist, include: [
+								{ model: models.Artist, as: 'Group' }
+							]}
 						]}
 					]},
 					{ model: models.Song, include: [
-						{ model: models.Artist },
+						{ model: models.Artist, include: [
+							{ model: models.Artist, as: 'Group' }
+						]},
 						{ model: models.Album, include: [
-							{ model: models.Artist }
+							{ model: models.Artist, include: [
+								{ model: models.Artist, as: 'Group' }
+							]}
 						]}
 					]}
 				]
@@ -206,7 +232,8 @@
 					id: id,
 					gender: result.gender,
 					type: result.type,
-					origin: result.origin
+					origin: result.origin,
+					primaryGroup: getPrimaryGroup(result)
 				};
 				var albums = extractAlbums(result);
 				getOtherAlbums(result, albums);
@@ -240,6 +267,7 @@
 			models.Artist.findAll({
 				where: queryOption,
 				include: [
+					{ model: models.Artist, as: 'Group' },
 					{ model: models.Album },
 					{ model: models.Song }
 				]

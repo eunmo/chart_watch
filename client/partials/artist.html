@@ -3,6 +3,9 @@
 		<div>
 			<h1>
 				{{artist.name}}
+				<span ng-show="artist.primaryGroup">
+					(<a href='#/artist/{{artist.primaryGroup.id}}'>{{artist.primaryGroup.name}}</a>)
+				</span>
 				<small>
 					{{artist.gender}}
 					{{artist.type | artistType}}
