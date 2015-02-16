@@ -4,7 +4,11 @@
 		router.get('/api/edit/artist/:_id', function (req, res) {
 			var id = req.params._id;
 			models.Artist.findOne({
-				where: {id: id}
+				where: {id: id},
+				include: [
+					{ model: models.Artist, as: 'Group' },
+					{ model: models.Artist, as: 'Member' }
+				]
 			}).then(function (artist) {
 				res.json(artist);
 			});

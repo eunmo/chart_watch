@@ -33,11 +33,12 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
 	$scope.others = [];
 
 	$http.get('api/initial/' + $routeParams.initial).success(function (data) {
-		for (var i in data) {
+		var i, j, count;
+		for (i in data) {
 			var artist = data[i];
 			if (artist.Albums.length > 0) {
-				var count = 0;
-				for (var j in artist.Albums) {
+				count = 0;
+				for (j in artist.Albums) {
 					var album = artist.Albums[j];
 					if (album.type === 'EP' || album.type === 'Studio' || album.type === 'LP')
 						count++;
@@ -48,8 +49,8 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
 					$scope.artists.push(artist);
 				}
 			} else {
-				var count = 0;
-				for (var j in artist.Songs) {
+				count = 0;
+				for (j in artist.Songs) {
 					var songArtist = artist.Songs[j].SongArtist;
 					if (songArtist.feat)
 						count++;
@@ -134,6 +135,34 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 	$scope.artist = {};
 
 	$http.get('api/edit/artist/' + $routeParams.id).success(function (artist) {
+		var i, artistGroup;
+		artist.editGroups = [];
+		artist.editMembers = [];
+
+		for (i in artist.Group) {
+			var group = artist.Group[i];
+			artistGroup = group.ArtistGroup;
+			artist.editGroups[i] = {
+				name: group.name,
+				id: group.id,
+				primary: artistGroup.primary,
+				deleted: false,
+				created: false
+			};
+		}
+
+		for (i in artist.Member) {
+			var member = artist.Member[i];
+			artistGroup = member.ArtistGroup;
+			artist.editMembers[i] = {
+				name: member.name,
+				id: member.id,
+				primary: artistGroup.primary,
+				deleted: false,
+				created: false
+			};
+		}
+
 		$scope.artist = artist;
 	});
 
@@ -149,6 +178,32 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 		.then(function (res) {
 			$location.url('/');
 		});
+	};
+
+	$scope.addGroup = function () {
+		if ($scope.artist.editGroups.length === 0 ||
+				$scope.artist.editGroups[$scope.artist.editGroups.length - 1].name !== null) {
+			var artist = {
+				name: null,
+				primary: false,
+				deleted: false,
+				created: true
+			};
+			$scope.artist.editGroups.push(artist);
+		}
+	};
+
+	$scope.addMember = function () {
+		if ($scope.artist.editMembers.length === 0 ||
+				$scope.artist.editMembers[$scope.artist.editMembers.length - 1].name !== null) {
+			var artist = {
+				name: null,
+				primary: false,
+				deleted: false,
+				created: true
+			};
+			$scope.artist.editMembers.push(artist);
+		}
 	};
 });
 

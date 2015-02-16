@@ -13,12 +13,17 @@
 		Artist.associate = function (models) {
 			Artist.belongsToMany(models.Album, {through: models.AlbumArtist});
 
-			Artist.hasMany(models.Artist);
+			Artist.belongsToMany(models.Artist,
+													 { through: models.ArtistGroup,
+													   as: 'Group',
+													   foreignKey: 'MemberId'});
+			Artist.belongsToMany(models.Artist,
+													 { through: models.ArtistGroup,
+													   as: 'Member',
+													   foreignKey: 'GroupId'});
 			
 			Artist.belongsToMany(models.Song, {through: models.SongArtist});
 		};
-
-		// hasMany artists: affiliation
 
 		// need views to show notable songs
 
