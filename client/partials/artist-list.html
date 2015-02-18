@@ -8,77 +8,27 @@
 	</thead>
 	<tr ng-show="albumArtists.length">
 		<td>
-			<h1>
-				{{albumArtists.length}}
-				Album Artist<span ng-show="albumArtists.length > 1">s</span>
-			</h1>
-			<div class="row">
-				<div class="col-sm-6" ng-repeat="artist in albumArtists | orderBy:'nameNorm'">
-					<h1>
-						<artist-link artist="artist"></artist-link>
-					</h1>
-				</div>
-			</div>
+			<artist-rows artists="albumArtists" desc="'Album Artist'"></artist-rows>
 		</td>
 	</tr>
 	<tr ng-show="artists.length">
 		<td>
-			<h1>
-				{{artists.length}}
-				Single Artist<span ng-show="artists.length > 1">s</span>
-			</h1>
-			<div class="row">
-				<div class="col-sm-6" ng-repeat="artist in artists | orderBy:'nameNorm'">
-					<h1>
-						<artist-link artist="artist"></artist-link>
-					</h1>
-				</div>
-			</div>
+			<artist-rows artists="artists" desc="'Single Artist'"></artist-rows>
 		</td>
 	</tr>
 	<tr ng-show="features.length">
 		<td>
-			<h1>
-				{{features.length}}
-				Featured Artist<span ng-show="features.length > 1">s</span>
-			</h1>
-			<div class="row">
-				<div class="col-sm-6" ng-repeat="artist in features | orderBy:'nameNorm'">
-					<h1>
-						<artist-link artist="artist"></artist-link>
-					</h1>
-				</div>
-			</div>
+			<artist-rows artists="features" desc="'Featured Artist'"></artist-rows>
 		</td>
 	</tr>
 	<tr ng-show="groups.length">
 		<td>
-			<h1>
-				{{groups.length}}
-				Artist Group<span ng-show="features.length > 1">s</span>
-			</h1>
-			<div class="row">
-				<div class="col-sm-6" ng-repeat="artist in groups | orderBy:'nameNorm'">
-					<h1>
-						<artist-link artist="artist"></artist-link>
-					</h1>
-				</div>
-			</div>
+			<artist-rows artists="groups" desc="'Artist Group'"></artist-rows>
 		</td>
 	</tr>
 	<tr ng-show="others.length">
 		<td>
-			<h1>
-				{{others.length}}
-				Other Artist<span ng-show="others.length > 1">s</span>
-			</h1>
-			<div class="row">
-				<div class="col-sm-6" ng-repeat="artist in others | orderBy:'nameNorm'">
-					<h1>
-						<artist-link artist="artist"></artist-link>
-					</h1>
-				</div>
-			</div>
+			<artist-rows artists="others" desc="'Other Artist'"></artist-rows>
 		</td>
 	</tr>
 </table>

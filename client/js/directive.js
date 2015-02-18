@@ -32,3 +32,14 @@ musicApp.directive('artistLink', function () {
 		templateUrl: 'partials/artist-link.html'
 	};
 });
+
+musicApp.directive('artistRows', function () {
+	return {
+		restrict: 'E',
+		scope: {
+			artists: '=artists',
+			desc: '=desc'
+		},
+		templateUrl: 'partials/artist-rows.html'
+	};
+});

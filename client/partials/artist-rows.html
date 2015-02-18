@@ -1,0 +1,11 @@
+<h1>
+	{{artists.length}}
+	{{desc}}<span ng-show="artists.length > 1">s</span>
+</h1>
+<div class="row">
+	<div class="col-sm-6" ng-repeat="artist in artists | orderBy:'nameNorm'">
+		<h1>
+			<artist-link artist="artist"></artist-link>
+		</h1>
+	</div>
+</div>
