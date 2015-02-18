@@ -3,9 +3,6 @@
 		<div>
 			<h1>
 				{{artist.name}}
-				<span ng-show="artist.primaryGroup">
-					(<a href='#/artist/{{artist.primaryGroup.id}}'>{{artist.primaryGroup.name}}</a>)
-				</span>
 				<small>
 					{{artist.gender}}
 					{{artist.type | artistType}}
@@ -14,6 +11,14 @@
 				</small>
 				<a class="btn btn-edit pull-right" href="#/edit/artist/{{artist.id}}">edit</a>
 			</h1>
+			<h2 ng-show="artist.groups.length">
+				<small>Part of</small>
+				<artist-array array="artist.groups"></artist-array>
+			</h2>
+			<h2 ng-show="artist.members.length">
+				<small>Includes</small>
+				<artist-array array="artist.members"></artist-array>
+			</h2>
 		</div>
 		<table class="table" ng-repeat="album in artist.albums | orderBy : 'release' : true">
 			<tr>

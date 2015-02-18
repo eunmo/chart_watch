@@ -205,6 +205,7 @@
 				where: {id: id},
 				include: [
 					{ model: models.Artist, as: 'Group' },
+					{ model: models.Artist, as: 'Member' },
 					{ model: models.Album, include: [
 						{ model: models.Artist, include: [
 							{ model: models.Artist, as: 'Group' }
@@ -227,17 +228,18 @@
 					]}
 				]
 			}).then(function (result) {
+				var albums = extractAlbums(result);
+				getOtherAlbums(result, albums);
 				var artist = {
 					name: result.name,
 					id: id,
 					gender: result.gender,
 					type: result.type,
 					origin: result.origin,
-					primaryGroup: getPrimaryGroup(result)
+					groups: result.Group,
+					members: result.Member,
+					albums: albums
 				};
-				var albums = extractAlbums(result);
-				getOtherAlbums(result, albums);
-				artist.albums = albums;
 				res.json(artist);
 			});
 		});
