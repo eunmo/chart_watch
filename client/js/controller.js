@@ -90,7 +90,7 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
 
 musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
 
-	$scope.artists = [];
+	$scope.loaded = false;
 
 	$http.get('api/artist/' + $routeParams.id).success(function (artist) {
 		// format songs into rows
@@ -100,7 +100,8 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 				album.songs[j].albumId = album.id;
 			}
 		}
-		$scope.artists.push(artist);
+		$scope.artist = artist;
+		$scope.loaded = true;
 	});
 
 	$scope.addNext = function (song, albumId) {
