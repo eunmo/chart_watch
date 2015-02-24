@@ -8,18 +8,30 @@
 					<span ng-show="artist.origin">from </span>{{artist.origin}}
 					{{artist.albums.length | numAlbums}}
 				</small>
-				<a class="btn btn-edit pull-right" href="#/edit/artist/{{artist.id}}">edit</a>
+				<div class="btn-group pull-right">
+					<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"
+						data-toggle="dropdown" aria-expanded="false">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu dropdown-menu-right dropdown-song" role="menu">
+						<li role="presentation"><a href="#/edit/artist/{{artist.id}}">Edit artist</a></li>
+						<li role="presentation" ng-show="artist.hasFeat && showFeat"><a ng-click="hideFeatures()">Hide Features</a></li>
+						<li role="presentation" ng-show="artist.hasFeat && !showFeat"><a ng-click="showFeatures()">Show Features</a></li>
+					</ul>
+				</div>
 			</h1>
-			<h2 ng-show="artist.groups.length">
-				<small>Part of</small>
-				<artist-array array="artist.groups"></artist-array>
-			</h2>
-			<h2 ng-show="artist.members.length">
-				<small>Includes</small>
-				<artist-array array="artist.members"></artist-array>
+			<h2 ng-show="artist.groups.length + artist.members.length">
+				<span ng-show="artist.groups.length">
+					<small>Part of</small>
+					<artist-array array="artist.groups"></artist-array>
+				</span>
+				<span ng-show="artist.members.length">
+					<small>Includes</small>
+					<artist-array array="artist.members"></artist-array>
+				</span>
 			</h2>
 		</div>
-		<table class="table" ng-repeat="album in artist.albums | orderBy : 'release' : true">
+		<table class="table" ng-repeat="album in artist.albums | orderBy : 'release' : true" ng-hide="!showFeat && album.isFeat">
 			<tr>
 				<td class="td-img">
 					<img src="/{{album.id}}.jpg" class="img-rounded img-album">
@@ -54,7 +66,6 @@
 									</span>
 									<span class="pull-right song-desc-right">
 										<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>
-										<span class="song-desc-time">{{song.time | songDuration}}</span>
 										<div class="btn-group">
 											<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"
 												data-toggle="dropdown" aria-expanded="false">

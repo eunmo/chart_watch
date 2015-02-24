@@ -189,6 +189,40 @@
 		}
 	};
 
+	var markFeat = function (result, albums) {
+		var hasFeat = false;
+		var albumFeatCount;
+		var album, song, artist;
+		var i, j, k;
+
+		for (i in albums) {
+			album = albums[i];
+			album.isFeat = false;
+			albumFeatCount = 0;
+
+			for (j in album.songs) {
+				song = album.songs[j];
+				song.isFeat = false;
+
+				for (k in song.features) {
+					artist = song.features[k];
+
+					if (artist.id === result.id) {
+						song.isFeat = true;
+						hasFeat = true;
+						albumFeatCount++;
+					}
+				}
+			}
+
+			if (album.songs.length === albumFeatCount) {
+				album.isFeat = true;
+			}
+		}
+
+		return hasFeat;
+	};
+
 	module.exports = function (router, models) {
 		router.get('/api/artist', function (req, res) {
 			models.Artist.findAll({
@@ -230,6 +264,7 @@
 			}).then(function (result) {
 				var albums = extractAlbums(result);
 				getOtherAlbums(result, albums);
+				var hasFeat = markFeat(result, albums);
 				var artist = {
 					name: result.name,
 					id: id,
@@ -238,7 +273,8 @@
 					origin: result.origin,
 					groups: result.Group,
 					members: result.Member,
-					albums: albums
+					albums: albums,
+					hasFeat: hasFeat
 				};
 				res.json(artist);
 			});
