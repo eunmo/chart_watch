@@ -23,7 +23,7 @@ for my $div ($dom->find('td[class*="subject"]')->each) {
 	my $title_norm = normalize_title($title);
 	my $artist_norm = normalize_artist($artist);
 	print ",\n" if $rank > 1;
-	print "{ rank: $rank, song: \'$title_norm\', artist: \'$artist_norm\' }";
+	print "{ \"rank\": $rank, \"song\": \"$title_norm\", \"artist\": \"$artist_norm\" }";
 	$rank++;
 }
 
@@ -41,10 +41,13 @@ sub normalize_artist($)
 {
 	my $string = shift;
 
-	if ($string =~ /f\(x\)/) { return "f(x)"; }
-	if ($string =~ /자이언티/) { return "Zion.T"; }
-	if ($string =~ /15&/) { return "15&"; }
-	if ($string =~ /포미닛/) { return "4minute"; }
+	if ($string =~ /^에이핑크/) { return "Apink"; }
+	if ($string =~ /^바비/) { return "BOBBY"; }
+	if ($string =~ /^f\(x\)/) { return "f(x)"; }
+	if ($string =~ /^위너/) { return "WINNER"; }
+	if ($string =~ /^자이언티/) { return "Zion.T"; }
+	if ($string =~ /^15&/) { return "15&"; }
+	if ($string =~ /^포미닛/) { return "4minute"; }
 
 	$string =~ s/\|.*$//;
 	$string =~ s/\(.*?\)//g;

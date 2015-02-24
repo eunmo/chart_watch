@@ -320,6 +320,35 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 	};
 });
 
+musicApp.controller('ChartCtrl', function ($rootScope, $scope, $http, songService) {
+
+	$scope.rows = [];
+
+	$http.get('chart/gaon').success(function (chartRows) {
+		console.log(chartRows);
+		$scope.rows = chartRows;
+	});
+
+	$scope.addChart = function () {
+		var i;
+		var row, song;
+		var songs = [];
+		
+		for (i in $scope.rows) {
+			row = $scope.rows[i];
+			if (row.songFound) {
+				song = {
+					id: row.song.id,
+					title: row.song.title,
+					albumId: row.song.Albums[0].id
+				};
+				songs.push(song);
+			}
+		}
+		songService.addSongs(songs);
+	};
+});
+
 musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $timeout, songService) {
 
 	// internal class for manipulating audio element

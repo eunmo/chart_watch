@@ -1,7 +1,7 @@
 	<div ng-show="loaded">
 		<div>
 			<h1>
-				{{artist.name}}
+				{{artist.name | normalizeString}}
 				<small>
 					{{artist.gender}}
 					{{artist.type | artistType}}
