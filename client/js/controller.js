@@ -310,7 +310,7 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 	};
 });
 
-musicApp.controller('PlayerController', function ($rootScope, $scope, $http, songService) {
+musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $timeout, songService) {
 
 	// internal class for manipulating audio element
 	var Audio = function ($scope) {
@@ -323,12 +323,12 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 
 		var start = function () {
 			if (selected && loaded) {
-				$scope.$apply(function () {
+				$timeout(function () {
 					$scope.time = elem.currentTime;
 					$scope.duration = elem.duration;
 					$scope.title = song.title;
 					$scope.albumId = song.albumId;
-				});
+				}, 0);
 				$scope.play();
 			}
 		};
@@ -386,10 +386,12 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, son
 		});
 
 		elem.addEventListener('timeupdate', function () {
-			$scope.$apply(function () {
-				$scope.time = elem.currentTime;
-				$scope.updateProgress(elem.currentTime / elem.duration);
-			});
+			if (selected) {
+				$scope.$apply(function () {
+					$scope.time = elem.currentTime;
+					$scope.updateProgress(elem.currentTime / elem.duration);
+				});
+			}
 		});
 
 		elem.addEventListener('ended', function () {
