@@ -12,14 +12,14 @@
 		<td ng-show="row.artistFound && !row.songFound">
 			<artist-link artist="row.artist"></artist-link>
 		</td>
-		<td ng-show="!row.artistFound">
+		<td ng-show="!row.artistFound" class="danger">
 			{{row.artist | normalizeString}}
 		</td>
 		<td ng-show="row.songFound">
-			<b>{{row.song.title | normalizeString}}</b>
+			{{row.song.title | normalizeString}}
 			<span class="badge pull-right" ng-show="{{row.song.plays}}">{{row.song.plays}}</span>
 		</td>
-		<td ng-show="!row.songFound">
+		<td ng-show="!row.songFound" class="danger">
 			{{row.song | normalizeString}}
 		</td>
 	</tr>
