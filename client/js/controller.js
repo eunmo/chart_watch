@@ -322,10 +322,13 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 
 musicApp.controller('ChartCtrl', function ($rootScope, $scope, $http, songService) {
 
+	$scope.week = 9;
+	$scope.year = 2015;
 	$scope.rows = [];
 
-	$http.get('chart/gaon').success(function (chartRows) {
-		console.log(chartRows);
+	$http.get('chart/gaon',
+						{ params: { week: $scope.week, year: $scope.year } })
+	.success(function (chartRows) {
 		$scope.rows = chartRows;
 	});
 

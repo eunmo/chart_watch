@@ -81,8 +81,8 @@
 		}
 
 		router.get('/chart/gaon', function (req, res) {
-			var year = 2015;
-			var week = 8;
+			var year = req.query.year;
+			var week = req.query.week;
 
 			var execStr = 'perl ' + gaonScript + ' ' + week + ' ' + year;
 
