@@ -103,7 +103,6 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 		}
 		$scope.artist = artist;
 		$scope.loaded = true;
-		console.log(artist);
 	});
 
 	$scope.addNext = function (song, albumId) {
@@ -340,7 +339,7 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $http, songServic
 		.success(function (chartRows) {
 			$scope.rows = chartRows;
 		});
-	}
+	};
 
 	$scope.fetch();
 

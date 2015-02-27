@@ -28,7 +28,30 @@
 
 	module.exports = function (router, models) {
 
-		function getChartSong (title, artistName, artistArray, i) {
+		function getSongArtists (song) {
+			var songArtists = [];
+			var j;
+			var artistRow, songArtist;
+
+			for (j in song.Artists) {
+				artistRow = song.Artists[j];
+				if (!artistRow.SongArtist.feat) {
+					songArtist = {
+						id: artistRow.id,
+						name: artistRow.name,
+						order: artistRow.SongArtist.order,
+						primaryGroup: getPrimaryGroup(artistRow)
+					};
+					songArtists.push(songArtist);
+				}
+			}
+
+			songArtists.sort(artistCmpOrder);
+
+			return songArtists;
+		}
+
+		function getChartSong (title, artistName, artistArray, i, year, week) {
 			return models.Artist.findOne({ where: { name: artistName } })
 			.then(function (artist) {
 				if (!artist) {
@@ -72,6 +95,15 @@
 							songArtists.sort(artistCmpOrder);
 
 							artistArray[i] = { index: Number(i) + 1, artistFound: true, songFound: true, song: fullArtist.Songs[0], songArtists: songArtists };
+							console.log(fullArtist.Songs[0].id);
+
+							return models.SongChart.create({
+								type: 'gaon',
+								year: year,
+								week: week,
+								rank: Number(i) + 1,
+								SongId: fullArtist.Songs[0].id
+							});
 						} else {
 							artistArray[i] = { index: Number(i) + 1, artistFound: true, songFound: false, song: title, artist: artist };
 						}
@@ -83,19 +115,44 @@
 		router.get('/chart/gaon', function (req, res) {
 			var year = req.query.year;
 			var week = req.query.week;
+			var artistArray = [];
 
-			var execStr = 'perl ' + gaonScript + ' ' + week + ' ' + year;
+			models.SongChart.findAll({
+				where: { type: 'gaon', year: year, week: week },
+				include: [
+					{ model: models.Song,
+						include: [
+							{ model: models.Album },
+							{ model: models.Artist, include: [
+								{ model: models.Artist, as: 'Group' }
+							]}
+						]
+					}
+				]
+			})
+			.then(function (charts) {
+				var i, row, rank, song;
 
-			exec(execStr)
+				for (i in charts) {
+					row = charts[i];
+					rank = row.rank;
+					song = row.Song;
+					artistArray[rank - 1] = { index: rank, artistFound: true, songFound: true, song: song, songArtists: getSongArtists(song) };
+				}
+
+				var execStr = 'perl ' + gaonScript + ' ' + week + ' ' + year;
+				return exec(execStr);
+			})
 			.spread(function (stdout, stderr) {
 				var chart = JSON.parse(stdout);
 				var i, row;
 				var promises = [];
-				var artistArray = [];
 
 				for (i in chart) {
+					if (artistArray[i] !== undefined)
+						continue;
 					row = chart[i];
-					promises[i] = getChartSong (row.song, row.artist, artistArray, i);
+					promises[i] = getChartSong (row.song, row.artist, artistArray, i, year, week);
 				}
 
 				Promise.all(promises)
