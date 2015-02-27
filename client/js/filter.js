@@ -14,7 +14,7 @@ musicApp.filter('songDuration', function () {
 
 musicApp.filter('normalizeString', function () {
 	return function (str) {
-		if (str === null || str === undefined)
+		if (str === null || str === undefined || typeof str !== "string")
 			return null;
 		return str.replace(/`/g, '\'');
 	};

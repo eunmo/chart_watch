@@ -322,15 +322,51 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 
 musicApp.controller('ChartCtrl', function ($rootScope, $scope, $http, songService) {
 
-	$scope.week = 9;
-	$scope.year = 2015;
+	var getWeek = function(weekStart) {
+		var januaryFirst = new Date($scope.date.getFullYear(), 0, 1);
+		weekStart = weekStart || 0;
+		return Math.floor(((($scope.date - januaryFirst) / 86400000) + januaryFirst.getDay() - weekStart) / 7) + 1;
+	};
+
+	$scope.date = new Date();
+	$scope.week = getWeek(4);
+	$scope.year = $scope.date.getFullYear();
 	$scope.rows = [];
 
-	$http.get('chart/gaon',
-						{ params: { week: $scope.week, year: $scope.year } })
-	.success(function (chartRows) {
-		$scope.rows = chartRows;
-	});
+	$scope.fetch = function () {
+		$scope.rows = [];
+		$http.get('chart/gaon',
+							{ params: { week: $scope.week, year: $scope.year } })
+		.success(function (chartRows) {
+			$scope.rows = chartRows;
+		});
+	}
+
+	$scope.fetch();
+
+	$scope.setWeek = function() {
+		$scope.date = new Date($scope.year, 0, 1);
+		$scope.date.setDate($scope.date.getDate() + 7 * $scope.week);
+	};
+
+	$scope.go = function () {
+		$scope.setWeek();
+		$scope.fetch();
+	};
+	
+	$scope.prev = function () {
+		$scope.date.setDate($scope.date.getDate() - 7);
+		$scope.week = getWeek(4);
+		$scope.year = $scope.date.getFullYear();
+		$scope.fetch();
+	};
+	
+	$scope.next = function () {
+		$scope.date.setDate($scope.date.getDate() + 7);
+		$scope.week = getWeek(4);
+		$scope.year = $scope.date.getFullYear();
+		$scope.fetch();
+	};
 
 	$scope.addChart = function () {
 		var i;

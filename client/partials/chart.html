@@ -1,5 +1,20 @@
 <h1>
-	<span ng-click="addChart()">Gaon Chart</span>
+	<form class="form-inline">
+		<span ng-click="addChart()">Gaon Chart</span>
+		<small>
+			<div class="form-group">
+				<label>Year</label>
+				<input type="text" class="form-control" ng-model="year"></input>
+			</div>
+			<div class="form-group">
+				<label>Week</label>
+				<input type="text" class="form-control" ng-model="week"></input>
+			</div>
+			<button class="btn btn-default" ng-click="go()">Go</button>
+			<button class="btn btn-default" ng-click="prev()">Prev</button>
+			<button class="btn btn-default" ng-click="next()">Next</button>
+		</small>
+	</form>
 </h1>
 <table class="table table-hover">
 	<tr ng-repeat="row in rows">
