@@ -34,6 +34,7 @@ sub normalize_title($)
 	my $string = shift;
 	$string =~ s/\(.*$//;
 	$string =~ s/\s+$//g;
+	$string =~ s/\'/`/g;
 	return $string;
 }
 
@@ -44,9 +45,13 @@ sub normalize_artist($)
 	if ($string =~ /^에이핑크/) { return "Apink"; }
 	if ($string =~ /^바비/) { return "BOBBY"; }
 	if ($string =~ /^f\(x\)/) { return "f(x)"; }
+	if ($string =~ /^G-Dragon/) { return "GD"; }
+	if ($string =~ /^MC 몽/) { return "MC몽"; }
+	if ($string =~ /^T.O.P/) { return "TOP"; }
 	if ($string =~ /^위너/) { return "WINNER"; }
 	if ($string =~ /^자이언티/) { return "Zion.T"; }
 	if ($string =~ /^15&/) { return "15&"; }
+	if ($string =~ /^슈퍼주니어 예성/) { return "예성"; }
 	if ($string =~ /^포미닛/) { return "4minute"; }
 
 	$string =~ s/\|.*$//;
