@@ -78,9 +78,17 @@
 							var songArtists = [];
 							var j;
 							var artistRow, songArtist;
+							var index = 0;
 
-							for (j in fullArtist.Songs[0].Artists) {
-								artistRow = fullArtist.Songs[0].Artists[j];
+							for (j in fullArtist.Songs) {
+								if (fullArtist.Songs[j].title === title) {
+									index = j;
+									break;
+								}
+							}
+
+							for (j in fullArtist.Songs[index].Artists) {
+								artistRow = fullArtist.Songs[index].Artists[j];
 								if (!artistRow.SongArtist.feat) {
 									songArtist = {
 										id: artistRow.id,
@@ -94,15 +102,14 @@
 
 							songArtists.sort(artistCmpOrder);
 
-							artistArray[i] = { index: Number(i) + 1, artistFound: true, songFound: true, song: fullArtist.Songs[0], songArtists: songArtists };
-							console.log(fullArtist.Songs[0].id);
+							artistArray[i] = { index: Number(i) + 1, artistFound: true, songFound: true, song: fullArtist.Songs[index], songArtists: songArtists };
 
 							return models.SongChart.create({
 								type: 'gaon',
 								year: year,
 								week: week,
 								rank: Number(i) + 1,
-								SongId: fullArtist.Songs[0].id
+								SongId: fullArtist.Songs[index].id
 							});
 						} else {
 							artistArray[i] = { index: Number(i) + 1, artistFound: true, songFound: false, song: title, artist: artist };

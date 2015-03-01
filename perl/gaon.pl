@@ -49,11 +49,16 @@ sub normalize_artist($)
 	if ($string =~ /^MC 몽/) { return "MC몽"; }
 	if ($string =~ /^산이/) { return "San E"; }
 	if ($string =~ /^T.O.P/) { return "TOP"; }
+	if ($string =~ /^유브이/) { return "UV"; }
 	if ($string =~ /^위너/) { return "WINNER"; }
 	if ($string =~ /^자이언티/) { return "Zion.T"; }
 	if ($string =~ /^15&/) { return "15&"; }
 	if ($string =~ /^마이티마우스/) { return "마이티 마우스"; }
 	if ($string =~ /^슈퍼주니어 예성/) { return "예성"; }
+	if ($string =~ /^오렌지캬라멜/) { return "오렌지 캬라멜"; }
+	if ($string =~ /^울랄라세션/) { return "울랄라 세션"; }
+	if ($string =~ /^존 박/) { return "존박"; }
+	if ($string =~ /^소녀시대-태티서/) { return "태티서"; }
 	if ($string =~ /^포미닛/) { return "4minute"; }
 
 	$string =~ s/\|.*$//;
