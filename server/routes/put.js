@@ -163,13 +163,22 @@
 			{ where: { AlbumId: albumId, ArtistId: artistId }
 			});
 		}
+
+		function updateAlbumSong(id, editSong) {
+			return models.Song.update({
+				plays: editSong.plays
+			},
+			{ where: { id: editSong.id }
+			});
+		}
 		
 		router.put('/api/edit/album', function (req, res) {
 			var input = req.body;
 			var id = input.id;
 			var promises = [];
+			var i;
 			
-			for (var i in input.editArtists) {
+			for (i in input.editArtists) {
 				var editArtist = input.editArtists[i];
 				if (editArtist.created) {
 					if (editArtist.name !== null) {
@@ -180,6 +189,11 @@
 				} else {
 					promises.push(updateAlbumArtist(id, editArtist.id, editArtist.order));
 				}
+			}
+
+			for (i in input.editSongs) {
+				var editSong = input.editSongs[i];
+				promises.push(updateAlbumSong(id, editSong));
 			}
 
 			Promise.all(promises)

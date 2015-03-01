@@ -47,16 +47,18 @@ sub normalize_artist($)
 	if ($string =~ /^f\(x\)/) { return "f(x)"; }
 	if ($string =~ /^G-Dragon/) { return "GD"; }
 	if ($string =~ /^MC 몽/) { return "MC몽"; }
+	if ($string =~ /^산이/) { return "San E"; }
 	if ($string =~ /^T.O.P/) { return "TOP"; }
 	if ($string =~ /^위너/) { return "WINNER"; }
 	if ($string =~ /^자이언티/) { return "Zion.T"; }
 	if ($string =~ /^15&/) { return "15&"; }
+	if ($string =~ /^마이티마우스/) { return "마이티 마우스"; }
 	if ($string =~ /^슈퍼주니어 예성/) { return "예성"; }
 	if ($string =~ /^포미닛/) { return "4minute"; }
 
 	$string =~ s/\|.*$//;
 	$string =~ s/\(.*?\)//g;
-	$string =~ s/[,&].*$//g;
+	$string =~ s/[,&＆].*$//g;
 	$string =~ s/\s+$//g;
 	return $string;
 }

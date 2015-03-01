@@ -55,6 +55,23 @@
 			</div>
 		</div>
 	</div>
+	<div ng-repeat="song in album.editSongs | orderBy : 'track'">
+		<div class="form-group">
+			<label class="col-sm-3 control-label">Track</label>
+			<div class="col-sm-1">
+				<input class="form-control" ng-model="song.disk" />
+			</div>
+			<div class="col-sm-1">
+				<input class="form-control" ng-model="song.track" />
+			</div>
+			<div class="col-sm-5">
+				<input class="form-control" ng-model="song.title" disabled />
+			</div>
+			<div class="col-sm-1">
+				<input class="form-control" ng-model="song.plays" />
+			</div>
+		</div>
+	</div>
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-8">
 			<button class="btn btn-default" ng-click="edit()">Edit</button>

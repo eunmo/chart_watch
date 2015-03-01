@@ -19,7 +19,8 @@
 			models.Album.findOne({
 				where: {id: id},
 				include: [
-					{ model: models.Artist }
+					{ model: models.Artist },
+					{ model: models.Song }
 				]
 			}).then(function (album) {
 				res.json(album);

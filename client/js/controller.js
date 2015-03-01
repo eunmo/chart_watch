@@ -242,9 +242,11 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 	$scope.album = {};
 
 	$http.get('api/edit/album/' + $routeParams.id).success(function (album) {
+		var i;
 		album.editArtists = [];
+		album.editSongs = [];
 
-		for (var i in album.Artists) {
+		for (i in album.Artists) {
 			var artist = album.Artists[i];
 			var albumArtist = artist.AlbumArtist;
 			album.editArtists[i] = {
@@ -255,6 +257,19 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 				created: false,
 			};
 		}
+
+		for (i in album.Songs) {
+			var song = album.Songs[i];
+			var albumSong = song.AlbumSong;
+			album.editSongs[i] = {
+				disk: albumSong.disk,
+				track: albumSong.track,
+				title: song.title,
+				id: song.id,
+				plays: song.plays
+			};
+		}
+
 		$scope.album = album;
 	});
 
