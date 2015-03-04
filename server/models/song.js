@@ -15,7 +15,9 @@
 		Song.associate = function (models) {
 			Song.belongsToMany(models.Album, {through: models.AlbumSong});			
 			
-			Song.belongsToMany(models.Artist, {through: models.SongArtist});			
+			Song.belongsToMany(models.Artist, {through: models.SongArtist});
+
+			Song.hasMany(models.SongChart);
 		};
 
 		// (tentative) hasOne song (for skits)

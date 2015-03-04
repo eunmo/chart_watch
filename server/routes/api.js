@@ -1,6 +1,7 @@
 (function () {
 	'use strict';
 	
+	var Sequelize = require('sequelize');
 	var Promise = require('bluebird');
 
 	var artistCmpId = function (a, b) {
@@ -97,7 +98,6 @@
 				id: artistRow.id,
 				name: artistRow.name,
 				order: artistRow.AlbumArtist.order,
-				primaryGroup: getPrimaryGroup(artistRow)
 			});
 		}
 
@@ -127,7 +127,6 @@
 				id: artistRow.id,
 				name: artistRow.name,
 				order: artistRow.SongArtist.order,
-				primaryGroup: getPrimaryGroup(artistRow)
 			};
 			if (artistRow.SongArtist.feat) {
 				song.features.push(songArtist);
@@ -240,13 +239,9 @@
 				where: {id: id},
 				include: [
 					{ model: models.Album, include: [
-						{ model: models.Artist, include: [
-							{ model: models.Artist, as: 'Group', attributes: [ 'id', 'name' ] }
-						], attributes: [ 'id', 'name' ] },
+						{ model: models.Artist, attributes: [ 'id', 'name' ] },
 						{ model: models.Song, include: [
-							{ model: models.Artist, include: [
-								{ model: models.Artist, as: 'Group', attributes: [ 'id', 'name' ] }
-							], attributes: [ 'id', 'name' ] }
+							{ model: models.Artist, attributes: [ 'id', 'name' ] }
 						]}
 					]}
 				]
@@ -260,19 +255,74 @@
 				where: {id: id},
 				include: [
 					{ model: models.Song, include: [
-						{ model: models.Artist, include: [
-							{ model: models.Artist, as: 'Group', attributes: [ 'id', 'name' ] }
-						], attributes: [ 'id', 'name' ] },
+						{ model: models.Artist, attributes: [ 'id', 'name' ] },
 						{ model: models.Album, include: [
-							{ model: models.Artist, include: [
-								{ model: models.Artist, as: 'Group', attributes: [ 'id', 'name' ] }
-							], attributes: [ 'id', 'name' ] }
+							{ model: models.Artist, attributes: [ 'id', 'name' ] }
 						]}
 					]}
 				]
 			}).then(function (result) {
 				results[index] = result;
 			});
+	};
+
+	var getArtistArray = function (models, artist) {
+		var array = [];
+		var idArray = [];
+		var i, j, k;
+		var album, albumArtist, song, songArtist;
+		var primaryGroup;
+
+		array[artist.id] = [];
+		array[artist.id].push(artist);
+
+		for (i in artist.albums) {
+			album = artist.albums[i];
+			for (k in album.albumArtists) {
+				albumArtist = album.albumArtists[k];
+				if (array[albumArtist.id] === undefined) {
+					array[albumArtist.id] = [];
+				}
+				array[albumArtist.id].push(albumArtist);
+			}
+
+			for (j in album.songs) {
+				song = album.songs[j];
+				for (k in song.artists) {
+					songArtist = song.artists[k];
+					if (array[songArtist.id] === undefined) {
+						array[songArtist.id] = [];
+					}
+					array[songArtist.id].push(songArtist);
+				}
+
+				for (k in song.features) {
+					songArtist = song.features[k];
+					if (array[songArtist.id] === undefined) {
+						array[songArtist.id] = [];
+					}
+					array[songArtist.id].push(songArtist);
+				}
+			}
+		}
+
+		for (i in array) {
+			idArray.push(i);
+		}
+
+		return models.Artist.findAll({
+			where: { id: { $in: idArray } },
+			include: [{ model: models.Artist, as: 'Group' }]
+		}).then(function (results) {
+			for (i in results) {
+				primaryGroup = getPrimaryGroup(results[i]);
+				if (primaryGroup !== null) {
+					for (j in array[results[i].id]) {
+						array[results[i].id][j].primaryGroup = primaryGroup;
+					}
+				}
+			}
+		});
 	};
 
 	module.exports = function (router, models) {
@@ -289,6 +339,7 @@
 			var id = req.params._id;
 			var promises = [];
 			var results = [];
+			var artist;
 
 			promises[0] = getMembership(models, id, results, 0);
 			promises[1] = getAlbumSongs(models, id, results, 1);
@@ -299,7 +350,7 @@
 				var albums = extractAlbums(results[1]);
 				getOtherAlbums(results[2], albums);
 				var hasFeat = markFeat(results[0], albums);
-				var artist = {
+				artist = {
 					name: results[0].name,
 					id: id,
 					gender: results[0].gender,
@@ -310,6 +361,14 @@
 					albums: albums,
 					hasFeat: hasFeat
 				};
+
+				promises = [];
+
+				promises.push(getArtistArray(models, artist));
+
+				return Promise.all(promises);
+			})
+			.then(function () {
 				res.json(artist);
 			});
 		});
