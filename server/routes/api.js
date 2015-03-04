@@ -223,6 +223,58 @@
 		return hasFeat;
 	};
 
+	var getMembership = function (models, id, results, index) {
+			return models.Artist.findOne({
+				where: {id: id},
+				include: [
+					{ model: models.Artist, as: 'Group', attributes: [ 'id', 'name' ] },
+					{ model: models.Artist, as: 'Member', attributes: [ 'id', 'name' ] },
+				]
+			}).then(function (result) {
+				results[index] = result;
+			});
+	};
+
+	var getAlbumSongs = function (models, id, results, index) {
+			return models.Artist.findOne({
+				where: {id: id},
+				include: [
+					{ model: models.Album, include: [
+						{ model: models.Artist, include: [
+							{ model: models.Artist, as: 'Group', attributes: [ 'id', 'name' ] }
+						], attributes: [ 'id', 'name' ] },
+						{ model: models.Song, include: [
+							{ model: models.Artist, include: [
+								{ model: models.Artist, as: 'Group', attributes: [ 'id', 'name' ] }
+							], attributes: [ 'id', 'name' ] }
+						]}
+					]}
+				]
+			}).then(function (result) {
+				results[index] = result;
+			});
+	};
+
+	var getSongAlbums = function (models, id, results, index) {
+			return models.Artist.findOne({
+				where: {id: id},
+				include: [
+					{ model: models.Song, include: [
+						{ model: models.Artist, include: [
+							{ model: models.Artist, as: 'Group', attributes: [ 'id', 'name' ] }
+						], attributes: [ 'id', 'name' ] },
+						{ model: models.Album, include: [
+							{ model: models.Artist, include: [
+								{ model: models.Artist, as: 'Group', attributes: [ 'id', 'name' ] }
+							], attributes: [ 'id', 'name' ] }
+						]}
+					]}
+				]
+			}).then(function (result) {
+				results[index] = result;
+			});
+	};
+
 	module.exports = function (router, models) {
 		router.get('/api/artist', function (req, res) {
 			models.Artist.findAll({
@@ -235,44 +287,26 @@
 
 		router.get('/api/artist/:_id', function (req, res) {
 			var id = req.params._id;
-			models.Artist.findOne({
-				where: {id: id},
-				include: [
-					{ model: models.Artist, as: 'Group' },
-					{ model: models.Artist, as: 'Member' },
-					{ model: models.Album, include: [
-						{ model: models.Artist, include: [
-							{ model: models.Artist, as: 'Group' }
-						]},
-						{ model: models.Song, include: [
-							{ model: models.Artist, include: [
-								{ model: models.Artist, as: 'Group' }
-							]}
-						]}
-					]},
-					{ model: models.Song, include: [
-						{ model: models.Artist, include: [
-							{ model: models.Artist, as: 'Group' }
-						]},
-						{ model: models.Album, include: [
-							{ model: models.Artist, include: [
-								{ model: models.Artist, as: 'Group' }
-							]}
-						]}
-					]}
-				]
-			}).then(function (result) {
-				var albums = extractAlbums(result);
-				getOtherAlbums(result, albums);
-				var hasFeat = markFeat(result, albums);
+			var promises = [];
+			var results = [];
+
+			promises[0] = getMembership(models, id, results, 0);
+			promises[1] = getAlbumSongs(models, id, results, 1);
+			promises[2] = getSongAlbums(models, id, results, 2);
+
+			Promise.all(promises)
+			.then(function (result) {
+				var albums = extractAlbums(results[1]);
+				getOtherAlbums(results[2], albums);
+				var hasFeat = markFeat(results[0], albums);
 				var artist = {
-					name: result.name,
+					name: results[0].name,
 					id: id,
-					gender: result.gender,
-					type: result.type,
-					origin: result.origin,
-					groups: result.Group,
-					members: result.Member,
+					gender: results[0].gender,
+					type: results[0].type,
+					origin: results[0].origin,
+					groups: results[0].Group,
+					members: results[0].Member,
 					albums: albums,
 					hasFeat: hasFeat
 				};

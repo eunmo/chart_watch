@@ -32,22 +32,28 @@ print "]";
 sub normalize_title($)
 {
 	my $string = shift;
+	
+	if ($string =~ /^Mr. Chu/) { return "Mr. Chu (On Stage)"; }
+
 	$string =~ s/\(.*$//;
 	$string =~ s/\s+$//g;
-	$string =~ s/\'/`/g;
+	$string =~ s/[\'’]/`/g;
 	return $string;
 }
 
 sub normalize_artist($)
 {
 	my $string = shift;
-
+	
 	if ($string =~ /^에이핑크/) { return "Apink"; }
-	if ($string =~ /^바비/) { return "BOBBY"; }
+	if ($string =~ /^비원에이포/) { return "B1A4"; }
+	if ($string =~ /^크러쉬/) { return "Crush"; }
 	if ($string =~ /^f\(x\)/) { return "f(x)"; }
 	if ($string =~ /^G-Dragon/) { return "GD"; }
 	if ($string =~ /^MC 몽/) { return "MC몽"; }
+	if ($string =~ /^레드벨벳/) { return "Red Velvet"; }
 	if ($string =~ /^산이/) { return "San E"; }
+	if ($string =~ /^스윙스/) { return "Swings"; }
 	if ($string =~ /^T.O.P/) { return "TOP"; }
 	if ($string =~ /^유브이/) { return "UV"; }
 	if ($string =~ /^위너/) { return "WINNER"; }
@@ -64,6 +70,11 @@ sub normalize_artist($)
 	$string =~ s/\|.*$//;
 	$string =~ s/\(.*?\)//g;
 	$string =~ s/[,&＆].*$//g;
-	$string =~ s/\s+$//g;
+	$string =~ s/\s+$//;
+	
+	if ($string =~ /^바비$/) { return "BOBBY"; }
+	if ($string =~ /^브로$/) { return "Bro"; }
+	if ($string =~ /^Gary$/) { return "개리"; }
+
 	return $string;
 }
