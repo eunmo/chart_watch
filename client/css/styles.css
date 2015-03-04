@@ -122,3 +122,7 @@ body {
 	top: -4px;
 	margin-left: 5px;
 }
+
+.label-as-badge {
+	border-radius: 1em;
+}

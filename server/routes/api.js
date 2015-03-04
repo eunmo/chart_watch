@@ -266,7 +266,7 @@
 			});
 	};
 
-	var getArtistArray = function (models, artist) {
+	var getArtistGroup = function (models, artist) {
 		var array = [];
 		var idArray = [];
 		var i, j, k;
@@ -325,6 +325,52 @@
 		});
 	};
 
+	var getSongChart = function (models, artist) {
+		var array = [];
+		var idArray = [];
+		var rankArray = [];
+		var i, j, k;
+		var album, song, chartRow, songId;
+
+		for (i in artist.albums) {
+			album = artist.albums[i];
+			for (j in album.songs) {
+				song = album.songs[j];
+				if (array[song.id] === undefined) {
+					array[song.id] = [];
+				}
+				array[song.id].push(song);
+			}
+		}
+
+		for (i in array) {
+			idArray.push(i);
+		}
+
+		return models.SongChart.findAll({
+			where: { SongId: { $in: idArray } }
+		}).then(function (results) {
+			for (i in results) {
+				chartRow = results[i];
+				songId = chartRow.SongId;
+				if (rankArray[songId] === undefined) {
+					rankArray[songId] = {};
+				}
+				if (rankArray[songId][chartRow.type] === undefined) {
+					rankArray[songId][chartRow.type] = chartRow.rank;
+				} else if (chartRow.rank < rankArray[songId][chartRow.type]) {
+					rankArray[songId][chartRow.type] = chartRow.rank;
+				}
+			}
+
+			for (i in rankArray) {
+				for (j in array[i]) {
+					array[i][j].rank = rankArray[i];
+				}
+			}
+		});
+	};
+
 	module.exports = function (router, models) {
 		router.get('/api/artist', function (req, res) {
 			models.Artist.findAll({
@@ -364,7 +410,8 @@
 
 				promises = [];
 
-				promises.push(getArtistArray(models, artist));
+				promises.push(getArtistGroup(models, artist));
+				promises.push(getSongChart(models, artist));
 
 				return Promise.all(promises);
 			})

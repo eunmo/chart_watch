@@ -65,6 +65,12 @@
 										{{song.title | normalizeString}}
 									</span>
 									<span class="pull-right song-desc-right">
+										<span class="label label-danger label-as-badge badge-plays"
+											ng-show="{{song.rank.gaon < 2}}">G{{song.rank.gaon}}</span>
+										<span class="label label-warning label-as-badge badge-plays"
+											ng-show="{{song.rank.gaon >= 2 && song.rank.gaon < 4}}">G{{song.rank.gaon}}</span>
+										<span class="label label-success label-as-badge badge-plays"
+											ng-show="{{song.rank.gaon >= 4 && song.rank.gaon < 8}}">G{{song.rank.gaon}}</span>
 										<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>
 										<div class="btn-group">
 											<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"
