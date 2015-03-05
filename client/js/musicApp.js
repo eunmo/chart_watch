@@ -29,7 +29,7 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		templateUrl: '/partials/edit-song.html',
 		controller: 'EditSongCtrl'
 	})
-	.when('/chart', {
+	.when('/chart/:name', {
 		templateUrl: '/partials/chart.html',
 		controller: 'ChartCtrl'
 	})

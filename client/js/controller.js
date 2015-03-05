@@ -335,7 +335,17 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 	};
 });
 
-musicApp.controller('ChartCtrl', function ($rootScope, $scope, $http, songService) {
+musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
+	$scope.chart = $routeParams.name;
+	$scope.weekOffset = 1;
+
+	if ($scope.chart === 'gaon') {
+		$scope.weekOffset = 4;
+		$scope.chartName = 'Gaon';
+	} else if ($scope.chart === 'melon') {
+		$scope.weekOffset = 8;
+		$scope.chartName = 'Melon';
+	}
 
 	var getWeek = function(weekStart) {
 		var januaryFirst = new Date($scope.date.getFullYear(), 0, 1);
@@ -344,13 +354,13 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $http, songServic
 	};
 
 	$scope.date = new Date();
-	$scope.week = getWeek(4);
+	$scope.week = getWeek($scope.weekOffset);
 	$scope.year = $scope.date.getFullYear();
 	$scope.rows = [];
 
 	$scope.fetch = function () {
 		$scope.rows = [];
-		$http.get('chart/gaon',
+		$http.get('chart/' + $scope.chart,
 							{ params: { week: $scope.week, year: $scope.year } })
 		.success(function (chartRows) {
 			$scope.rows = chartRows;

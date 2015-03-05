@@ -1,6 +1,8 @@
 <h1>
+		<span ng-click="addChart()">{{chartName}} Chart</span>
+</h1>
+<h2>
 	<form class="form-inline">
-		<span ng-click="addChart()">Gaon Chart</span>
 		<small>
 			<div class="form-group">
 				<label>Year</label>
@@ -15,7 +17,7 @@
 			<button class="btn btn-default" ng-click="next()">Next</button>
 		</small>
 	</form>
-</h1>
+</h2>
 <table class="table table-hover">
 	<tr ng-repeat="row in rows">
 		<td>

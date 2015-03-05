@@ -6,6 +6,7 @@
 	var exec = Promise.promisify(require('child_process').exec);
 
 	var gaonScript = path.resolve('perl/gaon.pl');
+	var melonScript = path.resolve('perl/melon.pl');
 	
 	var artistCmpOrder = function (a, b) {
 		return a.order - b.order;
@@ -51,7 +52,7 @@
 			return songArtists;
 		}
 
-		function getChartSong (title, artistName, artistArray, i, year, week) {
+		function getChartSong (title, artistName, artistArray, i, year, week, chart) {
 			return models.Artist.findOne({ where: { name: artistName } })
 			.then(function (artist) {
 				if (!artist) {
@@ -105,7 +106,7 @@
 							artistArray[i] = { index: Number(i) + 1, artistFound: true, songFound: true, song: fullArtist.Songs[index], songArtists: songArtists };
 
 							return models.SongChart.create({
-								type: 'gaon',
+								type: chart,
 								year: year,
 								week: week,
 								rank: Number(i) + 1,
@@ -119,13 +120,13 @@
 			});
 		}
 
-		router.get('/chart/gaon', function (req, res) {
+		function getChart (req, res, chartName, chartScript) {
 			var year = req.query.year;
 			var week = req.query.week;
 			var artistArray = [];
 
 			models.SongChart.findAll({
-				where: { type: 'gaon', year: year, week: week },
+				where: { type: chartName, year: year, week: week },
 				include: [
 					{ model: models.Song,
 						include: [
@@ -147,7 +148,7 @@
 					artistArray[rank - 1] = { index: rank, artistFound: true, songFound: true, song: song, songArtists: getSongArtists(song) };
 				}
 
-				var execStr = 'perl ' + gaonScript + ' ' + week + ' ' + year;
+				var execStr = 'perl ' + chartScript + ' ' + week + ' ' + year;
 				return exec(execStr);
 			})
 			.spread(function (stdout, stderr) {
@@ -159,7 +160,7 @@
 					if (artistArray[i] !== undefined)
 						continue;
 					row = chart[i];
-					promises[i] = getChartSong (row.song, row.artist, artistArray, i, year, week);
+					promises[i] = getChartSong (row.song, row.artist, artistArray, i, year, week, chartName);
 				}
 
 				Promise.all(promises)
@@ -167,6 +168,14 @@
 					res.json(artistArray);
 				});
 			});
+		}
+
+		router.get('/chart/gaon', function (req, res) {
+			getChart(req, res, 'gaon', gaonScript);
+		});
+
+		router.get('/chart/melon', function (req, res) {
+			getChart(req, res, 'melon', melonScript);
 		});
 	};
 }());
