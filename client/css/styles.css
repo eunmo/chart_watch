@@ -50,11 +50,6 @@ body {
 }
 
 .song-desc-title {
-	display: inline-block;
-	width: 68%;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 	font-size: 16px;
 }
 
