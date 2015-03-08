@@ -2,11 +2,14 @@
 	'use strict';
 
 	var path = require('path');
+	var fs = require('fs');
 	var Promise = require('bluebird');
 	var exec = Promise.promisify(require('child_process').exec);
 
 	var gaonScript = path.resolve('perl/gaon.pl');
+	var gaonFilePrefix = path.resolve('chart/gaon/gaon');
 	var melonScript = path.resolve('perl/melon.pl');
+	var melonFilePrefix = path.resolve('chart/melon/melon');
 	
 	var artistCmpOrder = function (a, b) {
 		return a.order - b.order;
@@ -120,10 +123,11 @@
 			});
 		}
 
-		function getChart (req, res, chartName, chartScript) {
+		function getChart (req, res, chartName, chartScript, filePrefix) {
 			var year = req.query.year;
 			var week = req.query.week;
 			var artistArray = [];
+			var chartFile = filePrefix + '.' + year + (week < 10 ? '.0' : '.') + week;
 
 			models.SongChart.findAll({
 				where: { type: chartName, year: year, week: week },
@@ -140,6 +144,7 @@
 			})
 			.then(function (charts) {
 				var i, row, rank, song;
+				var execStr;
 
 				for (i in charts) {
 					row = charts[i];
@@ -148,7 +153,11 @@
 					artistArray[rank - 1] = { index: rank, artistFound: true, songFound: true, song: song, songArtists: getSongArtists(song) };
 				}
 
-				var execStr = 'perl ' + chartScript + ' ' + week + ' ' + year;
+				if (fs.existsSync(chartFile)) {
+					execStr = 'cat ' + chartFile;
+				} else {
+					execStr = 'perl ' + chartScript + ' ' + week + ' ' + year + ' | tee ' + chartFile;
+				}
 				return exec(execStr);
 			})
 			.spread(function (stdout, stderr) {
@@ -171,11 +180,11 @@
 		}
 
 		router.get('/chart/gaon', function (req, res) {
-			getChart(req, res, 'gaon', gaonScript);
+			getChart(req, res, 'gaon', gaonScript, gaonFilePrefix);
 		});
 
 		router.get('/chart/melon', function (req, res) {
-			getChart(req, res, 'melon', melonScript);
+			getChart(req, res, 'melon', melonScript, melonFilePrefix);
 		});
 	};
 }());
