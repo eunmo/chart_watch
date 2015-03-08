@@ -345,6 +345,9 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 	} else if ($scope.chart === 'melon') {
 		$scope.weekOffset = 8;
 		$scope.chartName = 'Melon';
+	} else if ($scope.chart === 'billboard') {
+		$scope.weekOffset = -4;
+		$scope.chartName = 'Billboard';
 	}
 
 	var getWeek = function(weekStart) {

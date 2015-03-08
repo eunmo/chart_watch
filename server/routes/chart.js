@@ -10,6 +10,8 @@
 	var gaonFilePrefix = path.resolve('chart/gaon/gaon');
 	var melonScript = path.resolve('perl/melon.pl');
 	var melonFilePrefix = path.resolve('chart/melon/melon');
+	var billboardScript = path.resolve('perl/billboard.pl');
+	var billboardFilePrefix = path.resolve('chart/billboard/billboard');
 	
 	var artistCmpOrder = function (a, b) {
 		return a.order - b.order;
@@ -185,6 +187,10 @@
 
 		router.get('/chart/melon', function (req, res) {
 			getChart(req, res, 'melon', melonScript, melonFilePrefix);
+		});
+		
+		router.get('/chart/billboard', function (req, res) {
+			getChart(req, res, 'billboard', billboardScript, billboardFilePrefix);
 		});
 	};
 }());
