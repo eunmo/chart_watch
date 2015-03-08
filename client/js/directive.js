@@ -43,3 +43,14 @@ musicApp.directive('artistRows', function () {
 		templateUrl: 'partials/artist-rows.html'
 	};
 });
+
+musicApp.directive('chartBadge', function () {
+	return {
+		restrict: 'E',
+		scope: {
+			rank: '=rank',
+			prefix: '=prefix'
+		},
+		templateUrl: 'partials/chart-badge.html'
+	};
+});

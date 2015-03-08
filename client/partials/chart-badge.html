@@ -1,0 +1,7 @@
+<span class="label label-danger label-as-badge badge-plays"
+	ng-show="{{rank.min < 2}}">
+	{{prefix}}{{rank.min}}<span ng-show="{{rank.count > 1}}"><small>x</small>{{rank.count}}</span></span>
+<span class="label label-warning label-as-badge badge-plays"
+	ng-show="{{rank.min >= 2 && rank.min < 4}}">{{prefix}}{{rank.min}}</span>
+<span class="label label-success label-as-badge badge-plays"
+	ng-show="{{rank.min >= 4 && rank.min < 8}}">{{prefix}}{{rank.min}}</span>

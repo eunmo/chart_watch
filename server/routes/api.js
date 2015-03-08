@@ -357,9 +357,15 @@
 					rankArray[songId] = {};
 				}
 				if (rankArray[songId][chartRow.type] === undefined) {
-					rankArray[songId][chartRow.type] = chartRow.rank;
-				} else if (chartRow.rank < rankArray[songId][chartRow.type]) {
-					rankArray[songId][chartRow.type] = chartRow.rank;
+					rankArray[songId][chartRow.type] = {
+						min: chartRow.rank,
+						count: 1
+					};
+				} else if (chartRow.rank < rankArray[songId][chartRow.type].min) {
+					rankArray[songId][chartRow.type].min = chartRow.rank;
+					rankArray[songId][chartRow.type].count = 1;
+				} else if (chartRow.rank === rankArray[songId][chartRow.type].min) {
+					rankArray[songId][chartRow.type].count++;
 				}
 			}
 
