@@ -2,9 +2,12 @@
 	<div class="td-img center-block">
 		<img src="/{{albumId}}.jpg" class="img-rounded img-album">
 	</div>
-	<div style="text-align: center">
+	<h4 style="text-align: center">
 		{{title}}
-	</div>
+	</h4>
+	<h5 style="text-align: center">
+		<artist-array array="artists"></artist-array>
+	</h5>
 	<div class="text-align: center">
 		<div class="btn-group" role="group">
 			<button ng-click="next()" class="btn btn-default">

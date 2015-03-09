@@ -464,7 +464,7 @@
 		router.get('/api/shuffle', function (req, res) {
 			var promises = [];
 			var songs, albums, artists;
-			var albumSongs, songArtists;
+			var albumSongs, songArtists, artistGroups;
 
 			promises.push(models.Song.findAll()
 										.then(function (result) { songs = result; }));
@@ -472,28 +472,53 @@
 										.then(function (result) { artists = result; }));
 			promises.push(models.AlbumSong.findAll()
 										.then(function (result) { albumSongs = result; }));
-			promises.push(models.SongArtist.findAll()
+			promises.push(models.SongArtist.findAll({ where: { feat: false } })
 										.then(function (result) { songArtists = result; }));
+			promises.push(models.ArtistGroup.findAll({ where: { primary: true } } )
+										.then(function (result) { artistGroups = result; }));
 			Promise.all(promises)
 			.then(function () {
 				var songArray = [];
 				var artistArray = [];
 				var i;
-				var songRow, artistRow, albumSongRow, songArtistRow;
+				var row;
+				var songId, artistId;
 
 				for (i in songs) {
-					songRow = songs[i];
-					songArray[songRow.id] = {
-						id: songRow.id,
-						title: songRow.title
+					row = songs[i];
+					songArray[row.id] = {
+						id: row.id,
+						title: row.title,
+						artists: []
 					};
 				}
 
+				for (i in artists) {
+					row = artists[i];
+					artistArray[row.id] = {
+						id: row.id,
+						name: row.name
+					};
+				}
+
+				for (i in artistGroups) {
+					row = artistGroups[i];
+					artistArray[row.MemberId].primaryGroup = artistArray[row.GroupId];
+				}
+
 				for (i in albumSongs) {
-					albumSongRow = albumSongs[i];
-					if (songArray[albumSongRow.SongId].albumId === undefined) {
-						songArray[albumSongRow.SongId].albumId = albumSongRow.AlbumId;
+					row = albumSongs[i];
+					songId = row.SongId;
+					if (songArray[songId].albumId === undefined) {
+						songArray[songId].albumId = row.AlbumId;
 					}
+				}
+
+				for (i in songArtists) {
+					row = songArtists[i];
+					songId = row.SongId;
+					artistId = row.ArtistId;
+					songArray[songId].artists[row.order] = artistArray[artistId];
 				}
 
 				res.json(songArray);

@@ -60,7 +60,7 @@
 						<tr	ng-repeat="song in album.songs">
 							<td>
 								<div class="song-desc">
-									<span class="song-desc-title" ng-click="addSong(song, album.id)">
+									<span class="song-desc-title" ng-click="addSong(song, album)">
 										<span class="song-desc-track">{{song.track}}</span>
 										{{song.title | normalizeString}}
 									</span>
@@ -75,7 +75,7 @@
 												<span class="caret"></span>
 											</button>
 											<ul class="dropdown-menu dropdown-menu-right dropdown-song" role="menu">
-												<li role="presentation"><a ng-click="addNext(song, album.id)">Play next</a></li>
+												<li role="presentation"><a ng-click="addNext(song, album)">Play next</a></li>
 												<li role="presentation"><a href="#/edit/song/{{song.id}}">Edit song</a></li>
 											</ul>
 										</div>

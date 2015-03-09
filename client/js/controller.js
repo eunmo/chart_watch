@@ -90,39 +90,37 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 				album.songs[j].albumId = album.id;
 			}
 		}
-		console.log(artist);
 		$scope.artist = artist;
 		$scope.loaded = true;
 	});
 
-	$scope.addNext = function (song, albumId) {
+	var getSendSong = function (song, album) {
 		var sendSong = {
 			id: song.id,
 			title: song.title,
-			albumId: albumId
+			albumId: album.id
 		};
-		songService.addNext([sendSong]);
+		if (song.artists === undefined) {
+			sendSong.artists = album.albumArtists;
+		} else {
+			sendSong.artists = song.artists;
+		}
+
+		return sendSong;
 	};
 
-	$scope.addSong = function (song, albumId) {
-		var sendSong = {
-			id: song.id,
-			title: song.title,
-			albumId: albumId
-		};
-		songService.addSongs([sendSong]);
+	$scope.addNext = function (song, album) {
+		songService.addNext([getSendSong(song, album)]);
+	};
+
+	$scope.addSong = function (song, album) {
+		songService.addSongs([getSendSong(song, album)]);
 	};
 	
 	$scope.addNextAlbum = function (album) {
 		var songs = [];
 		for (var i in album.songs) {
-			var song = album.songs[i];
-			var sendSong = {
-				id: song.id,
-				title: song.title,
-				albumId: album.id
-			};
-			songs.push(sendSong);
+			songs.push(getSendSong(album.songs[i], album));
 		}
 		songService.addNext(songs);
 	};
@@ -130,13 +128,7 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 	$scope.addAlbum = function (album) {
 		var songs = [];
 		for (var i in album.songs) {
-			var song = album.songs[i];
-			var sendSong = {
-				id: song.id,
-				title: song.title,
-				albumId: album.id
-			};
-			songs.push(sendSong);
+			songs.push(getSendSong(album.songs[i], album));
 		}
 		songService.addSongs(songs);
 	};
@@ -396,7 +388,8 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 				song = {
 					id: row.song.id,
 					title: row.song.title,
-					albumId: row.song.Albums[0].id
+					albumId: row.song.Albums[0].id,
+					artists: row.songArtists
 				};
 				songs.push(song);
 			}
@@ -423,6 +416,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 					$scope.duration = elem.duration;
 					$scope.title = song.title;
 					$scope.albumId = song.albumId;
+					$scope.artists = song.artists;
 				}, 0);
 				$scope.play();
 			}
