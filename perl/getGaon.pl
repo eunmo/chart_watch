@@ -20,7 +20,7 @@ for (my $i = 0; $i <= $#years; $i++) {
 	my $year = $years[$i];
 	for (my $j = $week_start[$year]; $j <= $week_end[$year]; $j++) {
 		print "$year $j\n";
-		my $url = "\"http://54.64.168.41:8080/chart/gaon?week=$j&year=$year\"";
+		my $url = "\"http://54.64.168.41:3000/chart/gaon?week=$j&year=$year\"";
 		system("curl $url");
 	}
 }

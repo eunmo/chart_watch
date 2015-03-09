@@ -8,18 +8,7 @@ musicApp.controller('InitialCtrl', function ($rootScope, $scope, $http, songServ
 
 	$scope.shuffle = function () {
 		$http.get('api/shuffle').success(function (data) {
-			var songs = [];
-			var song, songRow;
-			for (var i in data) {
-				songRow = data[i];
-				song = {
-					id: songRow.id,
-					title: songRow.title,
-					albumId: songRow.Albums[0].id
-				};
-				songs.push(song);
-			}
-			songService.addRandom(songs);
+			songService.addRandom(data);
 		});
 	};
 });

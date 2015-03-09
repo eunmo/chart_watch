@@ -14,13 +14,13 @@ $week_end[2011] = 52;
 $week_end[2012] = 51;
 $week_end[2013] = 53;
 $week_end[2014] = 52;
-$week_end[2015] = 9;
+$week_end[2015] = 10;
 
 for (my $i = 0; $i <= $#years; $i++) {
 	my $year = $years[$i];
 	for (my $j = $week_start[$year]; $j <= $week_end[$year]; $j++) {
 		print "$year $j\n";
-		my $url = "\"http://54.64.168.41:8080/chart/melon?week=$j&year=$year\"";
+		my $url = "\"http://54.64.168.41:3000/chart/melon?week=$j&year=$year\"";
 		system("curl $url");
 	}
 }

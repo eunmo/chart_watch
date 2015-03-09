@@ -462,13 +462,41 @@
 		});
 
 		router.get('/api/shuffle', function (req, res) {
-			models.Song.findAll({
-				include: [
-					{ model: models.Album },
-					{ model: models.Artist }
-				]
-			}).then(function (result) {
-				res.json(result);
+			var promises = [];
+			var songs, albums, artists;
+			var albumSongs, songArtists;
+
+			promises.push(models.Song.findAll()
+										.then(function (result) { songs = result; }));
+			promises.push(models.Artist.findAll()
+										.then(function (result) { artists = result; }));
+			promises.push(models.AlbumSong.findAll()
+										.then(function (result) { albumSongs = result; }));
+			promises.push(models.SongArtist.findAll()
+										.then(function (result) { songArtists = result; }));
+			Promise.all(promises)
+			.then(function () {
+				var songArray = [];
+				var artistArray = [];
+				var i;
+				var songRow, artistRow, albumSongRow, songArtistRow;
+
+				for (i in songs) {
+					songRow = songs[i];
+					songArray[songRow.id] = {
+						id: songRow.id,
+						title: songRow.title
+					};
+				}
+
+				for (i in albumSongs) {
+					albumSongRow = albumSongs[i];
+					if (songArray[albumSongRow.SongId].albumId === undefined) {
+						songArray[albumSongRow.SongId].albumId = albumSongRow.AlbumId;
+					}
+				}
+
+				res.json(songArray);
 			});
 		});
 	};

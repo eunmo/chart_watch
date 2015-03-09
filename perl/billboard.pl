@@ -89,6 +89,10 @@ sub normalize_artist($)
 	$string =~ s/[,&＆].*$//g;
 	$string =~ s/\s+$//;
 
+	if ($string =~ /^bob$/) { return "B.o.B"; }
+	if ($string =~ /^disclosure$/) { return "The Disclosure"; }
+	if ($string =~ /^magic$/) { return "MAGIC!"; }
+	if ($string =~ /^nico vinz$/) { return "Nico & Vinz"; }
 	if ($string =~ /^weeknd$/) { return "The Weeknd"; }
 	
 	return $string;
