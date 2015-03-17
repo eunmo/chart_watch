@@ -321,25 +321,26 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
 	$scope.chart = $routeParams.name;
 	$scope.date = new Date();
+	$scope.date = new Date(Date.UTC($scope.date.getFullYear(), $scope.date.getMonth(), $scope.date.getDate()));
 
 	if ($scope.chart === 'gaon') {
 		if ($scope.date.getDay() < 4) {
 			$scope.date.setDate($scope.date.getDate() - 7);
 		}
 		$scope.chartName = 'Gaon';
-		$scope.minDate = new Date(2010, 0, 2);
+		$scope.minDate = new Date(Date.UTC(2010, 0, 2));
 	} else if ($scope.chart === 'melon') {
 		if ($scope.date.getDay() < 1) {
 			$scope.date.setDate($scope.date.getDate() - 7);
 		}
 		$scope.chartName = 'Melon';
-		$scope.minDate = new Date(2010, 0, 2);
+		$scope.minDate = new Date(Date.UTC(2010, 0, 2));
 	} else if ($scope.chart === 'billboard') {
 		if ($scope.date.getDay() < 5) {
 			$scope.date.setDate($scope.date.getDate() - 7);
 		}
 		$scope.chartName = 'Billboard';
-		$scope.minDate = new Date(2013, 0, 5);
+		$scope.minDate = new Date(Date.UTC(2013, 0, 5));
 	}
 	$scope.date.setDate($scope.date.getDate() - $scope.date.getDay() - 1);
 	$scope.max = $scope.date.getTime();
@@ -356,7 +357,6 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 							} })
 		.success(function (chartRows) {
 			$scope.rows = chartRows;
-			$scope.date = $scope.date;
 		});
 	};
 
