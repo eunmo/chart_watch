@@ -252,6 +252,8 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 			};
 		}
 
+		album.releaseDate = new Date(album.release);
+
 		$scope.album = album;
 	});
 
@@ -351,7 +353,7 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 		});
 	};
 
-	$scope.fetch();
+	//$scope.fetch();
 
 	$scope.setWeek = function() {
 		$scope.date = new Date($scope.year, 0, 1);
