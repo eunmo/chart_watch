@@ -320,62 +320,72 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 
 musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
 	$scope.chart = $routeParams.name;
-	$scope.weekOffset = 1;
+	$scope.date = new Date();
 
 	if ($scope.chart === 'gaon') {
-		$scope.weekOffset = 4;
+		if ($scope.date.getDay() < 4) {
+			$scope.date.setDate($scope.date.getDate() - 7);
+		}
 		$scope.chartName = 'Gaon';
+		$scope.minDate = new Date(2010, 0, 2);
 	} else if ($scope.chart === 'melon') {
-		$scope.weekOffset = 8;
+		if ($scope.date.getDay() < 1) {
+			$scope.date.setDate($scope.date.getDate() - 7);
+		}
 		$scope.chartName = 'Melon';
+		$scope.minDate = new Date(2010, 0, 2);
 	} else if ($scope.chart === 'billboard') {
-		$scope.weekOffset = -4;
+		if ($scope.date.getDay() < 5) {
+			$scope.date.setDate($scope.date.getDate() - 7);
+		}
 		$scope.chartName = 'Billboard';
+		$scope.minDate = new Date(2013, 0, 5);
 	}
-
-	var getWeek = function(weekStart) {
-		var januaryFirst = new Date($scope.date.getFullYear(), 0, 1);
-		weekStart = weekStart || 0;
-		return Math.floor(((($scope.date - januaryFirst) / 86400000) + januaryFirst.getDay() - weekStart) / 7) + 1;
-	};
-
-	$scope.date = new Date();
-	$scope.week = getWeek($scope.weekOffset);
-	$scope.year = $scope.date.getFullYear();
+	$scope.date.setDate($scope.date.getDate() - $scope.date.getDay() - 1);
+	$scope.max = $scope.date.getTime();
+	$scope.min = $scope.minDate.getTime();
 	$scope.rows = [];
 
 	$scope.fetch = function () {
 		$scope.rows = [];
 		$http.get('chart/' + $scope.chart,
-							{ params: { week: $scope.week, year: $scope.year } })
+							{ params: { 
+								year: $scope.date.getFullYear(),
+								month: $scope.date.getMonth() + 1,
+								day: $scope.date.getDay()
+							} })
 		.success(function (chartRows) {
 			$scope.rows = chartRows;
+			$scope.date = $scope.date;
 		});
 	};
 
-	//$scope.fetch();
+	$scope.fetch();
 
-	$scope.setWeek = function() {
-		$scope.date = new Date($scope.year, 0, 1);
-		$scope.date.setDate($scope.date.getDate() + 7 * $scope.week);
+	$scope.updateDate = function (offset) {
+		$scope.date.setDate($scope.date.getDate() + offset);
+		var time = $scope.date.getTime();
+		if ($scope.max < time) {
+			$scope.date = new Date($scope.max);
+		} else if (time < $scope.min) {
+			$scope.date = new Date($scope.min);
+		} else {
+			$scope.date = new Date($scope.date);
+		}
 	};
 
 	$scope.go = function () {
-		$scope.setWeek();
+		$scope.updateDate(6 - $scope.date.getDay());
 		$scope.fetch();
 	};
 	
 	$scope.prev = function () {
-		$scope.date.setDate($scope.date.getDate() - 7);
-		$scope.week = getWeek(4);
-		$scope.year = $scope.date.getFullYear();
+		$scope.updateDate(-7);
 		$scope.fetch();
 	};
 	
 	$scope.next = function () {
-		$scope.date.setDate($scope.date.getDate() + 7);
-		$scope.week = getWeek(4);
-		$scope.year = $scope.date.getFullYear();
+		$scope.updateDate(7);
 		$scope.fetch();
 	};
 
