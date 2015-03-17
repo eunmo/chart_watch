@@ -1,0 +1,22 @@
+<h1>
+		<span ng-click="addChart()">최신 차트</span>
+</h1>
+<table class="table table-hover">
+	<tr ng-repeat="row in rows">
+		<td>
+			{{row.index}}
+		</td>
+		<td>
+			<artist-array array="row.songArtists"></artist-array>
+		</td>
+		<td>
+			{{row.song.title | normalizeString}}
+			<span class="pull-right song-desc-right">
+				<chart-badge rank="row.rank.gaon" prefix="'G'"></chart-badge>
+				<chart-badge rank="row.rank.melon" prefix="'M'"></chart-badge>
+				<chart-badge rank="row.rank.billboard" prefix="'BB'"></chart-badge>
+				<span class="badge badge-plays" ng-show="{{row.song.plays}}">{{row.song.plays}}</span>
+			</span>
+		</td>
+	</tr>
+</table>

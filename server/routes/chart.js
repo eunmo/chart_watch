@@ -195,5 +195,137 @@
 		router.get('/chart/billboard', function (req, res) {
 			getChart(req, res, 'billboard', billboardScript, billboardFilePrefix);
 		});
+
+		function getMaxDate (type, dates, index) {
+			return models.SongChart.max('week', { where: { type: type } } )
+			.success(function (row) {
+				dates[index] = row;
+			});
+		}
+
+		function getCurrentSongs (type, date, songs, index) {
+			return models.SongChart.findAll({
+				where: { type: type, week: date, rank: { lt: 8 } },
+				include: [
+					{ model: models.Song,
+						include: [
+							{ model: models.Album },
+							{ model: models.Artist, include: [
+								{ model: models.Artist, as: 'Group' }
+							]}
+						]
+					}
+				]
+			})
+			.then(function (charts) {
+				songs[index] = charts;
+			});
+		}
+
+		router.get('/chart/current', function (req, res) {
+			var datePromises = [];
+			var dates = [];
+			var songPromises = [];
+			var songs = [];
+			var songArray = [];
+
+			datePromises.push(getMaxDate('gaon', dates, 0));
+			datePromises.push(getMaxDate('melon', dates, 1));
+			datePromises.push(getMaxDate('billboard', dates, 2));
+
+			Promise.all(datePromises)
+			.then(function () {
+
+				songPromises.push(getCurrentSongs('gaon', dates[0], songs, 0));
+				songPromises.push(getCurrentSongs('melon', dates[1], songs, 1));
+				songPromises.push(getCurrentSongs('billboard', dates[2], songs, 2));
+
+				return Promise.all(songPromises);
+			})
+			.then(function () {
+				var idArray = [];
+				var rankArray = [];
+				var row, rank, song, i, j;
+				var chartRow, songId;
+
+				for (i in songs) {
+					for (j in songs[i]) {
+						row = songs[i][j];
+						rank = row.rank;
+						song = row.Song;
+						if (songArray[song.id] === undefined) {
+							songArray[song.id] = {
+								curRank: [rank],
+								song: song,
+								songArtists: getSongArtists(song)
+							};
+						} else {
+							songArray[song.id].curRank.push(rank);
+							songArray[song.id].curRank.sort();
+						}
+					}
+				}
+
+				for (i in songArray) {
+					idArray.push(i);
+				}
+		
+				return models.SongChart.findAll({
+					where: { SongId: { $in: idArray } }
+				}).then(function (results) {
+					for (i in results) {
+						chartRow = results[i];
+						songId = chartRow.SongId;
+						if (rankArray[songId] === undefined) {
+							rankArray[songId] = {};
+						}
+						if (rankArray[songId][chartRow.type] === undefined) {
+							rankArray[songId][chartRow.type] = {
+								min: chartRow.rank,
+								count: 1
+							};
+						} else if (chartRow.rank < rankArray[songId][chartRow.type].min) {
+							rankArray[songId][chartRow.type].min = chartRow.rank;
+							rankArray[songId][chartRow.type].count = 1;
+						} else if (chartRow.rank === rankArray[songId][chartRow.type].min) {
+							rankArray[songId][chartRow.type].count++;
+						}
+					}
+
+					for (i in rankArray) {
+						songArray[i].rank = rankArray[i];
+					}
+				});
+			})
+		.then(function () {
+				var sendArray = [];
+				var row, rank, song, i, j;
+
+				for (i in songArray) {
+					sendArray.push(songArray[i]);
+				}
+
+				var rankCmp = function (a, b) {
+					var minSize = Math.min(a.curRank.length, b.curRank.length);
+					for (i = 0; i < minSize; i++) {
+						if (a.curRank[i] !== b.curRank[i])
+							return a.curRank[i] - b.curRank[i];
+					}
+
+					if (a.curRank.length === b.curRank.lenghth)
+						return a.id - b.id;
+
+					return b.curRank.length - a.curRank.length;
+				};
+
+				sendArray.sort(rankCmp);
+
+				for (i in sendArray) {
+					sendArray[i].index = Number(i) + 1;
+				}
+
+				res.json(sendArray);
+			});
+		});
 	};
 }());

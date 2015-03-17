@@ -353,7 +353,7 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 							{ params: { 
 								year: $scope.date.getFullYear(),
 								month: $scope.date.getMonth() + 1,
-								day: $scope.date.getDay()
+								day: $scope.date.getDate()
 							} })
 		.success(function (chartRows) {
 			$scope.rows = chartRows;
@@ -388,6 +388,34 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 		$scope.updateDate(7);
 		$scope.fetch();
 	};
+
+	$scope.addChart = function () {
+		var i;
+		var row, song;
+		var songs = [];
+		
+		for (i in $scope.rows) {
+			row = $scope.rows[i];
+			if (row.songFound) {
+				song = {
+					id: row.song.id,
+					title: row.song.title,
+					albumId: row.song.Albums[0].id,
+					artists: row.songArtists
+				};
+				songs.push(song);
+			}
+		}
+		songService.addSongs(songs);
+	};
+});
+
+musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
+	$scope.rows = [];
+	$http.get('chart/current')
+	.success(function (chartRows) {
+		$scope.rows = chartRows;
+	});
 
 	$scope.addChart = function () {
 		var i;

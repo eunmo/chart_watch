@@ -479,6 +479,8 @@
 			Promise.all(promises)
 			.then(function () {
 				var songArray = [];
+				var lastPlayed = [];
+				var resArray = [];
 				var artistArray = [];
 				var i;
 				var row;
@@ -491,6 +493,9 @@
 						title: row.title,
 						artists: []
 					};
+					if (row.lastPlayed === null) {
+						lastPlayed[row.id] = true;
+					}
 				}
 
 				for (i in artists) {
@@ -521,7 +526,12 @@
 					songArray[songId].artists[row.order] = artistArray[artistId];
 				}
 
-				res.json(songArray);
+				for (i in songArray) {
+					if (lastPlayed[songArray[i].id])
+						resArray.push(songArray[i]);
+				}
+
+				res.json(resArray);
 			});
 		});
 	};
