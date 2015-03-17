@@ -7,8 +7,9 @@ use Mojo::Collection;
 use DateTime;
 binmode(STDOUT, ":utf8");
 
-my $week = $ARGV[0];
-my $year = $ARGV[1];
+my $yy = $ARGV[0];
+my $mm = $ARGV[1];
+my $dd = $ARGV[2];
 
 my $url = get_url();
 my $html = get("$url");
@@ -40,59 +41,52 @@ print "]";
 
 sub first_day_of_week_old
 {
-	my ($year, $week) = @_;
-
-	DateTime->new( year => $year, month => 1, day => 1 )
-					->add( weeks => ($week - 1) )
+	DateTime->new( year => $yy, month => $mm, day => $dd )
 					->truncate( to => 'week' )
 					->subtract( days => 1);
 }
 
 sub last_day_of_week_old
 {
-	my ($year, $week) = @_;
-
-	DateTime->new( year => $year, month => 1, day => 1 )
-					->add( weeks => ($week - 1) )
+	DateTime->new( year => $yy, month => $mm, day => $dd )
 					->truncate( to => 'week' )
 					->add( days => 5 );
 }
 
 sub first_day_of_week_new
 {
-	my ($year, $week) = @_;
-
-	DateTime->new( year => $year, month => 1, day => 1 )
-					->add( weeks => ($week - 1) )
+	DateTime->new( year => $yy, month => $mm, day => $dd )
 					->truncate( to => 'week' );
 }
 
 sub last_day_of_week_new
 {
-	my ($year, $week) = @_;
-
-	DateTime->new( year => $year, month => 1, day => 1 )
-					->add( weeks => ($week - 1) )
+	DateTime->new( year => $yy, month => $mm, day => $dd )
 					->truncate( to => 'week' )
 					->add( days => 6 );
 }
 
 sub get_url
 {
-	my $age = int($year / 10) * 10;
+	my $age = int($yy / 10) * 10;
 	my $fd, $ld;
 
-	if ($year < 2012 || ($year == 2012 && $week <= 33)) {
-		$fd = first_day_of_week_old($year, $week);
-		$ld = last_day_of_week_old($year, $week);
+	if ($yy < 2012 ||
+		 ($yy == 2012 && ($mm < 8 || ($mm == 8 && $dd <= 19)))) {
+		$fd = first_day_of_week_old();
+		$ld = last_day_of_week_old();
 	} else {
-		$fd = first_day_of_week_new($year, $week);
-		$ld = last_day_of_week_new($year, $week);
+		$fd = first_day_of_week_new();
+		$ld = last_day_of_week_new();
 	}
 
 	my $fd_ymd = $fd->ymd('');
 	my $ld_ymd = $ld->ymd('');
 	my $url = sprintf("http://www.melon.com/chart/search/list.htm?chartType=WE&age=%d&year=%d&mon=%02d&day=%d%%5E%d&classCd=DP0000&startDay=%d&endDay=%d&moved=Y", $age, $year, $ld->month(), $fd_ymd, $ld_ymd, $fd_ymd, $ld_ymd);
+
+	print "$fd_ymd\n";
+	print "$ld_ymd\n";
+	print "$url\n";
 
 	return $url;
 }
@@ -156,6 +150,7 @@ sub normalize_artist($)
 	$string =~ s/\s+$//;
 	
 	if ($string =~ /^미$/) { return "美"; }
+	if ($string =~ /^XIA$/) { return "김준수"; }
 
 	return $string;
 }

@@ -4,10 +4,24 @@ use utf8;
 use Encode;
 use Mojo::DOM;
 use Mojo::Collection;
+use DateTime;
 binmode(STDOUT, ":utf8");
 
-my $week = $ARGV[0];
-my $year = $ARGV[1];
+my $yy = $ARGV[0];
+my $mm = $ARGV[1];
+my $dd = $ARGV[2];
+
+my $date = DateTime->new( year => $yy, month => $mm, day => $dd )
+									 ->add( weeks => 1)
+									 ->add( days => 1);
+
+my $jan2 = DateTime->new( year => $yy, month => 1, day => 2)->week_number();
+my $jan4 = DateTime->new( year => $yy, month => 1, day => 4)->week_number();
+
+$date = $date->add( weeks => 1) if ($jan2 != $jan4);
+
+my $year = $date->week_year();
+my $week = $date->week_number();
 my $week_string = sprintf("%02d", $week);
 
 my $url = "http://www.gaonchart.co.kr/main/section/chart/online.gaon?nationGbn=T&serviceGbn=ALL&targetTime=$week_string&hitYear=$year&termGbn=week";
@@ -52,6 +66,7 @@ sub normalize_artist($)
 	if ($string =~ /^크러쉬/) { return "Crush"; }
 	if ($string =~ /^f\(x\)/) { return "f(x)"; }
 	if ($string =~ /^G-Dragon/) { return "GD"; }
+	if ($string =~ /^MC몽/) { return "MC 몽"; }
 	if ($string =~ /^레드벨벳/) { return "Red Velvet"; }
 	if ($string =~ /^산이/) { return "San E"; }
 	if ($string =~ /^스윙스/) { return "Swings"; }
@@ -77,6 +92,7 @@ sub normalize_artist($)
 	if ($string =~ /^바비$/) { return "BOBBY"; }
 	if ($string =~ /^브로$/) { return "Bro"; }
 	if ($string =~ /^Gary$/) { return "개리"; }
+	if ($string =~ /^XIA$/) { return "김준수"; }
 
 	return $string;
 }
