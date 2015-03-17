@@ -4,9 +4,8 @@
 	module.exports = function (sequelize, DataTypes) {
 		var SongChart = sequelize.define('SongChart', {
 			type: { type: DataTypes.STRING, allowNull: false },
-			year: { type: DataTypes.INTEGER },
-			week: { type: DataTypes.INTEGER },
-			rank: { type: DataTypes.INTEGER },
+			week: { type: DataTypes.DATEONLY, allowNull: false },
+			rank: { type: DataTypes.INTEGER, allowNull: false },
 		});
 		
 		SongChart.associate = function (models) {

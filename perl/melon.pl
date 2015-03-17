@@ -84,10 +84,6 @@ sub get_url
 	my $ld_ymd = $ld->ymd('');
 	my $url = sprintf("http://www.melon.com/chart/search/list.htm?chartType=WE&age=%d&year=%d&mon=%02d&day=%d%%5E%d&classCd=DP0000&startDay=%d&endDay=%d&moved=Y", $age, $year, $ld->month(), $fd_ymd, $ld_ymd, $fd_ymd, $ld_ymd);
 
-	print "$fd_ymd\n";
-	print "$ld_ymd\n";
-	print "$url\n";
-
 	return $url;
 }
 

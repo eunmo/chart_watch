@@ -57,7 +57,7 @@
 			return songArtists;
 		}
 
-		function getChartSong (title, artistName, artistArray, i, year, week, chart) {
+		function getChartSong (title, artistName, artistArray, i, date, chart) {
 			return models.Artist.findOne({ where: { name: artistName } })
 			.then(function (artist) {
 				if (!artist) {
@@ -112,8 +112,7 @@
 
 							return models.SongChart.create({
 								type: chart,
-								year: year,
-								week: week,
+								week: date,
 								rank: Number(i) + 1,
 								SongId: fullArtist.Songs[index].id
 							});
@@ -127,12 +126,16 @@
 
 		function getChart (req, res, chartName, chartScript, filePrefix) {
 			var year = req.query.year;
-			var week = req.query.week;
+			var month = req.query.month;
+			var day = req.query.day;
 			var artistArray = [];
-			var chartFile = filePrefix + '.' + year + (week < 10 ? '.0' : '.') + week;
+			var chartFile = filePrefix + '.' + year +
+											(month < 10 ? '.0' : '.') + month +
+											(day < 10 ? '.0' : '.') + day;
+			var date = new Date(year, month - 1, day);
 
 			models.SongChart.findAll({
-				where: { type: chartName, year: year, week: week },
+				where: { type: chartName, week: date },
 				include: [
 					{ model: models.Song,
 						include: [
@@ -158,7 +161,7 @@
 				if (fs.existsSync(chartFile)) {
 					execStr = 'cat ' + chartFile;
 				} else {
-					execStr = 'perl ' + chartScript + ' ' + week + ' ' + year + ' | tee ' + chartFile;
+					execStr = 'perl ' + chartScript + ' ' + year + ' ' + month + ' ' + day + ' | tee ' + chartFile;
 				}
 				return exec(execStr);
 			})
@@ -171,7 +174,7 @@
 					if (artistArray[i] !== undefined)
 						continue;
 					row = chart[i];
-					promises[i] = getChartSong (row.song, row.artist, artistArray, i, year, week, chartName);
+					promises[i] = getChartSong (row.song, row.artist, artistArray, i, date, chartName);
 				}
 
 				Promise.all(promises)
