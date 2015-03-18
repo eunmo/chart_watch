@@ -424,15 +424,13 @@ musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routePara
 		
 		for (i in $scope.rows) {
 			row = $scope.rows[i];
-			if (row.songFound) {
-				song = {
-					id: row.song.id,
-					title: row.song.title,
-					albumId: row.song.Albums[0].id,
-					artists: row.songArtists
-				};
-				songs.push(song);
-			}
+			song = {
+				id: row.song.id,
+				title: row.song.title,
+				albumId: row.song.Albums[0].id,
+				artists: row.songArtists
+			};
+			songs.push(song);
 		}
 		songService.addSongs(songs);
 	};

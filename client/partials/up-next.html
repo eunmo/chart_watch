@@ -1,8 +1,9 @@
 <div>
 	<h2>Up Next
 		<span ng-show="songs.length">
-			<small>{{songs.length}}
-				<span ng-show="randomSource.length">/ {{randomSource.length}}</span>
+			<small>
+				<span ng-show="randomSource.length">{{songs.length}} / {{randomSource.length}}</span>
+				<span ng-hide="randomSource.length">{{songs.length | numSongs}}</span>
 			</small>
 			<span class="label label-default label-clear" ng-click="clearAll()">Clear</span>
 		</span>
