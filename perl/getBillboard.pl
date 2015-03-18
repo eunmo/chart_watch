@@ -9,7 +9,7 @@ if ($date->day_of_week() < 5) {
 }
 $date->add( days => 5 );
 
-while ($date->year >= 2013) {
+while ($date->year >= 2010) {
 	my $yy = $date->year;
 	my $mm = $date->month;
 	my $dd = $date->day;
