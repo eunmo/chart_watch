@@ -58,10 +58,17 @@ sub normalize_title($)
 	$string =~ s/\(.*$//;
 	$string =~ s/\s+$//g;
 	$string =~ s/[\'’]/`/g;
+	$string =~ s/F\*\*K/FUCK/g;
 	
+	if ($string =~ /^DJ GOT US FALLING IN LOVE$/) { return "DJ Got Us Fallin` In Love"; }
+	if ($string =~ /^ET$/) { return "E.T."; }
 	if ($string =~ /^GANGNAM STYLE$/) { return "강남스타일"; }
+	if ($string =~ /^FORGET YOU$/) { return "FUCK YOU"; }
 	if ($string =~ /^FOURFIVE SECONDS$/) { return "FOURFIVESECONDS"; }
-	
+	if ($string =~ /^MR KNOW IT ALL$/) { return "Mr. Know It All"; }
+	if ($string =~ /^N\*\*\*\*S IN PARIS$/) { return "Ni\*\*as In Paris"; }
+	if ($string =~ /^YOU NEED ME I DON`T NEED YOU$/) { return "You Need Me, I Don`t Need You"; }
+
 	return $string;
 }
 
@@ -69,26 +76,40 @@ sub normalize_artist($)
 {
 	my $string = shift;
 	
-	if ($string =~ /^FLORENCE & THE MACHINE$/) { return $string; }
+	if ($string =~ /^CHASE & STATUS/) { return "Chase & Status"; }
+	if ($string =~ /^FLORENCE & THE MACHINE$/) { return "Florence + the Machine"; }
+	if ($string =~ /^FLORENCE\/DIZZEE RASCAL$/) { return "Florence + the Machine"; }
 	if ($string =~ /^LILLY WOOD & ROBIN SCHULZ$/) { return "Lilly Wood & the Prick"; }
 	if ($string =~ /^MUMFORD & SONS$/) { return $string; }
 	if ($string =~ /^NICO & VINZ$/) { return $string; }
+	if ($string =~ /^SAM & THE WOMP$/) { return $string; }
 	if ($string =~ /^YEARS & YEARS$/) { return $string; }
 	if ($string =~ /^AC\/DC$/) { return $string; }
+	if ($string =~ /^SHOUT FT DIZZEE & JAMES CORDEN$/) { return "Shout For England"; }
 	
 	$string =~ s/\|.*$//;
 	$string =~ s/\(.*?\)//g;
 	$string =~ s/[,&＆].*$//g;
 	$string =~ s/\/.*$//;
 	$string =~ s/\sFT\s.*$//;
+	$string =~ s/\sVS\s.*$//;
 	$string =~ s/\s+$//;
 
+	if ($string =~ /^BLACK EYED PEAS$/) { return "The Black Eyed Peas"; }
+	if ($string =~ /^BOB$/) { return "B.o.B"; }
 	if ($string =~ /^CHERYL COLE$/) { return "CHERYL"; }
+	if ($string =~ /^DISCLOSURE$/) { return "The Disclosure"; }
+	if ($string =~ /^DR DRE$/) { return "Dr. Dre"; }
+	if ($string =~ /^FUN$/) { return "Fun."; }
 	if ($string =~ /^JAY-Z$/) { return "JAY Z"; }
+	if ($string =~ /^KESHA$/) { return "Ke\$ha"; }
 	if ($string =~ /^LUMINEERS$/) { return "The Lumineers"; }
 	if ($string =~ /^MAGIC$/) { return "MAGIC!"; }
+	if ($string =~ /^PINK$/) { return "P!nk"; }
 	if ($string =~ /^PSY$/) { return "싸이"; }
+	if ($string =~ /^SATURDAYS$/) { return "The Saturdays"; }
 	if ($string =~ /^SCRIPT$/) { return "The Script"; }
+	if ($string =~ /^S INGROSSO$/) { return "Sebastian Ingrosso"; }
 	if ($string =~ /^WANTED$/) { return "The Wanted"; }
 	if ($string =~ /^WEEKND$/) { return "The Weeknd"; }
 	if ($string =~ /^WILL I AM$/) { return "Will.I.Am"; }
