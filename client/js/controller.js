@@ -341,6 +341,12 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 		}
 		$scope.chartName = 'Billboard';
 		$scope.minDate = new Date(Date.UTC(2010, 0, 2));
+	} else if ($scope.chart === 'uk') {
+		if ($scope.date.getDay() < 1) {
+			$scope.date.setDate($scope.date.getDate() - 7);
+		}
+		$scope.chartName = 'UK';
+		$scope.minDate = new Date(Date.UTC(2013, 0, 5));
 	}
 	$scope.date.setDate($scope.date.getDate() - $scope.date.getDay() - 1);
 	$scope.max = $scope.date.getTime();

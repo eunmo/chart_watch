@@ -12,6 +12,8 @@
 	var melonFilePrefix = path.resolve('chart/melon/melon');
 	var billboardScript = path.resolve('perl/billboard.pl');
 	var billboardFilePrefix = path.resolve('chart/billboard/billboard');
+	var ukScript = path.resolve('perl/uk.pl');
+	var ukFilePrefix = path.resolve('chart/uk/uk');
 	
 	var artistCmpOrder = function (a, b) {
 		return a.order - b.order;
@@ -87,7 +89,7 @@
 							var index = 0;
 
 							for (j in fullArtist.Songs) {
-								if (fullArtist.Songs[j].title === title) {
+								if (fullArtist.Songs[j].title.toLowerCase() === title.toLowerCase()) {
 									index = j;
 									break;
 								}
@@ -195,6 +197,10 @@
 		router.get('/chart/billboard', function (req, res) {
 			getChart(req, res, 'billboard', billboardScript, billboardFilePrefix);
 		});
+		
+		router.get('/chart/uk', function (req, res) {
+			getChart(req, res, 'uk', ukScript, ukFilePrefix);
+		});
 
 		function getMaxDate (type, dates, index) {
 			return models.SongChart.max('week', { where: { type: type } } )
@@ -232,6 +238,7 @@
 			datePromises.push(getMaxDate('gaon', dates, 0));
 			datePromises.push(getMaxDate('melon', dates, 1));
 			datePromises.push(getMaxDate('billboard', dates, 2));
+			datePromises.push(getMaxDate('uk', dates, 3));
 
 			Promise.all(datePromises)
 			.then(function () {
@@ -239,6 +246,7 @@
 				songPromises.push(getCurrentSongs('gaon', dates[0], songs, 0));
 				songPromises.push(getCurrentSongs('melon', dates[1], songs, 1));
 				songPromises.push(getCurrentSongs('billboard', dates[2], songs, 2));
+				songPromises.push(getCurrentSongs('uk', dates[3], songs, 3));
 
 				return Promise.all(songPromises);
 			})
