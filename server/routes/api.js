@@ -115,6 +115,7 @@
 			title: songRow.title,
 			time: songRow.time,
 			plays: songRow.plays,
+			lastPlayed: songRow.lastPlayed,
 			disk: albumSong.disk,
 			track: albumSong.track,
 			artists: [],

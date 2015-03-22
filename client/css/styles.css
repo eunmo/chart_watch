@@ -39,7 +39,7 @@ body {
 	height: 20px;
 }
 
-.song-desc-track {
+.song-track {
 	display: inline-block;
 	text-align: right;
 	width: 20px;
@@ -47,6 +47,11 @@ body {
 	font-size: 12px;
 	position: relative;
 	top: -2px;
+}
+
+.song-track-played {
+	width: 24px;
+	margin-right: 6px;
 }
 
 .song-desc-title {
