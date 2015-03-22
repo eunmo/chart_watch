@@ -464,7 +464,7 @@
 		router.get('/api/shuffle', function (req, res) {
 			var promises = [];
 			var songs, albums, artists;
-			var albumSongs, songArtists, artistGroups;
+			var albumSongs, songArtists, artistGroups, songCharts;
 
 			promises.push(models.Song.findAll()
 										.then(function (result) { songs = result; }));
@@ -476,10 +476,14 @@
 										.then(function (result) { songArtists = result; }));
 			promises.push(models.ArtistGroup.findAll({ where: { primary: true } } )
 										.then(function (result) { artistGroups = result; }));
+			promises.push(models.SongChart.findAll({ where: { rank: { lt: 8 } } })
+										.then(function (result) { songCharts = result; }));
 			Promise.all(promises)
 			.then(function () {
 				var songArray = [];
 				var lastPlayed = [];
+				var plays = [];
+				var rank = [];
 				var resArray = [];
 				var artistArray = [];
 				var i;
@@ -488,13 +492,15 @@
 
 				for (i in songs) {
 					row = songs[i];
-					songArray[row.id] = {
+					songId = row.id;
+					songArray[songId] = {
 						id: row.id,
 						title: row.title,
 						artists: []
 					};
+					plays[songId] = row.plays;
 					if (row.lastPlayed === null) {
-						lastPlayed[row.id] = true;
+						lastPlayed[songId] = true;
 					}
 				}
 
@@ -526,8 +532,16 @@
 					songArray[songId].artists[row.order] = artistArray[artistId];
 				}
 
+				for (i in songCharts) {
+					row = songCharts[i];
+					songId = row.SongId;
+					if (plays[songId] && plays[songId] < 10) {
+						rank[songId] = true;
+					}
+				}
+
 				for (i in songArray) {
-					if (lastPlayed[songArray[i].id])
+					if (lastPlayed[songArray[i].id] || rank[songArray[i].id])
 						resArray.push(songArray[i]);
 				}
 
