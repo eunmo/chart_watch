@@ -83,6 +83,7 @@ sub normalize_artist($)
 	if ($string =~ /^MUMFORD & SONS$/) { return $string; }
 	if ($string =~ /^NICO & VINZ$/) { return $string; }
 	if ($string =~ /^SAM & THE WOMP$/) { return $string; }
+	if ($string =~ /^WAZE & ODYSSEY/) { return "Waze & Odyssey"; }
 	if ($string =~ /^YEARS & YEARS$/) { return $string; }
 	if ($string =~ /^AC\/DC$/) { return $string; }
 	if ($string =~ /^SHOUT FT DIZZEE & JAMES CORDEN$/) { return "Shout For England"; }

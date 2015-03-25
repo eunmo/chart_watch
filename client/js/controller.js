@@ -80,7 +80,7 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
 musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
 
 	$scope.loaded = false;
-	$scope.showFeat = true;
+	$scope.showFeat = false;
 
 	$http.get('api/artist/' + $routeParams.id).success(function (artist) {
 		// format songs into rows
