@@ -66,6 +66,7 @@ sub normalize_title($)
 	$string =~ s/F\*\*k/Fuck/g;
 	
 	if ($string =~ /^Gangnam Style$/) { return "강남스타일"; }
+	if ($string =~ /^G\.D\.F\.R.$/) { return "GDFR"; }
 	if ($string =~ /^Sexy Chick$/) { return "Sexy Bitch"; }
 
 	return $string;

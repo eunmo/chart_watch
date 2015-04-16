@@ -560,7 +560,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	$scope.getRandom = function () {
 		// add songs from selected random source
 		// TODO add customized random here.
-		while ($scope.songs.length < 16 && $scope.randomSource.length > 0) {
+		while ($scope.songs.length <= 10 && $scope.randomSource.length > 0) {
 			var randomIndex = Math.floor((Math.random() * $scope.randomSource.length));
 			$scope.songs.push($scope.randomSource[randomIndex]);
 			$scope.randomSource.splice(randomIndex, 1);
