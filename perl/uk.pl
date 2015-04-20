@@ -101,11 +101,13 @@ sub normalize_artist($)
 	if ($string =~ /^CHERYL COLE$/) { return "CHERYL"; }
 	if ($string =~ /^DISCLOSURE$/) { return "The Disclosure"; }
 	if ($string =~ /^DR DRE$/) { return "Dr. Dre"; }
+	if ($string =~ /^DR KUCHO$/) { return "Dr. Kucho!"; }
 	if ($string =~ /^FUN$/) { return "Fun."; }
 	if ($string =~ /^JAY-Z$/) { return "JAY Z"; }
 	if ($string =~ /^KESHA$/) { return "Ke\$ha"; }
 	if ($string =~ /^LUMINEERS$/) { return "The Lumineers"; }
 	if ($string =~ /^MAGIC$/) { return "MAGIC!"; }
+	if ($string =~ /^MAGICIAN$/) { return "The Magician"; }
 	if ($string =~ /^PINK$/) { return "P!nk"; }
 	if ($string =~ /^PSY$/) { return "싸이"; }
 	if ($string =~ /^SATURDAYS$/) { return "The Saturdays"; }
