@@ -55,7 +55,7 @@ sub normalize_title($)
 {
 	my $string = shift;
 	
-	$string =~ s/\(.*$//;
+	$string =~ s/\(.*\)//g;
 	$string =~ s/\s+$//g;
 	$string =~ s/[\'’]/`/g;
 	$string =~ s/F\*\*K/FUCK/g;

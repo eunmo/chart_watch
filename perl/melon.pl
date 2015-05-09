@@ -125,6 +125,7 @@ sub normalize_artist($)
 	if ($string =~ /^양동근/) { return "YDG"; }
 	if ($string =~ /^매드클라운/) { return "매드 클라운"; }
 	if ($string =~ /^브라운아이드걸스/) { return "브라운 아이드 걸스"; }
+	if ($string =~ /^BIGBANG/) { return "빅뱅"; }
 	if ($string =~ /^Beenzino/) { return "빈지노"; }
 	if ($string =~ /^Supreme Team/) { return "슈프림팀"; }
 	if ($string =~ /^CNBLUE/) { return "씨엔블루"; }

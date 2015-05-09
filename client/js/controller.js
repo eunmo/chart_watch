@@ -90,7 +90,6 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 				album.songs[j].albumId = album.id;
 			}
 		}
-		console.log(artist);
 		$scope.artist = artist;
 		$scope.loaded = true;
 	});

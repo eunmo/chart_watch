@@ -542,7 +542,8 @@
 				}
 
 				for (i in songArray) {
-					if (lastPlayed[songArray[i].id] || rank[songArray[i].id])
+//					if (lastPlayed[songArray[i].id] || rank[songArray[i].id])
+					if (lastPlayed[songArray[i].id])
 						resArray.push(songArray[i]);
 				}
 
