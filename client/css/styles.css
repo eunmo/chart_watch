@@ -74,7 +74,7 @@ body {
 
 .song-desc-up-next {
 	display: inline-block;
-	width: 170px;
+	width: 120px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;

@@ -76,6 +76,7 @@ sub normalize_artist($)
 {
 	my $string = shift;
 	
+	if ($string =~ /^BARS & MELODY/) { return "Bars & Melody"; }
 	if ($string =~ /^CHASE & STATUS/) { return "Chase & Status"; }
 	if ($string =~ /^FLORENCE & THE MACHINE$/) { return "Florence + the Machine"; }
 	if ($string =~ /^FLORENCE\/DIZZEE RASCAL$/) { return "Florence + the Machine"; }
@@ -113,6 +114,7 @@ sub normalize_artist($)
 	if ($string =~ /^SATURDAYS$/) { return "The Saturdays"; }
 	if ($string =~ /^SCRIPT$/) { return "The Script"; }
 	if ($string =~ /^S INGROSSO$/) { return "Sebastian Ingrosso"; }
+	if ($string =~ /^VAMPS$/) { return "The Vamps"; }
 	if ($string =~ /^WANTED$/) { return "The Wanted"; }
 	if ($string =~ /^WEEKND$/) { return "The Weeknd"; }
 	if ($string =~ /^WILL I AM$/) { return "Will.I.Am"; }

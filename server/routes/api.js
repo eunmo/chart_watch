@@ -536,15 +536,23 @@
 				for (i in songCharts) {
 					row = songCharts[i];
 					songId = row.SongId;
-					if (plays[songId] && plays[songId] < 10) {
-						rank[songId] = true;
-					}
+					rank[songId] = true;
 				}
 
 				for (i in songArray) {
-//					if (lastPlayed[songArray[i].id] || rank[songArray[i].id])
-					if (lastPlayed[songArray[i].id])
+					songId = songArray[i].id;
+					resArray.push(songArray[i]);
+					/* songs that have charted should have more chance of being played */
+					if (rank[songId]) {
 						resArray.push(songArray[i]);
+						resArray.push(songArray[i]);
+						if (plays[songId] < 10) {
+							resArray.push(songArray[i]);
+							resArray.push(songArray[i]);
+							resArray.push(songArray[i]);
+							resArray.push(songArray[i]);
+						}
+					}
 				}
 
 				res.json(resArray);
