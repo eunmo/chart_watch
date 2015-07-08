@@ -66,7 +66,9 @@ sub normalize_title($)
 	if ($string =~ /^FORGET YOU$/) { return "FUCK YOU"; }
 	if ($string =~ /^FOURFIVE SECONDS$/) { return "FOURFIVESECONDS"; }
 	if ($string =~ /^MR KNOW IT ALL$/) { return "Mr. Know It All"; }
+	if ($string =~ /^I DON`T LIKE IT I LOVE IT$/) { return "I Don`t Like It, I Love It"; }
 	if ($string =~ /^N\*\*\*\*S IN PARIS$/) { return "Ni\*\*as In Paris"; }
+	if ($string =~ /^SHUT UP & DANCE$/) { return "Shut Up And Dance"; }
 	if ($string =~ /^YOU NEED ME I DON`T NEED YOU$/) { return "You Need Me, I Don`t Need You"; }
 
 	return $string;
@@ -78,6 +80,7 @@ sub normalize_artist($)
 	
 	if ($string =~ /^BARS & MELODY/) { return "Bars & Melody"; }
 	if ($string =~ /^CHASE & STATUS/) { return "Chase & Status"; }
+	if ($string =~ /^FAUL & WAD AD/) { return "Faul & Wad Ad"; }
 	if ($string =~ /^FLORENCE & THE MACHINE$/) { return "Florence + the Machine"; }
 	if ($string =~ /^FLORENCE\/DIZZEE RASCAL$/) { return "Florence + the Machine"; }
 	if ($string =~ /^LILLY WOOD & ROBIN SCHULZ$/) { return "Lilly Wood & the Prick"; }
