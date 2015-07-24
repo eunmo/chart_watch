@@ -334,7 +334,7 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 		}
 		$scope.chartName = 'Melon';
 	} else if ($scope.chart === 'billboard') {
-		if ($scope.date.getDay() < 5) {
+		if ($scope.date.getDay() < 4) {
 			$scope.date.setDate($scope.date.getDate() - 7);
 		}
 		$scope.chartName = 'Billboard';

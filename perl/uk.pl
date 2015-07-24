@@ -65,9 +65,11 @@ sub normalize_title($)
 	if ($string =~ /^GANGNAM STYLE$/) { return "강남스타일"; }
 	if ($string =~ /^FORGET YOU$/) { return "FUCK YOU"; }
 	if ($string =~ /^FOURFIVE SECONDS$/) { return "FOURFIVESECONDS"; }
-	if ($string =~ /^MR KNOW IT ALL$/) { return "Mr. Know It All"; }
+	if ($string =~ /^HOLD ON WE`RE GOING HOME$/) { return "Hold On, We`re Going Home"; }
 	if ($string =~ /^I DON`T LIKE IT I LOVE IT$/) { return "I Don`t Like It, I Love It"; }
+	if ($string =~ /^MR KNOW IT ALL$/) { return "Mr. Know It All"; }
 	if ($string =~ /^N\*\*\*\*S IN PARIS$/) { return "Ni\*\*as In Paris"; }
+	if ($string =~ /^THATPOWER$/) { return "#thatPOWER"; }
 	if ($string =~ /^SHUT UP & DANCE$/) { return "Shut Up And Dance"; }
 	if ($string =~ /^YOU NEED ME I DON`T NEED YOU$/) { return "You Need Me, I Don`t Need You"; }
 
@@ -106,6 +108,7 @@ sub normalize_artist($)
 	if ($string =~ /^DISCLOSURE$/) { return "The Disclosure"; }
 	if ($string =~ /^DR DRE$/) { return "Dr. Dre"; }
 	if ($string =~ /^DR KUCHO$/) { return "Dr. Kucho!"; }
+	if ($string =~ /^FATBOYSLIM$/) { return "Fatboy Slim"; }
 	if ($string =~ /^FUN$/) { return "Fun."; }
 	if ($string =~ /^JAY-Z$/) { return "JAY Z"; }
 	if ($string =~ /^KESHA$/) { return "Ke\$ha"; }

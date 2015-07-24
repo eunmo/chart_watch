@@ -21,6 +21,7 @@
 			var form = new formidable.IncomingForm();
 			var files = [];
 			var tags = [];
+			var albumArtistArray = [];
 
 			form.uploadDir = uploadDir;
 
@@ -36,12 +37,10 @@
 				} else {
 					var promises = [];
 					Promise.map(files, function (file) {
-						return handleUpload(file, tags);
+						return handleUpload(file, tags, albumArtistArray);
 					}, {concurrency: 1})
 					.then(function () {
-						res.writeHead(200, {'content-type': 'text/plain'});
-						res.write('received files:\n\n '+util.inspect(files));
-						res.end('tags:\n\n '+util.inspect(tags));
+						res.redirect('/#/artist/' + albumArtistArray[0].id);
 					});
 				}
 			});
@@ -58,7 +57,7 @@
 			});
 		}
 
-		function handleUpload(file, tags) {
+		function handleUpload(file, tags, albumArtistArray) {
 			console.log(file);
 			
 			var filePath = file.path;
@@ -73,7 +72,6 @@
 
 				var i, index;
 				var artistPromises = [];
-				var albumArtistArray = [];
 				var songArtistArray = [];
 				var featArtistArray = [];
 
