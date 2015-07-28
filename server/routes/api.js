@@ -553,6 +553,12 @@
 							resArray.push(songArray[i]);
 						}
 					}
+
+					if (plays[songId] < 3)
+						resArray.push(songArray[i]);
+
+					if (plays[songId] < 2)
+						resArray.push(songArray[i]);
 				}
 
 				res.json(resArray);
