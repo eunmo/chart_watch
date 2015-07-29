@@ -18,7 +18,7 @@
 				</a>
 				<div class="media-body media-body-up-next">
 					<div class="media-desc-up-next">
-						<span class="song-desc-up-next">{{song.title}}</span>
+						<span class="song-desc-up-next">{{song.title | normalizeString}}</span>
 						<span class="glyphicon glyphicon-remove-circle pull-right" ng-click="removeSong(song)"></span>
 					</div>
 					<div class="media-desc-up-next">

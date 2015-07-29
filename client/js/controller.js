@@ -449,6 +449,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		var loading = false;
 		var loaded = false;
 		var selected = false;
+		var startNext = false;
 
 		var start = function () {
 			if (selected && loaded) {
@@ -487,6 +488,13 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		};
 
 		this.play = function () {
+			if ($scope.crossfade) {
+				$scope.crossfade = false;
+				elem.volume = 0.3;
+				$(elem).animate({volume: 1}, 1000 * $scope.crossfadeDuration, 'swing');				
+			} else {
+				elem.volume = 1;
+			}
 			elem.play();
 		};
 
@@ -512,6 +520,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		
 		elem.addEventListener('canplaythrough', function () {
 			loaded = true;
+			startNext = false;
 			start();
 		});
 
@@ -520,16 +529,23 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 				$scope.$apply(function () {
 					$scope.time = elem.currentTime;
 					$scope.updateProgress(elem.currentTime / elem.duration);
+					if (elem.duration - elem.currentTime < $scope.crossfadeDuration && !startNext) {
+						startNext = true;
+						$scope.crossfade = true;
+						$scope.playNext();
+						$(elem).animate({volume: 0.3}, 1000 * $scope.crossfadeDuration, 'swing');
+					}
 				});
 			}
 		});
 
 		elem.addEventListener('ended', function () {
-			$scope.pause();
-			$scope.updateProgress(0);
+			if (!startNext) {
+				$scope.pause();
+				$scope.updateProgress(0);
+			}
 			loading = false;
 			$http.put('api/play/song', song);
-			$scope.playNext();
 		});
 	};
 	
@@ -541,6 +557,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	$rootScope.audios = [];
 	$rootScope.audios[0] = new Audio($scope);
 	$rootScope.audios[1] = new Audio($scope);
+	$rootScope.audios[2] = new Audio($scope);
 	$scope.selectedIndex = 0;
 	$scope.selectedAudio = $rootScope.audios[$scope.selectedIndex];
 	$scope.selectedAudio.setSelected(true);
@@ -549,11 +566,14 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	$scope.duration = 0;
 	$scope.bindDone = false;
 	$scope.preloaded = false;
+	$scope.crossfade = false;
+	$scope.crossfadeDuration = 10;
 
 	$scope.initAudio = function () {
 		alert('init audio for iOS');
 		$rootScope.audios[0].init();
 		$rootScope.audios[1].init();
+		$rootScope.audios[2].init();
 	};
 
 	$scope.getRandom = function () {
@@ -566,10 +586,17 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		}
 	};
 
+	$scope.getNextIndex = function () {
+		var nextIndex = $scope.selectedIndex + 1;
+		if (nextIndex >= 3)
+			nextIndex = 0;
+		return nextIndex;
+	};
+
 	$scope.preload = function () {
 		if (0 in $scope.songs) {
 			var song = $scope.songs[0];
-			var nextIndex = 1 - $scope.selectedIndex;
+			var nextIndex = $scope.getNextIndex();
 			var nextAudio = $rootScope.audios[nextIndex];
 			nextAudio.load(song);
 			$scope.preloaded = true;
@@ -577,7 +604,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	};
 
 	$scope.playNext = function () {
-		var nextIndex = 1 - $scope.selectedIndex;
+		var nextIndex = $scope.getNextIndex();
 		var nextAudio = $rootScope.audios[nextIndex];
 		$scope.getRandom();
 
