@@ -529,7 +529,8 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 				$scope.$apply(function () {
 					$scope.time = elem.currentTime;
 					$scope.updateProgress(elem.currentTime / elem.duration);
-					if (elem.duration - elem.currentTime < $scope.crossfadeDuration && !startNext) {
+					if ($scope.useCrossfade && 
+							elem.duration - elem.currentTime < $scope.crossfadeDuration && !startNext) {
 						startNext = true;
 						$scope.crossfade = true;
 						$scope.playNext();
@@ -546,6 +547,9 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 			}
 			loading = false;
 			$http.put('api/play/song', song);
+			if (!startNext) {
+				$scope.playNext();
+			}
 		});
 	};
 	
@@ -566,6 +570,8 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	$scope.duration = 0;
 	$scope.bindDone = false;
 	$scope.preloaded = false;
+
+	$scope.useCrossfade = false;
 	$scope.crossfade = false;
 	$scope.crossfadeDuration = 10;
 
