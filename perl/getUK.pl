@@ -5,7 +5,7 @@ my $date = DateTime->today();
 $date->truncate( to => 'week' )->subtract( weeks => 1);
 $date->add( days => 5 );
 
-while ($date->year >= 2010) {
+while ($date->year >= 2000) {
 	my $yy = $date->year;
 	my $mm = $date->month;
 	my $dd = $date->day;

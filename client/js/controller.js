@@ -323,6 +323,7 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 	$scope.date = new Date();
 	$scope.date = new Date(Date.UTC($scope.date.getFullYear(), $scope.date.getMonth(), $scope.date.getDate()));
 
+	$scope.minDate = new Date(Date.UTC(2010, 0, 2));
 	if ($scope.chart === 'gaon') {
 		if ($scope.date.getDay() < 4) {
 			$scope.date.setDate($scope.date.getDate() - 7);
@@ -338,15 +339,16 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 			$scope.date.setDate($scope.date.getDate() - 7);
 		}
 		$scope.chartName = 'Billboard';
+		$scope.minDate = new Date(Date.UTC(2000, 0, 1));
 	} else if ($scope.chart === 'uk') {
 		if ($scope.date.getDay() < 1) {
 			$scope.date.setDate($scope.date.getDate() - 7);
 		}
 		$scope.chartName = 'UK';
+		$scope.minDate = new Date(Date.UTC(2000, 0, 1));
 	}
 	$scope.date.setDate($scope.date.getDate() - $scope.date.getDay() - 1);
 	$scope.max = $scope.date.getTime();
-	$scope.minDate = new Date(Date.UTC(2010, 0, 2));
 	$scope.min = $scope.minDate.getTime();
 	$scope.rows = [];
 
