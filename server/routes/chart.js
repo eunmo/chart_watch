@@ -168,6 +168,7 @@
 				return exec(execStr);
 			})
 			.spread(function (stdout, stderr) {
+				console.log(stdout);
 				var chart = JSON.parse(stdout);
 				var i, row;
 				var promises = [];

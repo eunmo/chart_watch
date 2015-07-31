@@ -62,7 +62,7 @@ sub normalize_title($)
 	
 	$string =~ s/\(.*$//;
 	$string =~ s/\s+$//g;
-	$string =~ s/[\'’]/`/g;
+	$string =~ s/[\'’"]/`/g;
 	$string =~ s/F\*\*k/Fuck/g;
 	
 	if ($string =~ /^Gangnam Style$/) { return "강남스타일"; }
@@ -82,6 +82,7 @@ sub normalize_artist($)
 	$string =~ s/[,&＆].*$//g;
 	$string =~ s/Featuring.*$//;
 	$string =~ s/\s+$//;
+	$string =~ s/[\'’"]/`/g;
 
 	if ($string =~ /^psy$/) { return "싸이"; }
 	if ($string =~ /^bob$/) { return "B.o.B"; }

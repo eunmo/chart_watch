@@ -102,6 +102,7 @@ sub normalize_artist($)
 	$string =~ s/\sFT\s.*$//;
 	$string =~ s/\sVS\s.*$//;
 	$string =~ s/\s+$//;
+	$string =~ s/[\'’]/`/g;
 
 	if ($string =~ /^BLACK EYED PEAS$/) { return "The Black Eyed Peas"; }
 	if ($string =~ /^BOB$/) { return "B.o.B"; }

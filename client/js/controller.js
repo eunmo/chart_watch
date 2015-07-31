@@ -708,6 +708,13 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		$scope.playing = false;
 	};
 
+	$scope.toggle = function () {
+		if ($scope.playing)
+			$scope.pause();
+		else
+			$scope.play();
+	};
+
 	$scope.next = function () {
 		$scope.pause();
 		$scope.selectedAudio.stop();

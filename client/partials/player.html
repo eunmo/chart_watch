@@ -1,6 +1,6 @@
 <div ng-show="loaded">
 	<div class="td-img center-block">
-		<img src="/{{albumId}}.jpg" class="img-rounded img-album">
+		<img src="/{{albumId}}.jpg" class="img-rounded img-album" ng-click="toggle()">
 	</div>
 	<h4 style="text-align: center">
 		{{title | normalizeString}}
