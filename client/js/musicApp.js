@@ -37,6 +37,10 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		templateUrl: '/partials/chart.html',
 		controller: 'ChartCtrl'
 	})
+	.when('/recent', {
+		templateUrl: '/partials/recent.html',
+		controller: 'RecentCtrl'
+	})
 	.otherwise({
 		redirectTo: '/'
 	});

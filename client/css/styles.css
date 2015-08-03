@@ -31,8 +31,16 @@ body {
 	width: 50px;
 }
 
+.img-album-up-list {
+	width: 30px;
+}
+
 .td-img {
 	width: 330px;
+}
+
+.td-img-list {
+	padding: 3px !important;
 }
 
 .song-desc {

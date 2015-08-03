@@ -1,15 +1,12 @@
 (function () {
 	'use strict';
-	
+
+	var common = require('../common/cwcommon.js');	
 	var Sequelize = require('sequelize');
 	var Promise = require('bluebird');
 
 	var artistCmpId = function (a, b) {
 		return a.id - b.id;
-	};
-
-	var artistCmpOrder = function (a, b) {
-		return a.order - b.order;
 	};
 
 	var songCmp = function (a, b) {
@@ -33,7 +30,7 @@
 			if (match)
 				delete song.artists;
 		} else {
-			song.artists.sort(artistCmpOrder);
+			song.artists.sort(common.artistCmpOrder);
 		}
 	};
 
@@ -110,17 +107,9 @@
 		var i;
 		var artistRow;
 		var songArtist;
-		var song = {
-			id: songRow.id,
-			title: songRow.title,
-			time: songRow.time,
-			plays: songRow.plays,
-			lastPlayed: songRow.lastPlayed,
-			disk: albumSong.disk,
-			track: albumSong.track,
-			artists: [],
-			features: []
-		};
+		var song = newSong(songRow);
+		song.disk = albumSong.disk;
+		song.track = albumSong.track;
 
 		for (i in songRow.Artists) {
 			artistRow = songRow.Artists[i];
@@ -136,7 +125,7 @@
 			}
 		}
 
-		song.features.sort(artistCmpOrder);
+		song.features.sort(common.artistCmpOrder);
 		removeDuplicateArtistOrSort(album, song);
 		album.songs.push(song);
 	};
@@ -156,7 +145,7 @@
 				createSong(songRow, songRow.AlbumSong, album);
 			}
 
-			album.albumArtists.sort(artistCmpOrder);
+			album.albumArtists.sort(common.artistCmpOrder);
 			album.songs.sort(songCmp);
 			albums.push(album);
 		}
@@ -182,7 +171,7 @@
 					}
 					album.albumArtists.sort(artistCmpId);
 					createSong(songRow, albumRow.AlbumSong, album);
-					album.albumArtists.sort(artistCmpOrder);
+					album.albumArtists.sort(common.artistCmpOrder);
 					album.songs.sort(songCmp);
 				}
 			}

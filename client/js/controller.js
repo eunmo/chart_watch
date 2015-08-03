@@ -441,6 +441,14 @@ musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routePara
 	};
 });
 
+musicApp.controller('RecentCtrl', function ($rootScope, $scope, $http, songService) {
+	$scope.rows = [];
+	$http.get('api/lastPlayed')
+	.success(function (lastPlayed) {
+		$scope.rows = lastPlayed;
+	});
+});
+
 musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $timeout, songService) {
 
 	// internal class for manipulating audio element

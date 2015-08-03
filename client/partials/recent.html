@@ -1,0 +1,26 @@
+<h1>
+	Recently Played
+</h1>
+<table class="table table-hover">
+	<tr ng-repeat="song in rows">
+		<td>
+			{{song.lastPlayed | date: 'short'}}
+		</td>
+		<td class="td-img-list">
+			<img src="/{{song.albumId}}.30px.jpg" class="img-rounded img-album-up-list">
+		</td>
+		<td>
+			<artist-array array="song.songArtists"></artist-array>
+		</td>
+		<td>
+			{{song.title | normalizeString}}
+			<span class="pull-right song-desc-right">
+				<chart-badge rank="song.rank.gaon" prefix="'G'"></chart-badge>
+				<chart-badge rank="song.rank.melon" prefix="'M'"></chart-badge>
+				<chart-badge rank="song.rank.billboard" prefix="'US'"></chart-badge>
+				<chart-badge rank="song.rank.uk" prefix="'UK'"></chart-badge>
+				<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>
+			</span>
+		</td>
+	</tr>
+</table>

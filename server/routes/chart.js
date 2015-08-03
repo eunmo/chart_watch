@@ -1,6 +1,7 @@
 (function () {
 	'use strict';
 
+	var common = require('../common/cwcommon');
 	var path = require('path');
 	var fs = require('fs');
 	var Promise = require('bluebird');
@@ -15,50 +16,7 @@
 	var ukScript = path.resolve('perl/uk.pl');
 	var ukFilePrefix = path.resolve('chart/uk/uk');
 	
-	var artistCmpOrder = function (a, b) {
-		return a.order - b.order;
-	};
-
-	var getPrimaryGroup = function (artist) {
-		var primaryGroup = null;
-		for (var i in artist.Group) {
-			var group = artist.Group[i];
-			if (group.ArtistGroup.primary) {
-				primaryGroup = {
-					name: group.name,
-					id: group.id
-				};
-				break;
-			}
-		}
-		return primaryGroup;
-	};
-
 	module.exports = function (router, models) {
-
-		function getSongArtists (song) {
-			var songArtists = [];
-			var j;
-			var artistRow, songArtist;
-
-			for (j in song.Artists) {
-				artistRow = song.Artists[j];
-				if (!artistRow.SongArtist.feat) {
-					songArtist = {
-						id: artistRow.id,
-						name: artistRow.name,
-						order: artistRow.SongArtist.order,
-						primaryGroup: getPrimaryGroup(artistRow)
-					};
-					songArtists.push(songArtist);
-				}
-			}
-
-			songArtists.sort(artistCmpOrder);
-
-			return songArtists;
-		}
-
 		function getChartSong (title, artistName, artistArray, i, date, chart) {
 			return models.Artist.findOne({ where: { name: artistName } })
 			.then(function (artist) {
@@ -85,7 +43,6 @@
 						if (fullArtist) {
 							var songArtists = [];
 							var j;
-							var artistRow, songArtist;
 							var index = 0;
 
 							for (j in fullArtist.Songs) {
@@ -95,20 +52,7 @@
 								}
 							}
 
-							for (j in fullArtist.Songs[index].Artists) {
-								artistRow = fullArtist.Songs[index].Artists[j];
-								if (!artistRow.SongArtist.feat) {
-									songArtist = {
-										id: artistRow.id,
-										name: artistRow.name,
-										order: artistRow.SongArtist.order,
-										primaryGroup: getPrimaryGroup(artistRow)
-									};
-									songArtists.push(songArtist);
-								}
-							}
-
-							songArtists.sort(artistCmpOrder);
+							songArtists = common.getSongArtists(fullArtist.Songs[index]);
 
 							artistArray[i] = { index: Number(i) + 1, artistFound: true, songFound: true, song: fullArtist.Songs[index], songArtists: songArtists };
 
@@ -157,7 +101,7 @@
 					row = charts[i];
 					rank = row.rank;
 					song = row.Song;
-					artistArray[rank - 1] = { index: rank, artistFound: true, songFound: true, song: song, songArtists: getSongArtists(song) };
+					artistArray[rank - 1] = { index: rank, artistFound: true, songFound: true, song: song, songArtists: common.getSongArtists(song) };
 				}
 
 				if (fs.existsSync(chartFile)) {
@@ -266,7 +210,7 @@
 							songArray[song.id] = {
 								curRank: [rank],
 								song: song,
-								songArtists: getSongArtists(song)
+								songArtists: common.getSongArtists(song)
 							};
 						} else {
 							songArray[song.id].curRank.push(rank);
