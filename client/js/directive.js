@@ -1,3 +1,10 @@
+musicApp.directive('navi', function () {
+	return {
+		restrict: 'E',
+		templateUrl: 'partials/navi.html'
+	};
+});
+
 musicApp.directive('upNext', function () {
 	return {
 		restrict: 'E',
