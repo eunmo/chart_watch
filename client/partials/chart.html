@@ -19,6 +19,11 @@
 		<td>
 			{{row.index}}
 		</td>
+		<td ng-show="row.songFound" class="td-img-list">
+			<img src="/{{row.song.Albums[0].id}}.30px.jpg" class="img-rounded img-album-up-list">
+		</td>
+		<td ng-show="!row.songFound">
+		</td>
 		<td ng-show="row.songFound">
 			<artist-array array="row.songArtists"></artist-array>
 		</td>
