@@ -3,7 +3,7 @@ musicApp.controller('InitialCtrl', function ($rootScope, $scope, $http, songServ
   $scope.initials = [];
 
 	$scope.initials.push.apply($scope.initials, '가나다라마바사아자차카타파하'.split(''));
-	$scope.initials.push.apply($scope.initials, 'ABCDEFGHIJLKMNOPQRSTUVWXYZ'.split(''));
+	$scope.initials.push.apply($scope.initials, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
 	$scope.initials.push('0-9');
 
 	$scope.shuffle = function () {
@@ -335,7 +335,7 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 		}
 		$scope.chartName = 'Melon';
 	} else if ($scope.chart === 'billboard') {
-		if ($scope.date.getDay() < 4) {
+		if ($scope.date.getDay() < 3) {
 			$scope.date.setDate($scope.date.getDate() - 7);
 		}
 		$scope.chartName = 'Billboard';

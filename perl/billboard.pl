@@ -65,6 +65,8 @@ sub normalize_title($)
 	$string =~ s/[\'’"]/`/g;
 	$string =~ s/F\*\*k/Fuck/g;
 	
+	if ($string =~ /^Doesn t Really Matter$/) { return "Doesn`t Really Matter"; }
+	if ($string =~ /^Hot Boy$/) { return "Hot Nigga"; }
 	if ($string =~ /^Gangnam Style$/) { return "강남스타일"; }
 	if ($string =~ /^G\.D\.F\.R.$/) { return "GDFR"; }
 	if ($string =~ /^Hot Boy$/) { return "Hot Nigga"; }
@@ -81,6 +83,7 @@ sub normalize_artist($)
 	$string =~ s/\(.*?\)//g;
 	$string =~ s/[,&＆].*$//g;
 	$string =~ s/Featuring.*$//;
+	$string =~ s/Duet.*$//;
 	$string =~ s/\s+$//;
 	$string =~ s/[\'’"]/`/g;
 
@@ -92,6 +95,7 @@ sub normalize_artist($)
 	if ($string =~ /^Far\*East Movement$/) { return "Far East Movement"; }
 	if ($string =~ /^foster people$/) { return "Foster The People"; }
 	if ($string =~ /^fun$/) { return "Fun."; }
+	if ($string =~ /^Janet$/) { return "Janet Jackson"; }
 	if ($string =~ /^Jay Z Kanye West$/) { return "Jay Z"; }
 	if ($string =~ /^Jay-Z/) { return "Jay Z"; }
 	if ($string =~ /^keha$/) { return "Ke\$ha"; }

@@ -17,6 +17,11 @@ $small =~ s/jpg$/50px\.jpg/;
 
 system("convert $imgfile -resize 50 $small");
 
+$small = $imgfile
+$small =~ s/jpg$/30px\.jpg/;
+
+system("convert $imgfile -resize 30 $small");
+
 sub save_img {
 	my $id3v2 = shift;
 	my $imgfile = shift;

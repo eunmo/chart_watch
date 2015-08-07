@@ -107,7 +107,7 @@
 		var i;
 		var artistRow;
 		var songArtist;
-		var song = newSong(songRow);
+		var song = common.newSong(songRow);
 		song.disk = albumSong.disk;
 		song.track = albumSong.track;
 

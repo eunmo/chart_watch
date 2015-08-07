@@ -17,11 +17,11 @@
 	var ukFilePrefix = path.resolve('chart/uk/uk');
 	
 	module.exports = function (router, models) {
-		function getChartSong (title, artistName, artistArray, i, date, chart) {
+		function getChartSong (title, artistName, artistArray, i, rank, date, chart) {
 			return models.Artist.findOne({ where: { name: artistName } })
 			.then(function (artist) {
 				if (!artist) {
-					artistArray[i] = { index: Number(i) + 1, artistFound: false, songFound: false, song: title, artist: artistName };
+					artistArray[i] = { index: rank, artistFound: false, songFound: false, song: title, artist: artistName };
 				}
 
 				if (artist) {
@@ -54,16 +54,16 @@
 
 							songArtists = common.getSongArtists(fullArtist.Songs[index]);
 
-							artistArray[i] = { index: Number(i) + 1, artistFound: true, songFound: true, song: fullArtist.Songs[index], songArtists: songArtists };
+							artistArray[i] = { index: rank, artistFound: true, songFound: true, song: fullArtist.Songs[index], songArtists: songArtists };
 
 							return models.SongChart.create({
 								type: chart,
 								week: date,
-								rank: Number(i) + 1,
+								rank: rank,
 								SongId: fullArtist.Songs[index].id
 							});
 						} else {
-							artistArray[i] = { index: Number(i) + 1, artistFound: true, songFound: false, song: title, artist: artist };
+							artistArray[i] = { index: rank, artistFound: true, songFound: false, song: title, artist: artist };
 						}
 					});
 				}
@@ -121,7 +121,7 @@
 					if (artistArray[i] !== undefined)
 						continue;
 					row = chart[i];
-					promises[i] = getChartSong (row.song, row.artist, artistArray, i, date, chartName);
+					promises[i] = getChartSong (row.song, row.artist, artistArray, i, row.rank, date, chartName);
 				}
 
 				Promise.all(promises)

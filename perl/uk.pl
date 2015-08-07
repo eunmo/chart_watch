@@ -20,6 +20,7 @@ my $url = "http://www.officialcharts.com/charts/singles-chart/$ld_ymd/7501";
 my $html = get("$url");
 my $dom = Mojo::DOM->new($html);
 my $rank = 1;
+my $count = 1;
 
 print "[";
 
@@ -34,8 +35,13 @@ for my $div ($dom->find('div[class*="title-artist"]')->each) {
 		my $artist = $div->find('div[class="artist"]')->first->find('a')->first->text;
 		$artist_norm = normalize_artist($artist);
 	}
-	print ",\n" if $rank > 1;
-	print "{ \"rank\": $rank, \"song\": \"$title_norm\", \"artist\": \"$artist_norm\" }";
+	my @tokens = split(/\//, $title_norm);
+	foreach my $title_token (@tokens) {
+		my $token_norm = normalize_title($title_token);
+		print ",\n" if $count > 1;
+		print "{ \"rank\": $rank, \"song\": \"$token_norm\", \"artist\": \"$artist_norm\" }";
+		$count++;
+	}
 	$rank++;
 }
 
@@ -57,6 +63,7 @@ sub normalize_title($)
 	
 	$string =~ s/\(.*\)//g;
 	$string =~ s/\s+$//g;
+	$string =~ s/^\s+//g;
 	$string =~ s/[\'’]/`/g;
 	$string =~ s/F\*\*K/FUCK/g;
 	
@@ -73,6 +80,7 @@ sub normalize_title($)
 	if ($string =~ /^SHUT UP & DANCE$/) { return "Shut Up And Dance"; }
 	if ($string =~ /^THATPOWER$/) { return "#thatPOWER"; }
 	if ($string =~ /^YOU NEED ME I DON`T NEED YOU$/) { return "You Need Me, I Don`t Need You"; }
+	if ($string =~ /^WHAT GOES AROUND COMES AROUND$/) { return "What Goes Around...Comes Around"; }
 
 	return $string;
 }
@@ -112,11 +120,14 @@ sub normalize_artist($)
 	if ($string =~ /^DR KUCHO$/) { return "Dr. Kucho!"; }
 	if ($string =~ /^FATBOYSLIM$/) { return "Fatboy Slim"; }
 	if ($string =~ /^FUN$/) { return "Fun."; }
+	if ($string =~ /^HEARSAY$/) { return "Hear`Say"; }
 	if ($string =~ /^JAY-Z$/) { return "JAY Z"; }
 	if ($string =~ /^KESHA$/) { return "Ke\$ha"; }
 	if ($string =~ /^LUMINEERS$/) { return "The Lumineers"; }
+	if ($string =~ /^KILLERS$/) { return "The Killers"; }
 	if ($string =~ /^MAGIC$/) { return "MAGIC!"; }
 	if ($string =~ /^MAGICIAN$/) { return "The Magician"; }
+	if ($string =~ /^OZZY$/) { return "Ozzy Osbourne"; }
 	if ($string =~ /^PINK$/) { return "P!nk"; }
 	if ($string =~ /^PSY$/) { return "싸이"; }
 	if ($string =~ /^SATURDAYS$/) { return "The Saturdays"; }
