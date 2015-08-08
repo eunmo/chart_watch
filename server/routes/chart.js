@@ -147,16 +147,16 @@
 			getChart(req, res, 'uk', ukScript, ukFilePrefix);
 		});
 
-		function getMaxDate (type, dates, index) {
+		function getMaxDate (type, dates) {
 			return models.SongChart.max('week', { where: { type: type } } )
 			.success(function (row) {
-				dates[index] = row;
+				dates[type] = row;
 			});
 		}
 
-		function getCurrentSongs (type, date, songs, index) {
+		function getCurrentSongs (type, dates, songs, index) {
 			return models.SongChart.findAll({
-				where: { type: type, week: date, rank: { lt: 8 } },
+				where: { type: type, week: dates[type], rank: { lt: 8 } },
 				include: [
 					{ model: models.Song,
 						include: [
@@ -174,24 +174,22 @@
 		}
 
 		router.get('/chart/current', function (req, res) {
+			var charts = ['gaon', 'melon', 'billboard', 'uk'];
 			var datePromises = [];
-			var dates = [];
+			var dates = {};
 			var songPromises = [];
 			var songs = [];
 			var songArray = [];
+			var i;
 
-			datePromises.push(getMaxDate('gaon', dates, 0));
-			datePromises.push(getMaxDate('melon', dates, 1));
-			datePromises.push(getMaxDate('billboard', dates, 2));
-			datePromises.push(getMaxDate('uk', dates, 3));
+			for (i in charts)
+				datePromises.push(getMaxDate(charts[i], dates));
 
 			Promise.all(datePromises)
 			.then(function () {
 
-				songPromises.push(getCurrentSongs('gaon', dates[0], songs, 0));
-				songPromises.push(getCurrentSongs('melon', dates[1], songs, 1));
-				songPromises.push(getCurrentSongs('billboard', dates[2], songs, 2));
-				songPromises.push(getCurrentSongs('uk', dates[3], songs, 3));
+				for (i in charts)
+					songPromises.push(getCurrentSongs(charts[i], dates, songs, i));
 
 				return Promise.all(songPromises);
 			})
@@ -215,6 +213,17 @@
 						} else {
 							songArray[song.id].curRank.push(rank);
 							songArray[song.id].curRank.sort();
+						}
+						songArray[song.id][charts[i]] = { min: rank, count: 1 };
+					}
+				}
+
+				for (i in songArray) {
+					for (j in charts) {
+						if (songArray[i][charts[j]] !== undefined &&
+								songArray[i][charts[j]].min === songArray[i].curRank[0]) {
+							songArray[i].chart = Number(j);
+							break;
 						}
 					}
 				}
@@ -265,8 +274,8 @@
 							return a.curRank[i] - b.curRank[i];
 					}
 
-					if (a.curRank.length === b.curRank.lenghth)
-						return a.id - b.id;
+					if (a.curRank.length === b.curRank.length) 
+						return a.chart - b.chart;
 
 					return b.curRank.length - a.curRank.length;
 				};

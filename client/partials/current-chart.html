@@ -2,10 +2,23 @@
 		<span ng-click="addChart()">최신 차트</span>
 </h1>
 <table class="table table-hover">
+	<tr>
+		<th>가온</th>
+		<th>멜론</th>
+		<th>US</th>
+		<th>UK</th>
+		<th></th>
+		<th>Artist</th>
+		<th>Song</th>
+	</tr>
 	<tr ng-repeat="row in rows">
-		<td>
+		<!--td>
 			{{row.index}}
-		</td>
+		</td-->
+		<td><span class="pull-left span-rank"><rank-badge rank="row.gaon"></chart-badge></span></td>
+		<td><span class="pull-left span-rank"><rank-badge rank="row.melon"></chart-badge></span></td>
+		<td><span class="pull-left span-rank"><rank-badge rank="row.billboard"></chart-badge></span></td>
+		<td><span class="pull-left span-rank"><rank-badge rank="row.uk"></chart-badge></span></td>
 		<td class="td-img-list">
 			<img src="/{{row.song.Albums[0].id}}.30px.jpg" class="img-rounded img-album-up-list">
 		</td>

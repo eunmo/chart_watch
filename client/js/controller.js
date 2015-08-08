@@ -419,6 +419,7 @@ musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routePara
 	$scope.rows = [];
 	$http.get('chart/current')
 	.success(function (chartRows) {
+		console.log(chartRows);
 		$scope.rows = chartRows;
 	});
 

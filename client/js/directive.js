@@ -61,3 +61,14 @@ musicApp.directive('chartBadge', function () {
 		templateUrl: 'partials/chart-badge.html'
 	};
 });
+
+musicApp.directive('rankBadge', function () {
+	return {
+		restrict: 'E',
+		scope: {
+			rank: '=rank',
+			prefix: '=prefix'
+		},
+		templateUrl: 'partials/rank-badge.html'
+	};
+});

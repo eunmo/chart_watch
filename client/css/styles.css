@@ -129,3 +129,13 @@ body {
 .label-as-badge {
 	border-radius: 1em;
 }
+
+.span-rank {
+	height: 20px;
+	font-size: 18px;
+}
+
+.badge-rank {
+	position: relative;
+	top: -4px;
+}

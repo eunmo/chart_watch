@@ -17,7 +17,7 @@ $small =~ s/jpg$/50px\.jpg/;
 
 system("convert $imgfile -resize 50 $small");
 
-$small = $imgfile
+$small = $imgfile;
 $small =~ s/jpg$/30px\.jpg/;
 
 system("convert $imgfile -resize 30 $small");
