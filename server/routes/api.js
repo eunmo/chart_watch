@@ -407,7 +407,8 @@
 				promises = [];
 
 				promises.push(getArtistGroup(models, artist));
-				promises.push(getSongChart(models, artist));
+				if (albums.length > 0)
+					promises.push(getSongChart(models, artist));
 
 				return Promise.all(promises);
 			})
