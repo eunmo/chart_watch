@@ -93,6 +93,7 @@ sub normalize_artist($)
 	if ($string =~ /^브로$/) { return "Bro"; }
 	if ($string =~ /^Gary$/) { return "개리"; }
 	if ($string =~ /^XIA$/) { return "김준수"; }
+	if ($string =~ /^Sik K$/) { return "Sik-K"; }
 
 	return $string;
 }

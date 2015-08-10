@@ -28,7 +28,7 @@ body {
 }
 
 .img-album-up-next {
-	width: 50px;
+	width: 40px;
 }
 
 .img-album-up-list {
@@ -67,7 +67,7 @@ body {
 }
 
 .media-body-up-next {
-	width: 190px;
+	width: 200px;
 }
 
 .media-desc-up-next {
@@ -77,7 +77,7 @@ body {
 
 .song-desc-up-next {
 	display: inline-block;
-	width: 170px;
+	width: 180px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;

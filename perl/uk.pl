@@ -77,6 +77,8 @@ sub normalize_title($)
 	if ($string =~ /^MR KNOW IT ALL$/) { return "Mr. Know It All"; }
 	if ($string =~ /^N\*\*\*\*S IN PARIS$/) { return "Ni\*\*as In Paris"; }
 	if ($string =~ /^OOPS! I DID IT AGAIN$/) { return "Oops!... I Did It Again"; }
+	if ($string =~ /^PLEASE PLEASE$/) { return "Please, Please"; }
+	if ($string =~ /^SORRY`S NOT GOOD ENOUGH$/) { return "Sorry`s Not Good Enough/Friday Night"; }
 	if ($string =~ /^SHUT UP & DANCE$/) { return "Shut Up And Dance"; }
 	if ($string =~ /^THATPOWER$/) { return "#thatPOWER"; }
 	if ($string =~ /^YOU NEED ME I DON`T NEED YOU$/) { return "You Need Me, I Don`t Need You"; }
