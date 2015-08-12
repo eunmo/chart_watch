@@ -129,6 +129,7 @@ sub normalize_artist($)
 	if ($string =~ /^KILLERS$/) { return "The Killers"; }
 	if ($string =~ /^MAGIC$/) { return "MAGIC!"; }
 	if ($string =~ /^MAGICIAN$/) { return "The Magician"; }
+	if ($string =~ /^NOTORIOUS BIG$/) { return "The Notorious B.I.G."; }
 	if ($string =~ /^OZZY$/) { return "Ozzy Osbourne"; }
 	if ($string =~ /^PINK$/) { return "P!nk"; }
 	if ($string =~ /^PSY$/) { return "싸이"; }
