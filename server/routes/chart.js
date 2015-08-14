@@ -17,7 +17,7 @@
 	var ukFilePrefix = path.resolve('chart/uk/uk');
 	
 	module.exports = function (router, models) {
-		function getChartSong (title, artistName, artistArray, i, rank, date, chart) {
+		function getChartSong (title, artistName, artistArray, i, rank, date, chart, songIds) {
 			return models.Artist.findOne({ where: { name: artistName } })
 			.then(function (artist) {
 				if (!artist) {
@@ -46,6 +46,8 @@
 							var index = 0;
 
 							for (j in fullArtist.Songs) {
+								if (songIds[fullArtist.Songs[j].id])
+									continue;
 								if (fullArtist.Songs[j].title.toLowerCase() === title.toLowerCase()) {
 									index = j;
 									break;
@@ -61,6 +63,8 @@
 								week: date,
 								rank: rank,
 								SongId: fullArtist.Songs[index].id
+							}).catch(function (errors) {
+								artistArray[i] = { index: rank, artistFound: true, songFound: false, song: title, artist: artist };
 							});
 						} else {
 							artistArray[i] = { index: rank, artistFound: true, songFound: false, song: title, artist: artist };
@@ -79,6 +83,9 @@
 											(month < 10 ? '.0' : '.') + month +
 											(day < 10 ? '.0' : '.') + day;
 			var date = new Date(year, month - 1, day);
+			var chartRows = [];
+			var chartRank = [];
+			var songIds = [];
 
 			models.SongChart.findAll({
 				where: { type: chartName, week: date },
@@ -101,7 +108,9 @@
 					row = charts[i];
 					rank = row.rank;
 					song = row.Song;
-					artistArray[rank - 1] = { index: rank, artistFound: true, songFound: true, song: song, songArtists: common.getSongArtists(song) };
+					chartRank[rank] = true;
+					chartRows.push({ index: rank, artistFound: true, songFound: true, song: song, songArtists: common.getSongArtists(song) });
+					songIds[song.id] = true;
 				}
 
 				if (fs.existsSync(chartFile)) {
@@ -112,21 +121,33 @@
 				return exec(execStr);
 			})
 			.spread(function (stdout, stderr) {
-				console.log(stdout);
 				var chart = JSON.parse(stdout);
 				var i, row;
 				var promises = [];
 
 				for (i in chart) {
-					if (artistArray[i] !== undefined)
-						continue;
 					row = chart[i];
-					promises[i] = getChartSong (row.song, row.artist, artistArray, i, row.rank, date, chartName);
+					if (chartRank[row.rank])
+						continue;
+					promises[i] = getChartSong (row.song, row.artist, artistArray, i, row.rank, date, chartName, songIds);
 				}
 
 				Promise.all(promises)
 				.then(function () {
-					res.json(artistArray);
+					var i, results = [];
+					for (i in chartRows) {
+						results.push(chartRows[i]);
+					}
+					for (i in artistArray) {
+						results.push(artistArray[i]);
+					}
+
+					var rankCmp = function (a, b) {
+						return a.index - b.index;
+					}
+
+					results.sort(rankCmp);
+					res.json(results);
 				});
 			});
 		}

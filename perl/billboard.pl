@@ -70,6 +70,7 @@ sub normalize_title($)
 	if ($string =~ /^Gangnam Style$/) { return "강남스타일"; }
 	if ($string =~ /^G\.D\.F\.R.$/) { return "GDFR"; }
 	if ($string =~ /^Hot Boy$/) { return "Hot Nigga"; }
+	if ($string =~ /^Ignition$/) { return "Ignition Remix"; }
 	if ($string =~ /^It s Gonna Be Me$/) { return "It`s Gonna Be Me"; }
 	if ($string =~ /^Sexy Chick$/) { return "Sexy Bitch"; }
 
@@ -110,9 +111,12 @@ sub normalize_artist($)
 	if ($string =~ /^nico vinz$/) { return "Nico & Vinz"; }
 	if ($string =~ /^pnk$/) { return "P!nk"; }
 	if ($string =~ /^plain white ts$/) { return "Plain White T`s"; }
+	if ($string =~ /^r kelly$/) { return "R. Kelly"; }
+	if ($string =~ /^sisq$/) { return "Sisqo"; }
 	if ($string =~ /^stu heiss$/) { return "Nelly"; }
 	if ($string =~ /^selena gomez scene$/) { return "Selena Gomez & the Scene"; }
 	if ($string =~ /^ti$/) { return "T.I."; }
+	if ($string =~ /^t pain$/) { return "T-Pain"; }
 	if ($string =~ /^wanted$/) { return "The Wanted"; }
 	if ($string =~ /^weeknd$/) { return "The Weeknd"; }
 	if ($string =~ /^william$/) { return "Will.I.Am"; }

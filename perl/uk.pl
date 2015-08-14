@@ -67,6 +67,7 @@ sub normalize_title($)
 	$string =~ s/[\'’]/`/g;
 	$string =~ s/F\*\*K/FUCK/g;
 	
+	if ($string =~ /^AMARILLO$/) { return "Is This the Way to Amarillo"; }
 	if ($string =~ /^DJ GOT US FALLING IN LOVE$/) { return "DJ Got Us Fallin` In Love"; }
 	if ($string =~ /^ET$/) { return "E.T."; }
 	if ($string =~ /^GANGNAM STYLE$/) { return "강남스타일"; }
@@ -74,6 +75,7 @@ sub normalize_title($)
 	if ($string =~ /^FOURFIVE SECONDS$/) { return "FOURFIVESECONDS"; }
 	if ($string =~ /^HOLD ON WE`RE GOING HOME$/) { return "Hold On, We`re Going Home"; }
 	if ($string =~ /^I DON`T LIKE IT I LOVE IT$/) { return "I Don`t Like It, I Love It"; }
+	if ($string =~ /^LUV ME LUV ME$/) { return "Luv Me, Luv Me"; }
 	if ($string =~ /^MR KNOW IT ALL$/) { return "Mr. Know It All"; }
 	if ($string =~ /^N\*\*\*\*S IN PARIS$/) { return "Ni\*\*as In Paris"; }
 	if ($string =~ /^OOPS! I DID IT AGAIN$/) { return "Oops!... I Did It Again"; }
@@ -110,7 +112,9 @@ sub normalize_artist($)
 	$string =~ s/[,&＆].*$//g;
 	$string =~ s/\/.*$//;
 	$string =~ s/\sFT\s.*$//;
+	$string =~ s/\sPTS\s.*$//;
 	$string =~ s/\sVS\s.*$//;
+	$string =~ s/\sWITH\s.*$//;
 	$string =~ s/\s+$//;
 	$string =~ s/[\'’]/`/g;
 
@@ -133,9 +137,14 @@ sub normalize_artist($)
 	if ($string =~ /^OZZY$/) { return "Ozzy Osbourne"; }
 	if ($string =~ /^PINK$/) { return "P!nk"; }
 	if ($string =~ /^PSY$/) { return "싸이"; }
+	if ($string =~ /^R KELLY$/) { return "R. Kelly"; }
 	if ($string =~ /^SATURDAYS$/) { return "The Saturdays"; }
 	if ($string =~ /^SCRIPT$/) { return "The Script"; }
 	if ($string =~ /^S INGROSSO$/) { return "Sebastian Ingrosso"; }
+	if ($string =~ /^SOPHIE ELLIS BEXTOR$/) { return "Sophie Ellis-Bextor"; }
+	if ($string =~ /^TATU$/) { return "t.A.T.u."; }
+	if ($string =~ /^TI$/) { return "T.I."; }
+	if ($string =~ /^TING TINGS$/) { return "The Ting Tings"; }
 	if ($string =~ /^VAMPS$/) { return "The Vamps"; }
 	if ($string =~ /^WANTED$/) { return "The Wanted"; }
 	if ($string =~ /^WEEKND$/) { return "The Weeknd"; }
