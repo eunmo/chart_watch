@@ -442,6 +442,15 @@ musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routePara
 	};
 });
 
+musicApp.controller('OneSongsCtrl', function ($rootScope, $scope, $http, songService) {
+	$scope.weeks = [];
+	$http.get('chart/ones')
+	.success(function (weeks) {
+		console.log(weeks);
+		$scope.weeks = weeks;
+	});
+});
+
 musicApp.controller('RecentCtrl', function ($rootScope, $scope, $http, songService) {
 	$scope.rows = [];
 	$http.get('api/lastPlayed')

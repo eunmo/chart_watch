@@ -139,3 +139,20 @@ body {
 	position: relative;
 	top: -4px;
 }
+
+.media-body-ones {
+	width: 140px;
+}
+
+.media-desc-ones {
+	height: 20px;
+}
+
+.song-desc-up-ones {
+	display: inline-block;
+	width: 140px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 14px;
+}

@@ -15,6 +15,7 @@
 	var billboardFilePrefix = path.resolve('chart/billboard/billboard');
 	var ukScript = path.resolve('perl/uk.pl');
 	var ukFilePrefix = path.resolve('chart/uk/uk');
+	var charts = ['gaon', 'melon', 'billboard', 'uk'];
 	
 	module.exports = function (router, models) {
 		function getChartSong (title, artistName, artistArray, i, rank, date, chart, songIds) {
@@ -195,7 +196,6 @@
 		}
 
 		router.get('/chart/current', function (req, res) {
-			var charts = ['gaon', 'melon', 'billboard', 'uk'];
 			var datePromises = [];
 			var dates = {};
 			var songPromises = [];
@@ -308,6 +308,66 @@
 				}
 
 				res.json(sendArray);
+			});
+		});
+
+		function weekToNum (week) {
+			return week.getFullYear() * 10000 + week.getMonth() * 100 + week.getDate();
+		}
+		
+		router.get('/chart/ones', function (req, res) {
+			return models.SongChart.findAll({
+				where: { rank: { $eq: 1 } },
+				include: [
+					{ model: models.Song,
+						include: [
+							{ model: models.Album },
+							{ model: models.Artist, include: [
+								{ model: models.Artist, as: 'Group' }
+							]}
+						]
+				}
+				]
+			}).then(function (rows) {
+				var weeks = [], results = [];
+				var week, weekNum, rankRow, song, i, j;
+				for (i in rows) {
+					rankRow = rows[i];
+					week = rankRow.week;
+					weekNum = weekToNum(week);
+					if (weeks[weekNum] === undefined) {
+						weeks[weekNum] = {
+							week: week,
+							songs: []
+						};
+						for (j in charts) {
+							weeks[weekNum].songs[j] = {};
+						}
+					}
+
+					song = rankRow.Song;
+					for (j in charts) {
+						if (charts[j] === rankRow.type) {
+							weeks[weekNum].songs[j] = {
+								title: song.title,
+								albumId: song.Albums[0].id,
+								artists: common.getSongArtists(song)
+							}
+						}
+					}
+				}
+
+				var weekCmp = function (a, b) {
+					return b.week - a.week;
+				};
+
+				weeks.sort(weekCmp);
+
+				for (i in weeks) {
+					results.push(weeks[i]);
+				}
+
+				res.json(results);
 			});
 		});
 	};

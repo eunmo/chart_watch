@@ -72,7 +72,7 @@ sub get_url
 	my $fd, $ld;
 
 	if ($yy < 2012 ||
-		 ($yy == 2012 && ($mm < 8 || ($mm == 8 && $dd <= 19)))) {
+		 ($yy == 2012 && ($mm < 8 || ($mm == 8 && $dd <= 11)))) {
 		$fd = first_day_of_week_old();
 		$ld = last_day_of_week_old();
 	} else {

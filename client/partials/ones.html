@@ -1,0 +1,32 @@
+<h1>
+		Number Ones
+</h1>
+<table class="table table-hover table-bordered">
+	<tr>
+		<th>week</th>
+		<th>가온</th>
+		<th>멜론</th>
+		<th>US</th>
+		<th>UK</th>
+	</tr>
+	<tr ng-repeat="week in weeks">
+		<td>
+			{{week.week | date: 'MM-dd yyyy' }}
+		</td>
+		<td ng-repeat="song in week.songs">
+			<div class="media" ng-show="song.title">
+				<a class="media-left">
+					<img src="/{{song.albumId}}.40px.jpg" class="img-rounded img-album-up-next">
+				</a>
+				<div class="media-body media-body-ones">
+					<div class="media-desc-ones">
+						<span class="song-desc-up-ones">{{song.title | normalizeString}}</span>
+					</div>
+					<div class="media-desc-ones">
+						<span class="song-desc-up-ones"><artist-array array="song.artists"></artist-array></span>
+					</div>
+				</div>
+			</div>
+		</td>
+	</tr>
+</table>

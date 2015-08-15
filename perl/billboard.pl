@@ -109,6 +109,7 @@ sub normalize_artist($)
 	if ($string =~ /^`N Sync$/) { return "NSYNC"; }
 	if ($string =~ /^ne yo$/) { return "Ne-Yo"; }
 	if ($string =~ /^nico vinz$/) { return "Nico & Vinz"; }
+	if ($string =~ /^pink$/) { return "P!nk"; }
 	if ($string =~ /^pnk$/) { return "P!nk"; }
 	if ($string =~ /^plain white ts$/) { return "Plain White T`s"; }
 	if ($string =~ /^r kelly$/) { return "R. Kelly"; }
