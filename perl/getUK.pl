@@ -1,11 +1,23 @@
 use DateTime;
 
+my $end = 2000;
+
 my $date = DateTime->today();
+
+if ($#ARGV >= 0) {
+	my $start = $ARGV[0];
+	$date = DateTime->new(year => $start, month => 12, day => 31);
+	$end = $start;
+}
+
+if ($#ARGV >= 1) {
+	$end = $ARGV[1];
+}
 
 $date->truncate( to => 'week' )->subtract( weeks => 1);
 $date->add( days => 5 );
 
-while ($date->year >= 2000) {
+while ($date->year >= $end) {
 	my $yy = $date->year;
 	my $mm = $date->month;
 	my $dd = $date->day;

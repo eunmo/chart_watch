@@ -156,3 +156,7 @@ body {
 	text-overflow: ellipsis;
 	font-size: 14px;
 }
+
+.ones-week {
+	width: 40px;
+}

@@ -419,7 +419,6 @@ musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routePara
 	$scope.rows = [];
 	$http.get('chart/current')
 	.success(function (chartRows) {
-		console.log(chartRows);
 		$scope.rows = chartRows;
 	});
 
@@ -446,7 +445,6 @@ musicApp.controller('OneSongsCtrl', function ($rootScope, $scope, $http, songSer
 	$scope.weeks = [];
 	$http.get('chart/ones')
 	.success(function (weeks) {
-		console.log(weeks);
 		$scope.weeks = weeks;
 	});
 });

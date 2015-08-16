@@ -81,6 +81,7 @@ sub normalize_title($)
 	if ($string =~ /^OOPS! I DID IT AGAIN$/) { return "Oops!... I Did It Again"; }
 	if ($string =~ /^PLEASE PLEASE$/) { return "Please, Please"; }
 	if ($string =~ /^SORRY`S NOT GOOD ENOUGH$/) { return "Sorry`s Not Good Enough/Friday Night"; }
+	if ($string =~ /^SEXY CHICK$/) { return "Sexy Bitch"; }
 	if ($string =~ /^SHUT UP & DANCE$/) { return "Shut Up And Dance"; }
 	if ($string =~ /^THATPOWER$/) { return "#thatPOWER"; }
 	if ($string =~ /^YOU NEED ME I DON`T NEED YOU$/) { return "You Need Me, I Don`t Need You"; }
@@ -101,6 +102,7 @@ sub normalize_artist($)
 	if ($string =~ /^LILLY WOOD & ROBIN SCHULZ$/) { return "Lilly Wood & the Prick"; }
 	if ($string =~ /^MUMFORD & SONS$/) { return $string; }
 	if ($string =~ /^NICO & VINZ$/) { return $string; }
+	if ($string =~ /^SAM & MARK$/) { return $string; }
 	if ($string =~ /^SAM & THE WOMP$/) { return $string; }
 	if ($string =~ /^WAZE & ODYSSEY/) { return "Waze & Odyssey"; }
 	if ($string =~ /^YEARS & YEARS$/) { return $string; }
@@ -121,9 +123,11 @@ sub normalize_artist($)
 	if ($string =~ /^BLACK EYED PEAS$/) { return "The Black Eyed Peas"; }
 	if ($string =~ /^BOB$/) { return "B.o.B"; }
 	if ($string =~ /^CHERYL COLE$/) { return "CHERYL"; }
+	if ($string =~ /^C AGUILERA$/) { return "Christina Aguilera"; }
 	if ($string =~ /^DISCLOSURE$/) { return "The Disclosure"; }
 	if ($string =~ /^DR DRE$/) { return "Dr. Dre"; }
 	if ($string =~ /^DR KUCHO$/) { return "Dr. Kucho!"; }
+	if ($string =~ /^ELVIS$/) { return "Elvis Presley"; }
 	if ($string =~ /^FATBOYSLIM$/) { return "Fatboy Slim"; }
 	if ($string =~ /^FUN$/) { return "Fun."; }
 	if ($string =~ /^HEARSAY$/) { return "Hear`Say"; }
@@ -141,6 +145,7 @@ sub normalize_artist($)
 	if ($string =~ /^SATURDAYS$/) { return "The Saturdays"; }
 	if ($string =~ /^SCRIPT$/) { return "The Script"; }
 	if ($string =~ /^S INGROSSO$/) { return "Sebastian Ingrosso"; }
+	if ($string =~ /^SHAPESHIFTERS$/) { return "The Shapeshifters"; }
 	if ($string =~ /^SOPHIE ELLIS BEXTOR$/) { return "Sophie Ellis-Bextor"; }
 	if ($string =~ /^TATU$/) { return "t.A.T.u."; }
 	if ($string =~ /^TI$/) { return "T.I."; }

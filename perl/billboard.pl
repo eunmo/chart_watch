@@ -86,12 +86,14 @@ sub normalize_artist($)
 	$string =~ s/[,&＆].*$//g;
 	$string =~ s/Featuring.*$//;
 	$string =~ s/Duet.*$//;
+	$string =~ s/And\s+.*$//;
 	$string =~ s/\s+$//;
 	$string =~ s/[\'’"]/`/g;
 
 	if ($string =~ /^psy$/) { return "싸이"; }
 	if ($string =~ /^bob$/) { return "B.o.B"; }
 	if ($string =~ /^black eyed peas$/) { return "The Black Eyed Peas"; }
+	if ($string =~ /^destinys child$/) { return "Destiny`s Child"; }
 	if ($string =~ /^disclosure$/) { return "The Disclosure"; }
 	if ($string =~ /^dr dre$/) { return "Dr. Dre"; }
 	if ($string =~ /^Far\*East Movement$/) { return "Far East Movement"; }
@@ -103,8 +105,9 @@ sub normalize_artist($)
 	if ($string =~ /^keha$/) { return "Ke\$ha"; }
 	if ($string =~ /^kings leon$/) { return "Kings of Leon"; }
 	if ($string =~ /^lumineers$/) { return "The Lumineers"; }
-	if ($string =~ /^magic$/) { return "MAGIC!"; }
 	if ($string =~ /^macklemore ryan lewis$/) { return "Macklemore"; }
+	if ($string =~ /^magic$/) { return "MAGIC!"; }
+	if ($string =~ /^mary j blige$/) { return "Mary J. Blige"; }
 	if ($string =~ /^N Sync$/) { return "NSYNC"; }
 	if ($string =~ /^`N Sync$/) { return "NSYNC"; }
 	if ($string =~ /^ne yo$/) { return "Ne-Yo"; }
@@ -114,6 +117,8 @@ sub normalize_artist($)
 	if ($string =~ /^plain white ts$/) { return "Plain White T`s"; }
 	if ($string =~ /^r kelly$/) { return "R. Kelly"; }
 	if ($string =~ /^sisq$/) { return "Sisqo"; }
+	if ($string =~ /^soulja boy$/) { return "Soulja Boy Tell`em"; }
+	if ($string =~ /^soulja boy tell em$/) { return "Soulja Boy Tell`em"; }
 	if ($string =~ /^stu heiss$/) { return "Nelly"; }
 	if ($string =~ /^selena gomez scene$/) { return "Selena Gomez & the Scene"; }
 	if ($string =~ /^ti$/) { return "T.I."; }
