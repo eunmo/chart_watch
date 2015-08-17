@@ -10,7 +10,11 @@
 			<img src="/{{song.albumId}}.30px.jpg" class="img-rounded img-album-up-list">
 		</td>
 		<td>
-			<artist-array array="song.songArtists"></artist-array>
+			<div class="recent-artists">
+				<span class="recent-artist-list">
+					<artist-array array="song.songArtists"></artist-array>
+				</span>
+			</div>
 		</td>
 		<td>
 			{{song.title | normalizeString}}

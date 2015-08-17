@@ -29,6 +29,8 @@
 
 			if (match)
 				delete song.artists;
+			else
+				song.artists.sort(common.artistCmpOrder);
 		} else {
 			song.artists.sort(common.artistCmpOrder);
 		}

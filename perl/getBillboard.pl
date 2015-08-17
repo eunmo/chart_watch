@@ -1,5 +1,7 @@
 use DateTime;
 
+my $end = 2000;
+
 my $date = DateTime->today();
 
 if ($#ARGV >= 0) {
@@ -19,7 +21,7 @@ if ($date->day_of_week() < 3) {
 }
 $date->add( days => 5 );
 
-while ($date->year >= 2000) {
+while ($date->year >= $end) {
 	my $yy = $date->year;
 	my $mm = $date->month;
 	my $dd = $date->day;

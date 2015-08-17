@@ -15,11 +15,11 @@
 		</td>
 		<td ng-repeat="song in week.songs">
 			<div class="media" ng-show="song.title">
-				<a class="media-left">
+				<a class="media-left" ng-click="addNext(song)">
 					<img src="/{{song.albumId}}.40px.jpg" class="img-rounded img-album-up-next">
 				</a>
 				<div class="media-body media-body-ones">
-					<div class="media-desc-ones">
+					<div class="media-desc-ones" ng-click="addSong(song)">
 						<span class="song-desc-up-ones">{{song.title | normalizeString}}</span>
 					</div>
 					<div class="media-desc-ones">

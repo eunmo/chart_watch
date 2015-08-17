@@ -92,6 +92,7 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 		}
 		$scope.artist = artist;
 		$scope.loaded = true;
+		console.log(artist);
 	});
 
 	var getSendSong = function (song, album) {
@@ -334,6 +335,7 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 			$scope.date.setDate($scope.date.getDate() - 7);
 		}
 		$scope.chartName = 'Melon';
+		$scope.minDate = new Date(Date.UTC(2005, 0, 1));
 	} else if ($scope.chart === 'billboard') {
 		if ($scope.date.getDay() < 3) {
 			$scope.date.setDate($scope.date.getDate() - 7);
@@ -447,6 +449,14 @@ musicApp.controller('OneSongsCtrl', function ($rootScope, $scope, $http, songSer
 	.success(function (weeks) {
 		$scope.weeks = weeks;
 	});
+
+	$scope.addNext = function (song) {
+		songService.addNext([song]);
+	};
+
+	$scope.addSong = function (song) {
+		songService.addSongs([song]);
+	};
 });
 
 musicApp.controller('RecentCtrl', function ($rootScope, $scope, $http, songService) {

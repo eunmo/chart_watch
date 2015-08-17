@@ -70,9 +70,17 @@ sub get_url
 {
 	my $age = int($yy / 10) * 10;
 	my $fd, $ld;
+	my $cd = 'DP0000';
 
-	if ($yy < 2012 ||
-		 ($yy == 2012 && ($mm < 8 || ($mm == 8 && $dd <= 11)))) {
+	if ($yy < 2007 ||
+		 ($yy == 2007 && ($mm < 7 || ($mm == 7 && $dd <= 8)))) {
+		$fd = first_day_of_week_new();
+		$ld = last_day_of_week_new();
+	} elsif ($yy == 2007 && $mm == 7 && $dd <= 14) {
+		$fd = first_day_of_week_new();
+		$ld = last_day_of_week_old();
+	} elsif ($yy < 2012 ||
+		   ($yy == 2012 && ($mm < 8 || ($mm == 8 && $dd <= 11)))) {
 		$fd = first_day_of_week_old();
 		$ld = last_day_of_week_old();
 	} else {
@@ -80,10 +88,14 @@ sub get_url
 		$ld = last_day_of_week_new();
 	}
 
+	if ($yy < 2008 ||
+			$yy == 2008 && ($mm < 10 || ($mm == 10 && $dd <= 25))) {
+		$cd = 'CL0000';
+	}
+
 	my $fd_ymd = $fd->ymd('');
 	my $ld_ymd = $ld->ymd('');
-	my $url = sprintf("http://www.melon.com/chart/search/list.htm?chartType=WE&age=%d&year=%d&mon=%02d&day=%d%%5E%d&classCd=DP0000&startDay=%d&endDay=%d&moved=Y", $age, $year, $ld->month(), $fd_ymd, $ld_ymd, $fd_ymd, $ld_ymd);
-
+	my $url = sprintf("http://www.melon.com/chart/search/list.htm?chartType=WE&age=%d&year=%d&mon=%02d&day=%d%%5E%d&classCd=%s&startDay=%d&endDay=%d&moved=Y", $age, $yy, $ld->month(), $fd_ymd, $ld_ymd, $cd, $fd_ymd, $ld_ymd);
 	return $url;
 }
 
@@ -104,6 +116,7 @@ sub normalize_title($)
 	if ($string =~ /^꽃피는 봄이오면/) { return "꽃피는 봄이 오면"; }
 	if ($string =~ /^울고, 불고/) { return "울고, 불고"; }
 	if ($string =~ /^Lollipop Pt.2/) { return "Lollipop Part 2"; }
+	if ($string =~ /^Again＆Again/) { return "Again & Again"; }
 
 	$string =~ s/\(.*$//;
 	$string =~ s/\s+$//g;
@@ -118,6 +131,7 @@ sub normalize_artist($)
 	if ($string =~ /^더블 케이/) { return "Double K"; }
 	if ($string =~ /^f\(x\)/) { return "f(x)"; }
 	if ($string =~ /^지드래곤/) { return "GD"; }
+	if ($string =~ /^G-DRAGON/) { return "GD"; }
 	if ($string =~ /^미쓰에이/) { return "miss A"; }
 	if ($string =~ /^SIMON Dominic/) { return "Simon D"; }
 	if ($string =~ /^스윙스/) { return "Swings"; }

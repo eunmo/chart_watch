@@ -1,5 +1,7 @@
 use DateTime;
 
+my $end = 2005;
+
 my $date = DateTime->today();
 
 if ($#ARGV >= 0) {
@@ -15,7 +17,7 @@ if ($#ARGV >= 1) {
 $date->truncate( to => 'week' )->subtract( weeks => 1);
 $date->add( days => 5 );
 
-while ($date->year >= 2010) {
+while ($date->year >= $end) {
 	my $yy = $date->year;
 	my $mm = $date->month;
 	my $dd = $date->day;

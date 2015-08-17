@@ -349,6 +349,7 @@
 					for (j in charts) {
 						if (charts[j] === rankRow.type) {
 							weeks[weekNum].songs[j] = {
+								id: song.id,
 								title: song.title,
 								albumId: song.Albums[0].id,
 								artists: common.getSongArtists(song)

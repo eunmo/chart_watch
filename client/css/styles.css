@@ -160,3 +160,17 @@ body {
 .ones-week {
 	width: 40px;
 }
+
+.recent-artists {
+	width: 140px;
+	height: 20px;
+}
+
+.recent-artist-list {
+	display: inline-block;
+	width: 140px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 14px;
+}
