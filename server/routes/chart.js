@@ -15,7 +15,11 @@
 	var billboardFilePrefix = path.resolve('chart/billboard/billboard');
 	var ukScript = path.resolve('perl/uk.pl');
 	var ukFilePrefix = path.resolve('chart/uk/uk');
-	var charts = ['gaon', 'melon', 'billboard', 'uk'];
+	var oriconScript = path.resolve('perl/oricon.pl');
+	var oriconFilePrefix = path.resolve('chart/oricon/o');
+	var japanScript = path.resolve('perl/japan.pl');
+	var japanFilePrefix = path.resolve('chart/japan/j');
+	var charts = ['gaon', 'melon', 'billboard', 'uk', 'oricon', 'japan'];
 	
 	module.exports = function (router, models) {
 		function getChartSong (title, artistName, artistArray, i, rank, date, chart, songIds) {
@@ -167,6 +171,14 @@
 		
 		router.get('/chart/uk', function (req, res) {
 			getChart(req, res, 'uk', ukScript, ukFilePrefix);
+		});
+		
+		router.get('/chart/oricon', function (req, res) {
+			getChart(req, res, 'oricon', oriconScript, oriconFilePrefix);
+		});
+		
+		router.get('/chart/japan', function (req, res) {
+			getChart(req, res, 'japan', japanScript, japanFilePrefix);
 		});
 
 		function getMaxDate (type, dates) {
