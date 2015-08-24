@@ -73,6 +73,8 @@ sub normalize_title($)
 	$string =~ s/\\/¥/g;
 
 	if ($string =~ /^アイ・リアリー・ライク・ユー$/) { return "I Really Like You"; }
+	if ($string =~ /^ステイ・ウィズ・ミー〜そばにいてほしい$/) { return "Stay With Me"; }
+	if ($string =~ /^シー・ユー・アゲイン$/) { return "See You Again"; }
 
 	return $string;
 }
@@ -94,6 +96,8 @@ sub normalize_artist($)
 	$string =~ s/[\'’]/`/g;
 	
 	if ($string =~ /^カーリー・レイ・ジェプセン$/) { return "Carly Rae Jepsen"; }
+	if ($string =~ /^サム・スミス$/) { return "Sam Smith"; }
+	if ($string =~ /^ウィズ・カリファ$/) { return "Wiz Khalifa"; }
 
 	return $string;
 }

@@ -53,6 +53,8 @@ print "]";
 sub normalize_title($)
 {
 	my $string = shift;
+
+	if ($string =~ /^Stay with me$/) { return $string; }
 	
 	$string =~ s/\(.*\)//g;
 	$string =~ s/\s+$//g;
@@ -63,8 +65,16 @@ sub normalize_title($)
 	$string =~ s/\\/¥/g;
 	$string =~ s/-.*-//g;
 	
+	if ($string =~ /^Like a Cat$/) { return "사뿐사뿐"; }
 	if ($string =~ /^胸キュン$/) { return "심쿵해"; }
+	if ($string =~ /^Mr.Chu$/) { return "Mr. Chu (On Stage)"; }
+	if ($string =~ /^戦姫絶唱シンフォギアGX キャラクターソング1$/) { return "星天ギャラクシィクロス"; }
 	if ($string =~ /^SUMMER SPECIAL Pinocchio$/) { return "피노키오"; }
+	if ($string =~ /^My Instant Song E.P.$/) { return "My Instant Song"; }
+	if ($string =~ /^うたの☆プリンスさまっ♪マジLOVEレボリューションズ アイドルソング 寿嶺二$/) { return "Never..."; }
+	if ($string =~ /^うたの☆プリンスさまっ♪マジLOVEレボリューションズ アイドルソング 黒崎蘭丸$/) { return "Only One"; }
+	if ($string =~ /^うたの☆プリンスさまっ♪マジLOVEレボリューションズ アイドルソング カミュ$/) { return "Saintly Territory"; }
+	if ($string =~ /^うたの☆プリンスさまっ♪マジLOVEレボリューションズ クロスユニットアイドルソング 神宮寺レン・来栖翔・愛島セシル$/) { return "Code: T.V.U"; }
 
 	return $string;
 }
@@ -83,6 +93,10 @@ sub normalize_artist($)
 	$string =~ s/\swith\s.*$//;
 	$string =~ s/\s+$//;
 	$string =~ s/[\'’]/`/g;
+	
+	if ($string =~ /^マリア×風鳴翼$/) { return "日笠陽子"; }
+	if ($string =~ /^Block B$/) { return "블락비"; }
+	if ($string =~ /^神宮寺レン・来栖翔・愛島セシル$/) { return "神宮寺レン"; }
 
 	return $string;
 }

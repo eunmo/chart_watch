@@ -37,9 +37,7 @@
 				}
 			}
 
-			console.log(songArtists);
 			songArtists.sort(this.artistCmpOrder);
-			console.log(songArtists);
 
 			return songArtists;
 		},

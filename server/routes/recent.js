@@ -68,6 +68,47 @@
 				return resArray;
 			});
 		}
+		
+		function getRecentlyAdded (limit) {
+			return models.Song.findAll({
+				order: 'createdAt DESC',
+				limit: limit
+			}).then(function (Songs) {
+				var ids = [];
+
+				for (var row in Songs) {
+					ids.push(Songs[row].id);
+				}
+
+				return models.Song.findAll({
+					where: { id: { in: ids } },
+					include: [
+						{ model: models.Album },
+						{ model: models.Artist, include: [
+							{ model: models.Artist, as: 'Group' }
+						]},
+						{ model: models.SongChart }
+					],
+					order: 'createdAt DESC',
+				});
+			}).then(function (Songs) {
+				var i;
+				var resArray = [];
+				var song, songRow;
+
+				for (i in Songs) {
+					songRow = Songs[i];
+					song = common.newSong(songRow);
+					song.lastPlayed = songRow.createdAt;
+					song.songArtists = common.getSongArtists(songRow);
+					song.rank = getRank(songRow.SongCharts);
+					song.albumId = songRow.Albums[0].id;
+					resArray.push(song);
+				}
+
+				return resArray;
+			});
+		}
 
 		router.get('/api/lastPlayed', function (req, res) {
 			getLastPlayed(100)
@@ -78,6 +119,13 @@
 		
 		router.get('/api/lastPlayed/:_limit', function (req, res) {
 			getLastPlayed(req.params._limit)
+			.then(function (songs) {
+				res.json(songs);
+			});
+		});
+
+		router.get('/api/newSongs/', function (req, res) {
+			getRecentlyAdded(100)
 			.then(function (songs) {
 				res.json(songs);
 			});

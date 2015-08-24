@@ -473,7 +473,17 @@ musicApp.controller('OneSongsCtrl', function ($rootScope, $scope, $http, songSer
 
 musicApp.controller('RecentCtrl', function ($rootScope, $scope, $http, songService) {
 	$scope.rows = [];
+	$scope.title = 'Played';
 	$http.get('api/lastPlayed')
+	.success(function (lastPlayed) {
+		$scope.rows = lastPlayed;
+	});
+});
+
+musicApp.controller('NewSongCtrl', function ($rootScope, $scope, $http, songService) {
+	$scope.rows = [];
+	$scope.title = 'Added';
+	$http.get('api/newSongs')
 	.success(function (lastPlayed) {
 		$scope.rows = lastPlayed;
 	});
