@@ -354,11 +354,6 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 		}
 		$scope.chartName = 'Oricon';
 		$scope.minDate = new Date(Date.UTC(2010, 0, 2));
-	} else if ($scope.chart === 'japan') {
-		if ($scope.date.getDay() < 3) {
-			$scope.date.setDate($scope.date.getDate() - 7);
-		}
-		$scope.chartName = 'Billboard Japan';
 	}
 	$scope.date.setDate($scope.date.getDate() - $scope.date.getDay() - 1);
 	$scope.max = $scope.date.getTime();
