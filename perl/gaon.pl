@@ -54,6 +54,7 @@ sub normalize_title($)
 	$string =~ s/\(.*$//;
 	$string =~ s/\s+$//g;
 	$string =~ s/[\'’]/`/g;
+	$string =~ s/\\/₩/g;
 	return $string;
 }
 
@@ -94,6 +95,8 @@ sub normalize_artist($)
 	if ($string =~ /^Gary$/) { return "개리"; }
 	if ($string =~ /^XIA$/) { return "김준수"; }
 	if ($string =~ /^Sik K$/) { return "Sik-K"; }
+	if ($string =~ /^SG워너비$/) { return "SG 워너비"; }
+	if ($string =~ /^이유 갓지않은이유$/) { return "이유 갓지 않은 이유"; }
 
 	return $string;
 }

@@ -91,11 +91,16 @@ sub normalize_artist($)
 	$string =~ s/\/.*$//;
 	$string =~ s/\sfeat\..*$//;
 	$string =~ s/\swith\s.*$//;
+	$string =~ s/\svs\s.*$//;
 	$string =~ s/\s+$//;
 	$string =~ s/[\'’]/`/g;
 	
 	if ($string =~ /^マリア×風鳴翼$/) { return "日笠陽子"; }
 	if ($string =~ /^Block B$/) { return "블락비"; }
+	if ($string =~ /^WOOYOUNG$/) { return "우영"; }
+	if ($string =~ /^東方神起$/) { return "동방신기"; }
+	if ($string =~ /^防弾少年団$/) { return "방탄소년단"; }
+	if ($string =~ /^SHINee$/) { return "샤이니"; }
 	if ($string =~ /^神宮寺レン・来栖翔・愛島セシル$/) { return "神宮寺レン"; }
 
 	return $string;

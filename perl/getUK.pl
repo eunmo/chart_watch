@@ -6,7 +6,7 @@ my $date = DateTime->today();
 
 if ($#ARGV >= 0) {
 	my $start = $ARGV[0];
-	$date = DateTime->new(year => $start, month => 12, day => 31);
+	$date = DateTime->new(year => $start, month => 12, day => 31) if $start < $date->year;
 	$end = $start;
 }
 
