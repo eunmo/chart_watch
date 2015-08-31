@@ -657,11 +657,15 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		this.getTotal = function () {
 			return total;
 		}
+
+		this.clear = function () {
+			levels = [];
+			total = 0;
+		}
 	};
 	
 	$scope.songs = [];
 	$scope.shuffle = new Shuffle($scope);
-	$scope.randomSource = [];
 	$scope.loaded = false;
 
 	$scope.playing = false;
@@ -777,9 +781,8 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	};
 
 	$scope.clearAll = function () {
-		var randomSourceSize = $scope.randomSource.length;
 		var songSize = $scope.songs.length;
-		$scope.randomSource.splice(0, randomSourceSize);
+		$scope.shuffle.clear();
 		$scope.songs.splice(0, songSize);
 		$scope.preloaded = false;
 	};
