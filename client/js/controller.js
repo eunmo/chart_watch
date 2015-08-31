@@ -145,8 +145,7 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 		$http.get('api/s3d/' + song.id, { params: { title: song.title } }).success(function (data) {
 			var dl = document.createElement('a');
 			dl.href = data.url;
-			console.log(data.url);
-			//dl.click();
+			dl.click();
 		});		
 	};
 });
@@ -606,8 +605,62 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 			}
 		});
 	};
+
+	var Shuffle = function ($scope) {
+		var levels = [];
+		var total = 0;
+
+		this.addSongs = function (songs) {
+			var song, level;
+			for (i in songs) {
+				song = songs[i];
+				level = 1;
+
+				if (song.rank) {
+					level += (8 - song.rank);
+					if (song.plays < 10)
+						level += 10;
+					else
+						level += Math.floor(song.plays / 5);
+				}
+
+				if (song.plays < 3)
+					level += 2;
+				if (song.plays < 2)
+					level += 2;
+				
+				if (levels[level] === undefined)
+					levels[level] = [];
+				levels[level].push(song);
+				total += level;
+			}
+		}
+
+		this.getNext = function () {
+			var index = Math.floor((Math.random() * total));
+			var level;
+
+			for (level = 1; level < levels.length; level++) {
+				if (levels[level]) {
+					if (index < levels[level].length * level)
+						break;
+					index -= levels[level].length * level;
+				}
+			}
+
+			index = Math.floor(Math.random() * levels[level].length);
+			$scope.songs.push(levels[level][index]);
+			levels[level].splice(index, 1);
+			total -= level;
+		}
+
+		this.getTotal = function () {
+			return total;
+		}
+	};
 	
 	$scope.songs = [];
+	$scope.shuffle = new Shuffle($scope);
 	$scope.randomSource = [];
 	$scope.loaded = false;
 
@@ -637,12 +690,8 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	};
 
 	$scope.getRandom = function () {
-		// add songs from selected random source
-		// TODO add customized random here.
-		while ($scope.songs.length <= 10 && $scope.randomSource.length > 0) {
-			var randomIndex = Math.floor((Math.random() * $scope.randomSource.length));
-			$scope.songs.push($scope.randomSource[randomIndex]);
-			$scope.randomSource.splice(randomIndex, 1);
+		while ($scope.songs.length <= 10 && $scope.shuffle.getTotal() > 0) {
+			$scope.shuffle.getNext();
 		}
 	};
 
@@ -714,9 +763,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	});
 
 	$scope.$on('handleRandom', function () {
-		for (var i in songService.random) {
-			$scope.randomSource.push(songService.random[i]);
-		}
+		$scope.shuffle.addSongs(songService.random);
 		$scope.loadSong(0);
 	});
 
