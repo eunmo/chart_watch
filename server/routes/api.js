@@ -477,6 +477,7 @@
 				var lastPlayed = [];
 				var plays = [];
 				var rank = [];
+				var rankMax = [];
 				var resArray = [];
 				var artistArray = [];
 				var i;
@@ -489,6 +490,7 @@
 					songArray[songId] = {
 						id: row.id,
 						title: row.title,
+						plays: row.plays,
 						artists: []
 					};
 					plays[songId] = row.plays;
@@ -529,12 +531,18 @@
 					row = songCharts[i];
 					songId = row.SongId;
 					rank[songId] = true;
+					if (rankMax[songId] === undefined || rankMax[songId] > row.rank) {
+						rankMax[songId] = row.rank;
+					}
 				}
 
 				for (i in songArray) {
 					songId = songArray[i].id;
+					if (rankMax[songId])
+						songArray[i].rank = rankMax[songId];
 					resArray.push(songArray[i]);
 					/* songs that have charted should have more chance of being played */
+					/*
 					if (rank[songId]) {
 						resArray.push(songArray[i]);
 						resArray.push(songArray[i]);
@@ -551,6 +559,7 @@
 
 					if (plays[songId] < 2)
 						resArray.push(songArray[i]);
+					 */
 				}
 
 				res.json(resArray);

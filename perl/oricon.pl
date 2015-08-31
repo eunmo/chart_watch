@@ -97,6 +97,7 @@ sub normalize_artist($)
 	
 	if ($string =~ /^マリア×風鳴翼$/) { return "日笠陽子"; }
 	if ($string =~ /^Block B$/) { return "블락비"; }
+	if ($string =~ /^KARA$/) { return "카라"; }
 	if ($string =~ /^WOOYOUNG$/) { return "우영"; }
 	if ($string =~ /^東方神起$/) { return "동방신기"; }
 	if ($string =~ /^防弾少年団$/) { return "방탄소년단"; }

@@ -145,7 +145,8 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 		$http.get('api/s3d/' + song.id, { params: { title: song.title } }).success(function (data) {
 			var dl = document.createElement('a');
 			dl.href = data.url;
-			dl.click();
+			console.log(data.url);
+			//dl.click();
 		});		
 	};
 });

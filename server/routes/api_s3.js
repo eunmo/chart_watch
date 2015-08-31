@@ -20,7 +20,7 @@
 			var id = req.params._id;
 			var s3 = new AWS.S3();
 			var params = { Bucket: mp3Bucket, Key: id,
-				ResponseContentDisposition: 'attachement; filename=\"' + req.query.title + '.mp3\"' };
+				ResponseContentDisposition: 'attachement; filename*= UTF-8\'\'' + encodeURIComponent( req.query.title ) + '.mp3' };
 			var url = s3.getSignedUrl('getObject', params);
 			res.json({ url: url });
 		});
