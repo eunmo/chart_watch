@@ -652,13 +652,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 				totals[tier] += level;
 				total++;
 			}
-
-			for (i = 1; i <= max_tier; i++) {
-				for (level = 1; level < tiers[i].length; level++) {
-					if (tiers[i] && tiers[i][level])
-				}
-			}
-		}
+		};
 		
 		var getNextFromTier = function (tier) {
 			var index = Math.floor((Math.random() * totals[tier]));
@@ -690,15 +684,15 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 			}
 				
 			getNextFromTier(tier);
-		}
+		};
 
 		this.getTotal = function () {
 			return total;
-		}
+		};
 
 		this.clear = function () {
 			init();
-		}
+		};
 	};
 	
 	$scope.songs = [];
