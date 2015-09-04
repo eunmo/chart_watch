@@ -75,6 +75,7 @@ sub normalize_title($)
 	if ($string =~ /^うたの☆プリンスさまっ♪マジLOVEレボリューションズ アイドルソング 黒崎蘭丸$/) { return "Only One"; }
 	if ($string =~ /^うたの☆プリンスさまっ♪マジLOVEレボリューションズ アイドルソング カミュ$/) { return "Saintly Territory"; }
 	if ($string =~ /^うたの☆プリンスさまっ♪マジLOVEレボリューションズ クロスユニットアイドルソング 神宮寺レン・来栖翔・愛島セシル$/) { return "Code: T.V.U"; }
+	if ($string =~ /^fightinggirls$/) { return "fighting-Φ-girls"; }
 
 	return $string;
 }
@@ -84,6 +85,7 @@ sub normalize_artist($)
 	my $string = shift;
 	
 	if ($string =~ /^f\(x\)/) { return "f(x)"; }
+	if ($string =~ /^Fear,and Loathing in Las Vegas$/) { return "Fear, and Loathing in Las Vegas"; }
 
 	$string =~ s/\|.*$//;
 	$string =~ s/\(.*?\)//g;

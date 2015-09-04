@@ -476,19 +476,28 @@ musicApp.controller('OneSongsCtrl', function ($rootScope, $scope, $http, songSer
 musicApp.controller('RecentCtrl', function ($rootScope, $scope, $http, songService) {
 	$scope.rows = [];
 	$scope.title = 'Played';
-	$http.get('api/lastPlayed')
-	.success(function (lastPlayed) {
-		$scope.rows = lastPlayed;
-	});
+
+	$scope.refresh = function () {
+		$http.get('api/lastPlayed')
+		.success(function (lastPlayed) {
+			$scope.rows = lastPlayed;
+		});
+	};
+
+	$scope.refresh();
 });
 
 musicApp.controller('NewSongCtrl', function ($rootScope, $scope, $http, songService) {
 	$scope.rows = [];
 	$scope.title = 'Added';
-	$http.get('api/newSongs')
-	.success(function (lastPlayed) {
-		$scope.rows = lastPlayed;
-	});
+
+	$scope.refresh = function () {
+		$http.get('api/newSongs')
+		.success(function (lastPlayed) {
+			$scope.rows = lastPlayed;
+		});
+	};
+	$scope.refresh();
 });
 
 musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $timeout, songService) {
@@ -612,7 +621,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		var totals = [];
 
 		var init = function () {
-			for (i = 0; i < max_tier; i++) {
+			for (i = 1; i <= max_tier; i++) {
 				tiers[i] = [];
 				totals[i] = 0;
 			}
@@ -621,6 +630,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 
 		this.addSongs = function (songs) {
 			var song, level, tier;
+			var counts = [];
 
 			for (i in songs) {
 				song = songs[i];
@@ -651,6 +661,14 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 					totals[tier] = 0;
 				totals[tier] += level;
 				total++;
+
+				if (counts[tier] === undefined)
+					counts[tier] = 0;
+				counts[tier]++;
+			}
+			
+			for (i = 1; i <= max_tier; i++) {
+				console.log('Tier ' + i + ': ' + counts[i]);
 			}
 		};
 		
