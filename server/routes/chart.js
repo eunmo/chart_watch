@@ -39,38 +39,111 @@
 										{ model: models.Artist, as: 'Group' }
 									]}
 							 	]
-							} 
+							}
 						]
 					})
 					.then(function (fullArtist) {
 						if (fullArtist) {
+							var songs = [];
 							var songArtists = [];
-							var j;
+							var j, k;
 							var index = 0;
+							var album, song;
 
 							for (j in fullArtist.Songs) {
-								if (songIds[fullArtist.Songs[j].id])
-									continue;
-								if (fullArtist.Songs[j].title.toLowerCase() === title.toLowerCase()) {
-									index = j;
-									break;
+								song = fullArtist.Songs[j];
+								songs.push(song);
+							}
+
+							for (j in fullArtist.Albums) {
+								album = fullArtist.Albums[j];
+
+								for (k in album.Songs) {
+									song = album.Songs[k];
+									songs.push(song);
 								}
 							}
 
-							songArtists = common.getSongArtists(fullArtist.Songs[index]);
+							for (j in songs) {
+								song = songs[j];
+								if (songIds[song.id])
+									continue;
+								if (song.title.toLowerCase() === title.toLowerCase())
+									break;
+							}
 
-							artistArray[i] = { index: rank, artistFound: true, songFound: true, song: fullArtist.Songs[index], songArtists: songArtists };
+							songArtists = common.getSongArtists(song);
+
+							artistArray[i] = { index: rank, artistFound: true, songFound: true, song: song, songArtists: songArtists };
 
 							return models.SongChart.create({
 								type: chart,
 								week: date,
 								rank: rank,
-								SongId: fullArtist.Songs[index].id
+								SongId: song.id
 							}).catch(function (errors) {
 								artistArray[i] = { index: rank, artistFound: true, songFound: false, song: title, artist: artist };
 							});
 						} else {
-							artistArray[i] = { index: rank, artistFound: true, songFound: false, song: title, artist: artist };
+							return models.Artist.findOne({
+								where: { id: artist.id },
+								include: [
+									{ model: models.Album,
+										include: [
+											{ model: models.Song,
+												where: { title: { like: title + '%' } },
+												include: [
+													{ model: models.Album },
+													{ model: models.Artist, include: [
+														{ model: models.Artist, as: 'Group' }
+													]}
+												]
+											}
+										]
+									}
+								]
+							})
+							.then (function (fullArtist) {
+								if (fullArtist) {
+									var songs = [];
+									var songArtists = [];
+									var j, k;
+									var index = 0;
+									var album, song;
+
+									for (j in fullArtist.Albums) {
+										album = fullArtist.Albums[j];
+
+										for (k in album.Songs) {
+											song = album.Songs[k];
+											songs.push(song);
+										}
+									}
+
+									for (j in songs) {
+										song = songs[j];
+										if (songIds[song.id])
+											continue;
+										if (song.title.toLowerCase() === title.toLowerCase())
+											break;
+									}
+
+									songArtists = common.getSongArtists(song);
+
+									artistArray[i] = { index: rank, artistFound: true, songFound: true, song: song, songArtists: songArtists };
+
+									return models.SongChart.create({
+										type: chart,
+										week: date,
+										rank: rank,
+										SongId: song.id
+									}).catch(function (errors) {
+										artistArray[i] = { index: rank, artistFound: true, songFound: false, song: title, artist: artist };
+									});
+								} else {
+									artistArray[i] = { index: rank, artistFound: true, songFound: false, song: title, artist: artist };
+								}
+							});
 						}
 					});
 				}
