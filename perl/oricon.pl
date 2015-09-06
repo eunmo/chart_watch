@@ -105,6 +105,9 @@ sub normalize_artist($)
 	if ($string =~ /^防弾少年団$/) { return "방탄소년단"; }
 	if ($string =~ /^SHINee$/) { return "샤이니"; }
 	if ($string =~ /^神宮寺レン・来栖翔・愛島セシル$/) { return "神宮寺レン"; }
+	if ($string =~ /^Printemps〜高坂穂乃果$/) { return "Printemps"; }
+	if ($string =~ /^lily white〜園田海未$/) { return "lily white"; }
+	if ($string =~ /^BiBi〜絢瀬絵里$/) { return "BiBi"; }
 
 	return $string;
 }

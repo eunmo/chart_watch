@@ -86,9 +86,16 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 		// format songs into rows
 		for (var i in artist.albums) {
 			var album = artist.albums[i];
+			var maxDisk = 0;
+			var song;
 			for (var j in album.songs) {
-				album.songs[j].albumId = album.id;
+				song = album.songs[j];
+				song.albumId = album.id;
+				if (maxDisk < song.disk)
+					maxDisk = song.disk;
 			}
+			album.maxDisk = maxDisk;
+			console.log(album.title + ' ' + maxDisk);
 		}
 		$scope.artist = artist;
 		$scope.loaded = true;

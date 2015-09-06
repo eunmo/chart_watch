@@ -61,7 +61,7 @@
 							<td>
 								<div class="song-desc">
 									<span class="song-desc-title" ng-click="addSong(song, album)">
-										<span class="song-track">{{song.track}}</span>
+										<span class="song-track"><span ng-show="album.maxDisk > 1">{{song.disk}}-</span>{{song.track}}</span>
 										{{song.title | normalizeString}}
 									</span>
 									<span class="pull-right song-desc-right">
