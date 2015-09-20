@@ -95,7 +95,6 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 					maxDisk = song.disk;
 			}
 			album.maxDisk = maxDisk;
-			console.log(album.title + ' ' + maxDisk);
 		}
 		$scope.artist = artist;
 		$scope.loaded = true;
@@ -843,6 +842,11 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		$scope.preloaded = false;
 	};
 
+	$scope.seek = function (ratio) {
+		$scope.updateProgress(ratio);
+		$scope.selectedAudio.seek(ratio);
+	};
+
 	$scope.play = function () {
 		$scope.selectedAudio.play();
 		$scope.playing = true;
@@ -853,8 +857,6 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 					var xCoord = event.pageX - $('#timeline').offset().left;
 					var clickRatio = xCoord / $('#timeline').width();
 					clickRatio = (clickRatio < 0 ? 0 : (clickRatio > 1 ? 1 : clickRatio));
-					$scope.updateProgress(clickRatio);
-					$scope.selectedAudio.seek(clickRatio);
 				}
 			});
 			$scope.bindDone = true;
@@ -877,6 +879,10 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		$scope.pause();
 		$scope.selectedAudio.stop();
 		$scope.playNext();
+	};
+
+	$scope.rewind = function () {
+		$scope.seek(0);
 	};
 
 	// jquery for slider (dirty, but works)

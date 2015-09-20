@@ -23,6 +23,10 @@ body {
 	margin-bottom: 7px;
 }
 
+.h2-upnext {
+	margin-top: 0px;
+}
+
 .img-album {
 	width: 300px;
 }
@@ -64,24 +68,6 @@ body {
 .song-desc-right {
 	height: 20px;
 	font-size: 18px;
-}
-
-.media-body-up-next {
-	width: 200px;
-}
-
-.media-desc-up-next {
-	height: 20px;
-	font-size: 18px;
-}
-
-.song-desc-up-next {
-	display: inline-block;
-	width: 180px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	font-size: 14px;
 }
 
 .progress-music {
@@ -162,15 +148,33 @@ body {
 }
 
 .recent-artists {
-	width: 140px;
+	width: 200px;
 	height: 20px;
 }
 
 .recent-artist-list {
+	display: inline-block;
+	width: 200px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 14px;
+}
+
+.up-next-artists {
+	width: 140px;
+	height: 20px;
+}
+
+.up-next-artist-list {
 	display: inline-block;
 	width: 140px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	font-size: 14px;
+}
+
+.glyphicon-up-next {
+	top: 3px;
 }

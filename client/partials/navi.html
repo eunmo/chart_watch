@@ -1,20 +1,50 @@
-<div>
-	<h1 ng-click="initAudio()">Chart Watch</h1>
-	<p>Free at last from iTunes</p>
-	<h2><a href="#/">Artists</a></h2>
-	<h2>
-		<a href="#/chart/current">Charts</a>
-		<a href="#/chart/ones">1's</a>
-		<a href="#/chart/gaon">가온</a>
-		<a href="#/chart/melon">멜론</a>
-		<a href="#/chart/billboard">US</a>
-		<a href="#/chart/uk">UK</a>
-		<a href="#/chart/oricon">オ</a>
-	</h2>
-	<h2>Statistics</h2>
-	<h2>Recently <a href="#/recent">Played</a> <a href="#/newSongs">Added</a></h2>
-	<form action="/upload" enctype="multipart/form-data" method="post">
-		<input type="file" name="file" multiple="multiple">
-		<input type="submit" value="Upload">
-	</form>
-</div>
+<nav class="navbar navbar-default">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" ng-click="initAudio()">Chart Watch</a>
+		</div>
+
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li><a href="#/">Artists</a></li>
+				<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Charts <span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="#/chart/current">Current</a></li>
+					<li><a href="#/chart/ones">1's</a></li>
+					<li role="separator" class="divider"></li>
+					<li><a href="#/chart/gaon">가온</a></li>
+					<li><a href="#/chart/melon">멜론</a></li>
+					<li><a href="#/chart/billboard">US Billboards</a></li>
+					<li><a href="#/chart/uk">UK Official</a></li>
+					<li><a href="#/chart/oricon">オリコン</a></li>
+				</ul>
+				</li>
+				<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Recent <span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="#/recent">Played</a></li>
+					<li><a href="#/newSongs">Added</a></li>
+				</ul>
+				</li>
+				<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Upload <span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li>
+					<form action="/upload" enctype="multipart/form-data" method="post">
+						<input type="file" name="file" multiple="multiple">
+						<input type="submit" value="Upload">
+					</form>
+					</li>
+				</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+</nav>

@@ -69,6 +69,7 @@ sub normalize_title($)
 	if ($string =~ /^胸キュン$/) { return "심쿵해"; }
 	if ($string =~ /^Mr.Chu$/) { return "Mr. Chu (On Stage)"; }
 	if ($string =~ /^戦姫絶唱シンフォギアGX キャラクターソング1$/) { return "星天ギャラクシィクロス"; }
+	if ($string =~ /^戦姫絶唱シンフォギアGX キャラクターソング6$/) { return "ジェノサイドソウ·ヘヴン"; }
 	if ($string =~ /^SUMMER SPECIAL Pinocchio$/) { return "피노키오"; }
 	if ($string =~ /^My Instant Song E.P.$/) { return "My Instant Song"; }
 	if ($string =~ /^うたの☆プリンスさまっ♪マジLOVEレボリューションズ アイドルソング 寿嶺二$/) { return "Never..."; }
@@ -108,6 +109,7 @@ sub normalize_artist($)
 	if ($string =~ /^Printemps〜高坂穂乃果$/) { return "Printemps"; }
 	if ($string =~ /^lily white〜園田海未$/) { return "lily white"; }
 	if ($string =~ /^BiBi〜絢瀬絵里$/) { return "BiBi"; }
+	if ($string =~ /^EXILE ATSUSHI \+ AI$/) { return "EXILE ATSUSHI"; }
 
 	return $string;
 }
