@@ -178,3 +178,18 @@ body {
 .glyphicon-up-next {
 	top: 3px;
 }
+
+.bar {
+	fill: steelblue;
+}
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+}
+
+.y.axis path {
+	display: none;
+}

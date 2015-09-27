@@ -892,3 +892,11 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		$('#timeline-bar').css('width', percent + '%');
 	};
 });
+
+musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams, $http) {
+	$scope.data = [];
+
+	$http.get('stats/plays').success(function (data) {
+		$scope.data = data;
+	});
+});

@@ -27,7 +27,7 @@
 				{{ time | songDuration }} / {{ duration | songDuration }}
 			</div>
 		</div>
-		<div class="col-md-6 col-lg-6">
+		<div class="col-md-6 col-lg-6" ng-show="songs.length">
 			<h2 class="h2-upnext">Up Next
 				<span ng-show="songs.length">
 					<small>

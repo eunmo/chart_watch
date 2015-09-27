@@ -87,6 +87,7 @@ sub normalize_artist($)
 	
 	if ($string =~ /^f\(x\)/) { return "f(x)"; }
 	if ($string =~ /^Fear,and Loathing in Las Vegas$/) { return "Fear, and Loathing in Las Vegas"; }
+	if ($string =~ /^コトリ with ステッチバード$/) { return $string; }
 
 	$string =~ s/\|.*$//;
 	$string =~ s/\(.*?\)//g;
