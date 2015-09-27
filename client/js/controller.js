@@ -80,10 +80,11 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
 musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
 
 	$scope.loaded = false;
-	$scope.showFeat = false;
+	$scope.showFeat = true;
 
 	$http.get('api/artist/' + $routeParams.id).success(function (artist) {
-		// format songs into rows
+		var onlyFeat = true;
+
 		for (var i in artist.albums) {
 			var album = artist.albums[i];
 			var maxDisk = 0;
@@ -95,6 +96,9 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 					maxDisk = song.disk;
 			}
 			album.maxDisk = maxDisk;
+
+			if (!album.isFeat)
+				$scope.showFeat = false;
 		}
 		$scope.artist = artist;
 		$scope.loaded = true;
