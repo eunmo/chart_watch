@@ -8,6 +8,7 @@
 		<th>US</th>
 		<th>UK</th>
 		<th>オ</th>
+		<th>D</th>
 		<th></th>
 		<th>Artist</th>
 		<th>Song</th>
@@ -21,6 +22,7 @@
 		<td><span class="pull-left span-rank"><rank-badge rank="row.billboard"></chart-badge></span></td>
 		<td><span class="pull-left span-rank"><rank-badge rank="row.uk"></chart-badge></span></td>
 		<td><span class="pull-left span-rank"><rank-badge rank="row.oricon"></chart-badge></span></td>
+		<td><span class="pull-left span-rank"><rank-badge rank="row.deutsche"></chart-badge></span></td>
 		<td class="td-img-list">
 			<img src="/{{row.song.Albums[0].id}}.30px.jpg" class="img-rounded img-album-up-list">
 		</td>
@@ -39,6 +41,7 @@
 				<chart-badge rank="row.rank.billboard" prefix="'US'"></chart-badge>
 				<chart-badge rank="row.rank.uk" prefix="'UK'"></chart-badge>
 				<chart-badge rank="row.rank.oricon" prefix="'オ'"></chart-badge>
+				<chart-badge rank="row.rank.deutsche" prefix="'D'"></chart-badge>
 				<span class="badge badge-plays" ng-show="{{row.song.plays}}">{{row.song.plays}}</span>
 			</span>
 		</td>

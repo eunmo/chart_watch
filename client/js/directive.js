@@ -90,26 +90,35 @@ musicApp.directive('d3BarPlays', function () {
 
 			//Render graph based on 'data'
 			scope.render = function(data) {
+				var maxCount = d3.max(data, function (d) { return d.count } );
+
 				var xMax = Math.ceil(d3.max(data, function (d) { return d.plays; }) / 10) * 10;
-				var yMax = Math.ceil(d3.max(data, function (d) { return d.count; }) / 100) * 100;
 				var barWidth = Math.floor(width / (xMax + 1)) - 1;
+				var x = d3.scale.linear()
+				.range([0, width])
+				.domain([0, xMax]);
 
-				var yTicks = [];
+				var yMax, yTicks = [], y;
 
-				for (var i = 10; i <= 50 && i < yMax; i += 10) {
-					yTicks.push(i);
+				if (maxCount < 100) {
+					yMax = Math.ceil(d3.max(data, function (d) { return d.count; }) / 10) * 10;
+
+					for (var i = 10; i <= yMax; i += 10)
+						yTicks.push(i);
+
+					y = d3.scale.linear().range([height, 0])
+					.domain([0, yMax]);
+				} else { // go polylinear if max count > 100
+					yMax = Math.ceil(d3.max(data, function (d) { return d.count; }) / 100) * 100;
+
+					for (var i = 10; i <= 50 && i < yMax; i += 10)
+						yTicks.push(i);
+					for (var i = 100; i <= yMax; i += 100)
+						yTicks.push(i);
+
+					y = d3.scale.linear().range([height, height / 2, 0])
+					.domain([0, 50, yMax]);
 				}
-				
-				for (var i = 100; i <= yMax; i += 100) {
-					yTicks.push(i);
-				}
-				
-				var x = d3.scale.linear().range([0, width]);
-				var y = d3.scale.linear().range([height, height / 2, 0]);
-				
-				//Set our scale's domains
-				x.domain([0, xMax]);
-				y.domain([0, 50, yMax]);
 
 				var xAxis = d3.svg.axis()
 				.scale(x)
@@ -133,13 +142,7 @@ musicApp.directive('d3BarPlays', function () {
 				svg.append("g")
 				.attr("class", "y axis")
 				.call(yAxis)
-				.append("text")
-				.attr("transform", "rotate(-90)")
-				.attr("y", 6)
-				.attr("dy", ".71em")
-				.style("text-anchor", "end")
-				.text("Count");
-
+				
 				var bars = svg.selectAll(".bar").data(data);
 
 				bars.enter().append("rect")

@@ -17,7 +17,9 @@
 	var ukFilePrefix = path.resolve('chart/uk/uk');
 	var oriconScript = path.resolve('perl/oricon.pl');
 	var oriconFilePrefix = path.resolve('chart/oricon/o');
-	var charts = ['gaon', 'melon', 'billboard', 'uk', 'oricon'];
+	var deutscheScript = path.resolve('perl/deutsche.pl');
+	var deutscheFilePrefix = path.resolve('chart/deutsche/d');
+	var charts = ['gaon', 'melon', 'billboard', 'uk', 'oricon', 'deutsche'];
 	
 	module.exports = function (router, models) {
 		function getChartSong (title, artistName, artistArray, i, rank, date, chart, songIds) {
@@ -247,7 +249,11 @@
 		router.get('/chart/oricon', function (req, res) {
 			getChart(req, res, 'oricon', oriconScript, oriconFilePrefix);
 		});
-
+		
+		router.get('/chart/deutsche', function (req, res) {
+			getChart(req, res, 'deutsche', deutscheScript, deutscheFilePrefix);
+		});
+		
 		function getMaxDate (type, dates) {
 			return models.SongChart.max('week', { where: { type: type } } )
 			.success(function (row) {
