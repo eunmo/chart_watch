@@ -64,7 +64,7 @@ sub normalize_artist($)
 	$string =~ s/\/.*$//;
 	$string =~ s/\sfeat\.\s.*$//;
 	$string =~ s/\s+$//;
-	$string =~ s/[\'’]/`/g;
+	$string =~ s/[\'’"]/`/g;
 
 	if ($string =~ /^R. City$/) { return "R City"; }
 	if ($string =~ /^Calvin Harris \+ Disciples$/) { return "Calvin Harris"; }

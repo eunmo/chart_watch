@@ -65,6 +65,26 @@
 			});
 		}
 
+		function addArtistAlias(artistId, alias, chart) {
+			return models.ArtistAlias.findOrCreate({
+				where: { ArtistId: artistId, alias: alias, chart: chart }
+			});
+		}
+
+		function deleteArtistAlias(artistId, alias, chart) {
+			return models.ArtistAlias.destroy({
+				where: { ArtistId: artistId, alias: alias, chart: chart }
+			});
+		}
+
+		function updateArtistAlias(id, alias, chart) {
+			return models.ArtistAlias.update({
+				alias: alias, chart: chart
+			}, {
+				where: { id: id }
+			});
+		};
+
 		router.put('/api/edit/artist', function (req, res) {
 			var input = req.body;
 			var id = input.id;
@@ -94,6 +114,19 @@
 					promises.push(deleteArtistGroup(id, editMember.id));
 				} else {
 					promises.push(updateArtistGroup(id, editMember.id, editMember.primary));
+				}
+			}
+
+			for (i in input.editAliases) {
+				var editAlias = input.editAliases[i];
+				if (editAlias.created) {
+					if (editAlias.alias !== null && editAlias.chart !== null) {
+						promises.push(addArtistAlias(id, editAlias.alias, editAlias.chart));
+					}
+				} else if (editAlias.deleted) {
+					promises.push(deleteArtistAlias(id, editAlias.alias, editAlias.chart));
+				} else {
+					promises.push(updateArtistAlias(editAlias.id, editAlias.alias, editAlias.chart));
 				}
 			}
 

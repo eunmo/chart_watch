@@ -7,7 +7,8 @@
 				where: {id: id},
 				include: [
 					{ model: models.Artist, as: 'Group' },
-					{ model: models.Artist, as: 'Member' }
+					{ model: models.Artist, as: 'Member' },
+					{ model: models.ArtistAlias }
 				]
 			}).then(function (artist) {
 				res.json(artist);

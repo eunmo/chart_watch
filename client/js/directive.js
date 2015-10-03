@@ -90,7 +90,8 @@ musicApp.directive('d3BarPlays', function () {
 
 			//Render graph based on 'data'
 			scope.render = function(data) {
-				var maxCount = d3.max(data, function (d) { return d.count } );
+				var i;
+				var maxCount = d3.max(data, function (d) { return d.count; } );
 
 				var xMax = Math.ceil(d3.max(data, function (d) { return d.plays; }) / 10) * 10;
 				var barWidth = Math.floor(width / (xMax + 1)) - 1;
@@ -103,7 +104,7 @@ musicApp.directive('d3BarPlays', function () {
 				if (maxCount < 100) {
 					yMax = Math.ceil(d3.max(data, function (d) { return d.count; }) / 10) * 10;
 
-					for (var i = 10; i <= yMax; i += 10)
+					for (i = 10; i <= yMax; i += 10)
 						yTicks.push(i);
 
 					y = d3.scale.linear().range([height, 0])
@@ -111,9 +112,9 @@ musicApp.directive('d3BarPlays', function () {
 				} else { // go polylinear if max count > 100
 					yMax = Math.ceil(d3.max(data, function (d) { return d.count; }) / 100) * 100;
 
-					for (var i = 10; i <= 50 && i < yMax; i += 10)
+					for (i = 10; i <= 50 && i < yMax; i += 10)
 						yTicks.push(i);
-					for (var i = 100; i <= yMax; i += 100)
+					for (i = 100; i <= yMax; i += 100)
 						yTicks.push(i);
 
 					y = d3.scale.linear().range([height, height / 2, 0])
@@ -141,7 +142,7 @@ musicApp.directive('d3BarPlays', function () {
 				//Y axis
 				svg.append("g")
 				.attr("class", "y axis")
-				.call(yAxis)
+				.call(yAxis);
 				
 				var bars = svg.selectAll(".bar").data(data);
 
@@ -166,7 +167,7 @@ musicApp.directive('d3BarPlays', function () {
 
 				svg
 				.attr('width', width)
-				.attr('height', height)
+				.attr('height', height);
 
 				width -= margin.left + margin.right;
 				height -= margin.top + margin.bottom;

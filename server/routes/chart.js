@@ -19,7 +19,7 @@
 	var oriconFilePrefix = path.resolve('chart/oricon/o');
 	var deutscheScript = path.resolve('perl/deutsche.pl');
 	var deutscheFilePrefix = path.resolve('chart/deutsche/d');
-	var charts = ['gaon', 'melon', 'billboard', 'uk', 'oricon', 'deutsche'];
+	var charts = ['gaon', 'melon', 'billboard', 'oricon', 'deutsche', 'uk'];
 	
 	module.exports = function (router, models) {
 		function getChartSong (title, artistName, artistArray, i, rank, date, chart, songIds) {
@@ -222,7 +222,7 @@
 
 					var rankCmp = function (a, b) {
 						return a.index - b.index;
-					}
+					};
 
 					results.sort(rankCmp);
 					res.json(results);
@@ -438,7 +438,7 @@
 								title: song.title,
 								albumId: song.Albums[0].id,
 								artists: common.getSongArtists(song)
-							}
+							};
 						}
 					}
 				}

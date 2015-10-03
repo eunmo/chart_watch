@@ -24,7 +24,7 @@
 		}
 
 		return rank;
-	}
+	};
 
 	module.exports = function (router, models) {
 		function getLastPlayed (limit) {

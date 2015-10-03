@@ -23,6 +23,8 @@
 													   foreignKey: 'GroupId'});
 			
 			Artist.belongsToMany(models.Song, {through: models.SongArtist});
+			
+			Artist.hasMany(models.ArtistAlias);
 		};
 
 		// need views to show notable songs

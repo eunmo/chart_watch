@@ -168,6 +168,7 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 		var i, artistGroup;
 		artist.editGroups = [];
 		artist.editMembers = [];
+		artist.editAliases = [];
 
 		for (i in artist.Group) {
 			var group = artist.Group[i];
@@ -188,6 +189,17 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 				name: member.name,
 				id: member.id,
 				primary: artistGroup.primary,
+				deleted: false,
+				created: false
+			};
+		}
+
+		for (i in artist.ArtistAliases) {
+			var alias = artist.ArtistAliases[i];
+			artist.editAliases[i] = {
+				id: alias.id,
+				alias: alias.alias,
+				chart: alias.chart,
 				deleted: false,
 				created: false
 			};
@@ -233,6 +245,20 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 				created: true
 			};
 			$scope.artist.editMembers.push(artist);
+		}
+	};
+	
+	$scope.addAlias = function () {
+		if ($scope.artist.editAliases.length === 0 ||
+				($scope.artist.editAliases[$scope.artist.editAliases.length - 1].alias !== null &&
+				 $scope.artist.editAliases[$scope.artist.editAliases.length - 1].chart !== null)) {
+			var alias = {
+				alias: null,
+				chart: null,
+				deleted: false,
+				created: true
+			};
+			$scope.artist.editAliases.push(alias);
 		}
 	};
 });
@@ -341,7 +367,7 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 	$scope.date = new Date();
 	$scope.date = new Date(Date.UTC($scope.date.getFullYear(), $scope.date.getMonth(), $scope.date.getDate()));
 
-	$scope.minDate = new Date(Date.UTC(2015, 0, 3));
+	$scope.minDate = new Date(Date.UTC(2010, 0, 2));
 	if ($scope.chart === 'gaon') {
 		if ($scope.date.getDay() < 4) {
 			$scope.date.setDate($scope.date.getDate() - 7);
@@ -654,7 +680,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 			var song, level, tier;
 			var counts = [];
 
-			for (i in songs) {
+			for (var i in songs) {
 				song = songs[i];
 				level = 1;
 
@@ -717,7 +743,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 			var tier = Math.floor((Math.random() * max_tier)) + 1;
 
 			while (tier > 1) {
-				if (totals[tier] === undefined || totals[tier] == 0)
+				if (totals[tier] === undefined || totals[tier] === 0)
 					tier--;
 				else
 					break;
