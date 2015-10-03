@@ -18,6 +18,8 @@
 			Song.belongsToMany(models.Artist, {through: models.SongArtist});
 
 			Song.hasMany(models.SongChart);
+			
+			Song.hasMany(models.SongAlias);
 		};
 
 		// (tentative) hasOne song (for skits)

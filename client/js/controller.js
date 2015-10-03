@@ -326,6 +326,7 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 
 	$http.get('api/edit/song/' + $routeParams.id).success(function (song) {
 		song.editArtists = [];
+		song.editAliases = [];
 
 		for (var i in song.Artists) {
 			var artist = song.Artists[i];
@@ -339,6 +340,18 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 				created: false,
 			};
 		}
+		
+		for (i in song.SongAliases) {
+			var alias = song.SongAliases[i];
+			song.editAliases[i] = {
+				id: alias.id,
+				alias: alias.alias,
+				chart: alias.chart,
+				deleted: false,
+				created: false
+			};
+		}
+
 		$scope.song = song;
 	});
 
@@ -358,6 +371,20 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 				created: true
 			};
 			$scope.song.editArtists.push(artist);
+		}
+	};
+	
+	$scope.addAlias = function () {
+		if ($scope.song.editAliases.length === 0 ||
+				($scope.song.editAliases[$scope.song.editAliases.length - 1].alias !== null &&
+				 $scope.song.editAliases[$scope.song.editAliases.length - 1].chart !== null)) {
+			var alias = {
+				alias: null,
+				chart: null,
+				deleted: false,
+				created: true
+			};
+			$scope.song.editAliases.push(alias);
 		}
 	};
 });

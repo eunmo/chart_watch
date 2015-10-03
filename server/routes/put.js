@@ -83,7 +83,7 @@
 			}, {
 				where: { id: id }
 			});
-		};
+		}
 
 		router.put('/api/edit/artist', function (req, res) {
 			var input = req.body;
@@ -281,6 +281,26 @@
 			{ where: { SongId: songId, ArtistId: artistId }
 			});
 		}
+
+		function addSongAlias(songId, alias, chart) {
+			return models.SongAlias.findOrCreate({
+				where: { SongId: songId, alias: alias, chart: chart }
+			});
+		}
+
+		function deleteSongAlias(songId, alias, chart) {
+			return models.SongAlias.destroy({
+				where: { SongId: songId, alias: alias, chart: chart }
+			});
+		}
+
+		function updateSongAlias(id, alias, chart) {
+			return models.SongAlias.update({
+				alias: alias, chart: chart
+			}, {
+				where: { id: id }
+			});
+		}
 		
 		router.put('/api/edit/song', function (req, res) {
 			var input = req.body;
@@ -297,6 +317,19 @@
 					promises.push(deleteSongArtist(id, editArtist.id));
 				} else {
 					promises.push(updateSongArtist(id, editArtist.id, editArtist.order, editArtist.feat));
+				}
+			}
+
+			for (i in input.editAliases) {
+				var editAlias = input.editAliases[i];
+				if (editAlias.created) {
+					if (editAlias.alias !== null && editAlias.chart !== null) {
+						promises.push(addSongAlias(id, editAlias.alias, editAlias.chart));
+					}
+				} else if (editAlias.deleted) {
+					promises.push(deleteSongAlias(id, editAlias.alias, editAlias.chart));
+				} else {
+					promises.push(updateSongAlias(editAlias.id, editAlias.alias, editAlias.chart));
 				}
 			}
 

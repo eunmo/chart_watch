@@ -29,6 +29,7 @@
 		</td>
 		<td ng-show="row.artistFound && !row.songFound">
 			<artist-link artist="row.artist"></artist-link>
+			[{{row.artistRaw | normalizeString}}]
 		</td>
 		<td ng-show="!row.artistFound" class="danger">
 			{{row.artist | normalizeString}}

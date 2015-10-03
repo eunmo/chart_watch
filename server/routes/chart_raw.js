@@ -96,14 +96,26 @@
 			});
 		}
 
-		var findSongByArtist = function (artistId, title) {
+		var findSongByArtist = function (artistId, title, chart) {
 			return models.sequelize.query("Select id, title from Songs where id in " +
 																		"(select SongId from SongArtists where ArtistId = " + artistId + ") " +
 																		"and (title = \"" + title + "\" or title like \"" + title + " (%)\")",
-																		{ type: models.sequelize.QueryTypes.SELECT });
+																		{ type: models.sequelize.QueryTypes.SELECT })
+			.then(function (results) {
+				if (results.length > 0) {
+					return results;
+				} else {
+					return models.sequelize.query("Select id, title from Songs where id =" +
+																				"(select SongId from SongAliases where SongId in" +
+																				" (select SongId from SongArtists where ArtistId = " + artistId + ")" +
+																				" and alias = \"" + title + "\" and chart = \"" + chart + "\")",
+																				{ type: models.sequelize.QueryTypes.SELECT });
+
+				}
+			});
 		};
 
-		var findAlbumSongByArtist = function (artistId, title) {
+		var findAlbumSongByArtist = function (artistId, title, chart) {
 			return models.sequelize.query("Select id, title from Songs where id in " +
 																		"(select SongId from AlbumSongs where AlbumId in " +
 																	  "	(select AlbumId from AlbumArtists where ArtistId = " + artistId + ")) " +
@@ -111,7 +123,7 @@
 																		{ type: models.sequelize.QueryTypes.SELECT });
 		};
 
-		var findSingleByArtist = function (artistId, title) {
+		var findSingleByArtist = function (artistId, title, chart) {
 			return models.sequelize.query("Select id, title from Songs where id = " +
 																		"(select SongId from AlbumSongs where track = 1 and " + 
 																		" albumId = (select id from Albums where id in " +
@@ -120,11 +132,11 @@
 																		{ type: models.sequelize.QueryTypes.SELECT });
 		};
 
-		function findSongByFunction (artistId, title, titleNorm, queryFunction) {
-			return queryFunction(artistId, title)
+		function findSongByFunction (artistId, title, titleNorm, chart, queryFunction) {
+			return queryFunction(artistId, title, chart)
 			.then(function (results) {
 				if (results.length === 0 && title !== titleNorm) {
-					return queryFunction(artistId, titleNorm);
+					return queryFunction(artistId, titleNorm, chart);
 				} else {
 					return results;
 				}
@@ -171,17 +183,17 @@
 		function getSong (artistId, title, index, songs, chart, date) {
 			var titleNorm = normalizeTitle(artistId, title, chart, date);
 
-			return findSongByFunction(artistId, title, titleNorm, findSongByArtist)
+			return findSongByFunction(artistId, title, titleNorm, chart, findSongByArtist)
 			.then(function (results) {
 				if (results.length > 0) {
 					songs[index] = getMatch(title, titleNorm, results);
 				} else {
-					return findSongByFunction(artistId, title, titleNorm, findAlbumSongByArtist)
+					return findSongByFunction(artistId, title, titleNorm, chart, findAlbumSongByArtist)
 					.then(function (results) {
 						if (results.length > 0) {
 							songs[index] = getMatch(title, titleNorm, results);
 						} else {
-							return findSongByFunction(artistId, title, titleNorm, findSingleByArtist)
+							return findSongByFunction(artistId, title, titleNorm, chart, findSingleByArtist)
 							.then(function (results) {
 								if (results.length > 0) {
 									songs[index] = getMatch(title, titleNorm, results);
@@ -378,14 +390,14 @@
 								chart.push({ index: row.rank, artistFound: true, songFound: true, song: song, songArtists: songArtists });
 							} else {
 								title = row.titles[j];
-								chart.push({ index: row.rank, artistFound: true, songFound: false, song: title, artist: artist });
+								chart.push({ index: row.rank, artistFound: true, artistRaw: row.artist, songFound: false, song: title, artist: artist });
 							}
 						}
 					} else if (results[row.rank]) {
 						for (j in row.titles) {
 							if (results[row.rank][j] === undefined) {
 								title = row.titles[j];
-								chart.push({ index: row.rank, artistFound: true, songFound: false, song: title, artist: getDBArtist(results[row.rank]) });
+								chart.push({ index: row.rank, artistFound: true, artistRaw: row.artist, songFound: false, song: title, artist: getDBArtist(results[row.rank]) });
 							} else if (results[row.rank][j].found) {
 								song = results[row.rank][j].Song;
 								songArtists = common.getSongArtists(song);
