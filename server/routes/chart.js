@@ -44,6 +44,7 @@
 				nameNorm = nameNorm.replace(/[,&＆].*$/, '');
 				nameNorm = nameNorm.replace(/\sFeaturing\s.*$/, '');
 				nameNorm = nameNorm.replace(/\sDuet\sWith\s.*$/, '');
+				nameNorm = nameNorm.replace(/\sAnd\s.*$/, '');
 				nameNorm = nameNorm.replace(/\s\+\s.*$/, '');
 			} else if (chart === 'oricon') {
 				nameNorm = nameNorm.replace(/\sfeat\..*$/, '');
@@ -79,8 +80,6 @@
 			}
 
 			nameNorm = nameNorm.trim();
-
-			console.log(name + ' ' + nameNorm);
 
 			return nameNorm;
 		}
@@ -237,8 +236,6 @@
 		function getMatch (title, titleNorm, results) {
 			var i, song;
 
-			console.log(results);
-			
 			for (i in results) {
 				song = results[i];
 
@@ -331,6 +328,19 @@
 			})
 			.then(function (song) {
 				arr[idx] = song;
+			});
+		}
+
+		function addChartExtra (artist, title, chart, date) {
+			models.ChartExtra.findOrCreate({
+				where: { type: chart, week: date },
+				defaults: { name: artist, title: title }
+			});
+		}
+		
+		function deleteChartExtra (chart, date) {
+			models.ChartExtra.destroy({
+				where: { type: chart, week: date }
 			});
 		}
 
@@ -450,6 +460,8 @@
 								song = results[row.rank][j];
 								promises.push(addSong(chartName, date, row.rank, j, song.id));
 								promises.push(getChartSong(song.id, dbSongs, index++));
+							} else if (row.rank === 1 && j === 0) {
+								console.log('\n\n\n' + date + ' ' + chartName + ' ' + row.artist + ' ' + row.titles[0] + '\n\n\n');
 							}
 						}
 					}
@@ -500,6 +512,15 @@
 						}
 					}
 				}
+
+				if (chart.length > 0 && !chart[0].songFound) {
+					row = webData[0];
+					if (row && row.titles.length > 0)
+						addChartExtra(row.artist, row.titles[0], chartName, date);
+				} else {
+					deleteChartExtra(chartName, date);
+				}
+
 				res.json(chart);
 			});
 		}

@@ -54,6 +54,7 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		controller: 'StatsPlaysCtrl'
 	})
 	.when('/blank', {
+		templateUrl: '/partials/blank.html',
 	})
 	.otherwise({
 		redirectTo: '/'

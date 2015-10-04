@@ -16,7 +16,7 @@
 			{{week.week | date: 'MM-dd yyyy' }}
 		</td>
 		<td ng-repeat="song in week.songs">
-			<div class="media" ng-show="song.title">
+			<div class="media" ng-show="song.id">
 				<a class="media-left" ng-click="addNext(song)">
 					<img src="/{{song.albumId}}.40px.jpg" class="img-rounded img-album-up-next">
 				</a>
@@ -28,6 +28,19 @@
 						<span class="song-desc-up-ones"><artist-array array="song.artists"></artist-array></span>
 					</div>
 				</div>
+			</div>
+			<div class="media media-ones" ng-show="song.extra">
+				<a class="media-left" ng-click="addNext(song)">
+					<img src="/0.jpg" class="img-rounded img-album-up-next">
+				</a>
+				<div class="media-body media-body-ones">
+					<div class="media-desc-ones">
+						<span class="song-desc-up-ones">{{song.title | normalizeString}}</span>
+					</div>
+					<div class="media-desc-ones">
+						<span class="song-desc-up-ones">{{song.artist | normalizeString}}</span>
+					</div>
+				</div>				
 			</div>
 		</td>
 	</tr>

@@ -25,7 +25,7 @@ while ($date->year >= $end) {
 	
 	print $date->ymd(), "\n";
 
-	my $url = "\"http://54.64.168.41:$port/chart/ukRaw?year=$yy&month=$mm&day=$dd\"";
+	my $url = "\"http://54.64.168.41:$port/chart/uk?year=$yy&month=$mm&day=$dd\"";
 	system("curl $url > /dev/null 2>&1");
 
 	$date->subtract( weeks => 1);
