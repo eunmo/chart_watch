@@ -8,147 +8,329 @@
 	var exec = Promise.promisify(require('child_process').exec);
 
 	var gaonScript = path.resolve('perl/gaon.pl');
-	var gaonFilePrefix = path.resolve('chart/gaon/gaon');
+	var gaonFilePrefix = path.resolve('chart/g');
 	var melonScript = path.resolve('perl/melon.pl');
-	var melonFilePrefix = path.resolve('chart/melon/melon');
+	var melonFilePrefix = path.resolve('chart/m');
 	var billboardScript = path.resolve('perl/billboard.pl');
-	var billboardFilePrefix = path.resolve('chart/billboard/billboard');
+	var billboardFilePrefix = path.resolve('chart/b');
 	var ukScript = path.resolve('perl/uk.pl');
-	var ukFilePrefix = path.resolve('chart/uk/uk');
+	var ukFilePrefix = path.resolve('chart/u');
 	var oriconScript = path.resolve('perl/oricon.pl');
-	var oriconFilePrefix = path.resolve('chart/oricon/o');
+	var oriconFilePrefix = path.resolve('chart/o');
 	var deutscheScript = path.resolve('perl/deutsche.pl');
-	var deutscheFilePrefix = path.resolve('chart/deutsche/d');
-	var charts = ['gaon', 'melon', 'billboard', 'oricon', 'deutsche', 'uk'];
+	var deutscheFilePrefix = path.resolve('chart/d');
 	
 	module.exports = function (router, models) {
-		function getChartSong (title, artistName, artistArray, i, rank, date, chart, songIds) {
-			return models.Artist.findOne({ where: { name: artistName } })
-			.then(function (artist) {
-				if (!artist) {
-					artistArray[i] = { index: rank, artistFound: false, songFound: false, song: title, artist: artistName };
-				}
 
-				if (artist) {
-					return models.Artist.findOne({
-						where: { id: artist.id },
-						include: [
-							{ model: models.Song,
-								where: { title: { like: title + '%' } },
-								include: [
-									{ model: models.Album },
-									{ model: models.Artist, include: [
-										{ model: models.Artist, as: 'Group' }
-									]}
-							 	]
-							}
-						]
-					})
-					.then(function (fullArtist) {
-						if (fullArtist) {
-							var songs = [];
-							var songArtists = [];
-							var j, k;
-							var index = 0;
-							var album, song;
+		function findArtistByName (name, chart) {
+			return models.sequelize.query("Select id, name from Artists " +
+																		"where name = \"" + name + "\" or nameNorm = \"" + name + "\" or " +
+																		"id = (select ArtistId from ArtistAliases where alias = \"" + name +
+																		"\" and chart = \"" + chart + "\")",
+																		{ type: models.sequelize.QueryTypes.SELECT });
+		}
 
-							for (j in fullArtist.Songs) {
-								song = fullArtist.Songs[j];
-								songs.push(song);
-							}
+		function normalizeName (name, chart) {
+			var nameNorm = name;
 
-							for (j in fullArtist.Albums) {
-								album = fullArtist.Albums[j];
+			nameNorm = nameNorm.replace(/\(.*\)/g, '');
 
-								for (k in album.Songs) {
-									song = album.Songs[k];
-									songs.push(song);
-								}
-							}
+			if (chart === 'gaon') {
+				nameNorm = nameNorm.replace(/[,&＆].*$/, '');
+			} else if (chart === 'melon') {
+				nameNorm = nameNorm.replace(/[,&＆].*$/, '');
+				nameNorm = nameNorm.replace(/\sWith\s.*$/, '');
+			} else if (chart === 'billboard') {
+				nameNorm = nameNorm.replace(/[,&＆].*$/, '');
+				nameNorm = nameNorm.replace(/\sFeaturing\s.*$/, '');
+				nameNorm = nameNorm.replace(/\sDuet\sWith\s.*$/, '');
+				nameNorm = nameNorm.replace(/\s\+\s.*$/, '');
+			} else if (chart === 'oricon') {
+				nameNorm = nameNorm.replace(/\sfeat\..*$/, '');
+				nameNorm = nameNorm.replace(/\swith\s.*$/, '');
+				nameNorm = nameNorm.replace(/\svs\s.*$/, '');
+				nameNorm = nameNorm.replace(/\s\+\s.*$/, '');
+				nameNorm = nameNorm.replace(/〜.*〜$/, '');
+				nameNorm = nameNorm.replace(/\/.*$/, '');
+			} else if (chart === 'deutsche') {
+				nameNorm = nameNorm.replace(/[,&＆].*$/, '');
+				nameNorm = nameNorm.replace(/\sfeat\..*$/, '');
+				nameNorm = nameNorm.replace(/\s\+\s.*$/, '');
+			} else if (chart === 'uk') {
+				nameNorm = nameNorm.replace(/[&＆].*$/, '');
+				nameNorm = nameNorm.replace(/\sFT\s.*$/, '');
+				nameNorm = nameNorm.replace(/\sWITH\s.*$/, '');
+				nameNorm = nameNorm.replace(/\sVS\s.*$/, '');
+				nameNorm = nameNorm.replace(/\/.*$/, '');
+			}
 
-							for (j in songs) {
-								song = songs[j];
-								if (songIds[song.id])
-									continue;
-								if (song.title.toLowerCase() === title.toLowerCase())
-									break;
-							}
+			nameNorm = nameNorm.trim();
 
-							songArtists = common.getSongArtists(song);
+			return nameNorm;
+		}
+		
+		function normalizeNameInvert (name, chart) {
+			var nameNorm = name;
 
-							artistArray[i] = { index: rank, artistFound: true, songFound: true, song: song, songArtists: songArtists };
+			if (chart === 'gaon' || chart === 'melon') {
+				nameNorm = nameNorm.replace(/.*?\(/, '');
+				nameNorm = nameNorm.replace(/\).*/, '');
+			} else if (chart === 'oricon') {
+			}
 
-							return models.SongChart.create({
-								type: chart,
-								week: date,
-								rank: rank,
-								SongId: song.id
-							}).catch(function (errors) {
-								artistArray[i] = { index: rank, artistFound: true, songFound: false, song: title, artist: artist };
-							});
-						} else {
-							return models.Artist.findOne({
-								where: { id: artist.id },
-								include: [
-									{ model: models.Album,
-										include: [
-											{ model: models.Song,
-												where: { title: { like: title + '%' } },
-												include: [
-													{ model: models.Album },
-													{ model: models.Artist, include: [
-														{ model: models.Artist, as: 'Group' }
-													]}
-												]
-											}
-										]
-									}
-								]
-							})
-							.then (function (fullArtist) {
-								if (fullArtist) {
-									var songs = [];
-									var songArtists = [];
-									var j, k;
-									var index = 0;
-									var album, song;
+			nameNorm = nameNorm.trim();
 
-									for (j in fullArtist.Albums) {
-										album = fullArtist.Albums[j];
+			console.log(name + ' ' + nameNorm);
 
-										for (k in album.Songs) {
-											song = album.Songs[k];
-											songs.push(song);
+			return nameNorm;
+		}
+
+		function getArtist (artist, index, artists, chart) {
+			return findArtistByName(artist, chart)
+			.then(function (results) {
+				if (results.length > 0) {
+					artists[index] = results[0];
+				} else {
+					var nameNorm = normalizeName(artist, chart);
+
+					if (artist !== nameNorm) {
+						return findArtistByName(nameNorm, chart)
+						.then(function (results) {
+							if (results.length > 0) {
+								artists[index] = results[0];
+							} else {
+								var nameInv = normalizeNameInvert(artist, chart);
+
+								if (artist !== nameInv && nameNorm !== nameInv) {
+									return findArtistByName(nameInv, chart)
+									.then(function (results) {
+										if (results.length > 0) {
+											artists[index] = results[0];
 										}
-									}
-
-									for (j in songs) {
-										song = songs[j];
-										if (songIds[song.id])
-											continue;
-										if (song.title.toLowerCase() === title.toLowerCase())
-											break;
-									}
-
-									songArtists = common.getSongArtists(song);
-
-									artistArray[i] = { index: rank, artistFound: true, songFound: true, song: song, songArtists: songArtists };
-
-									return models.SongChart.create({
-										type: chart,
-										week: date,
-										rank: rank,
-										SongId: song.id
-									}).catch(function (errors) {
-										artistArray[i] = { index: rank, artistFound: true, songFound: false, song: title, artist: artist };
 									});
-								} else {
-									artistArray[i] = { index: rank, artistFound: true, songFound: false, song: title, artist: artist };
 								}
+							}
+						});
+					}
+				}
+			});
+		}
+
+		var findSongByArtist = function (artistId, title, chart) {
+			return models.sequelize.query("Select id, title from Songs where id in " +
+																		"(select SongId from SongArtists where ArtistId = " + artistId + ") " +
+																		"and (title = \"" + title + "\" or title like \"" + title + " (%)\")",
+																		{ type: models.sequelize.QueryTypes.SELECT })
+			.then(function (results) {
+				if (results.length > 0) {
+					return results;
+				} else {
+					return models.sequelize.query("Select id, title from Songs where id =" +
+																				"(select SongId from SongAliases where SongId in" +
+																				" (select SongId from SongArtists where ArtistId = " + artistId + ")" +
+																				" and alias = \"" + title + "\" and chart = \"" + chart + "\")",
+																				{ type: models.sequelize.QueryTypes.SELECT });
+
+				}
+			});
+		};
+
+		var findAlbumSongByArtist = function (artistId, title, chart) {
+			return models.sequelize.query("Select id, title from Songs where id in " +
+																		"(select SongId from AlbumSongs where AlbumId in " +
+																	  "	(select AlbumId from AlbumArtists where ArtistId = " + artistId + ")) " +
+																		"and (title = \"" + title + "\" or title like \"" + title + " (%)\")",
+																		{ type: models.sequelize.QueryTypes.SELECT });
+		};
+
+		var findSingleByArtist = function (artistId, title, chart) {
+			return models.sequelize.query("Select id, title from Songs where id = " +
+																		"(select SongId from AlbumSongs where track = 1 and " + 
+																		" albumId = (select id from Albums where id in " +
+																		             "(select AlbumId from AlbumArtists where ArtistId = " + artistId + " and " +
+																								 "(title = \"" + title + "\" or title like \"" + title + " (%)\"))))",
+																		{ type: models.sequelize.QueryTypes.SELECT });
+		};
+
+		function findSongByFunction (artistId, title, titleNorm, chart, queryFunction) {
+			return queryFunction(artistId, title, chart)
+			.then(function (results) {
+				if (results.length === 0 && title !== titleNorm) {
+					return queryFunction(artistId, titleNorm, chart);
+				} else {
+					return results;
+				}
+			});
+		}
+
+		function handleTitleException (artistId, title, chart, date) {
+			if (artistId === 1294) { // R. Kelly
+				if (chart === 'billboard' || chart === 'deutsche') {
+					if (title === 'Ignition') {
+						return 'Ignition Remix';
+					}
+				}
+			} else if (artistId === 1320) { // Jennifer Lopez
+				var ImRealDate = new Date(2001, 7, 25); // 2001-08-25
+				var AintItFunnyDate = new Date(2001, 11, 15); // 2001-12-15
+				if (chart === 'billboard') {
+					if (title === 'I`m Real') {
+						if (date >= ImRealDate) {
+							return 'I`m Real (Murder Remix)';
+						}
+					} else if (title === 'Ain`t It Funny') {
+						return 'Ain`t It Funny (Murder Remix)';
+					} else if (title === 'I`m Gonna Be Alright') {
+						return 'I`m Gonna Be Alright (Track Masters Remix)';
+					}
+				} else if (chart === 'deutsche') {
+					if (title === 'I`m Real') {
+						return 'I`m Real (Murder Remix)';
+					} else if (title === 'I`m Gonna Be Alright') {
+						return 'I`m Gonna Be Alright (Track Masters Remix)';
+					}
+				} else if (chart === 'uk') {
+					if (title === 'I`M REAL') {
+						return 'I`m Real (Murder Remix)';
+					} else if (title === 'AIN`T IT FUNNY') {
+						if (date >= AintItFunnyDate) {
+							return 'Ain`t It Funny (Murder Remix)';
+						}
+					} else if (title === 'I`M GONNA BE ALRIGHT') {
+						return 'I`m Gonna Be Alright (Track Masters Remix)';
+					}
+				}
+			} else if (artistId === 1585) { // 50 Cent
+				if (chart === 'billboard') {
+					if (title === 'Outta Control (Remix)') {
+						return title;
+					}
+				} else if (chart === 'deutsche') {
+					if (title === 'Outta Control') {
+						return 'Outta Control (Remix)';
+					}
+				} else if (chart === 'uk') {
+					if (title === 'OUTTA CONTROL') {
+						return 'Outta Control (Remix)';
+					}
+				}
+			}
+
+			return null;
+		}
+
+		function normalizeTitle (artistId, title, chart, date) {
+			var titleNorm = title;
+
+			titleNorm = titleNorm.replace(/\(.*/g, '');
+
+			if (chart === 'oricon') {
+				titleNorm = titleNorm.replace(/(\s|。)feat\..*$/, '');
+				titleNorm = titleNorm.replace(/\sE\.P\.$/, '');
+			}
+
+			titleNorm = titleNorm.trim();
+
+			return titleNorm;
+		}
+
+		function getMatch (title, titleNorm, results) {
+			var i, song;
+
+			console.log(results);
+			
+			for (i in results) {
+				song = results[i];
+
+				if (song.title.toLowerCase() === title.toLowerCase()) {
+					return song;
+				}
+			}
+			
+			for (i in results) {
+				song = results[i];
+
+				if (song.title.toLowerCase() === title.toLowerCase()) {
+					return song;
+				}
+			}
+
+			return results[0];
+		}
+
+		function getSong (artistId, title, index, songs, chart, date) {
+			var titleNorm;
+			var exception = handleTitleException(artistId, title, chart, date);
+			
+			if (exception !== null) {
+				title = titleNorm = exception;
+			} else {	
+				titleNorm = normalizeTitle(artistId, title, chart, date);
+			}
+
+			return findSongByFunction(artistId, title, titleNorm, chart, findSongByArtist)
+			.then(function (results) {
+				if (results.length > 0) {
+					songs[index] = getMatch(title, titleNorm, results);
+				} else {
+					return findSongByFunction(artistId, title, titleNorm, chart, findAlbumSongByArtist)
+					.then(function (results) {
+						if (results.length > 0) {
+							songs[index] = getMatch(title, titleNorm, results);
+						} else {
+							return findSongByFunction(artistId, title, titleNorm, chart, findSingleByArtist)
+							.then(function (results) {
+								if (results.length > 0) {
+									songs[index] = getMatch(title, titleNorm, results);
+								}	
 							});
 						}
 					});
 				}
+			});
+		}
+
+		function addSong (chart, date, rank, order, songId) {
+			return models.SongChart.create({
+				type: chart,
+				week: date,
+				rank: rank,
+				order: order,
+				SongId: songId
+			}).catch(function (errors) {
+			});
+		}
+
+		function getArtistId (rows) {
+			var i, row;
+
+			for (i in rows) {
+				row = rows[i];
+				return row.Song.Artists[0].id;
+			}
+		}
+
+		function getDBArtist (rows) {
+			var i, row;
+
+			for (i in rows) {
+				row = rows[i];
+				return row.Song.Artists[0];
+			}
+		}
+
+		function getChartSong (id, arr, idx) {
+			return models.Song.findOne({
+				where: { id: id },
+				include: [
+					{ model: models.Album },
+					{ model: models.Artist, include: [
+						{ model: models.Artist, as: 'Group' }
+					]}
+				]
+			})
+			.then(function (song) {
+				arr[idx] = song;
 			});
 		}
 
@@ -161,300 +343,190 @@
 											(month < 10 ? '.0' : '.') + month +
 											(day < 10 ? '.0' : '.') + day;
 			var date = new Date(year, month - 1, day);
-			var chartRows = [];
-			var chartRank = [];
-			var songIds = [];
+			var webData;
+			var promises = [];
+			var execStr;
+			var i, j;
+			var row, title;
+			var artists = [];
+			var results = [];
+			var dbSongs = [];
 
-			models.SongChart.findAll({
-				where: { type: chartName, week: date },
-				include: [
-					{ model: models.Song,
-						include: [
-							{ model: models.Album },
-							{ model: models.Artist, include: [
-								{ model: models.Artist, as: 'Group' }
-							]}
-						]
-					}
-				]
-			})
-			.then(function (charts) {
-				var i, row, rank, song;
-				var execStr;
+			if (fs.existsSync(chartFile) && fs.statSync(chartFile).size > 1024) {
+				execStr = 'cat ' + chartFile;
+			} else {
+				execStr = 'perl ' + chartScript + ' ' + year + ' ' + month + ' ' + day + ' | tee ' + chartFile;
+			}
 
-				for (i in charts) {
-					row = charts[i];
-					rank = row.rank;
-					song = row.Song;
-					chartRank[rank] = true;
-					chartRows.push({ index: rank, artistFound: true, songFound: true, song: song, songArtists: common.getSongArtists(song) });
-					songIds[song.id] = true;
-				}
-
-				if (fs.existsSync(chartFile)) {
-					execStr = 'cat ' + chartFile;
-				} else {
-					execStr = 'perl ' + chartScript + ' ' + year + ' ' + month + ' ' + day + ' | tee ' + chartFile;
-				}
-				return exec(execStr);
-			})
+			exec(execStr)
 			.spread(function (stdout, stderr) {
-				var chart = JSON.parse(stdout);
-				var i, row;
-				var promises = [];
+				webData = JSON.parse(stdout);
+				
+				return models.SongChart.findAll({
+					where: { type: chartName, week: date },
+					include: [
+						{ model: models.Song,
+							include: [
+								{ model: models.Album },
+								{ model: models.Artist, include: [
+									{ model: models.Artist, as: 'Group' }
+								]}
+							]
+					}
+					]
+				})
+				.then(function (charts) {
 
-				for (i in chart) {
-					row = chart[i];
-					if (chartRank[row.rank])
-						continue;
-					promises[i] = getChartSong (row.song, row.artist, artistArray, i, row.rank, date, chartName, songIds);
+					for (i in charts) {
+						row = charts[i];
+
+						if (results[row.rank] === undefined) {
+							results[row.rank] = [];
+						}
+
+						results[row.rank][row.order] = row;
+						results[row.rank][row.order].found = true;
+					}
+
+					for (i in webData) {
+						row = webData[i];
+
+						if (results[row.rank] === undefined) {
+							promises.push(getArtist(row.artist, row.rank, artists, chartName));
+						}
+					}
+
+					return Promise.all(promises);
+				});
+			})
+			.then(function ()	{
+				var artist;
+				promises = [];
+
+				for (i in webData) {
+					row = webData[i];
+
+					artist = artists[row.rank];
+
+					if (artist) {
+						artist.songs = [];
+						for (j in row.titles) {
+							title = row.titles[j];
+							promises.push(getSong(artist.id, title, j, artist.songs, chartName, date));
+						}
+					}	else if (results[row.rank]) {
+						for (j in row.titles) {
+							title = row.titles[j];
+							if (results[row.rank][j] === undefined) {
+								promises.push(getSong(getArtistId(results[row.rank]), title, j, results[row.rank], chartName, date));
+							}
+						}
+					}	
 				}
 
-				Promise.all(promises)
-				.then(function () {
-					var i, results = [];
-					for (i in chartRows) {
-						results.push(chartRows[i]);
-					}
-					for (i in artistArray) {
-						results.push(artistArray[i]);
-					}
+				return Promise.all(promises);
+			})
+			.then(function () {
+				var artist, song, index = 0;
+				promises = [];
 
-					var rankCmp = function (a, b) {
-						return a.index - b.index;
-					};
+				for (i in webData) {
+					row = webData[i];
 
-					results.sort(rankCmp);
-					res.json(results);
-				});
+					artist = artists[row.rank];
+
+					if (artist) {
+						for (j in row.titles) {
+							song = artist.songs[j];
+							if (song) {
+								song = artist.songs[j];
+								promises.push(addSong(chartName, date, row.rank, j, song.id));
+								promises.push(getChartSong(song.id, dbSongs, index++));
+							}
+						}
+					} else if (results[row.rank]) {
+						for (j in row.titles) {
+							if (results[row.rank][j] !== undefined && !results[row.rank][j].found) {
+								song = results[row.rank][j];
+								promises.push(addSong(chartName, date, row.rank, j, song.id));
+								promises.push(getChartSong(song.id, dbSongs, index++));
+							}
+						}
+					}
+				}
+
+				return Promise.all(promises);
+			})
+			.then(function () {
+				var artist, song, songArtists, index = 0;
+				var chart = [];
+
+				for (i in webData) {
+					row = webData[i];
+
+					artist = artists[row.rank];
+
+					if (artist) {
+						for (j in row.titles) {
+							song = artist.songs[j];
+							if (song) {
+								song = dbSongs[index++];
+								songArtists = common.getSongArtists(song);
+								chart.push({ index: row.rank, artistFound: true, songFound: true, song: song, songArtists: songArtists });
+							} else {
+								title = row.titles[j];
+								chart.push({ index: row.rank, artistFound: true, artistRaw: row.artist, songFound: false, song: title, artist: artist });
+							}
+						}
+					} else if (results[row.rank]) {
+						for (j in row.titles) {
+							if (results[row.rank][j] === undefined) {
+								title = row.titles[j];
+								chart.push({ index: row.rank, artistFound: true, artistRaw: row.artist, songFound: false, song: title, artist: getDBArtist(results[row.rank]) });
+							} else if (results[row.rank][j].found) {
+								song = results[row.rank][j].Song;
+								songArtists = common.getSongArtists(song);
+								chart.push({ index: row.rank, artistFound: true, songFound: true, song: song, songArtists: songArtists });
+							} else {
+								song = dbSongs[index++];
+								songArtists = common.getSongArtists(song);
+								chart.push({ index: row.rank, artistFound: true, songFound: true, song: song, songArtists: songArtists });
+							}
+						}
+					} else {
+						for (j in row.titles) {
+							title = row.titles[j];
+							chart.push({ index: row.rank, artistFound: false, songFound: false, song: title, artist: row.artist }); 
+						}
+					}
+				}
+				res.json(chart);
 			});
 		}
-
+		
 		router.get('/chart/gaon', function (req, res) {
 			getChart(req, res, 'gaon', gaonScript, gaonFilePrefix);
 		});
-
+		
 		router.get('/chart/melon', function (req, res) {
 			getChart(req, res, 'melon', melonScript, melonFilePrefix);
 		});
-		
+
 		router.get('/chart/billboard', function (req, res) {
 			getChart(req, res, 'billboard', billboardScript, billboardFilePrefix);
-		});
-		
-		router.get('/chart/uk', function (req, res) {
-			getChart(req, res, 'uk', ukScript, ukFilePrefix);
-		});
-		
-		router.get('/chart/oricon', function (req, res) {
-			getChart(req, res, 'oricon', oriconScript, oriconFilePrefix);
 		});
 		
 		router.get('/chart/deutsche', function (req, res) {
 			getChart(req, res, 'deutsche', deutscheScript, deutscheFilePrefix);
 		});
+
+		router.get('/chart/oricon', function (req, res) {
+			getChart(req, res, 'oricon', oriconScript, oriconFilePrefix);
+		});
 		
-		function getMaxDate (type, dates) {
-			return models.SongChart.max('week', { where: { type: type } } )
-			.success(function (row) {
-				dates[type] = row;
-			});
-		}
-
-		function getCurrentSongs (type, dates, songs, index) {
-			return models.SongChart.findAll({
-				where: { type: type, week: dates[type], rank: { lt: 8 } },
-				include: [
-					{ model: models.Song,
-						include: [
-							{ model: models.Album },
-							{ model: models.Artist, include: [
-								{ model: models.Artist, as: 'Group' }
-							]}
-						]
-					}
-				]
-			})
-			.then(function (charts) {
-				songs[index] = charts;
-			});
-		}
-
-		router.get('/chart/current', function (req, res) {
-			var datePromises = [];
-			var dates = {};
-			var songPromises = [];
-			var songs = [];
-			var songArray = [];
-			var i;
-
-			for (i in charts)
-				datePromises.push(getMaxDate(charts[i], dates));
-
-			Promise.all(datePromises)
-			.then(function () {
-
-				for (i in charts)
-					songPromises.push(getCurrentSongs(charts[i], dates, songs, i));
-
-				return Promise.all(songPromises);
-			})
-			.then(function () {
-				var idArray = [];
-				var rankArray = [];
-				var row, rank, song, i, j;
-				var chartRow, songId;
-
-				for (i in songs) {
-					for (j in songs[i]) {
-						row = songs[i][j];
-						rank = row.rank;
-						song = row.Song;
-						if (songArray[song.id] === undefined) {
-							songArray[song.id] = {
-								curRank: [rank],
-								song: song,
-								songArtists: common.getSongArtists(song)
-							};
-						} else {
-							songArray[song.id].curRank.push(rank);
-							songArray[song.id].curRank.sort();
-						}
-						songArray[song.id][charts[i]] = { min: rank, count: 1 };
-					}
-				}
-
-				for (i in songArray) {
-					for (j in charts) {
-						if (songArray[i][charts[j]] !== undefined &&
-								songArray[i][charts[j]].min === songArray[i].curRank[0]) {
-							songArray[i].chart = Number(j);
-							break;
-						}
-					}
-				}
-
-				for (i in songArray) {
-					idArray.push(i);
-				}
-		
-				return models.SongChart.findAll({
-					where: { SongId: { $in: idArray } }
-				}).then(function (results) {
-					for (i in results) {
-						chartRow = results[i];
-						songId = chartRow.SongId;
-						if (rankArray[songId] === undefined) {
-							rankArray[songId] = {};
-						}
-						if (rankArray[songId][chartRow.type] === undefined) {
-							rankArray[songId][chartRow.type] = {
-								min: chartRow.rank,
-								count: 1
-							};
-						} else if (chartRow.rank < rankArray[songId][chartRow.type].min) {
-							rankArray[songId][chartRow.type].min = chartRow.rank;
-							rankArray[songId][chartRow.type].count = 1;
-						} else if (chartRow.rank === rankArray[songId][chartRow.type].min) {
-							rankArray[songId][chartRow.type].count++;
-						}
-					}
-
-					for (i in rankArray) {
-						songArray[i].rank = rankArray[i];
-					}
-				});
-			})
-		.then(function () {
-				var sendArray = [];
-				var row, rank, song, i, j;
-
-				for (i in songArray) {
-					sendArray.push(songArray[i]);
-				}
-
-				var rankCmp = function (a, b) {
-					var minSize = Math.min(a.curRank.length, b.curRank.length);
-					for (i = 0; i < minSize; i++) {
-						if (a.curRank[i] !== b.curRank[i])
-							return a.curRank[i] - b.curRank[i];
-					}
-
-					if (a.curRank.length === b.curRank.length) 
-						return a.chart - b.chart;
-
-					return b.curRank.length - a.curRank.length;
-				};
-
-				sendArray.sort(rankCmp);
-
-				for (i in sendArray) {
-					sendArray[i].index = Number(i) + 1;
-				}
-
-				res.json(sendArray);
-			});
+		router.get('/chart/uk', function (req, res) {
+			getChart(req, res, 'uk', ukScript, ukFilePrefix);
 		});
 
-		function weekToNum (week) {
-			return week.getFullYear() * 10000 + week.getMonth() * 100 + week.getDate();
-		}
-		
-		router.get('/chart/ones', function (req, res) {
-			return models.SongChart.findAll({
-				where: { rank: { $eq: 1 } },
-				include: [
-					{ model: models.Song,
-						include: [
-							{ model: models.Album },
-							{ model: models.Artist, include: [
-								{ model: models.Artist, as: 'Group' }
-							]}
-						]
-				}
-				]
-			}).then(function (rows) {
-				var weeks = [], results = [];
-				var week, weekNum, rankRow, song, i, j;
-				for (i in rows) {
-					rankRow = rows[i];
-					week = rankRow.week;
-					weekNum = weekToNum(week);
-					if (weeks[weekNum] === undefined) {
-						weeks[weekNum] = {
-							week: week,
-							songs: []
-						};
-						for (j in charts) {
-							weeks[weekNum].songs[j] = {};
-						}
-					}
-
-					song = rankRow.Song;
-					for (j in charts) {
-						if (charts[j] === rankRow.type) {
-							weeks[weekNum].songs[j] = {
-								id: song.id,
-								title: song.title,
-								albumId: song.Albums[0].id,
-								artists: common.getSongArtists(song)
-							};
-						}
-					}
-				}
-
-				var weekCmp = function (a, b) {
-					return b.week - a.week;
-				};
-
-				weeks.sort(weekCmp);
-
-				for (i in weeks) {
-					results.push(weeks[i]);
-				}
-
-				res.json(results);
-			});
-		});
 	};
 }());

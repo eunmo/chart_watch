@@ -35,7 +35,7 @@ for my $td ($dom->find('td[class*="ch-info"]')->each) {
 	my $title_norm = normalize_title($title);
 	my $artist_norm = normalize_artist($artist);
 	print ",\n" if $rank > 1;
-	print "{ \"rank\": $rank, \"song\": \"$title_norm\", \"artist\": \"$artist_norm\" }";
+	print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\" : [\"$title_norm\"] }";
 	$rank++;
 }
 
@@ -46,10 +46,10 @@ sub normalize_title($)
 	my $string = shift;
 	$string = decode('utf-8', $string) unless utf8::is_utf8($string);
 
-	$string =~ s/\(.*$//;
 	$string =~ s/\s+$//g;
+	$string =~ s/^\s+//g;
 	$string =~ s/[\'’"]/`/g;
-	$string =~ s/\\/₩/g;
+
 	return $string;
 }
 
@@ -58,16 +58,9 @@ sub normalize_artist($)
 	my $string = shift;
 	$string = decode('utf-8', $string) unless utf8::is_utf8($string);
 	
-	$string =~ s/\|.*$//;
-	$string =~ s/\(.*?\)//g;
-	$string =~ s/[,&＆].*$//g;
-	$string =~ s/\/.*$//;
-	$string =~ s/\sfeat\.\s.*$//;
-	$string =~ s/\s+$//;
+	$string =~ s/\s+$//g;
+	$string =~ s/^\s+//g;
 	$string =~ s/[\'’"]/`/g;
-
-	if ($string =~ /^R. City$/) { return "R City"; }
-	if ($string =~ /^Calvin Harris \+ Disciples$/) { return "Calvin Harris"; }
 
 	return $string;
 }

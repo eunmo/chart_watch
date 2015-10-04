@@ -6,6 +6,7 @@
 			type: { type: DataTypes.STRING, allowNull: false },
 			week: { type: DataTypes.DATEONLY, allowNull: false },
 			rank: { type: DataTypes.INTEGER, allowNull: false },
+			order: { type: DataTypes.INTEGER },
 		});
 		
 		SongChart.associate = function (models) {

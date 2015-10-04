@@ -1,6 +1,7 @@
 use DateTime;
 
 my $end = 2015;
+my $port = 3000;
 
 my $date = DateTime->today();
 
@@ -28,7 +29,7 @@ while ($date->year >= $end) {
 	
 	print $date->ymd(), "\n";
 
-	my $url = "\"http://54.64.168.41:3000/chart/oricon?year=$yy&month=$mm&day=$dd\"";
+	my $url = "\"http://54.64.168.41:$port/chart/oriconRaw?year=$yy&month=$mm&day=$dd\"";
 	system("curl $url > /dev/null 2>&1");
 
 	$date->subtract( weeks => 1);

@@ -33,7 +33,7 @@ for my $div ($dom->find('div[class*="wrap_song_info"]')->each) {
 		$artist_norm = normalize_artist($artist);
 	}
 	print ",\n" if $rank > 1;
-	print "{ \"rank\": $rank, \"song\": \"$title_norm\", \"artist\": \"$artist_norm\" }";
+	print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\" : [\"$title_norm\"] 	}";
 	$rank++;
 }
 
@@ -103,24 +103,10 @@ sub normalize_title($)
 {
 	my $string = shift;
 	
-	if ($string =~ /^Mr. Chu/) { return "Mr. Chu (On Stage)"; }
-	if ($string =~ /^살자 \(The Cure\)/) { return "살자 (The Cure)"; }
-	if ($string =~ /^죽을만큼 아파서 Part.2/) { return "죽을만큼 아파서 Part 2"; }
-	if ($string =~ /^나의 옛날이야기/) { return "나의 옛날 이야기"; }
-	if ($string =~ /^삐에로는 우릴 보고 웃지 \(김완선\)/) { return "삐에로는 우릴 보고 웃지"; }
-	if ($string =~ /^삐에로는 우릴 보고 웃지/) { return "삐에로는 우릴보고 웃지"; }
-	if ($string =~ /^슈퍼잡초맨/) { return "슈퍼 잡초맨"; }
-	if ($string =~ /^YooHoo/) { return "Yoo Hoo"; }
-	if ($string =~ /^외로움증폭장치/) { return "외로움 증폭장치"; }
-	if ($string =~ /^Hotshot/) { return "Hot Shot"; }
-	if ($string =~ /^꽃피는 봄이오면/) { return "꽃피는 봄이 오면"; }
-	if ($string =~ /^울고, 불고/) { return "울고, 불고"; }
-	if ($string =~ /^Lollipop Pt.2/) { return "Lollipop Part 2"; }
-	if ($string =~ /^Again＆Again/) { return "Again & Again"; }
-
-	$string =~ s/\(.*$//;
 	$string =~ s/\s+$//g;
+	$string =~ s/^\s+//g;
 	$string =~ s/[\'’]/`/g;
+
 	return $string;
 }
 
@@ -128,40 +114,9 @@ sub normalize_artist($)
 {
 	my $string = shift;
 	
-	if ($string =~ /^더블 케이/) { return "Double K"; }
-	if ($string =~ /^f\(x\)/) { return "f(x)"; }
-	if ($string =~ /^지드래곤/) { return "GD"; }
-	if ($string =~ /^G-DRAGON/) { return "GD"; }
-	if ($string =~ /^미쓰에이/) { return "miss A"; }
-	if ($string =~ /^SIMON Dominic/) { return "Simon D"; }
-	if ($string =~ /^스윙스/) { return "Swings"; }
-	if ($string =~ /^T.O.P/) { return "TOP"; }
-	if ($string =~ /^양동근/) { return "YDG"; }
-	if ($string =~ /^매드클라운/) { return "매드 클라운"; }
-	if ($string =~ /^브라운아이드걸스/) { return "브라운 아이드 걸스"; }
-	if ($string =~ /^BIGBANG/) { return "빅뱅"; }
-	if ($string =~ /^Beenzino/) { return "빈지노"; }
-	if ($string =~ /^Supreme Team/) { return "슈프림팀"; }
-	if ($string =~ /^CNBLUE/) { return "씨엔블루"; }
-	if ($string =~ /^에픽 하이/) { return "에픽하이"; }
-	if ($string =~ /^어반자카파/) { return "어반 자카파"; }
-	if ($string =~ /^엠씨 더 맥스/) { return "엠씨더맥스"; }
-	if ($string =~ /^울랄라세션/) { return "울랄라 세션"; }
-	if ($string =~ /^t 윤미래/) { return "윤미래"; }
-	if ($string =~ /^윤미래/) { return "윤미래"; }
-	if ($string =~ /^JOO/) { return "주"; }
-	if ($string =~ /^JUNIEL/) { return "주니엘"; }
-	if ($string =~ /^소녀시대-태티서/) { return "태티서"; }
-	if ($string =~ /^틴탑/) { return "틴 탑"; }
-	if ($string =~ /^15&/) { return "15&"; }
-
-	$string =~ s/\|.*$//;
-	$string =~ s/\(.*?\)//g;
-	$string =~ s/[,&＆].*$//g;
-	$string =~ s/\s+$//;
-	
-	if ($string =~ /^미$/) { return "美"; }
-	if ($string =~ /^XIA$/) { return "김준수"; }
+	$string =~ s/\s+$//g;
+	$string =~ s/^\s+//g;
+	$string =~ s/[\'’]/`/g;
 
 	return $string;
 }
