@@ -954,3 +954,11 @@ musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams
 		$scope.data = data;
 	});
 });
+
+musicApp.controller('StatsPlaysTitleCtrl', function ($rootScope, $scope, $routeParams, $http) {
+	$scope.data = [];
+
+	$http.get('stats/plays/title').success(function (data) {
+		$scope.data = data;
+	});
+});

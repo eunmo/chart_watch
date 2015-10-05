@@ -131,7 +131,7 @@ body {
 }
 
 .media-body-ones {
-	width: 140px;
+	width: 125px;
 }
 
 .media-desc-ones {
@@ -140,7 +140,7 @@ body {
 
 .song-desc-up-ones {
 	display: inline-block;
-	width: 140px;
+	width: 125px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;

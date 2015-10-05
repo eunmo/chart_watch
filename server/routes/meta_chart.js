@@ -187,7 +187,7 @@
 			});
 		}
 
-		function initWeek (weeks, week, weekNum) {
+		function initWeek (weeks, week) {
 			var weekNum, j;
 
 			weekNum = weekToNum(week);
