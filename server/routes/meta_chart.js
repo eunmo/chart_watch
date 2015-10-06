@@ -187,7 +187,7 @@
 			});
 		}
 
-		function initWeek (weeks, week) {
+		function initWeek (weeks, week, headers) {
 			var weekNum, j;
 
 			weekNum = weekToNum(week);
@@ -197,29 +197,46 @@
 					week: week,
 					songs: []
 				};
-				for (j in charts) {
+				for (j in headers) {
 					weeks[weekNum].songs[j] = {};
 				}
 			}
 
 			return weekNum;
 		}
+
+		function sortWeeks (weeks) {
+			var results = [];
+
+			var weekCmp = function (a, b) {
+				return b.week - a.week;
+			};
+
+			weeks.sort(weekCmp);
+
+			for (var i in weeks) {
+				results.push(weeks[i]);
+			}
+
+			return results;
+		}
 		
 		router.get('/chart/ones', function (req, res) {
 			var promises = [];
 			var arr = [];
+			var headers = ['가온', '멜론', 'US', 'オリコン', 'Deutsche', 'UK'];
 
 			promises.push(getOnes(arr));
 			promises.push(getExtra(arr));
 
 			Promise.all(promises)
 			.then(function () {
-				var weeks = [], results = [];
+				var weeks = [];
 				var week, weekNum, rankRow, song, i, j;
 
 				for (i in arr[0]) {
 					rankRow = arr[0][i];
-					weekNum = initWeek(weeks, rankRow.week);
+					weekNum = initWeek(weeks, rankRow.week, headers);
 
 					song = rankRow.Song;
 					for (j in charts) {
@@ -249,17 +266,65 @@
 					}
 				}
 
-				var weekCmp = function (a, b) {
-					return b.week - a.week;
-				};
+				res.json({
+					headers: headers,
+					weeks: sortWeeks(weeks)
+				});
+			});
+		});
 
-				weeks.sort(weekCmp);
+		function getTop8 (arr, chart) {
+			return models.SongChart.findAll({
+				where: { type: { $eq: chart }, rank: { $lt: 8 }, order: { $eq: 0 } },
+				include: [
+					{ model: models.Song,
+						include: [
+							{ model: models.Album },
+							{ model: models.Artist, include: [
+								{ model: models.Artist, as: 'Group' }
+							]}
+						]
+				}
+				]
+			}).then(function (rows) {
+				arr[0] = rows;
+			});
+		}
+		
+		router.get('/chart/history/:_chart', function (req, res) {
+			var chart = req.params._chart;
+			var arr = [];
+			var promises = [];
+			var headers = [];
 
-				for (i in weeks) {
-					results.push(weeks[i]);
+			for (var i = 1; i < 8; i++) {
+				headers.push(i);
+			}
+
+			promises.push(getTop8(arr, chart));
+
+			Promise.all(promises)
+			.then(function () {
+				var weeks = [];
+				var week, weekNum, rankRow, song, i;
+
+				for (i in arr[0]) {
+					rankRow = arr[0][i];
+					weekNum = initWeek(weeks, rankRow.week, headers);
+
+					song = rankRow.Song;
+					weeks[weekNum].songs[rankRow.rank - 1] = {
+						id: song.id,
+						title: song.title,
+						albumId: song.Albums[0].id,
+						artists: common.getSongArtists(song)
+					};
 				}
 
-				res.json(results);
+				res.json({
+					headers: headers,
+					weeks: sortWeeks(weeks)
+				});
 			});
 		});
 	};

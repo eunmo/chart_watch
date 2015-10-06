@@ -1,19 +1,17 @@
 <h1>
-		Number Ones
+	{{title}}
 </h1>
 <table class="table table-hover table-bordered table-condensed">
 	<tr>
 		<th>Week</th>
-		<th>가온</th>
-		<th>멜론</th>
-		<th>US</th>
-		<th>オリコン</th>
-		<th>Deutsche</th>
-		<th>UK</th>
+		<th ng-repeat="header in headers">
+			{{header}}
+		</th>
 	</tr>
 	<tr ng-repeat="week in weeks">
 		<td>
-			{{week.week | date: 'MM-dd yyyy' }}
+			<span ng-show="linkWeek"><a href="#/chart/{{chart}}/{{week.week | date: 'yyyy-MM-dd'}}">{{week.week | date: 'MM-dd yyyy'}}</a></span>
+			<span ng-hide="linkWeek">{{week.week | date: 'MM-dd yyyy'}}</span>
 		</td>
 		<td ng-repeat="song in week.songs">
 			<div class="media" ng-show="song.id">

@@ -389,6 +389,13 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 	};
 });
 
+function capitalize(string) {
+	if (string.length < 3)
+		return string.toUpperCase();
+
+	return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $http, $location, songService) {
 	
 	function getMaxDate (chart) {
@@ -415,13 +422,6 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 		} else {
 			return new Date(Date.UTC(2000, 0, 1)); // Jan 1st, 2000
 		}
-	}
-
-	function capitalize(string) {
-		if (string.length < 3)
-			return string.toUpperCase();
-
-		return string.charAt(0).toUpperCase() + string.slice(1);
 	}
 
 	$scope.adjustDate = function () {
@@ -487,6 +487,10 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 		$scope.updateDate(7);
 	};
 
+	$scope.history = function () {
+		$location.url('/chart/history/' + $scope.chart);
+	};
+
 	$scope.addChart = function () {
 		var i;
 		var row, song;
@@ -536,10 +540,15 @@ musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routePara
 });
 
 musicApp.controller('OneSongsCtrl', function ($rootScope, $scope, $http, songService) {
+	$scope.headers = [];
 	$scope.weeks = [];
+	$scope.linkWeek = false;
+	$scope.title = 'Number Ones';
+
 	$http.get('chart/ones')
-	.success(function (weeks) {
-		$scope.weeks = weeks;
+	.success(function (results) {
+		$scope.headers = results.headers;
+		$scope.weeks = results.weeks;
 	});
 
 	$scope.addNext = function (song) {
@@ -550,6 +559,29 @@ musicApp.controller('OneSongsCtrl', function ($rootScope, $scope, $http, songSer
 		songService.addSongs([song]);
 	};
 });
+
+musicApp.controller('ChartHistoryCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
+	$scope.headers = [];
+	$scope.weeks = [];
+	$scope.linkWeek = true;
+	$scope.chart = $routeParams.name;
+	$scope.title = capitalize($scope.chart) + ' History';
+
+	$http.get('chart/history/' + $routeParams.name)
+	.success(function (results) {
+		$scope.headers = results.headers;
+		$scope.weeks = results.weeks;
+	});
+
+	$scope.addNext = function (song) {
+		songService.addNext([song]);
+	};
+
+	$scope.addSong = function (song) {
+		songService.addSongs([song]);
+	};
+});
+
 
 musicApp.controller('RecentCtrl', function ($rootScope, $scope, $http, songService) {
 	$scope.rows = [];
