@@ -7,6 +7,7 @@
 			week: { type: DataTypes.DATEONLY, allowNull: false },
 			name: { type: DataTypes.STRING, allowNull: false },
 			title: { type: DataTypes.STRING, allowNull: false },
+			rank: { type: DataTypes.INTEGER, allowNull: false },
 		});
 		
 		return ChartExtra;

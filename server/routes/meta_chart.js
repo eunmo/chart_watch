@@ -180,8 +180,10 @@
 			});
 		}
 
-		function getExtra (arr) {
-			return models.ChartExtra.findAll()
+		function getExtra (arr, limit) {
+			return models.ChartExtra.findAll({
+				where: { rank: { $lte: limit } }
+			})
 			.then(function (rows) {
 				arr[1] = rows;
 			});
@@ -227,7 +229,7 @@
 			var headers = ['가온', '멜론', 'US', 'オリコン', 'Deutsche', 'UK'];
 
 			promises.push(getOnes(arr));
-			promises.push(getExtra(arr));
+			promises.push(getExtra(arr, 1));
 
 			Promise.all(promises)
 			.then(function () {
@@ -302,6 +304,7 @@
 			}
 
 			promises.push(getTop8(arr, chart));
+			promises.push(getExtra(arr, 7));
 
 			Promise.all(promises)
 			.then(function () {
@@ -318,6 +321,17 @@
 						title: song.title,
 						albumId: song.Albums[0].id,
 						artists: common.getSongArtists(song)
+					};
+				}
+				
+				for (i in arr[1]) {
+					rankRow = arr[1][i];
+					weekNum = initWeek(weeks, rankRow.week);
+					
+					weeks[weekNum].songs[rankRow.rank - 1] = {
+						extra: true,
+						artist: rankRow.name,
+						title: rankRow.title
 					};
 				}
 

@@ -331,16 +331,16 @@
 			});
 		}
 
-		function addChartExtra (artist, title, chart, date) {
+		function addChartExtra (artist, title, chart, date, rank) {
 			models.ChartExtra.findOrCreate({
-				where: { type: chart, week: date },
+				where: { type: chart, week: date, rank: rank },
 				defaults: { name: artist, title: title }
 			});
 		}
 		
-		function deleteChartExtra (chart, date) {
+		function deleteChartExtra (chart, date, rank) {
 			models.ChartExtra.destroy({
-				where: { type: chart, week: date }
+				where: { type: chart, week: date, rank: rank }
 			});
 		}
 
@@ -474,6 +474,7 @@
 				var chart = [];
 
 				for (i in webData) {
+					var songFound = false;
 					row = webData[i];
 
 					artist = artists[row.rank];
@@ -485,6 +486,7 @@
 								song = dbSongs[index++];
 								songArtists = common.getSongArtists(song);
 								chart.push({ index: row.rank, artistFound: true, songFound: true, song: song, songArtists: songArtists });
+								songFound = true;
 							} else {
 								title = row.titles[j];
 								chart.push({ index: row.rank, artistFound: true, artistRaw: row.artist, songFound: false, song: title, artist: artist });
@@ -499,10 +501,12 @@
 								song = results[row.rank][j].Song;
 								songArtists = common.getSongArtists(song);
 								chart.push({ index: row.rank, artistFound: true, songFound: true, song: song, songArtists: songArtists });
+								songFound = true;
 							} else {
 								song = dbSongs[index++];
 								songArtists = common.getSongArtists(song);
 								chart.push({ index: row.rank, artistFound: true, songFound: true, song: song, songArtists: songArtists });
+								songFound = true;
 							}
 						}
 					} else {
@@ -511,14 +515,12 @@
 							chart.push({ index: row.rank, artistFound: false, songFound: false, song: title, artist: row.artist }); 
 						}
 					}
-				}
 
-				if (chart.length > 0 && !chart[0].songFound) {
-					row = webData[0];
-					if (row && row.titles.length > 0)
-						addChartExtra(row.artist, row.titles[0], chartName, date);
-				} else {
-					deleteChartExtra(chartName, date);
+					if (songFound) {
+						deleteChartExtra(chartName, date, row.rank);
+					} else {
+						addChartExtra(row.artist, row.titles[0], chartName, date, row.rank);
+					}
 				}
 
 				res.json(chart);
