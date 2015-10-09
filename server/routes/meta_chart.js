@@ -292,6 +292,15 @@
 				arr[0] = rows;
 			});
 		}
+
+		function getExtra8 (arr, chart, limit) {
+			return models.ChartExtra.findAll({
+				where: { type: { $eq: chart }, rank: { $lte: limit } }
+			})
+			.then(function (rows) {
+				arr[1] = rows;
+			});
+		}
 		
 		router.get('/chart/history/:_chart', function (req, res) {
 			var chart = req.params._chart;
@@ -304,7 +313,7 @@
 			}
 
 			promises.push(getTop8(arr, chart));
-			promises.push(getExtra(arr, 7));
+			promises.push(getExtra8(arr, chart, 7));
 
 			Promise.all(promises)
 			.then(function () {

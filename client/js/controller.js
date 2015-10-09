@@ -786,7 +786,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 			var index = Math.floor((Math.random() * totals[tier]));
 			var level;
 
-			for (level = 1; level < tiers[tier].length; level++) {
+			for (level in tiers[tier]) {
 				if (tiers[tier][level]) {
 					if (index < tiers[tier][level].length * level)
 						break;
@@ -804,9 +804,12 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		this.getNext = function () {
 			var tier = Math.floor((Math.random() * max_tier)) + 1;
 
-			while (tier > 1) {
-				if (totals[tier] === undefined || totals[tier] === 0)
+			while (true) {
+				if (totals[tier] === undefined || totals[tier] === 0) {
 					tier--;
+					if (tier === 0)
+						tier = max_tier;
+				}
 				else
 					break;
 			}

@@ -490,7 +490,7 @@
 					songArray[songId] = {
 						id: row.id,
 						title: row.title,
-						plays: row.plays,
+						plays: row.lastPlayed ? row.plays : 0,
 						artists: []
 					};
 					plays[songId] = row.plays;
@@ -538,28 +538,10 @@
 
 				for (i in songArray) {
 					songId = songArray[i].id;
-					if (rankMax[songId])
+					if (rankMax[songId] && songArray[i].plays === 0) {
 						songArray[i].rank = rankMax[songId];
 					resArray.push(songArray[i]);
-					/* songs that have charted should have more chance of being played */
-					/*
-					if (rank[songId]) {
-						resArray.push(songArray[i]);
-						resArray.push(songArray[i]);
-						if (plays[songId] < 10) {
-							resArray.push(songArray[i]);
-							resArray.push(songArray[i]);
-							resArray.push(songArray[i]);
-							resArray.push(songArray[i]);
-						}
 					}
-
-					if (plays[songId] < 3)
-						resArray.push(songArray[i]);
-
-					if (plays[songId] < 2)
-						resArray.push(songArray[i]);
-					 */
 				}
 
 				res.json(resArray);

@@ -45,6 +45,7 @@
 				nameNorm = nameNorm.replace(/\sFeaturing\s.*$/, '');
 				nameNorm = nameNorm.replace(/\sDuet\sWith\s.*$/, '');
 				nameNorm = nameNorm.replace(/\sAnd\s.*$/, '');
+				nameNorm = nameNorm.replace(/\sFeat\..*$/, '');
 				nameNorm = nameNorm.replace(/\s\+\s.*$/, '');
 			} else if (chart === 'oricon') {
 				nameNorm = nameNorm.replace(/\sfeat\..*$/, '');
@@ -56,6 +57,7 @@
 			} else if (chart === 'deutsche') {
 				nameNorm = nameNorm.replace(/[,&＆].*$/, '');
 				nameNorm = nameNorm.replace(/\sfeat\..*$/, '');
+				nameNorm = nameNorm.replace(/\sand\s.*$/, '');
 				nameNorm = nameNorm.replace(/\s\+\s.*$/, '');
 			} else if (chart === 'uk') {
 				nameNorm = nameNorm.replace(/[&＆].*$/, '');
@@ -516,10 +518,12 @@
 						}
 					}
 
-					if (songFound) {
-						deleteChartExtra(chartName, date, row.rank);
-					} else {
-						addChartExtra(row.artist, row.titles[0], chartName, date, row.rank);
+					if (row.rank < 8) {
+						if (songFound) {
+							deleteChartExtra(chartName, date, row.rank);
+						} else {
+							addChartExtra(row.artist, row.titles[0], chartName, date, row.rank);
+						}
 					}
 				}
 
