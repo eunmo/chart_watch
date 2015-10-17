@@ -390,13 +390,6 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 	};
 });
 
-function capitalize(string) {
-	if (string.length < 3)
-		return string.toUpperCase();
-
-	return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
 musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $http, $location, songService) {
 
 	function toUTCDate (date) {
@@ -439,7 +432,6 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 	};
 
 	$scope.chart = $routeParams.name;
-	$scope.chartName = capitalize($scope.chart);
 	$scope.maxDate = getMaxDate($scope.chart);
 	$scope.minDate = getMinDate($scope.chart);
 	
@@ -627,6 +619,14 @@ musicApp.controller('StatsPlaysTitleCtrl', function ($rootScope, $scope, $routeP
 	$scope.data = [];
 
 	$http.get('stats/plays/title').success(function (data) {
+		$scope.data = data;
+	});
+});
+
+musicApp.controller('ChartMissingCtrl', function ($rootScope, $scope, $routeParams, $http) {
+	$scope.data = [];
+
+	$http.get('chart/missing').success(function (data) {
 		$scope.data = data;
 	});
 });

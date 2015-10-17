@@ -350,5 +350,17 @@
 				});
 			});
 		});
+
+		router.get('/chart/missing/', function (req, res) {
+			var queryString =
+				"SELECT name, title, min(rank) as rank, count(*) as count, min(type) as chart, max(week) as week " + 
+				"FROM ChartExtras " +
+				"GROUP BY name, title "+
+				"ORDER BY rank, count DESC, week DESC";
+			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
+			.then(function (rows) {
+				res.json(rows);
+			});
+		});
 	};
 }());
