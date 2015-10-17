@@ -8,7 +8,7 @@
 				"FROM Songs " +
 				"LEFT JOIN (SELECT SongId, min(rank) as rank " +
 									 "FROM SongCharts " +
-									 "WHERE rank <= 10 " +
+									 "WHERE rank <= 10  " +
 									 "GROUP BY SongId) Charts " +
 				"ON Songs.id = Charts.SongId " +
 				"GROUP BY plays, rank";

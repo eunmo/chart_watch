@@ -51,6 +51,12 @@ musicApp.directive('chartBadge', function () {
 			rank: '=rank',
 			prefix: '=prefix'
 		},
+		link: function (scope, element) {
+			var colors = ["#c6dbef","#c6dbef","#9ecae1","#6baed6","#4292c6","#2171b5","#ef6548"];
+			if (scope.rank) {
+				scope.color = colors[7 - scope.rank.min];
+			}
+		},	
 		templateUrl: 'partials/chart-badge.html'
 	};
 });
@@ -62,6 +68,12 @@ musicApp.directive('rankBadge', function () {
 			rank: '=rank',
 			prefix: '=prefix'
 		},
+		link: function (scope, element) {
+			var colors = ["#c6dbef","#c6dbef","#9ecae1","#6baed6","#4292c6","#2171b5","#ef6548"];
+			if (scope.rank) {
+				scope.color = colors[7 - scope.rank.min];
+			}
+		},	
 		templateUrl: 'partials/rank-badge.html'
 	};
 });
@@ -88,8 +100,9 @@ musicApp.directive('d3BarPlays', function () {
 			width -= margin.left + margin.right;
 			height -= margin.top + margin.bottom;
 
-			var color = d3.scale.category20c()
-										.domain([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+			var color = d3.scale.ordinal()
+										.domain([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+										.range(["#9e0142","#d53e4f","#f46d43","#fdae61","#fee08b","#ffffbf","#e6f598","#abdda4","#66c2a5","#3288bd","#5e4fa2"]);
 
 			function groupData (data) {
 				var group = [];
