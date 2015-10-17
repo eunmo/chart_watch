@@ -88,12 +88,49 @@ musicApp.directive('d3BarPlays', function () {
 			width -= margin.left + margin.right;
 			height -= margin.top + margin.bottom;
 
+			var color = d3.scale.category20c()
+										.domain([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+
+			function groupData (data) {
+				var group = [];
+				var series = [];
+				var datum, i, j, order, sum;
+
+				for (i in data) {
+					datum = data[i];
+					order = datum.rank ? datum.rank : 11;
+
+					if (group[datum.plays] === undefined) {
+						group[datum.plays] = [];
+					}
+
+					group[datum.plays][order] = { plays: datum.plays, rank: order, count: datum.count };
+				}
+
+				for (i in group) {
+					sum = 0;
+					for (j in group[i]) {
+						group[i][j].offset = sum;
+						sum += group[i][j].count;
+					}
+				}
+
+				for (i in group) {
+					for (j in group[i]) {
+						series.push(group[i][j]);
+					}
+				}
+
+				return series;
+			}
+
 			//Render graph based on 'data'
 			scope.render = function(data) {
+				var dataSeries = groupData(data);
 				var i;
-				var maxCount = d3.max(data, function (d) { return d.count; } );
+				var maxCount = d3.max(dataSeries, function (d) { return d.count + d.offset; } );
 
-				var xMax = Math.ceil(d3.max(data, function (d) { return d.plays; }) / 10) * 10;
+				var xMax = Math.ceil(d3.max(dataSeries, function (d) { return d.plays; }) / 10) * 10;
 				var barWidth = Math.floor(width / (xMax + 1)) - 1;
 				var x = d3.scale.linear()
 				.range([0, width])
@@ -101,8 +138,8 @@ musicApp.directive('d3BarPlays', function () {
 
 				var yMax, yTicks = [], y;
 
-				if (maxCount < 100) {
-					yMax = Math.ceil(d3.max(data, function (d) { return d.count; }) / 10) * 10;
+				if (maxCount < 200) {
+					yMax = Math.ceil(maxCount / 10) * 10;
 
 					for (i = 10; i <= yMax; i += 10)
 						yTicks.push(i);
@@ -110,15 +147,15 @@ musicApp.directive('d3BarPlays', function () {
 					y = d3.scale.linear().range([height, 0])
 					.domain([0, yMax]);
 				} else { // go polylinear if max count > 100
-					yMax = Math.ceil(d3.max(data, function (d) { return d.count; }) / 100) * 100;
+					yMax = Math.ceil(maxCount / 100) * 100;
 
-					for (i = 10; i <= 50 && i < yMax; i += 10)
+					for (i = 10; i < 100 && i < yMax; i += 10)
 						yTicks.push(i);
 					for (i = 100; i <= yMax; i += 100)
 						yTicks.push(i);
 
 					y = d3.scale.linear().range([height, height / 2, 0])
-					.domain([0, 50, yMax]);
+					.domain([0, 100, yMax]);
 				}
 
 				var xAxis = d3.svg.axis()
@@ -128,7 +165,22 @@ musicApp.directive('d3BarPlays', function () {
 				var yAxis = d3.svg.axis()
 				.scale(y)
 				.orient("left")
-				.tickValues(yTicks);
+				.tickValues(yTicks)
+				.tickSize(-width);
+				
+				var bars = svg.selectAll(".bar").data(dataSeries);
+
+				bars.enter().append("rect")
+				.attr("class", "bar");
+
+				bars
+				.attr("x", function(d) { return x(d.plays) - barWidth / 2; })
+				.attr("width", barWidth)
+				.attr('height', function(d) { return y(d.offset) - y(d.count + d.offset + 0); })
+				.attr("y", function(d) { return y(d.count + d.offset + 0); })
+				.style("fill", function(d) { return color(d.rank); });
+
+				bars.exit().remove();
 
 				//Redraw the axes
 				svg.selectAll('g.axis').remove();
@@ -143,27 +195,11 @@ musicApp.directive('d3BarPlays', function () {
 				svg.append("g")
 				.attr("class", "y axis")
 				.call(yAxis);
-				
-				var bars = svg.selectAll(".bar").data(data);
-
-				bars.enter().append("rect")
-				.attr("class", "bar");
-
-				bars
-				.attr("x", function(d) { return x(d.plays) - barWidth / 2; })
-				.attr("width", barWidth)
-				.attr('height', function(d) { return height - y(d.count + 0); })
-				.attr("y", function(d) { return y(d.count + 0); });
-
-				bars.exit().remove();
 			};
 
 			d3.select(window).on('resize', function () {
 				width = parseInt(d3.select('#d3-bar-plays').style('width'));
 				height = width * aspectRatio;
-
-				console.log(width);
-				console.log(height);
 
 				svg
 				.attr('width', width)

@@ -3,18 +3,34 @@
 
 	module.exports = function (router, models) {
 		router.get('/stats/plays', function (req, res) {
-			models.sequelize.query("Select plays, count(*) as count from Songs group by plays",
-														 { type: models.sequelize.QueryTypes.SELECT })
+			var queryString =
+				"SELECT plays, rank, count(*) as count " +
+				"FROM Songs " +
+				"LEFT JOIN (SELECT SongId, min(rank) as rank " +
+									 "FROM SongCharts " +
+									 "WHERE rank <= 10 " +
+									 "GROUP BY SongId) Charts " +
+				"ON Songs.id = Charts.SongId " +
+				"GROUP BY plays, rank";
+
+			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
 			.then(function (plays) {
 				res.json(plays);
 			});
 		});
 		
 		router.get('/stats/plays/title', function (req, res) {
-			models.sequelize.query("Select plays, count(*) as count from Songs " +
-														 "where id in (select SongId from SongCharts where rank < 8) " +
-														 "group by plays",
-														 { type: models.sequelize.QueryTypes.SELECT })
+			var queryString =
+				"SELECT plays, rank, count(*) as count " +
+				"FROM Songs " +
+				"INNER JOIN (SELECT SongId, min(rank) as rank " +
+									 "FROM SongCharts " +
+									 "WHERE rank <= 10 " +
+									 "GROUP BY SongId) Charts " +
+				"ON Songs.id = Charts.SongId " +
+				"GROUP BY plays, rank";
+
+			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
 			.then(function (plays) {
 				res.json(plays);
 			});

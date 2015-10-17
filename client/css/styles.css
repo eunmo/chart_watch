@@ -197,3 +197,7 @@ body {
 .y.axis path {
 	display: none;
 }
+
+.y.axis line {
+	stroke: #ffffff;
+}
