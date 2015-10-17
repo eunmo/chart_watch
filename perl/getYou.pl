@@ -4,8 +4,7 @@ my $end = 2015;
 
 my $script = '/home/ubuntu/chart_watch/perl/you.pl';
 my $chart_dir = '/home/ubuntu/chart_watch/chart';
-my $html_dir = "$chart_dir/you";
-
+my $html_dir = '/home/ubuntu/chart_watch/perl/html';
 
 my $date = DateTime->today();
 
@@ -19,7 +18,7 @@ if ($#ARGV >= 1) {
 	$end = $ARGV[1];
 }
 
-if ($date->day_of_week() < 4) {
+if ($date->day_of_week() < 2) {
 	$date->truncate( to => 'week' )->subtract( weeks => 2);
 } else {
 	$date->truncate( to => 'week' )->subtract( weeks => 1);
@@ -38,8 +37,15 @@ while ($date->year >= $end) {
 	if (-e $html_path) {
 		system "perl $script $html_dir/$ymd > $file_path";
 		print "\t->\t$file_path\n";
-	} else {
+	} elsif (-s $file_path > 6000) {
 		print "\n";
+	} else {
+		my $file_ymd = $file_date->ymd(' ');
+		system "/bin/bash oricon.sh $file_ymd";
+		system "perl $script $html_dir/$ymd > $file_path";
+		print "\t$file_ym\n";
+
+		sleep (20);
 	}
 
 	$date->subtract( weeks => 1);

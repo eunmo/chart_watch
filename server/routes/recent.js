@@ -125,7 +125,7 @@
 		});
 
 		router.get('/api/newSongs/', function (req, res) {
-			getRecentlyAdded(100)
+			getRecentlyAdded(200)
 			.then(function (songs) {
 				res.json(songs);
 			});
