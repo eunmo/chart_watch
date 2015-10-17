@@ -562,7 +562,6 @@ musicApp.controller('ChartHistoryCtrl', function ($rootScope, $scope, $routePara
 	$scope.weeks = [];
 	$scope.linkWeek = true;
 	$scope.chart = $routeParams.name;
-	$scope.title = capitalize($scope.chart) + ' History';
 
 	$http.get('chart/history/' + $routeParams.name)
 	.success(function (results) {

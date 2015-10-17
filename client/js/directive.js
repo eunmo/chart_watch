@@ -54,7 +54,7 @@ musicApp.directive('chartBadge', function () {
 		link: function (scope, element) {
 			var colors = ["#c6dbef","#c6dbef","#9ecae1","#6baed6","#4292c6","#2171b5","#ef6548"];
 			if (scope.rank) {
-				scope.color = colors[7 - scope.rank.min];
+				scope.style = { "background-color" : colors[7 - scope.rank.min] };
 			}
 		},	
 		templateUrl: 'partials/chart-badge.html'
@@ -71,7 +71,7 @@ musicApp.directive('rankBadge', function () {
 		link: function (scope, element) {
 			var colors = ["#c6dbef","#c6dbef","#9ecae1","#6baed6","#4292c6","#2171b5","#ef6548"];
 			if (scope.rank) {
-				scope.color = colors[7 - scope.rank.min];
+				scope.style = { "background-color" : colors[7 - scope.rank.min] };
 			}
 		},	
 		templateUrl: 'partials/rank-badge.html'
