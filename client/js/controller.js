@@ -81,47 +81,6 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 
 	$scope.loaded = false;
 	$scope.showFeat = true;
-	$scope.plays=[];
-
-	function getPlays (artist) {
-		var ranks = [];
-		var arr = [];
-		var i, j, k;
-		var charts = ['gaon', 'melon', 'billboard', 'oricon', 'deutsche', 'uk'];
-
-		for (i in artist.albums) {
-			var album = artist.albums[i];
-			for (j in album.songs) {
-				var song = album.songs[j];
-				var rank = 8;
-				var plays = song.plays;
-
-				if (song.rank) {
-					for (k in charts) {
-						var chart = charts[k]
-						if (song.rank[chart] && song.rank[chart].min < rank)
-							rank = song.rank[chart].min;
-					}
-				}
-
-				if (ranks[rank] === undefined)
-					ranks[rank] = [];
-
-				if (ranks[rank][plays] === undefined)
-					ranks[rank][plays] = { rank: rank, plays: song.plays, count: 0 };
-
-				ranks[rank][plays].count++;
-			}
-		}
-
-		for (i in ranks) {
-			for (j in ranks[i]) {
-				arr.push(ranks[i][j]);
-			}
-		}
-
-		return arr;
-	}
 
 	$http.get('api/artist/' + $routeParams.id).success(function (artist) {
 		var onlyFeat = true;
@@ -141,8 +100,6 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 			if (!album.isFeat)
 				$scope.showFeat = false;
 		}
-
-		//$scope.plays = getPlays(artist);
 
 		$scope.artist = artist;
 		$scope.loaded = true;
