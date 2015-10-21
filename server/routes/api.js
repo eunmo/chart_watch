@@ -340,7 +340,7 @@
 		}
 
 		return models.SongChart.findAll({
-			where: { SongId: { $in: idArray } }
+			where: { SongId: { $in: idArray }, rank: { $lte: 10 } }
 		}).then(function (results) {
 			for (i in results) {
 				chartRow = results[i];
@@ -351,13 +351,17 @@
 				if (rankArray[songId][chartRow.type] === undefined) {
 					rankArray[songId][chartRow.type] = {
 						min: chartRow.rank,
+						run: 0,
 						count: 1
 					};
 				} else if (chartRow.rank < rankArray[songId][chartRow.type].min) {
 					rankArray[songId][chartRow.type].min = chartRow.rank;
+					rankArray[songId][chartRow.type].run += rankArray[songId][chartRow.type].count;
 					rankArray[songId][chartRow.type].count = 1;
 				} else if (chartRow.rank === rankArray[songId][chartRow.type].min) {
 					rankArray[songId][chartRow.type].count++;
+				} else {
+					rankArray[songId][chartRow.type].run++;
 				}
 			}
 
@@ -469,7 +473,7 @@
 										.then(function (result) { songArtists = result; }));
 			promises.push(models.ArtistGroup.findAll({ where: { primary: true } } )
 										.then(function (result) { artistGroups = result; }));
-			promises.push(models.SongChart.findAll({ where: { rank: { lt: 8 } } })
+			promises.push(models.SongChart.findAll({ where: { rank: { lte: 10 } } })
 										.then(function (result) { songCharts = result; }));
 			Promise.all(promises)
 			.then(function () {
@@ -490,7 +494,7 @@
 					songArray[songId] = {
 						id: row.id,
 						title: row.title,
-						plays: row.lastPlayed ? row.plays : 0,
+						plays: row.plays,
 						artists: []
 					};
 					plays[songId] = row.plays;
@@ -538,10 +542,9 @@
 
 				for (i in songArray) {
 					songId = songArray[i].id;
-					if (rankMax[songId] && songArray[i].plays === 0) {
+					if (rankMax[songId])
 						songArray[i].rank = rankMax[songId];
 					resArray.push(songArray[i]);
-					}
 				}
 
 				res.json(resArray);

@@ -35,5 +35,20 @@
 				res.json(plays);
 			});
 		});
+		
+		router.get('/stats/plays/non-title', function (req, res) {
+			var queryString =
+				"SELECT plays, count(*) as count " +
+				"FROM Songs " +
+				"WHERE id not in (SELECT SongId " +
+									 "FROM SongCharts " +
+									 "WHERE rank <= 10) " +
+				"GROUP BY plays";
+
+			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
+			.then(function (plays) {
+				res.json(plays);
+			});
+		});
 	};
 }());

@@ -97,7 +97,7 @@
 				}
 		
 				return models.SongChart.findAll({
-					where: { SongId: { $in: idArray } }
+					where: { SongId: { $in: idArray }, rank: { $lte: 10 } }
 				}).then(function (results) {
 					for (i in results) {
 						chartRow = results[i];
@@ -108,13 +108,17 @@
 						if (rankArray[songId][chartRow.type] === undefined) {
 							rankArray[songId][chartRow.type] = {
 								min: chartRow.rank,
+								run: 0,
 								count: 1
 							};
 						} else if (chartRow.rank < rankArray[songId][chartRow.type].min) {
 							rankArray[songId][chartRow.type].min = chartRow.rank;
+							rankArray[songId][chartRow.type].run += rankArray[songId][chartRow.type].count;
 							rankArray[songId][chartRow.type].count = 1;
 						} else if (chartRow.rank === rankArray[songId][chartRow.type].min) {
 							rankArray[songId][chartRow.type].count++;
+						} else {
+							rankArray[songId][chartRow.type].run++;
 						}
 					}
 
@@ -356,6 +360,18 @@
 				"SELECT name, title, min(rank) as rank, count(*) as count, min(type) as chart, max(week) as week " + 
 				"FROM ChartExtras " +
 				"GROUP BY name, title "+
+				"ORDER BY rank, count DESC, week DESC";
+			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
+			.then(function (rows) {
+				res.json(rows);
+			});
+		});
+
+		router.get('/chart/missingA/', function (req, res) {
+			var queryString =
+				"SELECT name, min(rank) as rank, count(*) as count, min(type) as chart, max(week) as week " + 
+				"FROM ChartExtras " +
+				"GROUP BY name "+
 				"ORDER BY rank, count DESC, week DESC";
 			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
 			.then(function (rows) {

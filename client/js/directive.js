@@ -52,9 +52,13 @@ musicApp.directive('chartBadge', function () {
 			prefix: '=prefix'
 		},
 		link: function (scope, element) {
-			var colors = ["#c6dbef","#c6dbef","#9ecae1","#6baed6","#4292c6","#2171b5","#ef6548"];
+			var colors = ["#9ecae1","#6baed6","#4292c6","#2171b5","#ef6548"];
 			if (scope.rank) {
-				scope.style = { "background-color" : colors[7 - scope.rank.min] };
+				var color = "#c6dbef";
+				if (scope.rank.min <= 5) {
+					color = colors[5 - scope.rank.min];
+				}
+				scope.style = { "background-color" : color };
 			}
 		},	
 		templateUrl: 'partials/chart-badge.html'

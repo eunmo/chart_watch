@@ -10,16 +10,24 @@
 
 		for (i in charts) {
 			chartRow = charts[i];
+
+			if (chartRow.rank > 10)
+				continue;
+
 			if (rank[chartRow.type] === undefined) {
 				rank[chartRow.type] = {
 					min: chartRow.rank,
+					run: 0,
 					count: 1
 				};
 			} else if (chartRow.rank < rank[chartRow.type].min) {
 				rank[chartRow.type].min = chartRow.rank;
+				rank[chartRow.type].run += rank[chartRow.type].count;
 				rank[chartRow.type].count = 1;
-			} else if (chartRow.rank == rank[chartRow.type].min) {
+			} else if (chartRow.rank === rank[chartRow.type].min) {
 				rank[chartRow.type].count++;
+			} else {
+				rank[chartRow.type].run++;
 			}
 		}
 

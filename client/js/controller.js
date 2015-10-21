@@ -83,6 +83,8 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 	$scope.showFeat = true;
 
 	$http.get('api/artist/' + $routeParams.id).success(function (artist) {
+
+		console.log(artist);
 		var onlyFeat = true;
 
 		for (var i in artist.albums) {
@@ -540,7 +542,7 @@ musicApp.controller('OneSongsCtrl', function ($rootScope, $scope, $http, songSer
 	$scope.headers = [];
 	$scope.weeks = [];
 	$scope.linkWeek = false;
-	$scope.title = 'Number Ones';
+	$scope.chart = 'Number Ones';
 
 	$http.get('chart/ones')
 	.success(function (results) {
@@ -617,7 +619,7 @@ musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams
 musicApp.controller('StatsPlaysTitleCtrl', function ($rootScope, $scope, $routeParams, $http) {
 	$scope.data = [];
 
-	$http.get('stats/plays/title').success(function (data) {
+	$http.get('stats/plays/' + $routeParams.type).success(function (data) {
 		$scope.data = data;
 	});
 });
