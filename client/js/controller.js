@@ -519,12 +519,12 @@ musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routePara
 		$scope.rows = chartRows;
 	});
 
-	$scope.addChart = function () {
+	$scope.addSongs = function (index) {
 		var i;
 		var row, song;
 		var songs = [];
-		
-		for (i in $scope.rows) {
+
+		for (i = index; i < $scope.rows.length; i++) {
 			row = $scope.rows[i];
 			song = {
 				id: row.song.id,
@@ -535,6 +535,10 @@ musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routePara
 			songs.push(song);
 		}
 		songService.addSongs(songs);
+	};
+
+	$scope.addChart = function () {
+		$scope.addSongs(0);
 	};
 });
 

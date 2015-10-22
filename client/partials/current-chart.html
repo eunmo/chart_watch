@@ -34,7 +34,7 @@
 			</div>
 		</td>
 		<td>
-			{{row.song.title | normalizeString}}
+			<span ng-click="addSongs($index)">{{row.song.title | normalizeString}}</span>
 			<span class="pull-right song-desc-right">
 				<chart-badge rank="row.rank.gaon" prefix="'G'"></chart-badge>
 				<chart-badge rank="row.rank.melon" prefix="'M'"></chart-badge>
