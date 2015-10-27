@@ -1,3 +1,16 @@
 <div id="d3-bar-plays">
 	<d3-bar-plays data='data'></d3-bar-plays>
 </div>
+<div class="btn-group btn-group-justified">
+	<div class="btn btn-default" ng-repeat="rank in ranks" ng-class="{active: rank.active}" ng-click="toggle($index)">
+		{{rank.name}}
+	</div>
+	<div class="btn btn-default" ng-click="clear()">
+		clear
+	</div>
+</div>
+<div ng-show="tiers">
+	<div ng-repeat="tier in tiers">
+		Tier {{$index + 1}}: {{tier}}
+	</div>
+</div>

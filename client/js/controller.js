@@ -404,7 +404,7 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 		if ((chart === 'gaon' && date.getDay() < 4) ||
 				(chart === 'melon' && date.getDay() < 1) ||
 				(chart === 'billboard' && date.getDay() < 3) ||
-				(chart === 'oricon' && date.getDay() < 3))
+				(chart === 'oricon' && date.getDay() < 2))
 			date.setDate(date.getDate() - 7);
 		
 		date.setDate(date.getDate() - date.getDay() - 1);
@@ -613,19 +613,80 @@ musicApp.controller('NewSongCtrl', function ($rootScope, $scope, $http, songServ
 });
 
 musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams, $http) {
+	$scope.rawData = [];
 	$scope.data = [];
+	$scope.ranks = [];
+	$scope.tiers = [];
+
+	for (i = 0; i < 10; i++) {
+		$scope.ranks[i] = { name: i + 1, active: true, data: [] };
+	}
+	$scope.ranks[10] = { name: '11+', active: true, data: [] };
 
 	$http.get('stats/plays').success(function (data) {
+		var i, datum, tier;
+
+		for (i in data) {
+			datum = data[i];
+			
+			if (datum.rank) {
+				if (datum.plays >= 10) {
+					tier = 0;
+				} else {
+					tier = 1;
+				}
+
+				$scope.ranks[datum.rank - 1].data.push(datum);
+			} else {
+				if (datum.plays <= 2) {
+					tier = 2;
+				} else {
+					tier = 3;
+				}
+				$scope.ranks[10].data.push(datum);
+			}
+
+			if ($scope.tiers[tier] === undefined)
+				$scope.tiers[tier] = 0;
+			$scope.tiers[tier] += datum.count;
+		}
+
+		$scope.rawData = data;
 		$scope.data = data;
 	});
-});
 
-musicApp.controller('StatsPlaysTitleCtrl', function ($rootScope, $scope, $routeParams, $http) {
-	$scope.data = [];
+	function updateData () {
+		var i, data = [];
 
-	$http.get('stats/plays/' + $routeParams.type).success(function (data) {
+		for (i in $scope.ranks) {
+			if ($scope.ranks[i].active)
+				data = data.concat($scope.ranks[i].data);
+		}
+
 		$scope.data = data;
-	});
+	}
+
+	$scope.toggle = function (index) {
+		if ($scope.ranks[index]) {
+			if ($scope.ranks[index].active) {
+				$scope.ranks[index].active = false;
+			} else {
+				$scope.ranks[index].active = true;
+			}
+
+			updateData();
+		}
+	};
+
+	$scope.clear = function () {
+		var i;
+
+		for (i in $scope.ranks) {
+			$scope.ranks[i].active = false;
+		}
+
+		updateData();
+	};
 });
 
 musicApp.controller('ChartMissingCtrl', function ($rootScope, $scope, $routeParams, $http) {

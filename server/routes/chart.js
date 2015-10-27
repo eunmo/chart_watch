@@ -518,7 +518,7 @@
 						}
 					}
 
-					if (row.rank < 8) {
+					if (row.rank <= 10) {
 						if (songFound) {
 							deleteChartExtra(chartName, date, row.rank);
 						} else {

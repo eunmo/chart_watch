@@ -279,9 +279,9 @@
 			});
 		});
 
-		function getTop8 (arr, chart) {
+		function getTop10 (arr, chart) {
 			return models.SongChart.findAll({
-				where: { type: { $eq: chart }, rank: { $lt: 8 }, order: { $eq: 0 } },
+				where: { type: { $eq: chart }, rank: { $lte: 10 }, order: { $eq: 0 } },
 				include: [
 					{ model: models.Song,
 						include: [
@@ -297,9 +297,9 @@
 			});
 		}
 
-		function getExtra8 (arr, chart, limit) {
+		function getExtra10 (arr, chart) {
 			return models.ChartExtra.findAll({
-				where: { type: { $eq: chart }, rank: { $lte: limit } }
+				where: { type: { $eq: chart }, rank: { $lte: 10 } }
 			})
 			.then(function (rows) {
 				arr[1] = rows;
@@ -312,12 +312,12 @@
 			var promises = [];
 			var headers = [];
 
-			for (var i = 1; i < 8; i++) {
+			for (var i = 1; i <= 10; i++) {
 				headers.push(i);
 			}
 
-			promises.push(getTop8(arr, chart));
-			promises.push(getExtra8(arr, chart, 7));
+			promises.push(getTop10(arr, chart));
+			promises.push(getExtra10(arr, chart));
 
 			Promise.all(promises)
 			.then(function () {
