@@ -68,11 +68,15 @@ sub last_day_of_week_new
 
 sub get_url
 {
-	my $age = int($yy / 10) * 10;
 	my $fd, $ld;
 	my $cd = 'DP0000';
 
-	if ($yy < 2007 ||
+	if ($yy < 2004 ||
+			$yy == 2004 && ($mm < 11 || ($mm == 10 && $dd <= 21))) {
+		$fd = first_day_of_week_old();
+		$ld = last_day_of_week_old();
+		$cd = 'KPOP';
+	} elsif ($yy < 2007 ||
 		 ($yy == 2007 && ($mm < 7 || ($mm == 7 && $dd <= 8)))) {
 		$fd = first_day_of_week_new();
 		$ld = last_day_of_week_new();
@@ -93,9 +97,11 @@ sub get_url
 		$cd = 'CL0000';
 	}
 
+	my $age = int($fd->year() / 10) * 10;
 	my $fd_ymd = $fd->ymd('');
 	my $ld_ymd = $ld->ymd('');
 	my $url = sprintf("http://www.melon.com/chart/search/list.htm?chartType=WE&age=%d&year=%d&mon=%02d&day=%d%%5E%d&classCd=%s&startDay=%d&endDay=%d&moved=Y", $age, $yy, $ld->month(), $fd_ymd, $ld_ymd, $cd, $fd_ymd, $ld_ymd);
+
 	return $url;
 }
 

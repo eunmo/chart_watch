@@ -7,7 +7,7 @@
 	var Promise = require('bluebird');
 	var exec = Promise.promisify(require('child_process').exec);
 
-	var charts = ['gaon', 'melon', 'billboard', 'oricon', 'deutsche', 'uk'];
+	var charts = ['gaon', 'melon', 'billboard', 'oricon', 'deutsche', 'uk', 'francais'];
 	
 	module.exports = function (router, models) {
 		
@@ -230,7 +230,7 @@
 		router.get('/chart/ones', function (req, res) {
 			var promises = [];
 			var arr = [];
-			var headers = ['가온', '멜론', 'US', 'オリコン', 'Deutsche', 'UK'];
+			var headers = ['가온', '멜론', 'US', 'オリコン', 'Deutsche', 'UK', 'Francais'];
 
 			promises.push(getOnes(arr));
 			promises.push(getExtra(arr, 1));
@@ -361,6 +361,18 @@
 				"FROM ChartExtras " +
 				"GROUP BY name, title "+
 				"ORDER BY rank, count DESC, week DESC";
+			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
+			.then(function (rows) {
+				res.json(rows);
+			});
+		});
+
+		router.get('/chart/missing/1', function (req, res) {
+			var queryString =
+				"SELECT name, title, count(*) as count, min(type) as chart, min(week) as week " + 
+				"FROM ChartExtras where rank = 1 " +
+				"GROUP BY name, title "+
+				"ORDER BY week, chart";
 			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
 			.then(function (rows) {
 				res.json(rows);

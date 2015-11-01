@@ -415,8 +415,6 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 	function getMinDate (chart) {
 		if (chart === 'gaon') {
 			return new Date(Date.UTC(2010, 0, 2)); // Jan 2nd, 2010
-		} else if (chart === 'melon') {
-			return new Date(Date.UTC(2005, 0, 1)); // Jan 1st, 2005
 		} else {
 			return new Date(Date.UTC(2000, 0, 1)); // Jan 1st, 2000
 		}
@@ -617,6 +615,7 @@ musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams
 	$scope.data = [];
 	$scope.ranks = [];
 	$scope.tiers = [];
+	$scope.total = 0;
 
 	for (i = 0; i < 10; i++) {
 		$scope.ranks[i] = { name: i + 1, active: true, data: [] };
@@ -649,6 +648,7 @@ musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams
 			if ($scope.tiers[tier] === undefined)
 				$scope.tiers[tier] = 0;
 			$scope.tiers[tier] += datum.count;
+			$scope.total += datum.count;
 		}
 
 		$scope.rawData = data;
@@ -693,6 +693,14 @@ musicApp.controller('ChartMissingCtrl', function ($rootScope, $scope, $routePara
 	$scope.data = [];
 
 	$http.get('chart/missing').success(function (data) {
+		$scope.data = data;
+	});
+});
+
+musicApp.controller('ChartMissing1Ctrl', function ($rootScope, $scope, $routeParams, $http) {
+	$scope.data = [];
+
+	$http.get('chart/missing/1').success(function (data) {
 		$scope.data = data;
 	});
 });

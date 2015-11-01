@@ -19,6 +19,8 @@
 	var oriconFilePrefix = path.resolve('chart/o');
 	var deutscheScript = path.resolve('perl/deutsche.pl');
 	var deutscheFilePrefix = path.resolve('chart/d');
+	var francaisScript = path.resolve('perl/francais.pl');
+	var francaisFilePrefix = path.resolve('chart/f');
 	
 	module.exports = function (router, models) {
 
@@ -65,6 +67,12 @@
 				nameNorm = nameNorm.replace(/\sWITH\s.*$/, '');
 				nameNorm = nameNorm.replace(/\sVS\s.*$/, '');
 				nameNorm = nameNorm.replace(/\/.*$/, '');
+			} else if (chart === 'francais') {
+				nameNorm = nameNorm.replace(/[,&＆].*$/, '');
+				nameNorm = nameNorm.replace(/\sfeat\..*$/, '');
+				nameNorm = nameNorm.replace(/\sFeat\..*$/, '');
+				nameNorm = nameNorm.replace(/\sand\s.*$/, '');
+				nameNorm = nameNorm.replace(/\/.*$/, '');
 			}
 
 			nameNorm = nameNorm.trim();
@@ -78,7 +86,6 @@
 			if (chart === 'gaon' || chart === 'melon') {
 				nameNorm = nameNorm.replace(/.*?\(/, '');
 				nameNorm = nameNorm.replace(/\).*/, '');
-			} else if (chart === 'oricon') {
 			}
 
 			nameNorm = nameNorm.trim();
@@ -553,6 +560,10 @@
 		
 		router.get('/chart/uk', function (req, res) {
 			getChart(req, res, 'uk', ukScript, ukFilePrefix);
+		});
+		
+		router.get('/chart/francais', function (req, res) {
+			getChart(req, res, 'francais', francaisScript, francaisFilePrefix);
 		});
 
 	};

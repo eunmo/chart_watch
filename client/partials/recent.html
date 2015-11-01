@@ -4,7 +4,7 @@
 <table class="table table-hover">
 	<tr ng-repeat="song in rows">
 		<td>
-			{{song.lastPlayed | date: 'MM/dd hh:mma'}}
+			{{song.lastPlayed | date: 'MM/dd@hh:mma'}}
 		</td>
 		<td class="td-img-list">
 			<img src="/{{song.albumId}}.30px.jpg" class="img-rounded img-album-up-list">
@@ -25,6 +25,7 @@
 				<chart-badge rank="song.rank.oricon" prefix="'オ'"></chart-badge>
 				<chart-badge rank="song.rank.deutsche" prefix="'D'"></chart-badge>
 				<chart-badge rank="song.rank.uk" prefix="'UK'"></chart-badge>
+				<chart-badge rank="song.rank.francais" prefix="'F'"></chart-badge>
 				<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>
 			</span>
 		</td>

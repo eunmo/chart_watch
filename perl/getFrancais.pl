@@ -1,13 +1,13 @@
 use DateTime;
 
 my $end = 2000;
-my $port = 3000;
+my $port = 8080;
 
 my $date = DateTime->today();
 
 if ($#ARGV >= 0 && $date->year() != $ARGV[0]) {
 	my $start = $ARGV[0];
-	$date = DateTime->new(year => $start, month => 12, day => 31);
+	$date = DateTime->new(year => $start, month => 12, day => 31) if $start < $date->year;
 	$end = $start;
 }
 
@@ -25,7 +25,7 @@ while ($date->year >= $end) {
 	
 	print $date->ymd(), "\n";
 
-	my $url = "\"http://54.64.168.41:$port/chart/melon?year=$yy&month=$mm&day=$dd\"";
+	my $url = "\"http://54.64.168.41:$port/chart/francais?year=$yy&month=$mm&day=$dd\"";
 	system("curl $url > /dev/null 2>&1");
 
 	$date->subtract( weeks => 1);
