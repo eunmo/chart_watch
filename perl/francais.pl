@@ -19,8 +19,34 @@ my $year = $date->week_year();
 
 print "[";
 
-if ($year < 2015 || $year == 2015 && $date->month < 2) {
-	$date->add( weeks => 1 );
+if (($year == 2005 && $date->month() == 3 && $date->day() == 4) ||
+	  ($year == 2007 && $date->month() == 1 && $date->day() == 12)) {
+	my $week = $year == 2005 ? "10" : "02";
+	my $url = "http://acharts.co/france_singles_top_100/$year/$week";
+	my $html = get("$url");
+
+	my $dom = Mojo::DOM->new($html);
+	my $rank = 1;
+
+	for my $tr ($dom->find('table[class*=std] tbody tr')->each) {
+		my $title = $tr->find('span[itemprop="name"]')->last->text;
+		my $artist = $tr->find('span[itemprop="name"]')->first->text;
+		my $artist_norm = normalize_artist($artist);
+		print ",\n" if $rank > 1;
+		print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\": [";
+		$count = 1;
+		my @tokens = split(/\//, $title);
+		foreach my $token (@tokens) {
+			my $token_norm = normalize_title($token);
+			print ", " if $count > 1;	
+			print "\"$token_norm\"";
+			$count++;
+		}
+		print "]}";
+		$rank++;
+		last if $rank > 100;
+	}
+} elsif ($year < 2015 || $year == 2015 && $date->month() < 2) {
 	if ($year < 2003 || ($year == 2003 && $date->month() < 4) ||
 		  ($year == 2003 && $date->month() == 4 && $date->day() < 26)) {
 		$date->add( days => 1 );

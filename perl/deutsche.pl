@@ -14,13 +14,13 @@ my $dd = $ARGV[2];
 my $date = DateTime->new( year => $yy, month => $mm, day => $dd )
 									 ->truncate( to => 'week')
 									 ->add( days => 4 );
-my $base_date = DateTime->new( year => 2000, month => 1, day => 1);
+my $base_date = DateTime->new( year => 1999, month => 12, day => 31);
 
 my $dur = $date->delta_days( $base_date );
 
-my $weeks = $dur->in_units('weeks');
-my $chart_id = $weeks * 6048 + 9471708;
-my $url = "https://www.offiziellecharts.de/charts/single/for-date-${chart_id}00000";
+my $days = $dur->in_units('days');
+my $chart_id = (10960 + $days) * 86400;
+my $url = "https://www.offiziellecharts.de/charts/single/for-date-${chart_id}000";
 
 my $browser = LWP::UserAgent->new();
 my $response = $browser->get($url);
