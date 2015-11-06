@@ -25,8 +25,12 @@ system("convert $imgfile -resize 30 $small");
 sub save_img {
 	my $id3v2 = shift;
 	my $imgfile = shift;
+	my $frameIDs_hash = $id3v2->get_frame_ids('truename');
+	my $pic;
 
-	my $pic = $id3v2->get_frame("APIC");
+	$pic = $id3v2->get_frame("PIC") if $frameIDs_hash->{'PIC'};
+	$pic = $id3v2->get_frame("APIC") if $frameIDs_hash->{'APIC'};
+
 	open (SAVE, ">$imgfile");
 	binmode SAVE;
 	print SAVE $pic->{_Data};
