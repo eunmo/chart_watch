@@ -49,8 +49,8 @@
 
 		function getArtist(name, nameNorm, array, i) {
 			return models.Artist.findOrCreate({
-				where: { name: name },
-				defaults: { nameNorm: nameNorm }
+				where: models.sequelize.or({ name: name }, { nameNorm: nameNorm }),
+				defaults: { name: name, nameNorm: nameNorm }
 			})
 			.spread(function (artist, artistCreated) {
 				array[i] = artist;
