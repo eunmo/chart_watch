@@ -44,40 +44,49 @@ musicApp.directive('artistRows', function () {
 	};
 });
 
-musicApp.directive('chartBadge', function () {
-	return {
-		restrict: 'E',
-		scope: {
-			rank: '=rank',
-			prefix: '=prefix'
-		},
-		link: function (scope, element) {
-			var colors = ["#9ecae1","#6baed6","#4292c6","#2171b5","#ef6548"];
-			if (scope.rank) {
-				var color = "#c6dbef";
-				if (scope.rank.min <= 5) {
-					color = colors[5 - scope.rank.min];
-				}
-				scope.style = { "background-color" : color };
-			}
-		},	
-		templateUrl: 'partials/chart-badge.html'
-	};
-});
-
 musicApp.directive('rankBadge', function () {
 	return {
 		restrict: 'E',
 		scope: {
 			rank: '=rank',
+			min: '=?min',
+			count: '=?count',
+			run: '=?run',
 			prefix: '=prefix'
 		},
-		link: function (scope, element) {
-			var colors = ["#c6dbef","#c6dbef","#9ecae1","#6baed6","#4292c6","#2171b5","#ef6548"];
-			if (scope.rank) {
-				scope.style = { "background-color" : colors[7 - scope.rank.min] };
-			}
-		},	
+		compile: function() {
+			return {
+				pre: function (scope, element, attrs) {
+					scope.show = false;
+					scope.showCount = false;
+
+					if (scope.rank) {
+						scope.showMin = true;
+						scope.min = scope.rank.min;
+						scope.count = scope.rank.count;
+						if (scope.rank.run)
+							scope.run = scope.rank.run;
+						if (scope.min <= 10)
+							scope.show = true;
+						if (scope.count > 1)
+							scope.showCount = true;
+					} else if (scope.count) {
+						scope.show = true;
+						scope.showCount = true;
+					}
+
+					if (scope.min) {
+						var colors = ["#9ecae1","#6baed6","#4292c6","#2171b5","#ef6548"];
+
+						if (scope.min < 6)
+							scope.style = { "background-color" : colors[5 - scope.min] };
+						else {
+							scope.style = { "background-color" : "#c6dbef" };
+						}
+					}
+				}
+			};
+		},
 		templateUrl: 'partials/rank-badge.html'
 	};
 });

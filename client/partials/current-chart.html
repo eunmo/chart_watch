@@ -19,13 +19,13 @@
 		<td>
 			{{row.index}}
 		</td>
-		<td><span class="pull-left span-rank"><rank-badge rank="row.gaon"></chart-badge></span></td>
-		<td><span class="pull-left span-rank"><rank-badge rank="row.melon"></chart-badge></span></td>
-		<td><span class="pull-left span-rank"><rank-badge rank="row.billboard"></chart-badge></span></td>
-		<td><span class="pull-left span-rank"><rank-badge rank="row.oricon"></chart-badge></span></td>
-		<td><span class="pull-left span-rank"><rank-badge rank="row.deutsche"></chart-badge></span></td>
-		<td><span class="pull-left span-rank"><rank-badge rank="row.uk"></chart-badge></span></td>
-		<td><span class="pull-left span-rank"><rank-badge rank="row.francais"></chart-badge></span></td>
+		<td><span class="pull-left span-rank"><rank-badge rank="row.gaon"></rank-badge></span></td>
+		<td><span class="pull-left span-rank"><rank-badge rank="row.melon"></rank-badge></span></td>
+		<td><span class="pull-left span-rank"><rank-badge rank="row.billboard"></rank-badge></span></td>
+		<td><span class="pull-left span-rank"><rank-badge rank="row.oricon"></rank-badge></span></td>
+		<td><span class="pull-left span-rank"><rank-badge rank="row.deutsche"></rank-badge></span></td>
+		<td><span class="pull-left span-rank"><rank-badge rank="row.uk"></rank-badge></span></td>
+		<td><span class="pull-left span-rank"><rank-badge rank="row.francais"></rank-badge></span></td>
 		<td class="td-img-list">
 			<img src="/{{row.song.Albums[0].id}}.30px.jpg" class="img-rounded img-album-up-list">
 		</td>
@@ -39,13 +39,13 @@
 		<td>
 			<span ng-click="addSongs($index)">{{row.song.title | normalizeString}}</span>
 			<span class="pull-right song-desc-right">
-				<chart-badge rank="row.rank.gaon" prefix="'G'"></chart-badge>
-				<chart-badge rank="row.rank.melon" prefix="'M'"></chart-badge>
-				<chart-badge rank="row.rank.billboard" prefix="'US'"></chart-badge>
-				<chart-badge rank="row.rank.oricon" prefix="'オ'"></chart-badge>
-				<chart-badge rank="row.rank.deutsche" prefix="'D'"></chart-badge>
-				<chart-badge rank="row.rank.uk" prefix="'UK'"></chart-badge>
-				<chart-badge rank="row.rank.francais" prefix="'F'"></chart-badge>
+				<rank-badge rank="row.rank.gaon" prefix="'G'"></rank-badge>
+				<rank-badge rank="row.rank.melon" prefix="'M'"></rank-badge>
+				<rank-badge rank="row.rank.billboard" prefix="'US'"></rank-badge>
+				<rank-badge rank="row.rank.oricon" prefix="'オ'"></rank-badge>
+				<rank-badge rank="row.rank.deutsche" prefix="'D'"></rank-badge>
+				<rank-badge rank="row.rank.uk" prefix="'UK'"></rank-badge>
+				<rank-badge rank="row.rank.francais" prefix="'F'"></rank-badge>
 				<span class="badge badge-plays" ng-show="{{row.song.plays}}">{{row.song.plays}}</span>
 			</span>
 		</td>

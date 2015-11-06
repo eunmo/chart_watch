@@ -8,27 +8,22 @@
 	</thead>
 	<tr ng-show="albumArtists.length">
 		<td>
-			<artist-rows artists="albumArtists" desc="'Album Artist'"></artist-rows>
+			<artist-rows artists="albumArtists" desc="'Album'"></artist-rows>
 		</td>
 	</tr>
-	<tr ng-show="artists.length">
+	<tr ng-show="singleArtists.length">
 		<td>
-			<artist-rows artists="artists" desc="'Single Artist'"></artist-rows>
+			<artist-rows artists="singleArtists" desc="'Single'"></artist-rows>
 		</td>
 	</tr>
-	<tr ng-show="features.length">
+	<tr ng-show="chartedArtists.length">
 		<td>
-			<artist-rows artists="features" desc="'Featured Artist'"></artist-rows>
-		</td>
-	</tr>
-	<tr ng-show="groups.length">
-		<td>
-			<artist-rows artists="groups" desc="'Artist Group'"></artist-rows>
+			<artist-rows artists="chartedArtists" desc="'Charted'"></artist-rows>
 		</td>
 	</tr>
 	<tr ng-show="others.length">
 		<td>
-			<artist-rows artists="others" desc="'Other Artist'"></artist-rows>
+			<artist-rows artists="others" desc="'Other'"></artist-rows>
 		</td>
 	</tr>
 </table>

@@ -17,62 +17,22 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
 
 	$scope.initial = $routeParams.initial;	
   $scope.albumArtists = [];
-  $scope.artists = [];
-	$scope.features = [];
-	$scope.groups = [];
+  $scope.singleArtists = [];
+  $scope.chartedArtists = [];
 	$scope.others = [];
-
-	var getPrimaryGroup = function (artist) {
-		var primaryGroup = null;
-		for (var i in artist.Group) {
-			var group = artist.Group[i];
-			if (group.ArtistGroup.primary) {
-				primaryGroup = {
-					name: group.name,
-					id: group.id
-				};
-				break;
-			}
-		}
-		return primaryGroup;
-	};
 
 	$http.get('api/initial/' + $routeParams.initial).success(function (data) {
 		var i, j, count;
 		for (i in data) {
 			var artist = data[i];
-			artist.primaryGroup = getPrimaryGroup(artist);			
-			if (artist.Albums.length > 0) {
-				count = 0;
-				for (j in artist.Albums) {
-					var album = artist.Albums[j];
-					if (album.type === 'EP' || album.type === 'Studio' || album.type === 'LP')
-						count++;
-				}
-				if (count > 0) {
-					$scope.albumArtists.push(artist);
-				} else {
-					$scope.artists.push(artist);
-				}
-			} else {
-				count = 0;
-				for (j in artist.Songs) {
-					var songArtist = artist.Songs[j].SongArtist;
-					if (songArtist.feat)
-						count++;
-				}
-				if (count > 0 && count === artist.Songs.length) {
-					$scope.features.push(artist);
-				} else if (artist.Songs.length > 0) {
-					$scope.artists.push(artist);
-				} else {
-					if (artist.Member.length > 0) {
-						$scope.groups.push(artist);
-					} else {
-						$scope.others.push(artist);
-					}
-				}
-			}
+			if (artist.albums.EP || artist.albums.Studio || artist.albums.Compilation)
+				$scope.albumArtists.push(artist);
+			else if (artist.albums.Single)
+				$scope.singleArtists.push(artist);
+			else if (artist.songs.length > 1 || artist.feats.length > 1)
+				$scope.chartedArtists.push(artist);
+			else
+				$scope.others.push(artist);
 		}
 	});
 });
@@ -84,7 +44,6 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 
 	$http.get('api/artist/' + $routeParams.id).success(function (artist) {
 
-		console.log(artist);
 		var onlyFeat = true;
 
 		for (var i in artist.albums) {

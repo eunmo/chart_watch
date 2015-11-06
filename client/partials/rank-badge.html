@@ -1,3 +1,2 @@
-<span class="label label-as-badge badge-rank"
-	ng-show="{{rank.min <= 10}}" ng-style="style">
-	{{prefix}}{{rank.min}}<span ng-show="{{rank.count > 1}}"><small>x</small>{{rank.count}}</span></span>
+<span class="label label-as-badge badge-rank"	ng-show="show" ng-style="style">
+	{{prefix}}{{min}}<span ng-show="showCount"><small>x</small>{{count}}</span><span ng-show="{{run > 0}}"><small> {{count + run}}</small></span></span>

@@ -65,13 +65,13 @@
 									{{song.title | normalizeString}}
 								</span>
 								<span class="pull-right song-desc-right">
-									<chart-badge rank="song.rank.gaon" prefix="'G'"></chart-badge>
-									<chart-badge rank="song.rank.melon" prefix="'M'"></chart-badge>
-									<chart-badge rank="song.rank.billboard" prefix="'US'"></chart-badge>
-									<chart-badge rank="song.rank.oricon" prefix="'オ'"></chart-badge>
-									<chart-badge rank="song.rank.deutsche" prefix="'D'"></chart-badge>
-									<chart-badge rank="song.rank.uk" prefix="'UK'"></chart-badge>
-									<chart-badge rank="song.rank.francais" prefix="'F'"></chart-badge>
+									<rank-badge rank="song.rank.gaon" prefix="'G'"></rank-badge>
+									<rank-badge rank="song.rank.melon" prefix="'M'"></rank-badge>
+									<rank-badge rank="song.rank.billboard" prefix="'US'"></rank-badge>
+									<rank-badge rank="song.rank.oricon" prefix="'オ'"></rank-badge>
+									<rank-badge rank="song.rank.deutsche" prefix="'D'"></rank-badge>
+									<rank-badge rank="song.rank.uk" prefix="'UK'"></rank-badge>
+									<rank-badge rank="song.rank.francais" prefix="'F'"></rank-badge>
 									<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>
 									<div class="btn-group">
 										<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"

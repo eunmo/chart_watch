@@ -373,6 +373,74 @@
 		});
 	};
 
+	var getPrimaryGroupSummary = function (models, artists, ids) {
+		var query = "SELECT MemberId, GroupId, name " + 
+								"FROM ArtistGroups g, Artists a " +
+								"WHERE g.MemberId in (" + ids.toString() + ") " +
+								"AND g.GroupId = a.id " + 
+								"AND g.primary = true;";
+		return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
+		.then(function (rows) {
+			var i, primary, id, type;
+
+			for (i in rows) {
+				primary = rows[i];
+				artists[primary.MemberId].primaryGroup = {
+					id: primary.GroupId,
+					name: primary.name
+				};
+			}
+		});
+	};
+
+	var getAlbumSummary = function (models, artists, ids) {
+		var query = "SELECT ArtistId, `type`, count(*) AS count, max(a.id) As AlbumId " +
+								"FROM AlbumArtists aa, Albums a " +
+								"WHERE aa.ArtistId in (" + ids.toString() + ") " + 
+								"AND aa.AlbumId = a.id " + 
+								"GROUP BY aa.ArtistId, a.`type`";
+		return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
+		.then(function (rows) {
+			var i, albumCount, id, type;
+
+			for (i in rows) {
+				albumCount = rows[i];
+				id = albumCount.ArtistId;
+				type = albumCount.type;
+				if (type) {
+					artists[id].albums[type] = albumCount.count;
+					artists[id].maxAlbum = Math.max(artists[id].maxAlbum, albumCount.AlbumId);
+				}
+			}
+		});
+	};
+
+	var getSongSummary = function (models, artists, ids) {
+		var idString = ids.toString();
+		var query = "SELECT ArtistId, feat, IFNULL (rank, 0) AS rank, count(*) AS count " +
+								"FROM (" +
+											 "SELECT ArtistId, feat, sa.SongId, IF (min(rank) <= 10, min(rank), NULL) AS rank " +
+											 "FROM SongArtists sa LEFT JOIN SongCharts sc " +
+											 "ON sa.SongId = sc.SongId " +
+											 "WHERE sa.ArtistId in (" + ids.toString() + ") " +
+											 "GROUP BY ArtistId, SongId) a " + 
+								"GROUP BY ArtistId, feat, rank;";
+		return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
+		.then(function (rows) {
+			var i, songCount, id, feat;
+
+			for (i in rows) {
+				songCount = rows[i];
+				id = songCount.ArtistId;
+				if (songCount.feat) {
+					artists[id].feats[songCount.rank] = songCount.count;
+				} else {
+					artists[id].songs[songCount.rank] = songCount.count;
+				}
+			}
+		});
+	};
+
 	module.exports = function (router, models) {
 		router.get('/api/artist', function (req, res) {
 			models.Artist.findAll({
@@ -422,39 +490,73 @@
 				res.json(artist);
 			});
 		});
+
+
 		
 		router.get('/api/initial/:_initial', function (req, res) {
 			var initial = req.params._initial;
 			var queryOption = {};
+			var artists = [];
+			var promises = [];
+
+			var query = "SELECT id, name, nameNorm, origin, type, gender " +
+									"FROM Artists " +
+									"WHERE ";
 
 			if (initial.match(/[가나다라마바사아자차카타파하]/)) {
 				// korean
 				var krnInitials = '가나다라마바사아자차카타파하';
 				var index = krnInitials.indexOf(initial);
 
+				query += "nameNorm >= '" + krnInitials[index] + "' ";
+
 				if (index < 13) {
-					queryOption = { nameNorm: { gte: krnInitials[index], lt: krnInitials[index+1] } };
-				} else {
-					queryOption = { nameNorm: { gte: '하' } };
+					query += "AND nameNorm < '" + krnInitials[index+1] + "' ";
 				}
 			} else if (initial.match(/0-9/)) {
 				// numbers
-				queryOption = { nameNorm: { lt: 'a' } };
+				query += "nameNorm < 'a' ";
 			} else {
 				// alphabet
-				queryOption = { nameNorm: { like: initial + '%'}};
+				query += "nameNorm like '" + initial + "%' ";
 			}
 
-			models.Artist.findAll({
-				where: queryOption,
-				include: [
-					{ model: models.Artist, as: 'Group' },
-					{ model: models.Artist, as: 'Member' },
-					{ model: models.Album },
-					{ model: models.Song }
-				]
-		 	}).then(function (artists) {
-				res.json(artists);
+			return models.sequelize.query(query + ';', { type: models.sequelize.QueryTypes.SELECT })
+		 	.then(function (rows) {
+				var ids = [];
+				var artist, i, id;
+
+				for (i in rows) {
+					artist = rows[i];
+					id = artist.id;
+					ids.push(id);
+					artists[id] = {
+						id: id,
+						name: artist.name,
+						nameNorm: artist.nameNorm,
+						origin: artist.origin,
+						type: artist.type,
+						gender: artist.gender,
+						maxAlbum: 0,
+						albums: {},
+						songs: [],
+						feats: []
+					};
+				}
+
+				promises.push(getPrimaryGroupSummary(models, artists, ids));
+				promises.push(getAlbumSummary(models, artists, ids));
+				promises.push(getSongSummary(models, artists, ids));
+
+				return Promise.all(promises);
+		 	}).then(function () {
+				var result = [];
+
+				for (var i in artists) {
+					result.push(artists[i]);
+				}
+
+				res.json(result);
 			});
 		});
 
