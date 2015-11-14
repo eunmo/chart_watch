@@ -114,7 +114,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 
 	var Shuffle = function ($scope) {
 		var tiers = [];
-		var max_tier = 4;
+		var max_tier = 5;
 		var total = 0;
 		var totals = [];
 
@@ -139,14 +139,16 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 					if (song.plays >= 10) {
 						level += Math.floor(song.plays / 5);
 						tier = 1;
-					} else {
+					} else if (song.plays >= 5) {
 						tier = 2;
+					} else {
+						tier = 3;
 					}
 				} else {
 					if (song.plays < 3) {
-						tier = 3;
-					} else {
 						tier = 4;
+					} else {
+						tier = 5;
 					}
 				}
 

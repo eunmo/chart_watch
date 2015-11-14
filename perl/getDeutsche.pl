@@ -2,6 +2,7 @@ use DateTime;
 
 my $end = 2000;
 my $port = 3000;
+#my $port = 8080;
 
 my $date = DateTime->today();
 
@@ -15,7 +16,11 @@ if ($#ARGV >= 1) {
 	$end = $ARGV[1];
 }
 
-$date->truncate( to => 'week' )->subtract( weeks => 1);
+if ($date->day_of_week() < 3) {
+	$date->truncate( to => 'week' )->subtract( weeks => 2);
+} else {
+	$date->truncate( to => 'week' )->subtract( weeks => 1);
+}
 $date->add( days => 5 );
 
 while ($date->year >= $end) {

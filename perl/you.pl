@@ -29,7 +29,7 @@ for (my $i = 1; $i <= 2; $i++) {
 			print ",\n" if $rank > 1;
 			print "{ \"rank\": $rank, \"artist\": \"$artist\", \"titles\": [";
 			$count = 1;
-			my @tokens = split(/\//, $title);
+			my @tokens = split(/\/|\|/, $title);
 			foreach my $token (@tokens) {
 				my $token_norm = normalize_title($token);
 				print ", " if $count > 1;	

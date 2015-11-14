@@ -52,13 +52,15 @@ musicApp.directive('rankBadge', function () {
 			min: '=?min',
 			count: '=?count',
 			run: '=?run',
-			prefix: '=prefix'
+			prefix: '=prefix',
+			showMin: '=?showMin'
 		},
 		compile: function() {
 			return {
 				pre: function (scope, element, attrs) {
 					scope.show = false;
 					scope.showCount = false;
+					scope.showMin = false;
 
 					if (scope.rank) {
 						scope.showMin = true;

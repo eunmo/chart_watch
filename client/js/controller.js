@@ -363,7 +363,8 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 		if ((chart === 'gaon' && date.getDay() < 4) ||
 				(chart === 'melon' && date.getDay() < 1) ||
 				(chart === 'billboard' && date.getDay() < 3) ||
-				(chart === 'oricon' && date.getDay() < 2))
+				(chart === 'oricon' && date.getDay() < 2) ||
+				(chart === 'deutsche' && date.getDay() < 1))
 			date.setDate(date.getDate() - 7);
 		
 		date.setDate(date.getDate() - date.getDay() - 1);
@@ -590,16 +591,18 @@ musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams
 			if (datum.rank) {
 				if (datum.plays >= 10) {
 					tier = 0;
-				} else {
+				} else if (datum.plays > 5) {
 					tier = 1;
+				} else {
+					tier = 2;
 				}
 
 				$scope.ranks[datum.rank - 1].data.push(datum);
 			} else {
 				if (datum.plays <= 2) {
-					tier = 2;
-				} else {
 					tier = 3;
+				} else {
+					tier = 4;
 				}
 				$scope.ranks[10].data.push(datum);
 			}

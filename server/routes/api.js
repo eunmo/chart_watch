@@ -423,6 +423,7 @@
 											 "FROM SongArtists sa LEFT JOIN SongCharts sc " +
 											 "ON sa.SongId = sc.SongId " +
 											 "WHERE sa.ArtistId in (" + ids.toString() + ") " +
+											 "AND sc.order = 0 " + 
 											 "GROUP BY ArtistId, SongId) a " + 
 								"GROUP BY ArtistId, feat, rank;";
 		return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
@@ -646,7 +647,8 @@
 					songId = songArray[i].id;
 					if (rankMax[songId])
 						songArray[i].rank = rankMax[songId];
-					resArray.push(songArray[i]);
+					if (songArray[i].plays > 0)
+						resArray.push(songArray[i]);
 				}
 
 				res.json(resArray);

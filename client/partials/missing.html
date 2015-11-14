@@ -11,7 +11,7 @@
 		<th>Name</th>
 		<th>Title</th>
 	</tr>
-	<tr ng-repeat="song in data | orderBy:['-count', 'rank', '-week']">
+	<tr ng-repeat="song in data | orderBy:['chart', 'name', 'week']">
 		<td>
 			{{$index + 1}}
 		</td>

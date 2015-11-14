@@ -7,7 +7,8 @@
 	var Promise = require('bluebird');
 	var exec = Promise.promisify(require('child_process').exec);
 
-	var charts = ['gaon', 'melon', 'billboard', 'oricon', 'deutsche', 'uk', 'francais'];
+	var charts = ['billboard', 'oricon', 'deutsche', 'uk', 'francais', 'melon', 'gaon'];
+	var headers = ['US', 'オリコン', 'Deutsche', 'UK', 'Francais', '멜론', '가온'];
 	
 	module.exports = function (router, models) {
 		
@@ -230,7 +231,6 @@
 		router.get('/chart/ones', function (req, res) {
 			var promises = [];
 			var arr = [];
-			var headers = ['가온', '멜론', 'US', 'オリコン', 'Deutsche', 'UK', 'Francais'];
 
 			promises.push(getOnes(arr));
 			promises.push(getExtra(arr, 1));
