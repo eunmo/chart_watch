@@ -591,7 +591,7 @@ musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams
 			if (datum.rank) {
 				if (datum.plays >= 10) {
 					tier = 0;
-				} else if (datum.plays > 5) {
+				} else if (datum.plays >= 5) {
 					tier = 1;
 				} else {
 					tier = 2;

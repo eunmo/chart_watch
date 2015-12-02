@@ -148,7 +148,20 @@
 																		"(select SongId from AlbumSongs where AlbumId in " +
 																	  "	(select AlbumId from AlbumArtists where ArtistId = " + artistId + ")) " +
 																		"and (title = \"" + title + "\" or title like \"" + title + " (%)\")",
-																		{ type: models.sequelize.QueryTypes.SELECT });
+																		{ type: models.sequelize.QueryTypes.SELECT })
+			.then(function (results) {
+				if (results.length > 0) {
+					return results;
+				} else {
+					return models.sequelize.query("Select id, title from Songs where id =" +
+																				"(select SongId from SongAliases where SongId in" +
+																				" (select SongId from AlbumSongs where AlbumId in " +
+																				"	 (select AlbumId from AlbumArtists where ArtistId = " + artistId + ")) " +
+																				" and alias = \"" + title + "\" and chart = \"" + chart + "\")",
+																				{ type: models.sequelize.QueryTypes.SELECT });
+
+				}
+			});
 		};
 
 		var findSingleByArtist = function (artistId, title, chart) {
