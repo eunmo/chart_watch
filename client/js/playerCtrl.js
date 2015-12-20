@@ -40,10 +40,8 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 			song = s;
 			loading = true;
 			loaded = false;
-			$http.get('api/s3/' + song.id).success(function (data) {
-				elem.src = data.url;
-				elem.load();
-			});
+			elem.src = '/music/' + song.id + '.mp3';
+			elem.load();
 		};
 
 		this.play = function () {

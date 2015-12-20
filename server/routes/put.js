@@ -234,7 +234,7 @@
 				return models.Album.update({
 					title: input.title,
 					titleNorm: input.titleNorm,
-					release: input.releaseDate,
+					release: new Date(input.releaseDate),
 					type: input.type
 				},
 				{ where: { id: id } });

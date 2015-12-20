@@ -9,7 +9,8 @@
 	var AWS = require('aws-sdk');
 	var exec = Promise.promisify(require('child_process').exec);
 
-	var uploadDir = path.resolve('uploads/mp3');
+	var uploadDir = path.resolve('uploads/temp');
+	var musicDir = path.resolve('uploads/music');
 	var imageDir = path.resolve('uploads/img');
 	var tagScript = path.resolve('perl/tag.pl');
 	var imgScript = path.resolve('perl/img.pl');
@@ -153,24 +154,11 @@
 					for (i = 0; i < featArtistArray.length; i++) {
 						song.addArtist(featArtistArray[i], {order: i, feat: true});
 					}
-					var fileBuffer = fs.readFileSync(filePath);
-					var s3 = new AWS.S3();
-					var param = {
-						Bucket: mp3Bucket,
-						Key: song.id.toString(),
-						ContentType: 'audio/mpeg',
-						Body: fileBuffer
-					};
 					return new Promise(function (resolve, reject) {
-						s3.putObject(param, function (error, response) {
-							if (error !== null) {
-								console.log('s3 error: ' + error);
-								return reject();
-							}
-							fs.unlinkSync(filePath);
-							tags.push(tag);
-							resolve(tag);
-						});
+						var newPath = path.resolve(musicDir, song.id.toString() + '.mp3');
+						fs.renameSync(filePath, newPath);
+						tags.push(tag);
+						resolve(tag);
 					});
 				});
 			});

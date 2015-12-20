@@ -21,6 +21,7 @@
 
 	app.use(express.static(path.join(__dirname, '../client')));
 	app.use(express.static(path.join(__dirname, '../uploads/img')));
+	app.use(express.static(path.join(__dirname, '../uploads')));
 
 	app.use('/', routes);
 
