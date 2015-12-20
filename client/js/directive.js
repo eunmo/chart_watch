@@ -123,16 +123,26 @@ musicApp.directive('d3BarPlays', function () {
 				var group = [];
 				var series = [];
 				var datum, i, j, order, sum;
+				var plays;
 
 				for (i in data) {
 					datum = data[i];
 					order = datum.rank ? datum.rank : 11;
+					plays = datum.plays <= 100 ? datum.plays : 100;
 
-					if (group[datum.plays] === undefined) {
-						group[datum.plays] = [];
+					if (group[plays] === undefined) {
+						group[plays] = [];
 					}
 
-					group[datum.plays][order] = { plays: datum.plays, rank: order, count: datum.count };
+					if (group[plays][order] === undefined) {
+						group[plays][order] = {
+							plays: plays,
+							rank: order,
+							count: 0
+						};
+					}
+
+					group[plays][order].count += datum.count;
 				}
 
 				for (i in group) {
