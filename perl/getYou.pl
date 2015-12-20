@@ -2,9 +2,9 @@ use DateTime;
 
 my $end = 2015;
 
-my $script = '/home/ubuntu/chart_watch/perl/you.pl';
-my $chart_dir = '/home/ubuntu/chart_watch/chart';
-my $html_dir = '/home/ubuntu/chart_watch/perl/html';
+my $script = '/home/eunmo/dev/chart_watch/perl/you.pl';
+my $chart_dir = '/home/eunmo/dev/chart_watch/chart';
+my $html_dir = '/home/eunmo/dev/chart_watch/perl/html';
 
 my $date = DateTime->today();
 
