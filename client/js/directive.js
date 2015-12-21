@@ -204,7 +204,7 @@ musicApp.directive('d3BarPlays', function () {
 				.scale(y)
 				.orient("left")
 				.tickValues(yTicks)
-				.tickSize(-width);
+				.tickSize(-width-barWidth/2);
 				
 				var bars = svg.selectAll(".bar").data(dataSeries);
 

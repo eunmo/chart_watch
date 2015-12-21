@@ -374,7 +374,7 @@
 			var chartFile = filePrefix + '.' + year +
 											(month < 10 ? '.0' : '.') + month +
 											(day < 10 ? '.0' : '.') + day;
-			var date = new Date(year, month - 1, day);
+			var date = new Date(Date.UTC(year, month - 1, day));
 			var webData;
 			var promises = [];
 			var execStr;
