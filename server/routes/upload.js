@@ -111,7 +111,7 @@
 						if (matchingAlbum !== null) {
 							return matchingAlbum;
 						} else {
-							var releaseDate = new Date(tag.year, tag.month, tag.day);
+							var releaseDate = new Date(Date.UTC(tag.year, tag.month, tag.day));
 							return models.Album.create({
 								title: tag.album,
 								titleNorm: tag.albumNorm,

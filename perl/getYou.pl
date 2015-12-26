@@ -2,9 +2,9 @@ use DateTime;
 
 my $end = 2015;
 
-my $script = '/home/eunmo/dev/chart_watch/perl/you.pl';
-my $chart_dir = '/home/eunmo/dev/chart_watch/chart';
-my $html_dir = '/home/eunmo/dev/chart_watch/perl/html';
+my $script = '/Users/eunmo/dev/chart_watch/perl/you.pl';
+my $chart_dir = '/Users/eunmo/dev/chart_watch/chart';
+my $html_dir = '/Users/eunmo/dev/chart_watch/perl/html';
 
 my $date = DateTime->today();
 
@@ -42,6 +42,7 @@ while ($date->year >= $end) {
 	} else {
 		my $file_ymd = $file_date->ymd(' ');
 		system "/bin/bash oricon.sh $file_ymd";
+		print "$file_path\n";
 		system "perl $script $html_dir/$ymd > $file_path";
 		print "\t$file_ym\n";
 

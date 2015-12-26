@@ -13,6 +13,11 @@ save_img($id3v2, $imgfile) if defined $imgfile;
 $mp3->close();
 
 my $small = $imgfile;
+$small =~ s/jpg$/80px\.jpg/;
+
+system("convert $imgfile -resize 80 $small");
+
+my $small = $imgfile;
 $small =~ s/jpg$/40px\.jpg/;
 
 system("convert $imgfile -resize 40 $small");

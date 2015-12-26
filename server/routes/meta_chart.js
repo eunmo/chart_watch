@@ -38,7 +38,7 @@
 			});
 		}
 
-		router.get('/chart/current', function (req, res) {
+		function getSortedCurrentSongs () {
 			var datePromises = [];
 			var dates = {};
 			var songPromises = [];
@@ -49,7 +49,7 @@
 			for (i in charts)
 				datePromises.push(getMaxDate(charts[i], dates));
 
-			Promise.all(datePromises)
+			return Promise.all(datePromises)
 			.then(function () {
 
 				for (i in charts)
@@ -159,6 +159,13 @@
 					sendArray[i].index = Number(i) + 1;
 				}
 
+				return sendArray;
+			});
+		}
+
+		router.get('/chart/current', function (req, res) {
+			getSortedCurrentSongs()
+			.then(function (sendArray) {
 				res.json(sendArray);
 			});
 		});
