@@ -214,43 +214,60 @@
 			});
 		}
 
+		function idToSongs (songIds) {
+			var ids = [];
+
+			for (var i in songIds) {
+				ids.push(songIds[i].id);
+			}
+
+			return models.Song.findAll({
+				where: { id: { in: ids } },
+						 include: [
+			{ model: models.Album },
+						 { model: models.Artist, include: [
+							 { model: models.Artist, as: 'Group' }
+							 ]}
+							 ]
+			}).then(function (songs) {
+				var resArray = [];
+				var song, songRow;
+
+				for (i in songs) {
+					songRow = songs[i];
+					song = common.newSong(songRow);
+					song.songArtists = common.getSongArtists(songRow);
+					song.albumId = songRow.Albums[0].id;
+					resArray.push(song);
+				}
+
+				return resArray;
+			});
+		}
+
 		function getCharted (count) {
 			var queryString =
-				"SELECT distinct SongId " +
+				"SELECT distinct SongId as id " +
 				"FROM Songs s, SongCharts c " +
 				"WHERE s.id = c.SongId and rank <= 10 and plays < 10 " +
 				"ORDER BY SongId " +
 				"LIMIT " + count;
 			return models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT 
-			}).then(function (songIds) {
-				var ids = [];
-
-				for (var i in songIds) {
-					ids.push(songIds[i].SongId);
-				}
-
-				return models.Song.findAll({
-					where: { id: { in: ids } },
-					include: [
-						{ model: models.Album },
-						{ model: models.Artist, include: [
-							{ model: models.Artist, as: 'Group' }
-						]}
-					]
-				}).then(function (songs) {
-					var resArray = [];
-					var song, songRow;
-
-					for (i in songs) {
-						songRow = songs[i];
-						song = common.newSong(songRow);
-						song.songArtists = common.getSongArtists(songRow);
-						song.albumId = songRow.Albums[0].id;
-						resArray.push(song);
-					}
-
-					return resArray;
-				});
+			}).then( function (ids) {
+				return idToSongs(ids);
+			});
+		}
+		
+		function getUncharted (count) {
+			var queryString =
+				"SELECT id " +
+				"FROM Songs " +
+				"WHERE plays < 3 " +
+				"ORDER BY id " +
+				"LIMIT " + count;
+			return models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT 
+			}).then( function (ids) {
+				return idToSongs(ids);
 			});
 		}
 
@@ -258,6 +275,7 @@
 			var promises = [];
 			var result = {};
 			var chartedLimit = req.query.charted;
+			var unchartedLimit = req.query.uncharted;
 
 			promises.push(
 				getSortedCurrentSongs()
@@ -270,6 +288,13 @@
 				getCharted(chartedLimit)
 				.then( function (array) {
 					result.charted = array;
+				})
+			);
+
+			promises.push(
+				getUncharted(unchartedLimit)
+				.then( function (array) {
+					result.uncharted = array;
 				})
 			);
 
