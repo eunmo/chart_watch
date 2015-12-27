@@ -271,12 +271,82 @@
 			});
 		}
 
+		function getSeasonalWeeks () {
+			var date = new Date();
+			var dates = "";
+			var mm = date.getMonth();
+			var dd = date.getDate();
+			var append = false;
+
+			for (var yy = date.getFullYear() - 1; yy >= 2000; yy--) {
+				date = new Date(Date.UTC(yy, mm, dd));
+				date.setDate(date.getDate() + (6 - date.getDay()));
+				console.log(date);
+				
+				if (append) {
+					dates += ",";
+				}
+
+				dates += "'" + date.getFullYear() +
+					"-" + (date.getMonth() + 1) +
+					"-" + date.getDate() + "'";
+				append = true;
+			}
+
+			return dates;
+		}
+
+		function getSeasonal (limit) {
+			var weeks = getSeasonalWeeks();
+			var queryString =
+				"SELECT week, SongId " +
+				"FROM SongCharts " +
+				"WHERE rank <= " + limit + " " +
+				"AND week IN (" + weeks + ") " +
+				"ORDER BY week DESC, rank DESC, SongId";
+			return models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT 
+			}).then( function (results) {
+				var ids = [];
+				var idMap = [];
+
+				for (var i in results) {
+					var id = results[i].SongId;
+					if (idMap[id] === undefined) {
+						ids.push({id: results[i].SongId});
+						idMap[id] = i;
+					}
+				}
+				
+				return idToSongs(ids)
+				.then( function (array) {
+					var resArray = [];
+					
+					for (var i in results) {
+						var songId = results[i].SongId;
+						if (idMap[songId] === i) {
+							for (var j in array) {
+								var song = array[j];
+
+								if (song.id === songId) {
+									song.week = results[i].week;
+									resArray.push(song);
+								}
+							}
+						}
+					}	
+				  
+					return resArray;
+				});
+			});
+		}
+
 		router.get('/api/ios/fetch', function (req, res) {
 			var promises = [];
 			var result = {};
 			var chartedLimit = req.query.charted;
 			var unchartedLimit = req.query.uncharted;
-
+			var seasonalLimit = req.query.seasonal;
+			
 			promises.push(
 				getSortedCurrentSongs()
 				.then( function (array) {
@@ -295,6 +365,13 @@
 				getUncharted(unchartedLimit)
 				.then( function (array) {
 					result.uncharted = array;
+				})
+			);
+
+			promises.push(
+				getSeasonal(seasonalLimit)
+				.then( function (array) {
+					result.seasonal = array;
 				})
 			);
 
