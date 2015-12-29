@@ -56,6 +56,7 @@
 				nameNorm = nameNorm.replace(/\s\+\s.*$/, '');
 				nameNorm = nameNorm.replace(/〜.*〜$/, '');
 				nameNorm = nameNorm.replace(/\/.*$/, '');
+				nameNorm = nameNorm.replace(/[&＆].*$/, '');
 			} else if (chart === 'deutsche') {
 				nameNorm = nameNorm.replace(/[,&＆].*$/, '');
 				nameNorm = nameNorm.replace(/\sfeat\..*$/, '');

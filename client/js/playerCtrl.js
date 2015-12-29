@@ -352,6 +352,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 					var xCoord = event.pageX - $('#timeline').offset().left;
 					var clickRatio = xCoord / $('#timeline').width();
 					clickRatio = (clickRatio < 0 ? 0 : (clickRatio > 1 ? 1 : clickRatio));
+					$scope.seek(clickRatio);
 				}
 			});
 			$scope.bindDone = true;
