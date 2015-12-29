@@ -5,10 +5,6 @@
 	var Sequelize = require('sequelize');
 	var Promise = require('bluebird');
 
-	var artistCmpId = function (a, b) {
-		return a.id - b.id;
-	};
-
 	var songCmp = function (a, b) {
 		if (a.disk === b.disk)
 			return a.track - b.track;
@@ -64,47 +60,6 @@
 		return null;
 	};
 
-	var getPrimaryGroup = function (artist) {
-		var primaryGroup = null;
-		for (var i in artist.Group) {
-			var group = artist.Group[i];
-			if (group.ArtistGroup.primary) {
-				primaryGroup = {
-					name: group.name,
-					id: group.id
-				};
-				break;
-			}
-		}
-		return primaryGroup;
-	};
-
-	var createAlbum = function (albumRow) {
-		var i;
-		var artistRow;
-		var album = { 
-			id: albumRow.id,
-			title: albumRow.title,
-			type: albumRow.type,
-			release: albumRow.release,
-			albumArtists: [],
-			songs: []
-		};
-
-		for (i in albumRow.Artists) {
-			artistRow = albumRow.Artists[i];
-			album.albumArtists.push({
-				id: artistRow.id,
-				name: artistRow.name,
-				order: artistRow.AlbumArtist.order,
-			});
-		}
-
-		album.albumArtists.sort(artistCmpId);
-
-		return album;
-	};
-
 	var createSong = function (songRow, albumSong, album) {
 		var i;
 		var artistRow;
@@ -140,7 +95,8 @@
 
 		for (i in result.Albums) {
 			albumRow = result.Albums[i];
-			album = createAlbum(albumRow);
+			album = common.newAlbum(albumRow);
+			album.songs = [];
 
 			for (j in albumRow.Songs) {
 				songRow = albumRow.Songs[j];
@@ -168,10 +124,11 @@
 					albumRow = songRow.Albums[j];
 					album = findAlbumInAlbums(albumRow.id, albums);
 					if (album === null) {
-						album = createAlbum(albumRow);
+						album = common.newAlbum(albumRow);
+						album.songs = [];
+
 						albums.push(album);
 					}
-					album.albumArtists.sort(artistCmpId);
 					createSong(songRow, albumRow.AlbumSong, album);
 					album.albumArtists.sort(common.artistCmpOrder);
 					album.songs.sort(songCmp);
@@ -307,7 +264,7 @@
 			include: [{ model: models.Artist, as: 'Group' }]
 		}).then(function (results) {
 			for (i in results) {
-				primaryGroup = getPrimaryGroup(results[i]);
+				primaryGroup = common.getPrimaryGroup(results[i]);
 				if (primaryGroup !== null) {
 					for (j in array[results[i].id]) {
 						array[results[i].id][j].primaryGroup = primaryGroup;

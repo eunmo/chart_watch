@@ -170,10 +170,6 @@
 			});
 		});
 
-		function weekToNum (week) {
-			return week.getFullYear() * 10000 + week.getMonth() * 100 + week.getDate();
-		}
-
 		function getOnes (arr) {
 			return models.SongChart.findAll({
 				where: { rank: { $eq: 1 }, order: { $eq: 0 } },
@@ -204,7 +200,7 @@
 		function initWeek (weeks, week, headers) {
 			var weekNum, j;
 
-			weekNum = weekToNum(week);
+			weekNum = common.weekToNum(week);
 
 			if (weeks[weekNum] === undefined) {
 				weeks[weekNum] = {
@@ -217,22 +213,6 @@
 			}
 
 			return weekNum;
-		}
-
-		function sortWeeks (weeks) {
-			var results = [];
-
-			var weekCmp = function (a, b) {
-				return b.week - a.week;
-			};
-
-			weeks.sort(weekCmp);
-
-			for (var i in weeks) {
-				results.push(weeks[i]);
-			}
-
-			return results;
 		}
 		
 		router.get('/chart/ones', function (req, res) {
@@ -281,7 +261,7 @@
 
 				res.json({
 					headers: headers,
-					weeks: sortWeeks(weeks)
+					weeks: common.sortWeeks(weeks)
 				});
 			});
 		});
