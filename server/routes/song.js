@@ -105,8 +105,6 @@
 				}
 			}
 
-			console.log(chartMap);
-			
 			for (i in array.SongCharts) {
 				chartRow = array.SongCharts[i];
 				chartIndex = chartMap[chartRow.type];

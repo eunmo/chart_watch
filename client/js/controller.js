@@ -666,3 +666,13 @@ musicApp.controller('ChartMissing1Ctrl', function ($rootScope, $scope, $routePar
 		$scope.data = data;
 	});
 });
+
+musicApp.controller('SongCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
+
+	$scope.loaded = false;
+
+	$http.get('api/song/' + $routeParams.id).success(function (song) {
+		$scope.song = song;
+		$scope.loaded = true;
+	});
+});
