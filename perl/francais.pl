@@ -85,6 +85,37 @@ if (($year == 2005 && $date->month() == 3 && $date->day() == 4) ||
 		$rank++;
 		last if $rank > 100;
 	}
+} elsif ($yy > 2015) {
+	my $week = $date->week_number();
+	my $week_string = sprintf("%02d", $week);
+	my $year_string = $year % 100;
+	my $rank = 1;
+	for (my $i = 1; $i <= 2; $i++) {
+		my $url = "http://www.chartsinfrance.net/charts/$year_string$week_string/singles.php,p$i";
+		my $html = get("$url");
+
+		my $dom = Mojo::DOM->new($html);
+
+		for my $div ($dom->find('div[class="c1_td5"]')->each) {
+			my $title = $div->find('font[class="noir11"]')->first->find('a')->first->text;
+			my $artist = $div->find('font[class="noir13b"]')->first;
+			$artist =~ s/\<.*?\>//g;
+			my $title_norm = normalize_title($title);
+			my $artist_norm = normalize_artist($artist);
+			print ",\n" if $rank > 1;
+			print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\": [";
+			$count = 1;
+			my @tokens = split(/\//, $title);
+			foreach my $token (@tokens) {
+				my $token_norm = normalize_title($token);
+				print ", " if $count > 1;	
+				print "\"$token_norm\"";
+				$count++;
+			}
+			print "]}";
+			$rank++;
+		}
+	}
 } else {
 	my $week = $date->week_number();
 	my $week_string = sprintf("%02d", $week);

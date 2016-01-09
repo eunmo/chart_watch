@@ -100,7 +100,6 @@
 			var songs = [];
 			var songArray = [];
 			var i;
-			var charts = ['billboard', 'oricon', 'deutsche', 'uk', 'melon', 'gaon'];
 
 			for (i in charts)
 				datePromises.push(getMaxDate(charts[i], dates));
