@@ -114,11 +114,11 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 	};
 
 	$scope.download = function (song) {
-		$http.get('api/s3d/' + song.id, { params: { title: song.title } }).success(function (data) {
-			var dl = document.createElement('a');
-			dl.href = data.url;
-			dl.click();
-		});		
+		var dl = document.createElement('a');
+		dl.href = '/music/' + song.id + '.mp3';
+		dl.download = song.title + '.mp3';
+		console.log(dl);
+		dl.click();
 	};
 });
 
