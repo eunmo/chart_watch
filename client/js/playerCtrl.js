@@ -135,7 +135,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 				if (song.rank) {
 					level += (8 - song.rank);
 					if (song.plays >= 10) {
-						level += Math.floor(song.plays / 5);
+						//level += Math.floor(song.plays / 5);
 						tier = 1;
 					} else if (song.plays >= 5) {
 						tier = 2;
