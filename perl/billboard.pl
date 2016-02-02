@@ -24,7 +24,7 @@ my $rank = 1;
 
 print "[";
 
-for my $div ($dom->find('div[class*="row-title"]')->each) {
+for my $div ($dom->find('div[class*="row__title"]')->each) {
 	my $title_norm;
 	if ($div->find('h2')->first) {
 		my $title = $div->find('h2')->first->text;
