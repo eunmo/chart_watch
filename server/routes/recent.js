@@ -138,5 +138,12 @@
 				res.json(songs);
 			});
 		});
+
+		router.get('/api/newSongs/:_limit', function (req, res) {
+			getRecentlyAdded(req.params._limit)
+			.then(function (songs) {
+				res.json(songs);
+			});
+		});
 	};
 }());

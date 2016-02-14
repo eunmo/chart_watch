@@ -32,10 +32,18 @@ print "[";
 for my $td ($dom->find('td[class*="ch-info"]')->each) {
 	my $title = $td->find('span[class*="info-title"]')->first->text;
 	my $artist = $td->find('span[class*="info-artist"]')->first->text;
-	my $title_norm = normalize_title($title);
 	my $artist_norm = normalize_artist($artist);
 	print ",\n" if $rank > 1;
-	print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\" : [\"$title_norm\"] }";
+	print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\": [";
+	$count = 1;
+	my @tokens = split(/\//, $title);
+	foreach my $token (@tokens) {
+		my $token_norm = normalize_title($token);
+		print ", " if $count > 1;	
+		print "\"$token_norm\"";
+		$count++;
+	}
+	print "]}";
 	$rank++;
 }
 
