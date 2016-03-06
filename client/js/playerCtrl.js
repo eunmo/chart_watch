@@ -233,6 +233,9 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	$scope.crossfade = false;
 	$scope.crossfadeDuration = 10;
 
+	$scope.upNextLimit = 10;
+	$scope.expanded = false;
+
 	$scope.initAudio = function () {
 		alert('init audio for iOS');
 		$rootScope.audios[0].init();
@@ -383,6 +386,16 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 
 	$scope.rewind = function () {
 		$scope.seek(0);
+	};
+
+	$scope.expand = function () {
+		$scope.upNextLimit = 1000000;
+		$scope.expanded = true;
+	};
+
+	$scope.shrink = function () {
+		$scope.upNextLimit = 10;
+		$scope.expanded = false;
 	};
 
 	// jquery for slider (dirty, but works)

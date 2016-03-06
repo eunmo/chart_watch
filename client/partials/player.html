@@ -37,11 +37,13 @@
 						<span ng-show="randomSource.length">{{songs.length}} / {{randomSource.length}}</span>
 						<span ng-hide="randomSource.length">{{songs.length | numSongs}}</span>
 					</small>
+					<span class="label label-default label-clear" ng-hide="expanded" ng-click="expand()">Expand</span>
+					<span class="label label-default label-clear" ng-show="expanded" ng-click="shrink()">Shrink</span>
 					<span class="label label-default label-clear" ng-click="clearAll()">Clear</span>
 				</span>
 			</h2>
 			<table class="table">
-				<tr ng-repeat="song in songs | limitTo: 10">
+				<tr ng-repeat="song in songs | limitTo: upNextLimit">
 					<td class="td-img-list">
 						<img src="/{{song.albumId}}.30px.jpg" class="img-rounded img-album-up-list">
 					</td>
