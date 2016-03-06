@@ -112,7 +112,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 
 	var Shuffle = function ($scope) {
 		var tiers = [];
-		var max_tier = 5;
+		var max_tier = 4;
 		var total = 0;
 		var totals = [];
 
@@ -137,16 +137,14 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 					if (song.plays >= 10) {
 						//level += Math.floor(song.plays / 5);
 						tier = 1;
-					} else if (song.plays >= 5) {
-						tier = 2;
 					} else {
-						tier = 3;
+						tier = 2;
 					}
 				} else {
 					if (song.plays < 3) {
-						tier = 4;
+						tier = 3;
 					} else {
-						tier = 5;
+						tier = 4;
 					}
 				}
 
@@ -163,10 +161,6 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 				if (counts[tier] === undefined)
 					counts[tier] = 0;
 				counts[tier]++;
-			}
-			
-			for (i = 1; i <= max_tier; i++) {
-				console.log('Tier ' + i + ': ' + counts[i]);
 			}
 		};
 		
@@ -190,7 +184,13 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		};
 
 		this.getNext = function () {
-			var tier = Math.floor((Math.random() * max_tier)) + 1;
+			if (total == 0)
+				return;
+
+			var tier = Math.floor((Math.random() * (max_tier + 1))) + 1;
+
+			if (tier == max_tier + 1)
+				tier = 2;
 
 			while (true) {
 				if (totals[tier] === undefined || totals[tier] === 0) {
@@ -203,6 +203,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 			}
 				
 			getNextFromTier(tier);
+			return tier;
 		};
 
 		this.getTotal = function () {
@@ -244,9 +245,15 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	};
 
 	$scope.getRandom = function () {
-		while ($scope.songs.length <= 10 && $scope.shuffle.getTotal() > 0) {
-			$scope.shuffle.getNext();
-		}
+		var tiers = [0, 0, 0, 0, 0, 0];
+		var tier;
+		do {
+			tier = $scope.shuffle.getNext();
+			tiers[tier]++;
+		} while ($scope.songs.length <= 1000 && $scope.shuffle.getTotal() > 0)
+
+		for (tier in tiers)
+			console.log(tier + ' ' + tiers[tier]);
 	};
 
 	$scope.getNextIndex = function () {

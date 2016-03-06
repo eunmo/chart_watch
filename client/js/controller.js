@@ -591,18 +591,16 @@ musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams
 			if (datum.rank) {
 				if (datum.plays >= 10) {
 					tier = 0;
-				} else if (datum.plays >= 5) {
-					tier = 1;
 				} else {
-					tier = 2;
+					tier = 1;
 				}
 
 				$scope.ranks[datum.rank - 1].data.push(datum);
 			} else {
 				if (datum.plays <= 2) {
-					tier = 3;
+					tier = 2;
 				} else {
-					tier = 4;
+					tier = 3;
 				}
 				$scope.ranks[10].data.push(datum);
 			}
