@@ -53,7 +53,8 @@ musicApp.directive('rankBadge', function () {
 			count: '=?count',
 			run: '=?run',
 			prefix: '=prefix',
-			showMin: '=?showMin'
+			showMin: '=?showMin',
+			song: '=song'
 		},
 		compile: function() {
 			return {
@@ -72,7 +73,13 @@ musicApp.directive('rankBadge', function () {
 							scope.show = true;
 						if (scope.count > 1)
 							scope.showCount = true;
-					} else if (scope.count) {
+					} else if (scope.song) {
+						scope.show = true;
+						scope.showCount = true;
+						scope.min = scope.song.rank;
+						scope.count = scope.song.plays;
+						scope.style = { "background-color" : "#777" };
+					}	else if (scope.count) {
 						scope.show = true;
 						scope.showCount = true;
 					}

@@ -15,10 +15,8 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 				$timeout(function () {
 					$scope.time = elem.currentTime;
 					$scope.duration = elem.duration;
-					$scope.title = song.title;
-					$scope.albumId = song.albumId;
-					$scope.artists = song.artists;
 				}, 0);
+				$scope.nowPlaying[0] = song;
 				$scope.play();
 			}
 		};
@@ -184,9 +182,6 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		};
 
 		this.getNext = function () {
-			if (total == 0)
-				return;
-
 			var tier = Math.floor((Math.random() * (max_tier + 1))) + 1;
 
 			if (tier == max_tier + 1)
@@ -230,6 +225,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	
 	$scope.time = 0;
 	$scope.duration = 0;
+	$scope.nowPlaying = [];
 	$scope.bindDone = false;
 	$scope.preloaded = false;
 
@@ -247,10 +243,11 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	$scope.getRandom = function () {
 		var tiers = [0, 0, 0, 0, 0, 0];
 		var tier;
-		do {
+
+		while ($scope.songs.length <= 10 && $scope.shuffle.getTotal() > 0) {
 			tier = $scope.shuffle.getNext();
 			tiers[tier]++;
-		} while ($scope.songs.length <= 1000 && $scope.shuffle.getTotal() > 0)
+		}
 
 		for (tier in tiers)
 			console.log(tier + ' ' + tiers[tier]);

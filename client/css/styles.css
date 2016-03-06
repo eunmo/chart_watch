@@ -201,3 +201,10 @@ body {
 .y.axis line {
 	stroke: #ffffff;
 }
+
+.now-playing-badge {
+	height: 20px;
+	font-size: 18px;
+	position: relative;
+	top: 2px;
+}
