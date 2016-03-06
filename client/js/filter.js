@@ -36,6 +36,16 @@ musicApp.filter('numSongs', function () {
 	};
 });
 
+musicApp.filter('numSongsWithPlay', function () {
+	return function (num) {
+		if (num <= 1)
+			return num + ' song';
+		else if (num == 200)
+			return num + '+ songs';
+		return num + ' songs';
+	};
+});
+
 musicApp.filter('numFeatures', function () {
 	return function (num) {
 		if (num <= 1)

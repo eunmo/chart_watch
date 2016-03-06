@@ -145,5 +145,69 @@
 				res.json(songs);
 			});
 		});
+		
+		router.get('/api/plays/:_play', function (req, res) {
+			var play = req.params._play;
+			var whereClause, orderByClause;
+			var order = [];
+
+			if (play == 100) {
+				whereClause = "WHERE s.plays >= 100 ";
+				orderByClause = "ORDER BY plays DESC, ISNULL(rank), rank, s.id ";
+			} else {
+				whereClause = "WHERE s.plays = " + req.params._play + " ";
+				orderByClause = "ORDER BY ISNULL(rank), rank, s.id ";
+			}
+
+			var queryString =
+				"SELECT s.id " +
+				"FROM Songs s " +
+				"LEFT JOIN (SELECT SongId, min(rank) as rank " +
+									 "FROM SongCharts " +
+									 "WHERE rank <= 10  " +
+									 "GROUP BY SongId) c " +
+				"ON s.id = c.SongId " +
+				whereClause +
+				orderByClause +
+			  "LIMIT 200 ";
+
+			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
+			.then(function (Songs) {
+				var ids = [], id;
+
+				for (var row in Songs) {
+					id = Songs[row].id;
+					ids.push(id);
+					order[id] = row;
+				}
+
+				return models.Song.findAll({
+					where: { id: { in: ids } },
+					include: [
+						{ model: models.Album },
+						{ model: models.Artist, include: [
+							{ model: models.Artist, as: 'Group' }
+						]},
+						{ model: models.SongChart }
+					],
+				});
+			}).then(function (Songs) {
+				var i;
+				var resArray = [];
+				var song, songRow;
+
+				for (i in Songs) {
+					songRow = Songs[i];
+					song = common.newSong(songRow);
+					song.lastPlayed = songRow.lastPlayed;
+					song.songArtists = common.getSongArtists(songRow);
+					song.rank = getRank(songRow.SongCharts);
+					song.albumId = songRow.Albums[0].id;
+					resArray[order[song.id]] = song;
+				}
+
+				res.json(resArray);
+			});
+		});
 	};
 }());

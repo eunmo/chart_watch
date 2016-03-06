@@ -1,6 +1,6 @@
 (function () {
 	'use strict';
-
+	
 	module.exports = function (router, models) {
 		router.get('/stats/plays', function (req, res) {
 			var queryString =

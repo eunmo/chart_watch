@@ -601,7 +601,9 @@ musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams
 	$scope.data = [];
 	$scope.ranks = [];
 	$scope.tiers = [];
+	$scope.songs = [];
 	$scope.total = 0;
+	$scope.allVisible = true;
 
 	for (i = 0; i < 10; i++) {
 		$scope.ranks[i] = { name: i + 1, active: true, data: [] };
@@ -643,10 +645,13 @@ musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams
 
 	function updateData () {
 		var i, data = [];
-
+		
+		$scope.allVisible = true;
 		for (i in $scope.ranks) {
 			if ($scope.ranks[i].active)
 				data = data.concat($scope.ranks[i].data);
+			else
+				$scope.allVisible = false;
 		}
 
 		$scope.data = data;
@@ -664,14 +669,26 @@ musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams
 		}
 	};
 
-	$scope.clear = function () {
+	$scope.setAll = function (bool) {
 		var i;
 
 		for (i in $scope.ranks) {
-			$scope.ranks[i].active = false;
+			$scope.ranks[i].active = bool;
 		}
 
 		updateData();
+		
+		if (!bool) {
+			$scope.selectedPlayCount = undefined;
+			$scope.songs = [];
+		}
+	};
+
+	$scope.showSongs = function (play) {
+		$http.get('api/plays/' + play).success(function (data) {
+			$scope.selectedPlayCount = play;
+			$scope.songs = data;
+		});
 	};
 });
 

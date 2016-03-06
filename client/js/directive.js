@@ -104,7 +104,8 @@ musicApp.directive('d3BarPlays', function () {
 	return {
 		restrict: 'E',
 		scope: {
-			data: '='
+			data: '=',
+			showSongs: '&onClick'
 		},
 		link: function (scope, element) {
 			var margin = {top: 10, right: 10, bottom: 20, left: 50},
@@ -221,9 +222,10 @@ musicApp.directive('d3BarPlays', function () {
 				bars
 				.attr("x", function(d) { return x(d.plays) - barWidth / 2; })
 				.attr("width", barWidth)
-				.attr('height', function(d) { return y(d.offset) - y(d.count + d.offset + 0); })
+				.attr("height", function(d) { return y(d.offset) - y(d.count + d.offset + 0); })
 				.attr("y", function(d) { return y(d.count + d.offset + 0); })
-				.style("fill", function(d) { return color(d.rank); });
+				.style("fill", function(d) { return color(d.rank); })
+				.on('click', function (d, i) { scope.showSongs({play: d.plays}); });
 
 				bars.exit().remove();
 
