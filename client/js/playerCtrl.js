@@ -182,9 +182,9 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		};
 
 		this.getNext = function () {
-			var tier = Math.floor((Math.random() * (max_tier + 1))) + 1;
+			var tier = Math.floor((Math.random() * (max_tier + 2))) + 1;
 
-			if (tier == max_tier + 1)
+			if (tier > max_tier) // prefer tier 2
 				tier = 2;
 
 			while (true) {

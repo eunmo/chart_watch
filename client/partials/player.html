@@ -57,6 +57,8 @@
 						<span class="pull-right song-desc-right" ng-click="removeSong(song)">
 							<rank-badge song="song"></rank-badge>
 						</span>
+						<span class="glyphicon glyphicon-remove glyphicon-up-next pull-right"
+							ng-click="removeSong(song)" ng-hide="song.plays"></span>
 					</td>
 				</tr>
 			</table>

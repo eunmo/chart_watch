@@ -67,16 +67,29 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 	});
 
 	var getSendSong = function (song, album) {
+		var minRank = 100, rank;
+
+		for (var prop in song.rank) {
+			if (song.rank.hasOwnProperty(prop)) {
+				rank = song.rank[prop].min;
+				if (rank < minRank)
+					minRank = rank;
+			}
+		}
+
 		var sendSong = {
 			id: song.id,
 			title: song.title,
-			albumId: album.id
+			albumId: album.id,
+			plays: song.plays,
 		};
 		if (song.artists === undefined) {
 			sendSong.artists = album.albumArtists;
 		} else {
 			sendSong.artists = song.artists;
 		}
+		if (minRank < 10)
+			sendSong.rank = minRank;
 
 		return sendSong;
 	};
@@ -117,7 +130,6 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 		var dl = document.createElement('a');
 		dl.href = '/music/' + song.id + '.mp3';
 		dl.download = song.title + '.mp3';
-		console.log(dl);
 		dl.click();
 	};
 });
@@ -460,7 +472,8 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 					id: row.song.id,
 					title: row.song.title,
 					albumId: row.song.Albums[0].id,
-					artists: row.songArtists
+					artists: row.songArtists,
+					plays: row.song.plays
 				};
 				songs.push(song);
 			}
@@ -481,14 +494,27 @@ musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routePara
 		var i;
 		var row, song;
 		var songs = [];
+		var minRank, rank;
 
 		for (i = index; i < $scope.rows.length; i++) {
 			row = $scope.rows[i];
+
+			minRank = 100;
+			for (var prop in row.rank) {
+				if (row.rank.hasOwnProperty(prop)) {
+					rank = row.rank[prop].min;
+					if (rank < minRank)
+						minRank = rank;
+				}
+			}
+
 			song = {
 				id: row.song.id,
 				title: row.song.title,
 				albumId: row.song.Albums[0].id,
-				artists: row.songArtists
+				artists: row.songArtists,
+				rank: minRank,
+				plays: row.song.plays
 			};
 			songs.push(song);
 		}
@@ -543,7 +569,7 @@ musicApp.controller('ChartHistoryCtrl', function ($rootScope, $scope, $routePara
 });
 
 
-musicApp.controller('RecentCtrl', function ($rootScope, $scope, $http, songService) {
+musicApp.controller('RecentCtrl', function ($rootScope, $scope, $http) {
 	$scope.rows = [];
 	$scope.title = 'Played';
 
@@ -557,7 +583,7 @@ musicApp.controller('RecentCtrl', function ($rootScope, $scope, $http, songServi
 	$scope.refresh();
 });
 
-musicApp.controller('NewSongCtrl', function ($rootScope, $scope, $http, songService) {
+musicApp.controller('NewSongCtrl', function ($rootScope, $scope, $http) {
 	$scope.rows = [];
 	$scope.title = 'Added';
 
@@ -665,7 +691,7 @@ musicApp.controller('ChartMissing1Ctrl', function ($rootScope, $scope, $routePar
 	});
 });
 
-musicApp.controller('SongCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
+musicApp.controller('SongCtrl', function ($rootScope, $scope, $routeParams, $http) {
 
 	$scope.loaded = false;
 

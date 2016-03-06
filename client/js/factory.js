@@ -19,6 +19,6 @@ musicApp.factory('songService', function ($rootScope) {
 			$rootScope.audios[0].init();
 			$rootScope.audios[1].init();
 			$rootScope.$broadcast(name);
-		}
+		},
 	};
 });

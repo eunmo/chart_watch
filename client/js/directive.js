@@ -73,7 +73,7 @@ musicApp.directive('rankBadge', function () {
 							scope.show = true;
 						if (scope.count > 1)
 							scope.showCount = true;
-					} else if (scope.song) {
+					} else if (scope.song && scope.song.plays) {
 						scope.show = true;
 						scope.showCount = true;
 						scope.min = scope.song.rank;
