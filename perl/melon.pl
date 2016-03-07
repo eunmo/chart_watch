@@ -1,4 +1,4 @@
-use LWP::Simple;
+use LWP;
 use feature 'unicode_strings';
 use utf8;
 use Encode;
@@ -12,7 +12,10 @@ my $mm = $ARGV[1];
 my $dd = $ARGV[2];
 
 my $url = get_url();
-my $html = get("$url");
+my $browser = LWP::UserAgent->new();
+$browser->agent('Mozilla/5.0');
+my $response = $browser->get($url);
+my $html = $response->decoded_content;
 my $dom = Mojo::DOM->new($html);
 my $rank = 1;
 
@@ -33,7 +36,7 @@ for my $div ($dom->find('div[class*="wrap_song_info"]')->each) {
 		$artist_norm = normalize_artist($artist);
 	}
 	print ",\n" if $rank > 1;
-	print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\" : [\"$title_norm\"] 	}";
+	print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\" : [\"$title_norm\"] }";
 	$rank++;
 }
 
