@@ -1,18 +1,20 @@
 <div class="jumbotron" ng-show="loaded">
 	<div class="row">
-		<div class="col-md-6 col-lg-6" ng-repeat="song in nowPlaying">
-			<div class="td-img center-block">
-				<img src="/{{song.albumId}}.jpg" class="img-rounded img-album" ng-click="toggle()">
+		<div class="col-md-6 col-lg-6">
+			<div ng-repeat="song in nowPlaying">
+				<div class="td-img center-block">
+					<img src="/{{song.albumId}}.jpg" class="img-rounded img-album" ng-click="toggle()">
+				</div>
+				<h4 style="text-align: center">
+					{{song.title | normalizeString}}
+					<span class="now-playing-badge">
+						<rank-badge song="song"></rank-badge>
+					</span>
+				</h4>
+				<h5 style="text-align: center">
+					<artist-array array="song.artists"></artist-array>
+				</h5>
 			</div>
-			<h4 style="text-align: center">
-				{{song.title | normalizeString}}
-				<span class="now-playing-badge">
-					<rank-badge song="song"></rank-badge>
-				</span>
-			</h4>
-			<h5 style="text-align: center">
-				<artist-array array="song.artists"></artist-array>
-			</h5>
 			<div class="text-align: center">
 				<div class="btn-group" role="group">
 					<button ng-click="rewind()" class="btn btn-default">

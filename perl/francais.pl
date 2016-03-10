@@ -29,8 +29,8 @@ if (($year == 2005 && $date->month() == 3 && $date->day() == 4) ||
 	my $rank = 1;
 
 	for my $tr ($dom->find('table[class*=std] tbody tr')->each) {
-		my $title = $tr->find('span[itemprop="name"]')->last->text;
-		my $artist = $tr->find('span[itemprop="name"]')->first->text;
+		my $title = $tr->find('span[itemprop="name"]')->first->text;
+		my $artist = $tr->find('span[itemprop="name"]')->last->text;
 		my $artist_norm = normalize_artist($artist);
 		print ",\n" if $rank > 1;
 		print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\": [";
