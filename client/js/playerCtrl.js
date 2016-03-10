@@ -101,7 +101,9 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 				$scope.updateProgress(0);
 			}
 			loading = false;
-			$http.put('api/play/song', song);
+			$http.put('api/play/song', song).success(function () {
+				songService.songEnded(song);
+			});
 			if (!startNext) {
 				$scope.playNext();
 			}

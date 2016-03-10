@@ -15,6 +15,10 @@ musicApp.factory('songService', function ($rootScope) {
 			this.random = random;
 			this.broadcast('handleRandom');
 		},
+		songEnded: function (song) {
+			console.log('song ended');
+			this.broadcast('handleSongEnded');
+		},
 		broadcast: function (name) {
 			$rootScope.audios[0].init();
 			$rootScope.audios[1].init();

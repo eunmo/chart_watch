@@ -569,7 +569,7 @@ musicApp.controller('ChartHistoryCtrl', function ($rootScope, $scope, $routePara
 });
 
 
-musicApp.controller('RecentCtrl', function ($rootScope, $scope, $http) {
+musicApp.controller('RecentCtrl', function ($rootScope, $scope, $http, songService) {
 	$scope.rows = [];
 	$scope.title = 'Played';
 
@@ -579,6 +579,10 @@ musicApp.controller('RecentCtrl', function ($rootScope, $scope, $http) {
 			$scope.rows = lastPlayed;
 		});
 	};
+
+	$scope.$on('handleSongEnded', function () {
+		$scope.refresh();
+	});
 
 	$scope.refresh();
 });
