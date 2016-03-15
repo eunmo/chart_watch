@@ -337,7 +337,7 @@
 
 				res.json({
 					headers: headers,
-					weeks: sortWeeks(weeks)
+					weeks: common.sortWeeks(weeks)
 				});
 			});
 		});
