@@ -35,18 +35,22 @@ sub remove_feat {
 }
 
 sub get_feat {
-	my $str = shift;
+	my $title = shift;
+	my $artist = shift;
+	my $feat_str;
 
-	if ($str =~ /\((feat|with)(.*?)\)/i) {
-		my $feat_str = $2;
-
-		$feat_str =~ s/^\.//;
-		$feat_str =~ s/^uring//i;
-		
-		return get_artist_array($feat_str);
+	if ($title =~ /\((feat|with)(.*?)\)/i) {
+		$feat_str = $2;
+	} elsif ($artist =~ /feat(.*?)$/i) {
+		$feat_str = $1;
 	} else {
 		return ();
 	}
+
+	$feat_str =~ s/^\.//;
+	$feat_str =~ s/^uring//i;
+
+	return get_artist_array($feat_str);
 }
 
 sub get_artist_array {
@@ -66,6 +70,14 @@ sub get_artist_array {
 	return @arr;
 }
 
+sub get_artist {
+	my $str = shift;
+
+	$str =~ s/Feat\..*$//;
+
+	return get_artist_array($str);
+}
+
 sub parse_tags {
 	my $mp3 = shift;
 	my $id3v2 = shift;
@@ -74,8 +86,9 @@ sub parse_tags {
 	my %tag;
 
 	my $title = convert_text($mp3->title());
-	my @artist_arr = get_artist_array(convert_text($mp3->artist()));
-	my @feat_arr = get_feat($title);
+	my $artist = convert_text($mp3->artist());
+	my @artist_arr = get_artist(convert_text($artist));
+	my @feat_arr = get_feat($title, $artist);
 	my @album_artist_arr = get_artist_array(convert_text($id3v2->get_frame("TPE2")));
 
 	if (!@album_artist_arr) {

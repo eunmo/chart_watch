@@ -592,7 +592,7 @@ musicApp.controller('NewSongCtrl', function ($rootScope, $scope, $http) {
 	$scope.title = 'Added';
 
 	$scope.refresh = function () {
-		$http.get('api/newSongs/200')
+		$http.get('api/newSongs/300')
 		.success(function (lastPlayed) {
 			$scope.rows = lastPlayed;
 		});
