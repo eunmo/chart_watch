@@ -193,11 +193,13 @@ musicApp.directive('d3BarPlays', function () {
 					y = d3.scale.linear().range([height, 0])
 					.domain([0, yMax]);
 				} else { // go polylinear if max count > 100
-					yMax = Math.ceil(maxCount / 100) * 100;
+					var mill = Math.ceil(maxCount / 1000);
+					var unit = mill * 100;
+					yMax = Math.ceil(maxCount / unit) * unit;
 
 					for (i = 10; i < 100 && i < yMax; i += 10)
 						yTicks.push(i);
-					for (i = 100; i <= yMax; i += 100)
+					for (i = 100; i <= yMax; i += unit)
 						yTicks.push(i);
 
 					y = d3.scale.linear().range([height, height / 2, 0])
