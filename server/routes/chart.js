@@ -73,10 +73,15 @@
 				nameNorm = nameNorm.replace(/\sfeat\..*$/, '');
 				nameNorm = nameNorm.replace(/\sFeat\..*$/, '');
 				nameNorm = nameNorm.replace(/\sand\s.*$/, '');
+				nameNorm = nameNorm.replace(/\svs\.\s.*$/, '');
 				nameNorm = nameNorm.replace(/\/.*$/, '');
 			}
 
 			nameNorm = nameNorm.trim();
+
+			console.log("\n\n\n");
+			console.log(nameNorm);
+			console.log("\n\n\n");
 
 			return nameNorm;
 		}
