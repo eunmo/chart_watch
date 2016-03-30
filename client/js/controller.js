@@ -378,6 +378,10 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 				(chart === 'oricon' && date.getDay() < 2) ||
 				(chart === 'deutsche' && date.getDay() < 1))
 			date.setDate(date.getDate() - 7);
+
+		if ((chart === 'uk' && date.getDay() === 6) ||
+			  (chart === 'francais' && date.getDay() === 6))
+			date.setDate(date.getDate() + 7);
 		
 		date.setDate(date.getDate() - date.getDay() - 1);
 
@@ -606,7 +610,7 @@ musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams
 	$scope.ranks = [];
 	$scope.tiers = [];
 	$scope.songs = [];
-	$scope.total = 0;
+	$scope.total = { sum: 0, count: 0 };
 	$scope.allVisible = true;
 
 	for (i = 0; i < 10; i++) {
@@ -638,9 +642,11 @@ musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams
 			}
 
 			if ($scope.tiers[tier] === undefined)
-				$scope.tiers[tier] = 0;
-			$scope.tiers[tier] += datum.count;
-			$scope.total += datum.count;
+				$scope.tiers[tier] = { sum: 0, count: 0 };
+			$scope.tiers[tier].count += datum.count;
+			$scope.tiers[tier].sum += datum.count * datum.plays;
+			$scope.total.count += datum.count;
+			$scope.total.sum += datum.count * datum.plays;
 		}
 
 		$scope.rawData = data;

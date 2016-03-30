@@ -10,9 +10,9 @@
 </div>
 <div ng-show="tiers" ng-hide="selectedPlayCount">
 	<div ng-repeat="tier in tiers">
-		Tier {{$index + 1}}: {{tier}}
+		Tier {{$index + 1}}: {{tier.count}} (avg. {{tier.sum / tier.count | number:2}})
 	</div>
-	<div>Total {{total}}</div>
+	<div>Total {{total.count}} (avg. {{total.sum / total.count | number:2}})</div>
 </div>
 <h1 ng-show="selectedPlayCount">
 	{{songs.length | numSongsWithPlay}} with {{selectedPlayCount}} plays
