@@ -375,11 +375,11 @@ musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $ht
 		if ((chart === 'gaon' && date.getDay() < 4) ||
 				(chart === 'melon' && date.getDay() < 1) ||
 				(chart === 'billboard' && date.getDay() < 3) ||
-				(chart === 'oricon' && date.getDay() < 2) ||
-				(chart === 'deutsche' && date.getDay() < 1))
+				(chart === 'oricon' && date.getDay() < 2))
 			date.setDate(date.getDate() - 7);
 
-		if ((chart === 'uk' && date.getDay() === 6) ||
+		if ((chart === 'deutsche' && date.getDay() === 6) ||
+		    (chart === 'uk' && date.getDay() === 6) ||
 			  (chart === 'francais' && date.getDay() === 6))
 			date.setDate(date.getDate() + 7);
 		
