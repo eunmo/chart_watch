@@ -21,7 +21,7 @@
 
 		function getCurrentSongs (type, dates, songs, index) {
 			return models.SongChart.findAll({
-				where: { type: type, week: dates[type], rank: { lt: 8 } },
+				where: { type: type, week: dates[type], rank: { lte: 10 } },
 				include: [
 					{ model: models.Song,
 						include: [
@@ -133,7 +133,9 @@
 				var row, rank, song, i, j;
 
 				for (i in songArray) {
-					sendArray.push(songArray[i]);
+					song = songArray[i];
+					if (song.curRank[0] <= 5 || song.song.plays <= 10)
+						sendArray.push(song);
 				}
 
 				var rankCmp = function (a, b) {
