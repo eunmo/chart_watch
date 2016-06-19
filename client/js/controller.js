@@ -282,6 +282,14 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 		var album = $scope.album;
 		album.title = album.title.replace (/\'/g, '`');
 		album.titleNorm = album.titleNorm.replace (/\'/g, '`');
+
+		for (var i in album.editSongs) {
+			var song = album.editSongs[i];
+			song.title = song.title.replace (/\'/g, '`');
+			if (song.title !== album.Songs[i].title)
+				song.edited = true;
+		}
+
 		$http.put('api/edit/album', $scope.album)
 		.then(function (res) {
 			$location.url('/artist/' + res.data);

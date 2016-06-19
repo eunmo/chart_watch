@@ -199,7 +199,8 @@
 
 		function updateAlbumSong(id, editSong) {
 			return models.Song.update({
-				plays: editSong.plays
+				title: editSong.title,
+				titleNorm: editSong.title
 			},
 			{ where: { id: editSong.id }
 			});
@@ -223,10 +224,11 @@
 					promises.push(updateAlbumArtist(id, editArtist.id, editArtist.order));
 				}
 			}
-
+			
 			for (i in input.editSongs) {
 				var editSong = input.editSongs[i];
-				promises.push(updateAlbumSong(id, editSong));
+				if (editSong.edited)
+					promises.push(updateAlbumSong(id, editSong));
 			}
 
 			Promise.all(promises)
