@@ -132,7 +132,7 @@
 							songArray[song.id] = newSong;
 						} else {
 							songArray[song.id].curRank.push(rank);
-							songArray[song.id].curRank.sort();
+							songArray[song.id].curRank.sort(function (a,b) {return a-b;});
 						}
 						songArray[song.id][charts[i]] = { min: rank, count: 1 };
 					}
@@ -348,14 +348,14 @@
 			var chartedLimit = req.query.charted;
 			var unchartedLimit = req.query.uncharted;
 			var seasonalLimit = req.query.seasonal;
-			
+		
 			promises.push(
 				getSortedCurrentSongs()
 				.then( function (array) {
 					result.current = array;
 				})
 			);
-
+			
 			promises.push(
 				getCharted(chartedLimit)
 				.then( function (array) {
@@ -381,6 +381,17 @@
 			.then ( function () {
 				res.json(result);
 			});
+			
+/*
+			getCharted (700)
+			.then (function (array) {
+				result.current = [];
+				result.charted = array;
+				result.uncharted = [];
+				result.seasonal = [];
+				res.json(result);
+			});
+			*/
 		});
 		
 	};

@@ -183,6 +183,9 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 	});
 
 	$scope.edit = function () {
+		var artist = $scope.artist;
+		artist.name = artist.name.replace (/\'/g, '`');
+		artist.nameNorm = artist.nameNorm.replace (/\'/g, '`');
 		$http.put('api/edit/artist', $scope.artist)
 		.then(function (res) {
 			$location.url('/artist/' + res.data);
@@ -276,6 +279,9 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 	});
 
 	$scope.edit = function () {
+		var album = $scope.album;
+		album.title = album.title.replace (/\'/g, '`');
+		album.titleNorm = album.titleNorm.replace (/\'/g, '`');
 		$http.put('api/edit/album', $scope.album)
 		.then(function (res) {
 			$location.url('/artist/' + res.data);
@@ -330,6 +336,9 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 	});
 
 	$scope.edit = function () {
+		var song = $scope.song;
+		song.title = song.title.replace (/\'/g, '`');
+		song.titleNorm = song.titleNorm.replace (/\'/g, '`');
 		$http.put('api/edit/song', $scope.song)
 		.then(function (res) {
 			$location.url('/artist/' + res.data);
@@ -596,7 +605,7 @@ musicApp.controller('NewSongCtrl', function ($rootScope, $scope, $http) {
 	$scope.title = 'Added';
 
 	$scope.refresh = function () {
-		$http.get('api/newSongs/100')
+		$http.get('api/newSongs/200')
 		.success(function (lastPlayed) {
 			$scope.rows = lastPlayed;
 		});

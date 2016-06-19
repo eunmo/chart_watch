@@ -77,7 +77,7 @@
 							};
 						} else {
 							songArray[song.id].curRank.push(rank);
-							songArray[song.id].curRank.sort();
+							songArray[song.id].curRank.sort(function (a,b) {return a-b;});
 						}
 						songArray[song.id][charts[i]] = { min: rank, count: 1 };
 					}
