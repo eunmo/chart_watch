@@ -119,6 +119,8 @@ musicApp.directive('d3BarPlays', function () {
 			.attr('height', height + margin.top + margin.bottom)
 			.append("g")
 			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			
+			var tooltip;
 
 			width -= margin.left + margin.right;
 			height -= margin.top + margin.bottom;
@@ -158,6 +160,9 @@ musicApp.directive('d3BarPlays', function () {
 					for (j in group[i]) {
 						group[i][j].offset = sum;
 						sum += group[i][j].count;
+					}
+					for (j in group[i]) {
+						group[i][j].total = sum;
 					}
 				}
 
@@ -215,6 +220,7 @@ musicApp.directive('d3BarPlays', function () {
 				.orient("left")
 				.tickValues(yTicks)
 				.tickSize(-width-barWidth/2);
+
 				
 				var bars = svg.selectAll(".bar").data(dataSeries);
 
@@ -227,7 +233,22 @@ musicApp.directive('d3BarPlays', function () {
 				.attr("height", function(d) { return y(d.offset) - y(d.count + d.offset + 0); })
 				.attr("y", function(d) { return y(d.count + d.offset + 0); })
 				.style("fill", function(d) { return color(d.rank); })
-				.on('click', function (d, i) { scope.showSongs({play: d.plays}); });
+				.on('click', function (d, i) { scope.showSongs({play: d.plays}); })
+				.on('mouseover', function (d) {
+					var text = "<table class=\"table table-bordered table-tooltip\" id=\"d3-bar-plays-tooltip\">" +
+										   "<tr><td>" + d.total + "</td></tr>" +
+										 "</table>";
+					tooltip.html(text)
+								 .style("opacity", 1.0);
+
+					var table = d3.select('#d3-bar-plays-tooltip');
+
+					var width = parseInt (table.style('width'));
+					var height = parseInt (table.style('height'));
+					
+					tooltip.attr("x", x(d.plays) - width / 2)
+								 .attr("y", Math.max (y(d.total) - height - 3, 0));
+				})
 
 				bars.exit().remove();
 
@@ -244,6 +265,12 @@ musicApp.directive('d3BarPlays', function () {
 				svg.append("g")
 				.attr("class", "y axis")
 				.call(yAxis);
+
+				svg.selectAll('.tooltip').remove();
+		 	
+				// tooltip
+				tooltip	= svg.append("foreignObject")
+										 .attr("class", "tooltip");
 			};
 
 			d3.select(window).on('resize', function () {
