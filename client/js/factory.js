@@ -16,7 +16,6 @@ musicApp.factory('songService', function ($rootScope) {
 			this.broadcast('handleRandom');
 		},
 		songEnded: function (song) {
-			console.log('song ended');
 			this.broadcast('handleSongEnded');
 		},
 		broadcast: function (name) {

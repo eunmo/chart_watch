@@ -39,8 +39,10 @@
 						<span ng-show="randomSource.length">{{songs.length}} / {{randomSource.length}}</span>
 						<span ng-hide="randomSource.length">{{songs.length | numSongs}}</span>
 					</small>
-					<span class="label label-default label-clear" ng-hide="expanded" ng-click="expand()">Expand</span>
-					<span class="label label-default label-clear" ng-show="expanded" ng-click="shrink()">Shrink</span>
+					<span class="label label-default label-clear"
+						ng-hide="songs.length <= 10 || expanded" ng-click="expand()">Expand</span>
+					<span class="label label-default label-clear" 
+						ng-show="songs.length > 10 && expanded" ng-click="shrink()">Shrink</span>
 					<span class="label label-default label-clear" ng-click="clearAll()">Clear</span>
 				</span>
 			</h2>

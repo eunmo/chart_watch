@@ -348,6 +348,8 @@
 			var chartedLimit = req.query.charted;
 			var unchartedLimit = req.query.uncharted;
 			var seasonalLimit = req.query.seasonal;
+
+			unchartedLimit = 200;
 		
 			promises.push(
 				getSortedCurrentSongs()
@@ -382,17 +384,6 @@
 				res.json(result);
 			});
 			
-/*
-			getCharted (700)
-			.then (function (array) {
-				result.current = [];
-				result.charted = array;
-				result.uncharted = [];
-				result.seasonal = [];
-				res.json(result);
-			});
-			*/
 		});
-		
 	};
 }());

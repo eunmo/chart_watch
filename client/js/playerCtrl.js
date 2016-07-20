@@ -115,52 +115,47 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		var max_tier = 4;
 		var total = 0;
 		var totals = [];
+		var counts = [];
 
-		var init = function () {
+		this.init = function () {
 			for (i = 1; i <= max_tier; i++) {
 				tiers[i] = [];
 				totals[i] = 0;
+				counts[i] = 0;
 			}
 			total = 0;
 		};
 
+		this.addToTier = function (song, tier, level) {
+			if (tiers[tier][level] === undefined)
+				tiers[tier][level] = [];
+			tiers[tier][level].push(song);
+			totals[tier] += level;
+			counts[tier] += 1;
+			total++;
+		};
+
 		this.addSongs = function (songs) {
 			var song, level, tier;
-			var counts = [];
 
 			for (var i in songs) {
 				song = songs[i];
 				level = 1;
+				
+				this.addToTier (song, 4, level);
 
-				if (song.rank) {
-					level += (8 - song.rank);
-					if (song.plays >= 10) {
-						//level += Math.floor(song.plays / 5);
-						tier = 1;
-					} else {
-						tier = 2;
-					}
-				} else {
-					if (song.plays < 3) {
-						tier = 3;
-					} else {
-						tier = 4;
-					}
+				if (song.plays < 3) {
+					this.addToTier (song, 3, level);
 				}
 
-				if (tiers[tier] === undefined)
-					tiers[tier] = [];	
-				if (tiers[tier][level] === undefined)
-					tiers[tier][level] = [];
-				tiers[tier][level].push(song);
-				if (totals[tier] === undefined)
-					totals[tier] = 0;
-				totals[tier] += level;
-				total++;
+				if (song.rank) {
+					if (song.plays < 10) {
+						this.addToTier (song, 2, level);
+					}
 
-				if (counts[tier] === undefined)
-					counts[tier] = 0;
-				counts[tier]++;
+					level = (11 - song.rank);
+					this.addToTier (song, 1, level);
+				}
 			}
 		};
 		
@@ -184,10 +179,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		};
 
 		this.getNext = function () {
-			var tier = Math.floor((Math.random() * (max_tier + 2))) + 1;
-
-			if (tier > max_tier) // prefer tier 2
-				tier = 2;
+			var tier = Math.floor((Math.random() * (max_tier))) + 1;
 
 			while (true) {
 				if (totals[tier] === undefined || totals[tier] === 0) {
@@ -208,12 +200,13 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		};
 
 		this.clear = function () {
-			init();
+			this.init();
 		};
 	};
 	
 	$scope.songs = [];
 	$scope.shuffle = new Shuffle($scope);
+	$scope.shuffle.init();
 	$scope.loaded = false;
 
 	$scope.playing = false;
@@ -253,9 +246,6 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 			tier = $scope.shuffle.getNext();
 			tiers[tier]++;
 		}
-
-		for (tier in tiers)
-			console.log(tier + ' ' + tiers[tier]);
 	};
 
 	$scope.getNextIndex = function () {
