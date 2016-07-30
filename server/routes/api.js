@@ -448,8 +448,6 @@
 				res.json(artist);
 			});
 		});
-
-
 		
 		router.get('/api/initial/:_initial', function (req, res) {
 			var initial = req.params._initial;
@@ -515,100 +513,6 @@
 				}
 
 				res.json(result);
-			});
-		});
-
-		router.get('/api/shuffle', function (req, res) {
-			var promises = [];
-			var songs, albums, artists;
-			var albumSongs, songArtists, artistGroups, songCharts;
-
-			promises.push(models.Song.findAll()
-										.then(function (result) { songs = result; }));
-			promises.push(models.Artist.findAll()
-										.then(function (result) { artists = result; }));
-			promises.push(models.AlbumSong.findAll()
-										.then(function (result) { albumSongs = result; }));
-			promises.push(models.SongArtist.findAll({ where: { feat: false } })
-										.then(function (result) { songArtists = result; }));
-			promises.push(models.ArtistGroup.findAll({ where: { primary: true } } )
-										.then(function (result) { artistGroups = result; }));
-			promises.push(models.SongChart.findAll({ where: { rank: { lte: 10 } } })
-										.then(function (result) { songCharts = result; }));
-			Promise.all(promises)
-			.then(function () {
-				var songArray = [];
-				var lastPlayed = [];
-				var plays = [];
-				var rank = [];
-				var rankMax = [];
-				var resArray = [];
-				var artistArray = [];
-				var i;
-				var row;
-				var songId, artistId;
-
-				for (i in songs) {
-					row = songs[i];
-					songId = row.id;
-					songArray[songId] = {
-						id: row.id,
-						title: row.title,
-						plays: row.plays,
-						artists: []
-					};
-					plays[songId] = row.plays;
-					if (row.lastPlayed === null) {
-						lastPlayed[songId] = true;
-					}
-				}
-
-				for (i in artists) {
-					row = artists[i];
-					artistArray[row.id] = {
-						id: row.id,
-						name: row.name
-					};
-				}
-
-				for (i in artistGroups) {
-					row = artistGroups[i];
-					artistArray[row.MemberId].primaryGroup = artistArray[row.GroupId];
-				}
-
-				for (i in albumSongs) {
-					row = albumSongs[i];
-					songId = row.SongId;
-					if (songArray[songId].albumId === undefined) {
-						songArray[songId].albumId = row.AlbumId;
-					}
-				}
-
-				for (i in songArtists) {
-					row = songArtists[i];
-					songId = row.SongId;
-					artistId = row.ArtistId;
-					songArray[songId].artists[row.order] = artistArray[artistId];
-				}
-
-				for (i in songCharts) {
-					row = songCharts[i];
-					songId = row.SongId;
-					rank[songId] = true;
-					if (rankMax[songId] === undefined || rankMax[songId] > row.rank) {
-						rankMax[songId] = row.rank;
-					}
-				}
-
-				for (i in songArray) {
-					songId = songArray[i].id;
-					if (rankMax[songId])
-						songArray[i].rank = rankMax[songId];
-					if (songArray[i].plays > 0)
-						resArray.push(songArray[i]);
-				}
-
-				res.json(resArray);
 			});
 		});
 	};

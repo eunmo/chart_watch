@@ -109,104 +109,8 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 			}
 		});
 	};
-
-	var Shuffle = function ($scope) {
-		var tiers = [];
-		var max_tier = 4;
-		var total = 0;
-		var totals = [];
-		var counts = [];
-
-		this.init = function () {
-			for (i = 1; i <= max_tier; i++) {
-				tiers[i] = [];
-				totals[i] = 0;
-				counts[i] = 0;
-			}
-			total = 0;
-		};
-
-		this.addToTier = function (song, tier, level) {
-			if (tiers[tier][level] === undefined)
-				tiers[tier][level] = [];
-			tiers[tier][level].push(song);
-			totals[tier] += level;
-			counts[tier] += 1;
-			total++;
-		};
-
-		this.addSongs = function (songs) {
-			var song, level, tier;
-
-			for (var i in songs) {
-				song = songs[i];
-				level = 1;
-				
-				this.addToTier (song, 4, level);
-
-				if (song.plays < 3) {
-					this.addToTier (song, 3, level);
-				}
-
-				if (song.rank) {
-					if (song.plays < 10) {
-						this.addToTier (song, 2, level);
-					}
-
-					level = (11 - song.rank);
-					this.addToTier (song, 1, level);
-				}
-			}
-		};
-		
-		var getNextFromTier = function (tier) {
-			var index = Math.floor((Math.random() * totals[tier]));
-			var level;
-
-			for (level in tiers[tier]) {
-				if (tiers[tier][level]) {
-					if (index < tiers[tier][level].length * level)
-						break;
-					index -= tiers[tier][level].length * level;
-				}
-			}
-
-			index = Math.floor(Math.random() * tiers[tier][level].length);
-			$scope.songs.push(tiers[tier][level][index]);
-			tiers[tier][level].splice(index, 1);
-			totals[tier] -= level;
-			total--;
-		};
-
-		this.getNext = function () {
-			var tier = Math.floor((Math.random() * (max_tier))) + 1;
-
-			while (true) {
-				if (totals[tier] === undefined || totals[tier] === 0) {
-					tier--;
-					if (tier === 0)
-						tier = max_tier;
-				}
-				else
-					break;
-			}
-				
-			getNextFromTier(tier);
-			return tier;
-		};
-
-		this.getTotal = function () {
-			return total;
-		};
-
-		this.clear = function () {
-			this.init();
-		};
-	};
 	
 	$scope.songs = [];
-	$scope.shuffle = new Shuffle($scope);
-	$scope.shuffle.init();
 	$scope.loaded = false;
 
 	$scope.playing = false;
@@ -238,16 +142,6 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		$rootScope.audios[2].init();
 	};
 
-	$scope.getRandom = function () {
-		var tiers = [0, 0, 0, 0, 0, 0];
-		var tier;
-
-		while ($scope.songs.length <= 10 && $scope.shuffle.getTotal() > 0) {
-			tier = $scope.shuffle.getNext();
-			tiers[tier]++;
-		}
-	};
-
 	$scope.getNextIndex = function () {
 		var nextIndex = $scope.selectedIndex + 1;
 		if (nextIndex >= 3)
@@ -268,7 +162,6 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	$scope.playNext = function () {
 		var nextIndex = $scope.getNextIndex();
 		var nextAudio = $rootScope.audios[nextIndex];
-		$scope.getRandom();
 
 		if ($scope.preloaded) {
 			$scope.preloaded = false;
@@ -285,8 +178,6 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	};
 
 	$scope.loadSong = function (index) {
-		$scope.getRandom();
-
 		if ($scope.songs.length === 0) {
 			$scope.loaded = false;
 		}
@@ -315,11 +206,6 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		$scope.loadSong(0);
 	});
 
-	$scope.$on('handleRandom', function () {
-		$scope.shuffle.addSongs(songService.random);
-		$scope.loadSong(0);
-	});
-
 	$scope.removeSong = function (song) {
 		var index = $scope.songs.indexOf(song);
 		$scope.songs.splice(index, 1);
@@ -331,7 +217,6 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 
 	$scope.clearAll = function () {
 		var songSize = $scope.songs.length;
-		$scope.shuffle.clear();
 		$scope.songs.splice(0, songSize);
 		$scope.preloaded = false;
 	};

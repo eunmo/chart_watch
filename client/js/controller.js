@@ -7,8 +7,8 @@ musicApp.controller('InitialCtrl', function ($rootScope, $scope, $http, songServ
 	$scope.initials.push('0-9');
 
 	$scope.shuffle = function () {
-		$http.get('api/shuffle').success(function (data) {
-			songService.addRandom(data);
+		$http.get('shuffle').success(function (data) {
+			songService.addSongs(data);
 		});
 	};
 });

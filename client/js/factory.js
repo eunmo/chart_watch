@@ -2,7 +2,6 @@ musicApp.factory('songService', function ($rootScope) {
 	return {
 		next: [],
 		songs: [],
-		random: [],
 		addNext: function (songs) {
 			this.next = songs;
 			this.broadcast('handleAddNext');
@@ -10,10 +9,6 @@ musicApp.factory('songService', function ($rootScope) {
 		addSongs: function (songs) {
 			this.songs = songs;
 			this.broadcast('handleAddSong');
-		},
-		addRandom: function (random) {
-			this.random = random;
-			this.broadcast('handleRandom');
 		},
 		songEnded: function (song) {
 			this.broadcast('handleSongEnded');

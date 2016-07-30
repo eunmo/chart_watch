@@ -248,7 +248,7 @@ musicApp.directive('d3BarPlays', function () {
 					
 					tooltip.attr("x", x(d.plays) - width / 2)
 								 .attr("y", Math.max (y(d.total) - height - 3, 0));
-				})
+				});
 
 				bars.exit().remove();
 
