@@ -5,12 +5,6 @@ musicApp.controller('InitialCtrl', function ($rootScope, $scope, $http, songServ
 	$scope.initials.push.apply($scope.initials, '가나다라마바사아자차카타파하'.split(''));
 	$scope.initials.push.apply($scope.initials, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
 	$scope.initials.push('0-9');
-
-	$scope.shuffle = function () {
-		$http.get('shuffle').success(function (data) {
-			songService.addSongs(data);
-		});
-	};
 });
 
 musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routeParams, $http) {

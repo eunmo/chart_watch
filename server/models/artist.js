@@ -7,7 +7,8 @@
 			nameNorm: { type: DataTypes.STRING, allowNull: false, unique: true },
 			origin: DataTypes.STRING,
 			type: DataTypes.ENUM('Solo', 'Duet', 'Group'),
-			gender: DataTypes.ENUM('Male', 'Female', 'Mixed')
+			gender: DataTypes.ENUM('Male', 'Female', 'Mixed'),
+			favorites: DataTypes.BOOLEAN
 		});
 
 		Artist.associate = function (models) {

@@ -274,6 +274,12 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		$scope.upNextLimit = 10;
 		$scope.expanded = false;
 	};
+	
+	$scope.shuffle = function () {
+		$http.get('shuffle').success(function (data) {
+			songService.addSongs(data);
+		});
+	};
 
 	// jquery for slider (dirty, but works)
 	$scope.updateProgress = function (ratio) {

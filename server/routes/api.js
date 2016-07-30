@@ -472,6 +472,8 @@
 			} else if (initial.match(/0-9/)) {
 				// numbers
 				query += "nameNorm < 'a' ";
+			} else if (initial.match(/Favorites/)) {
+				query += "favorites = true ";
 			} else {
 				// alphabet
 				query += "nameNorm like '" + initial + "%' ";

@@ -34,11 +34,12 @@
 
 	var queries = [
 		{ query: "SELECT id FROM Songs;", code: 'A', callback: simpleRandom },
-		{ query: "SELECT id FROM Songs WHERE (plays <= 2) OR (plays <= 10 and id in (SELECT distinct SongId from SongCharts where rank <= 10));", 
+		{ query: "SELECT id FROM Songs WHERE (plays <= 2) OR (plays <= 10 AND id IN (SELECT distinct SongId FROM SongCharts WHERE rank <= 10));", 
 			code: 'B', callback: simpleRandom },
-		{ query: "SELECT s.id,  11 - min(rank) as weight FROM Songs s, SongCharts sc WHERE s.id = sc.SongId and sc.rank <= 10 group by s.id;", 
-			code: 'C', callback: weightedRandom }
-		
+		{ query: "SELECT s.id,  11 - min(rank) as weight FROM Songs s, SongCharts sc WHERE s.id = sc.SongId AND sc.rank <= 10 GROUP BY s.id;", 
+			code: 'C', callback: weightedRandom },
+		{ query: "SELECT SongId id FROM SongArtists sa, Artists a WHERE a.favorites = true AND a.id = sa.ArtistId GROUP BY SongId;",
+			code: 'D', callback: simpleRandom }
 		];
 
 	var getSongIds = function (models, query, array, count) {
@@ -152,8 +153,9 @@
 		function getArtists (doc) {
 			var query = "SELECT SongId, ArtistId, name " +
 									"FROM SongArtists s, Artists a " +
-									"WHERE s.ArtistId = a.id " +
-									"AND s.SongId in " + doc.ids + " " +
+									"WHERE s.SongId in " + doc.ids + " " +
+									"AND s.ArtistId = a.id " +
+									"AND s.feat = false " +
 									"ORDER BY s.order;";
 			
 			return models.sequelize.query (query, { type: models.sequelize.QueryTypes.SELECT })

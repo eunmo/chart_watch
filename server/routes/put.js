@@ -90,6 +90,10 @@
 			var id = input.id;
 			var promises = [];
 			var i;
+			var favorites = input.favorites;
+
+			if (favorites === false)
+				favorites = null;
 			
 			for (i in input.editGroups) {
 				var editGroup = input.editGroups[i];
@@ -160,7 +164,8 @@
 							nameNorm: input.nameNorm,
 							origin: input.origin,
 							type: input.type,
-							gender: input.gender
+							gender: input.gender,
+							favorites: favorites
 						},
 						{	where: { id: id }	});
 					}
