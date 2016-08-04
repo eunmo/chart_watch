@@ -38,7 +38,10 @@
 			code: 'B', callback: simpleRandom },
 		{ query: "SELECT s.id,  11 - min(rank) as weight FROM Songs s, SongCharts sc WHERE s.id = sc.SongId AND sc.rank <= 10 GROUP BY s.id;", 
 			code: 'C', callback: weightedRandom },
-		{ query: "SELECT SongId id FROM SongArtists sa, Artists a WHERE a.favorites = true AND a.id = sa.ArtistId GROUP BY SongId;",
+		{ query: "SELECT SongId id FROM Artists a, AlbumArtists aa, AlbumSongs s " +
+						 "WHERE a.favorites = true AND a.id = aa.ArtistId AND aa.AlbumId = s.AlbumId GROUP BY SongId " +
+						 "UNION " +
+		 				 "SELECT SongId id FROM SongArtists sa, Artists a WHERE a.favorites = true AND a.id = sa.ArtistId GROUP BY SongId;",
 			code: 'D', callback: simpleRandom }
 		];
 
