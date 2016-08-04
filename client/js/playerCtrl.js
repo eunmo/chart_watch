@@ -277,7 +277,19 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	
 	$scope.shuffle = function () {
 		$http.get('shuffle').success(function (data) {
-			songService.addSongs(data);
+			var array = [];
+
+			for (var i in data) {
+				var song = data[i];
+				if (song.plays > 0) {
+					array.push (song);
+				}
+				else {
+					console.log (song);
+				}
+			}
+
+			songService.addSongs(array);
 		});
 	};
 
