@@ -339,24 +339,58 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 
 	$scope.edit = function () {
 		var song = $scope.song;
+		var artists = [];
 		song.title = song.title.replace (/\'/g, '`');
 		song.titleNorm = song.titleNorm.replace (/\'/g, '`');
+
+		/* remove artists without a name */
+		for (var i in song.editArtists) {
+			var artist = song.editArtists[i];
+			console.log (artist);
+
+			if (artist.name !== null && artist.name !== "") {
+				artists.push(artist);
+			}
+		}
+		song.editArtists = artists;
+		
 		$http.put('api/edit/song', $scope.song)
 		.then(function (res) {
 			$location.url('/artist/' + res.data);
 		});
 	};
 
-	$scope.addArtist = function () {
-		if ($scope.song.editArtists[$scope.song.editArtists.length - 1].name !== null) {
-			var artist = {
-				name: null,
-				feat: false,
-				deleted: false,
-				created: true
-			};
-			$scope.song.editArtists.push(artist);
+	function getOrder (isFeat) {
+		var order = 0;
+		var artist;
+
+		for (var i in $scope.song.editArtists) {
+			artist = $scope.song.editArtists[i];
+			if (artist.feat === isFeat && order <= artist.order) {
+				order = artist.order + 1;
+			}
 		}
+
+		return order;
+	}
+
+	function addArtist (isFeat) {
+		var artist = {
+			order: getOrder (isFeat),
+			name: null,
+			feat: isFeat,
+			deleted: false,
+			created: true
+		};
+		$scope.song.editArtists.push(artist);
+	}
+
+	$scope.addArtist = function () {
+		addArtist (false);
+	};
+
+	$scope.addFeature = function () {
+		addArtist (true);
 	};
 	
 	$scope.addAlias = function () {

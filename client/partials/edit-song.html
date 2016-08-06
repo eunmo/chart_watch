@@ -21,7 +21,7 @@
 			<input class="form-control" ng-model="song.plays" />
 		</div>
 	</div>
-	<div ng-repeat="artist in song.editArtists">
+	<div ng-repeat="artist in song.editArtists | orderBy : ['feat', 'order']">
 		<div class="form-group">
 			<label class="col-sm-3 control-label">
 				<span ng-hide="artist.feat">Main</span>
@@ -75,6 +75,7 @@
 		<div class="col-sm-offset-3 col-sm-8">
 			<button class="btn btn-default" ng-click="edit()">Edit</button>
 			<button class="btn btn-default" ng-click="addArtist()">Add Artist</button>
+			<button class="btn btn-default" ng-click="addFeature()">Add Feature</button>
 			<button class="btn btn-default" ng-click="addAlias()">Add Alias</button>
 			<button class="btn btn-danger">Delete</button>
 		</div>
