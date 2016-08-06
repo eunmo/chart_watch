@@ -210,13 +210,27 @@
 			{ where: { id: editSong.id }
 			});
 		}
+
+		function addAlbumSong (id, newSong) {
+			return models.Song.findOne ({
+				where: { id: newSong.id }
+			})
+			.then (function (array) {
+				if (array !== null) {
+					return models.AlbumSong.findOrCreate ({
+						where: { AlbumId: id, disk: newSong.disk, track: newSong.track },
+						defaults: { SongId: newSong.id }
+					});
+				}
+			});
+		}
 		
 		router.put('/api/edit/album', function (req, res) {
 			var input = req.body;
 			var id = input.id;
 			var promises = [];
 			var i;
-			
+		
 			for (i in input.editArtists) {
 				var editArtist = input.editArtists[i];
 				if (editArtist.created) {
@@ -234,6 +248,10 @@
 				var editSong = input.editSongs[i];
 				if (editSong.edited)
 					promises.push(updateAlbumSong(id, editSong));
+			}
+			
+			for (i in input.newSongs) {
+				promises.push (addAlbumSong (id, input.newSongs[i]));
 			}
 
 			Promise.all(promises)

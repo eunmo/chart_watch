@@ -72,10 +72,25 @@
 			</div>
 		</div>
 	</div>
+	<div ng-repeat="song in album.newSongs | orderBy : ['disk', 'track']">
+		<div class="form-group">
+			<label class="col-sm-3 control-label">Track</label>
+			<div class="col-sm-1">
+				<input type="number" class="form-control" ng-model="song.disk" />
+			</div>
+			<div class="col-sm-1">
+				<input type="number" class="form-control" ng-model="song.track" />
+			</div>
+			<div class="col-sm-5">
+				<input type="number" class="form-control" ng-model="song.id" />
+			</div>
+		</div>
+	</div>
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-8">
 			<button class="btn btn-default" ng-click="edit()">Edit</button>
 			<button class="btn btn-default" ng-click="addArtist()">Add Artist</button>
+			<button class="btn btn-default" ng-click="addSong()">Add Song</button>
 			<button class="btn btn-danger">Delete</button>
 		</div>
 	</div>

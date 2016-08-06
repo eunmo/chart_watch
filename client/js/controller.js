@@ -242,6 +242,7 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 		var i;
 		album.editArtists = [];
 		album.editSongs = [];
+		album.newSongs = [];
 
 		for (i in album.Artists) {
 			var artist = album.Artists[i];
@@ -274,19 +275,42 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 
 	$scope.edit = function () {
 		var album = $scope.album;
+		var i;
 		album.title = album.title.replace (/\'/g, '`');
 		album.titleNorm = album.titleNorm.replace (/\'/g, '`');
 
-		for (var i in album.editSongs) {
+		for (i in album.editSongs) {
 			var song = album.editSongs[i];
 			song.title = song.title.replace (/\'/g, '`');
 			if (song.title !== album.Songs[i].title)
 				song.edited = true;
 		}
 
+		var newSongs = [];
+		for (i in album.newSongs) {
+			var newSong = album.newSongs[i];
+			if (newSong.disk !== null && newSong.track !== null && newSong.id !== null) {
+				newSongs.push (newSong);
+			}
+		}
+
+		if (newSongs.length > 0) {
+			album.newSongs = newSongs;
+		}
+
+		console.log (album);
+
 		$http.put('api/edit/album', $scope.album)
 		.then(function (res) {
 			$location.url('/artist/' + res.data);
+		});
+	};
+	
+	$scope.addSong = function () {
+		$scope.album.newSongs.push ({
+			disk: null,
+			track: null,
+			id: null
 		});
 	};
 	
