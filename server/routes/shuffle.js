@@ -34,7 +34,7 @@
 
 	var queries = [
 		{ query: "SELECT id FROM Songs;", code: 'A', callback: simpleRandom },
-		{ query: "SELECT id FROM Songs WHERE (plays <= 2) OR (plays <= 10 AND id IN (SELECT distinct SongId FROM SongCharts WHERE rank <= 10));", 
+		{ query: "SELECT id FROM Songs WHERE (plays <= 2) OR (plays < 10 AND id IN (SELECT distinct SongId FROM SongCharts WHERE rank <= 10));", 
 			code: 'B', callback: simpleRandom },
 		{ query: "SELECT s.id,  11 - min(rank) as weight FROM Songs s, SongCharts sc WHERE s.id = sc.SongId AND sc.rank <= 10 GROUP BY s.id;", 
 			code: 'C', callback: weightedRandom },
