@@ -269,6 +269,7 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 		}
 
 		album.releaseDate = new Date(album.release);
+		album.cover = null;
 
 		$scope.album = album;
 	});

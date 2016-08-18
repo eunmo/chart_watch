@@ -2,6 +2,10 @@
 	'use strict';
 
 	var Promise = require('bluebird');
+	var path = require('path');
+	var exec = Promise.promisify(require('child_process').exec);
+	
+	var imageDir = path.resolve('uploads/img');
 
 	module.exports = function (router, models) {
 		
@@ -224,6 +228,20 @@
 				}
 			});
 		}
+
+		function addAlbumCover (id, url) {
+			var sizes = [80, 40, 30];
+			var imgPath = path.resolve (imageDir, id + '.jpg');
+			var execStr = 'curl ' + url + ' -o ' + imgPath + '; ';
+
+			for (var i in sizes) {
+				var size = sizes[i];
+				var smallImgPath = path.resolve (imageDir, id + '.' + size + 'px.jpg');
+				execStr += 'convert ' + imgPath + ' -resize ' + size + ' ' +  smallImgPath + '; ';
+			}
+
+			return exec (execStr);
+		}
 		
 		router.put('/api/edit/album', function (req, res) {
 			var input = req.body;
@@ -252,6 +270,10 @@
 			
 			for (i in input.newSongs) {
 				promises.push (addAlbumSong (id, input.newSongs[i]));
+			}
+
+			if (input.cover !== null) {
+				promises.push (addAlbumCover (id, input.cover));
 			}
 
 			Promise.all(promises)

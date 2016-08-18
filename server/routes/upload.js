@@ -6,7 +6,6 @@
 	var path = require('path');
 	var fs = require('fs');
 	var Promise = require('bluebird');
-	var AWS = require('aws-sdk');
 	var exec = Promise.promisify(require('child_process').exec);
 
 	var uploadDir = path.resolve('uploads/temp');
@@ -59,7 +58,6 @@
 		}
 
 		function handleUpload(file, tags, albumArtistArray) {
-			console.log(file);
 			
 			var filePath = file.path;
 			var index = filePath.lastIndexOf('/') + 1;
@@ -69,7 +67,6 @@
 			return exec(execTagStr)
 			.spread(function (stdout, stderr) {
 				var tag = JSON.parse(stdout);
-				console.log(tag);
 
 				var i, index;
 				var artistPromises = [];
