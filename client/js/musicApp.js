@@ -69,9 +69,13 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		templateUrl: '/partials/recent.html',
 		controller: 'NewSongCtrl'
 	})
-	.when('/stats/plays', {
-		templateUrl: '/partials/stats.plays.html',
-		controller: 'StatsPlaysCtrl'
+	.when('/stats/plays-table', {
+		templateUrl: '/partials/stats-plays-table.html',
+		controller: 'StatsPlaysTableCtrl'
+	})
+	.when('/stats/plays-chart', {
+		templateUrl: '/partials/stats-plays-chart.html',
+		controller: 'StatsPlaysChartCtrl'
 	})
 	.when('/blank', {
 		templateUrl: '/partials/blank.html',

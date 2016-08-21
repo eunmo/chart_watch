@@ -674,7 +674,7 @@ musicApp.controller('NewSongCtrl', function ($rootScope, $scope, $http) {
 	$scope.refresh();
 });
 
-musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams, $http) {
+musicApp.controller('StatsPlaysChartCtrl', function ($rootScope, $scope, $routeParams, $http) {
 	$scope.rawData = [];
 	$scope.data = [];
 	$scope.ranks = [];
@@ -770,6 +770,50 @@ musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams
 			$scope.songs = data;
 		});
 	};
+});
+
+musicApp.controller('StatsPlaysTableCtrl', function ($rootScope, $scope, $routeParams, $http) {
+	$scope.rawData = [];
+	$scope.data = [];
+	$scope.plays = [];
+
+	for (var i = 0; i <= 100; i++) {
+		$scope.plays[i] = { play: i, rank: [], cumul: [] };
+		for (var j = 0; j <= 10; j++) {
+			$scope.plays[i].rank[j] = 0;
+		}
+	}
+
+	$scope.plays[100].play = '100+';
+
+	$http.get('stats/plays').success(function (data) {
+		var i, j, datum, rank, plays;
+
+		for (i in data) {
+			datum = data[i];
+
+			plays = Math.min(datum.plays, 100);
+			rank = (datum.rank !== null) ? datum.rank - 1 : 10;
+
+			$scope.plays[plays].rank[rank] += datum.count;
+		}
+
+		for (i = 0; i <= 100; i++) {
+			$scope.plays[i].cumul[0] = $scope.plays[i].rank[0];
+			for (j = 1; j <= 10; j++) {
+				$scope.plays[i].cumul[j] = $scope.plays[i].cumul[j - 1] + $scope.plays[i].rank[j];
+			}
+		}
+
+		for (i in $scope.plays) {
+			for (j in $scope.plays.rank) {
+
+			}
+		}
+
+		$scope.rawData = data;
+		$scope.data = data;
+	});
 });
 
 musicApp.controller('ChartMissingCtrl', function ($rootScope, $scope, $routeParams, $http) {
