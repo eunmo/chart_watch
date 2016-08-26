@@ -433,38 +433,38 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 	};
 });
 
+function toUTCDate (date) {
+	return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+}
+
+function getMaxDate (chart) {
+	var date = toUTCDate(new Date());
+
+	if ((chart === 'gaon' && date.getDay() < 4) ||
+			(chart === 'melon' && date.getDay() < 1) ||
+			(chart === 'billboard' && date.getDay() < 3) ||
+			(chart === 'oricon' && date.getDay() < 2))
+		date.setDate(date.getDate() - 7);
+
+	if ((chart === 'deutsche' && date.getDay() === 6) ||
+			(chart === 'uk' && date.getDay() === 6) ||
+			(chart === 'francais' && date.getDay() === 6))
+		date.setDate(date.getDate() + 7);
+
+	date.setDate(date.getDate() - date.getDay() - 1);
+
+	return date;
+}
+
+function getMinDate (chart) {
+	if (chart === 'gaon') {
+		return new Date(Date.UTC(2010, 0, 2)); // Jan 2nd, 2010
+	} else {
+		return new Date(Date.UTC(2000, 0, 1)); // Jan 1st, 2000
+	}
+}
+
 musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $http, $location, songService) {
-
-	function toUTCDate (date) {
-		return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-	}
-	
-	function getMaxDate (chart) {
-		var date = toUTCDate(new Date());
-
-		if ((chart === 'gaon' && date.getDay() < 4) ||
-				(chart === 'melon' && date.getDay() < 1) ||
-				(chart === 'billboard' && date.getDay() < 3) ||
-				(chart === 'oricon' && date.getDay() < 2))
-			date.setDate(date.getDate() - 7);
-
-		if ((chart === 'deutsche' && date.getDay() === 6) ||
-		    (chart === 'uk' && date.getDay() === 6) ||
-			  (chart === 'francais' && date.getDay() === 6))
-			date.setDate(date.getDate() + 7);
-		
-		date.setDate(date.getDate() - date.getDay() - 1);
-
-		return date;
-	}
-
-	function getMinDate (chart) {
-		if (chart === 'gaon') {
-			return new Date(Date.UTC(2010, 0, 2)); // Jan 2nd, 2010
-		} else {
-			return new Date(Date.UTC(2000, 0, 1)); // Jan 1st, 2000
-		}
-	}
 
 	$scope.adjustDate = function () {
 		var time = $scope.date.getTime();
@@ -600,38 +600,7 @@ musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routePara
 	};
 });
 
-musicApp.controller('AlbumChartCtrl', function ($rootScope, $scope, $routeParams, $http, $location, songService) {
-
-	function toUTCDate (date) {
-		return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-	}
-	
-	function getMaxDate (chart) {
-		var date = toUTCDate(new Date());
-
-		if ((chart === 'gaon' && date.getDay() < 4) ||
-				(chart === 'melon' && date.getDay() < 1) ||
-				(chart === 'billboard' && date.getDay() < 3) ||
-				(chart === 'oricon' && date.getDay() < 2))
-			date.setDate(date.getDate() - 7);
-
-		if ((chart === 'deutsche' && date.getDay() === 6) ||
-		    (chart === 'uk' && date.getDay() === 6) ||
-			  (chart === 'francais' && date.getDay() === 6))
-			date.setDate(date.getDate() + 7);
-		
-		date.setDate(date.getDate() - date.getDay() - 1);
-
-		return date;
-	}
-
-	function getMinDate (chart) {
-		if (chart === 'gaon') {
-			return new Date(Date.UTC(2010, 0, 2)); // Jan 2nd, 2010
-		} else {
-			return new Date(Date.UTC(2000, 0, 1)); // Jan 1st, 2000
-		}
-	}
+musicApp.controller('AlbumChartCtrl', function ($rootScope, $scope, $routeParams, $http, $location) {
 
 	$scope.adjustDate = function () {
 		var time = $scope.date.getTime();
@@ -1007,4 +976,136 @@ musicApp.controller('SongCtrl', function ($rootScope, $scope, $routeParams, $htt
 		$scope.song = song;
 		$scope.loaded = true;
 	});
+});
+
+musicApp.controller('BatchCtrl', function ($rootScope, $scope, $http) {
+	$scope.chartNames = ['billboard', 'oricon',	'deutsche', 'uk', 'francais', 'melon', 'gaon'];
+	$scope.charts = [];
+
+	$scope.start = getMinDate ('uk');
+	$scope.end = getMaxDate ('uk');
+
+	for (var i in $scope.chartNames) {
+		var chartName = $scope.chartNames[i];
+		var minDate = getMinDate (chartName);
+		var maxDate = getMaxDate (chartName);
+
+		$scope.charts.push ({
+			chart: chartName,
+			minDate: minDate,
+			maxDate: maxDate,
+			start: minDate,
+			end: maxDate,
+			enabled: false,
+			progress: 0
+		});
+	}
+
+	$scope.adjustDates = function () {
+		for (var i in $scope.charts) {
+			var chart = $scope.charts[i];
+			var startTime = chart.start.getTime ();
+			var endTime = chart.end.getTime ();
+			var maxTime = chart.maxDate.getTime ();
+			var minTime = chart.minDate.getTime ();
+
+			if (maxTime < startTime) {
+				chart.start = new Date (chart.maxDate);
+			} else if (minTime > startTime) {
+				chart.start = new Date (chart.minDate);
+			} else {
+				chart.start.setDate (chart.start.getDate () + (6 - chart.start.getDay ()));
+			}
+
+			if (maxTime < endTime) {
+				chart.end = new Date (chart.maxDate);
+			} else if (minTime > endTime) {
+				chart.end = new Date (chart.minDate);
+			} else {
+				chart.end.setDate (chart.end.getDate () + (6 - chart.end.getDay ()));
+			}
+		}
+	}
+
+	$scope.setAllDates = function () {
+		for (var i in $scope.charts) {
+			$scope.charts[i].start = $scope.start;
+			$scope.charts[i].end = $scope.end;
+		}
+
+		$scope.adjustDates ();
+	}
+
+	$scope.prepareRun = function () {
+		$scope.chartIndex = 0;
+		$scope.running = true;
+		
+		$scope.adjustDates ();
+
+		for (var i in $scope.charts) {
+			$scope.charts[i].cur = new Date ($scope.charts[i].start);
+			$scope.charts[i].cur.setDate ($scope.charts[i].cur.getDate () - 7);
+			$scope.charts[i].progress = 0;
+		}
+	}
+
+	$scope.advance = function () {
+		while ($scope.chartIndex < $scope.charts.length) {
+			var chart = $scope.charts[$scope.chartIndex];
+
+			if (chart.enabled === false) {
+				$scope.chartIndex++;
+				continue;
+			}
+
+			chart.cur.setDate (chart.cur.getDate () + 7);
+
+			if (chart.cur.getTime () > chart.end.getTime ()) {
+				$scope.chartIndex++;
+			} else {
+				chart.progress =
+					(chart.cur.getTime () - chart.start.getTime ()) /
+					(chart.end.getTime () - chart.start.getTime ()) * 100;
+				break;
+			}
+		}
+	}
+
+	$scope.run = function () {
+		$scope.advance ();
+		var chart = $scope.charts[$scope.chartIndex];
+
+		if ($scope.chartIndex < $scope.charts.length) {
+			$http.get($scope.urlPrefix + chart.chart,
+					{ params: { 
+											year: chart.cur.getFullYear(),
+											month: chart.cur.getMonth() + 1,
+											day: chart.cur.getDate()
+										} })
+			.success(function () {
+				$scope.run ();
+			});
+		}
+		else {
+			$scope.running = false;
+		}
+	}
+
+	$scope.fetchMatchSingle = function () {
+		$scope.urlPrefix = '/chart/';
+		$scope.prepareRun ();
+		$scope.run ();
+	}
+
+	$scope.fetchAlbum = function () {
+		$scope.urlPrefix = '/chart/album/fetch/';
+		$scope.prepareRun ();
+		$scope.run ();
+	}
+
+	$scope.matchAlbum = function () {
+		$scope.urlPrefix = '/chart/album/match/';
+		$scope.prepareRun ();
+		$scope.run ();
+	}
 });
