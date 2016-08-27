@@ -330,6 +330,52 @@
 		});
 	};
 
+	var getAlbumChart = function (models, artist) {
+		var array = [];
+		var idArray = [];
+		var rankArray = [];
+		var i, j, k;
+		var album, song, chartRow, albumId;
+
+		for (i in artist.albums) {
+			album = artist.albums[i];
+			albumId = album.id;
+			array[albumId] = album;
+			idArray.push (albumId);
+		}
+
+		return models.AlbumChart.findAll({
+			where: { AlbumId: { $in: idArray }, rank: { $lte: 10 } }
+		}).then(function (results) {
+			for (i in results) {
+				chartRow = results[i];
+				albumId = chartRow.AlbumId;
+				if (rankArray[albumId] === undefined) {
+					rankArray[albumId] = {};
+				}
+				if (rankArray[albumId][chartRow.type] === undefined) {
+					rankArray[albumId][chartRow.type] = {
+						min: chartRow.rank,
+						run: 0,
+						count: 1
+					};
+				} else if (chartRow.rank < rankArray[albumId][chartRow.type].min) {
+					rankArray[albumId][chartRow.type].min = chartRow.rank;
+					rankArray[albumId][chartRow.type].run += rankArray[albumId][chartRow.type].count;
+					rankArray[albumId][chartRow.type].count = 1;
+				} else if (chartRow.rank === rankArray[albumId][chartRow.type].min) {
+					rankArray[albumId][chartRow.type].count++;
+				} else {
+					rankArray[albumId][chartRow.type].run++;
+				}
+			}
+
+			for (i in rankArray) {
+				array[i].rank = rankArray[i];
+			}
+		});
+	};
+
 	var getPrimaryGroupSummary = function (models, artists, ids) {
 		var query = "SELECT MemberId, GroupId, name " + 
 								"FROM ArtistGroups g, Artists a " +
@@ -460,8 +506,10 @@
 				promises = [];
 
 				promises.push(getArtistGroup(models, artist));
-				if (albums.length > 0)
+				if (albums.length > 0) {
 					promises.push(getSongChart(models, artist));
+					promises.push(getAlbumChart(models, artist));
+				}
 
 				return Promise.all(promises);
 			})

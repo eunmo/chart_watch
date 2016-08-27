@@ -70,6 +70,16 @@ body {
 	font-size: 18px;
 }
 
+.album-desc-right {
+	height: 20px;
+	font-size: 18px;
+}
+
+.album-desc-right small {
+	color: #fff;
+	font-weight: 700;
+}
+
 .progress-music {
 	display: inline-block;
 	width: 300px;
