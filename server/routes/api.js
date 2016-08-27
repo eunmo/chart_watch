@@ -372,6 +372,28 @@
 		});
 	};
 
+	var getAlbumChartSummary = function (models, artists, ids) {
+		var idString = ids.toString();
+		var query = "SELECT ArtistId, IFNULL (rank, 0) AS rank, count(*) AS count " +
+								"FROM (" +
+											 "SELECT ArtistId, IF (min(rank) <= 10, min(rank), NULL) AS rank " +
+											 "FROM AlbumArtists a LEFT JOIN AlbumCharts c " +
+											 "ON a.AlbumId = c.AlbumId " +
+											 "WHERE a.ArtistId in (" + ids.toString() + ") " +
+											 "GROUP BY ArtistId, a.AlbumId) a " + 
+								"GROUP BY ArtistId, rank;";
+		return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
+		.then(function (rows) {
+			var i, albumCount, id;
+
+			for (i in rows) {
+				albumCount = rows[i];
+				id = albumCount.ArtistId;
+				artists[id].albumCharts[albumCount.rank] = albumCount.count;
+			}
+		});
+	};
+
 	var getSongSummary = function (models, artists, ids) {
 		var idString = ids.toString();
 		var query = "SELECT ArtistId, feat, IFNULL (rank, 0) AS rank, count(*) AS count " +
@@ -380,7 +402,6 @@
 											 "FROM SongArtists sa LEFT JOIN SongCharts sc " +
 											 "ON sa.SongId = sc.SongId " +
 											 "WHERE sa.ArtistId in (" + ids.toString() + ") " +
-											 "AND sc.order = 0 " + 
 											 "GROUP BY ArtistId, SongId) a " + 
 								"GROUP BY ArtistId, feat, rank;";
 		return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
@@ -498,12 +519,14 @@
 						maxAlbum: 0,
 						albums: {},
 						songs: [],
-						feats: []
+						feats: [],
+						albumCharts: []
 					};
 				}
 
 				promises.push(getPrimaryGroupSummary(models, artists, ids));
 				promises.push(getAlbumSummary(models, artists, ids));
+				promises.push(getAlbumChartSummary(models, artists, ids));
 				promises.push(getSongSummary(models, artists, ids));
 
 				return Promise.all(promises);

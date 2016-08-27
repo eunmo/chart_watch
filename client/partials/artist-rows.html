@@ -10,7 +10,8 @@
 		<th ng-show="{{desc === 'Album'}}">Studio</th>
 		<th ng-show="{{desc === 'Album'}}">EP</th>
 		<th ng-show="{{desc === 'Album' || desc === 'Single'}}">Single</th>
-		<th ng-hide="{{desc === 'Other'}}" ng-repeat="song in [1,2,3,4,5,6,7,8,9,10]">{{song}}</th>
+		<th ng-hide="{{desc === 'Other'}}" ng-repeat="song in [1,5,10]">Top {{song}} Song</th>
+		<th ng-hide="{{desc === 'Other'}}" ng-repeat="song in [1,5,10]">Top {{song}} Album</th>
 	</tr>
 	<tr ng-repeat="artist in artists | orderBy:'nameNorm'">
 		<td class="td-img-list" ng-show="{{desc === 'Album' || desc === 'Single'}}">
@@ -23,8 +24,11 @@
 		<td ng-show="{{desc === 'Album'}}"><span ng-show="artist.albums.Studio">{{artist.albums.Studio}}</span></td>
 		<td ng-show="{{desc === 'Album'}}"><span ng-show="artist.albums.EP">{{artist.albums.EP}}</span></td>
 		<td ng-show="{{desc === 'Album' || desc === 'Single'}}"><span ng-show="artist.albums.Single">{{artist.albums.Single}}</span></td>
-		<td ng-hide="{{desc === 'Other'}}" ng-repeat="song in [1,2,3,4,5,6,7,8,9,10]">
-			<rank-badge class="pull-left span-rank" min="song" show-min="false" count="artist.songs[song] + artist.feats[song]"></rank-badge>
+		<td ng-hide="{{desc === 'Other'}}" ng-repeat="song in [1,2,6]">
+			<rank-badge class="pull-right span-rank" min="song" show-min="false" count="artist.songChartSum[song]"></rank-badge>
+		</td>
+		<td ng-hide="{{desc === 'Other'}}" ng-repeat="song in [1,2,6]">
+			<rank-badge class="pull-right span-rank" min="song" show-min="false" count="artist.albumChartSum[song]"></rank-badge>
 		</td>
 	</tr>
 </table>

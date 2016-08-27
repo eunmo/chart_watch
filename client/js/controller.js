@@ -27,7 +27,49 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
 				$scope.chartedArtists.push(artist);
 			else
 				$scope.others.push(artist);
+
+			artist.albumChartSum = [];
+			artist.albumChartSum[1] = artist.albumCharts[1];
+
+			artist.albumChartSum[2] = 0;
+			for (i = 2; i <= 5; i++) {
+				if (artist.albumCharts[i] !== undefined)
+					artist.albumChartSum[2] += artist.albumCharts[i];
+			}
+
+			artist.albumChartSum[6] = 0;
+			for (i = 6; i <= 10; i++) {
+				if (artist.albumCharts[i] !== undefined)
+					artist.albumChartSum[6] += artist.albumCharts[i];
+			}
+
+			artist.songChartSum = [];
+			artist.songChartSum[1] = 0;
+			for (i = 1; i <= 1; i++) {
+				console.log (artist.songs[i]);
+				if (artist.songs[i] !== undefined)
+					artist.songChartSum[1] += artist.songs[i];
+				if (artist.feats[i] !== undefined)
+					artist.songChartSum[1] += artist.feats[i];
+			}
+
+			artist.songChartSum[2] = 0;
+			for (i = 2; i <= 5; i++) {
+				if (artist.songs[i] !== undefined)
+					artist.songChartSum[2] += artist.songs[i];
+				if (artist.feats[i] !== undefined)
+					artist.songChartSum[2] += artist.feats[i];
+			}
+
+			artist.songChartSum[6] = 0;
+			for (i = 6; i <= 10; i++) {
+				if (artist.songs[i] !== undefined)
+					artist.songChartSum[6] += artist.songs[i];
+				if (artist.feats[i] !== undefined)
+					artist.songChartSum[6] += artist.feats[i];
+			}
 		}
+		console.log ($scope.albumArtists);
 	});
 });
 
