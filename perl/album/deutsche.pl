@@ -49,6 +49,8 @@ sub normalize_title($)
 	$string =~ s/\s+$//g;
 	$string =~ s/^\s+//g;
 	$string =~ s/[\'’"]/`/g;
+	$string =~ s/\/\\\/\\ \/\\ Y \/\\/MAYA/g;
+	$string =~ s/\\/\//g;
 
 	return $string;
 }
