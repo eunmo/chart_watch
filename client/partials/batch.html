@@ -30,6 +30,7 @@
 			<div class="col-sm-3" ng-show="chart.enabled">
 				<div class="progress">
 					<div class="progress-bar" role="progressbar" aria-valuenow="{{chart.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{chart.progress}}%;">
+						<span ng-show="running">{{chart.cur | date: 'yy-MM-dd' }}</span>
 					</div>
 				</div>
 			</div>
