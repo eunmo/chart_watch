@@ -243,6 +243,7 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 		album.editArtists = [];
 		album.editSongs = [];
 		album.newSongs = [];
+		album.editAliases = [];
 
 		for (i in album.Artists) {
 			var artist = album.Artists[i];
@@ -265,6 +266,17 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 				title: song.title,
 				id: song.id,
 				plays: song.plays
+			};
+		}
+
+		for (i in album.AlbumAliases) {
+			var alias = album.AlbumAliases[i];
+			album.editAliases[i] = {
+				id: alias.id,
+				alias: alias.alias,
+				chart: alias.chart,
+				deleted: false,
+				created: false
 			};
 		}
 
@@ -323,6 +335,20 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 				created: true
 			};
 			$scope.album.editArtists.push(artist);
+		}
+	};
+	
+	$scope.addAlias = function () {
+		if ($scope.album.editAliases.length === 0 ||
+				($scope.album.editAliases[$scope.album.editAliases.length - 1].alias !== null &&
+				 $scope.album.editAliases[$scope.album.editAliases.length - 1].chart !== null)) {
+			var alias = {
+				alias: null,
+				chart: null,
+				deleted: false,
+				created: true
+			};
+			$scope.album.editAliases.push(alias);
 		}
 	};
 });

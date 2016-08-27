@@ -243,6 +243,26 @@
 			return exec (execStr);
 		}
 		
+		function addAlbumAlias(artistId, alias, chart) {
+			return models.AlbumAlias.findOrCreate({
+				where: { AlbumId: artistId, alias: alias, chart: chart }
+			});
+		}
+
+		function deleteAlbumAlias(artistId, alias, chart) {
+			return models.AlbumAlias.destroy({
+				where: { AlbumId: artistId, alias: alias, chart: chart }
+			});
+		}
+
+		function updateAlbumAlias(id, alias, chart) {
+			return models.AlbumAlias.update({
+				alias: alias, chart: chart
+			}, {
+				where: { id: id }
+			});
+		}
+		
 		router.put('/api/edit/album', function (req, res) {
 			var input = req.body;
 			var id = input.id;
@@ -274,6 +294,19 @@
 
 			if (input.cover !== null) {
 				promises.push (addAlbumCover (id, input.cover));
+			}
+
+			for (i in input.editAliases) {
+				var editAlias = input.editAliases[i];
+				if (editAlias.created) {
+					if (editAlias.alias !== null && editAlias.chart !== null) {
+						promises.push(addAlbumAlias(id, editAlias.alias, editAlias.chart));
+					}
+				} else if (editAlias.deleted) {
+					promises.push(deleteAlbumAlias(id, editAlias.alias, editAlias.chart));
+				} else {
+					promises.push(updateAlbumAlias(editAlias.id, editAlias.alias, editAlias.chart));
+				}
 			}
 
 			Promise.all(promises)

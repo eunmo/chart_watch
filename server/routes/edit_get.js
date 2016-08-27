@@ -21,7 +21,8 @@
 				where: {id: id},
 				include: [
 					{ model: models.Artist },
-					{ model: models.Song }
+					{ model: models.Song },
+					{ model: models.AlbumAlias }
 				]
 			}).then(function (album) {
 				res.json(album);

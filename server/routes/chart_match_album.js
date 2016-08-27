@@ -4,6 +4,20 @@
 	var Promise = require('bluebird');
 	
 	module.exports = function (router, models) {
+		function findAlbumAlias (entry) {
+			var query = "SELECT AlbumId as id from AlbumAliases " +
+									"WHERE alias = \"" + entry.title + "\" " +
+										"AND chart = \"" + entry.chart + "\";";
+
+			return models.sequelize.query (query,
+																		 { type: models.sequelize.QueryTypes.SELECT })
+			.then (function (albums) {
+				if (albums.length > 0) {
+					entry.candidateAlbums = albums;
+				}
+			});
+		}
+
 		function findAlbum (entry) {
 			var query = "SELECT id FROM Albums WHERE title = \"" + entry.title + "\";";
 
@@ -12,6 +26,9 @@
 			.then (function (albums) {
 				if (albums.length > 0) {
 					entry.candidateAlbums = albums;
+				}
+				else {
+					return findAlbumAlias (entry);
 				}
 			});
 		}
