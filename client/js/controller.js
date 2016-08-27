@@ -311,6 +311,11 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 			album.newSongs = newSongs;
 		}
 
+		for (i in album.editAliases) {
+			var alias = album.editAliases[i];
+			alias.alias = alias.alias.replace (/\'/g, '`');
+		}
+
 		console.log (album);
 
 		$http.put('api/edit/album', $scope.album)
@@ -998,6 +1003,7 @@ musicApp.controller('ChartMissing1Ctrl', function ($rootScope, $scope, $routePar
 musicApp.controller('ChartMissingAlbumCtrl', function ($rootScope, $scope, $routeParams, $http) {
 	$scope.data = [];
 	$scope.type = 'No.1 Albums';
+	$scope.q = "";
 
 	$http.get('chart/missing/album').success(function (data) {
 		$scope.data = data;

@@ -46,7 +46,7 @@ sub normalize_title($)
 	
 	$string =~ s/\s+$//g;
 	$string =~ s/^\s+//g;
-	$string =~ s/[\'’]/`/g;
+	$string =~ s/[\'’′]/`/g;
 	$string =~ s/\\/₩/g;
 
 	return $string;
@@ -59,7 +59,7 @@ sub normalize_artist($)
 	$string =~ s/\|.*$//;
 	$string =~ s/\s+$//g;
 	$string =~ s/^\s+//g;
-	$string =~ s/[\'’]/`/g;
+	$string =~ s/[\'’′]/`/g;
 
 	return $string;
 }

@@ -4,8 +4,11 @@
 	var Promise = require('bluebird');
 	
 	module.exports = function (router, models) {
-		function findAlbumAlias (entry) {
-			var query = "SELECT AlbumId as id from AlbumAliases " +
+
+		function findAlbum (entry) {
+			var query = "SELECT id FROM Albums WHERE title = \"" + entry.title + "\" " +
+									"UNION " + 
+									"SELECT AlbumId as id from AlbumAliases " +
 									"WHERE alias = \"" + entry.title + "\" " +
 										"AND chart = \"" + entry.chart + "\";";
 
@@ -14,21 +17,6 @@
 			.then (function (albums) {
 				if (albums.length > 0) {
 					entry.candidateAlbums = albums;
-				}
-			});
-		}
-
-		function findAlbum (entry) {
-			var query = "SELECT id FROM Albums WHERE title = \"" + entry.title + "\";";
-
-			return models.sequelize.query (query,
-																		 { type: models.sequelize.QueryTypes.SELECT })
-			.then (function (albums) {
-				if (albums.length > 0) {
-					entry.candidateAlbums = albums;
-				}
-				else {
-					return findAlbumAlias (entry);
 				}
 			});
 		}
@@ -58,6 +46,12 @@
 									       "or " +
 									       "ar.nameNorm = \"" + entry.artist + "\") " +
 									  "AND aa.ArtistId = ar.id;";
+					
+			if (entry.artist === 'Soundtrack' ||
+					entry.artist === 'Various Artists') {
+					entry.AlbumId = entry.candidateAlbums[0].id;
+					return;
+			}
 
 			return models.sequelize.query (query,
 																		 { type: models.sequelize.QueryTypes.SELECT })
