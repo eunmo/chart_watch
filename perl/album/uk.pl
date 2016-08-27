@@ -13,30 +13,35 @@ my $dd = $ARGV[2];
 
 my $ld = DateTime->new( year => $yy, month => $mm, day => $dd )
 								 ->truncate( to => 'week' )
-								 ->add( weeks => 2)
-								 ->add( days => 5 );
-my $ld_ymd = $ld->ymd();
+								 ->add( days => 6 );
+my $ld_ymd = $ld->ymd('');
 
-my $url = "http://www.billboard.com/charts/billboard-200/$ld_ymd";
+my $cur_date = DateTime->today();
+
+my $url = "http://www.officialcharts.com/charts/albums-chart/$ld_ymd/7502";
+
+if ($cur_date->add( days => 2) == $ld) {
+	$url = "http://www.officialcharts.com/charts/albums-chart";
+}
+
 my $html = get("$url");
 my $dom = Mojo::DOM->new($html);
 my $rank = 1;
+my $count = 1;
 
 print "[";
 
-for my $div ($dom->find('div[class*="row__title"]')->each) {
+for my $div ($dom->find('div[class*="title-artist"]')->each) {
 	my $title_norm;
-	if ($div->find('h2')->first) {
-		my $title = $div->find('h2')->first->text;
+	if ($div->find('div[class="title"]')->first) {
+		my $title = $div->find('div[class="title"]')->first->find('a')->first->text;
 		$title_norm = normalize_title($title);
 	}
-	my $artist;
-	if ($div->find('a[data-tracklabel="Artist Name"]')->first) {
-		$artist = $div->find('a[data-tracklabel="Artist Name"]')->first->text;
-	} elsif ($div->find('h3')->first) {
-		$artist = $div->find('h3')->first->text;
+	my $artist_norm;
+	if ($div->find('div[class="artist"]')->first) {
+		my $artist = $div->find('div[class="artist"]')->first->find('a')->first->text;
+		$artist_norm = normalize_artist($artist);
 	}
-	my $artist_norm = normalize_artist($artist);
 	print ",\n" if $rank > 1;
 	print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"title\": \"$title_norm\" }";
 	$rank++;
@@ -51,7 +56,6 @@ sub normalize_title($)
 	$string =~ s/\s+$//g;
 	$string =~ s/^\s+//g;
 	$string =~ s/[\'’"]/`/g;
-	$string =~ s/\\/\//g;
 
 	return $string;
 }

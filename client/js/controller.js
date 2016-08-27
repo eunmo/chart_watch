@@ -1025,7 +1025,7 @@ musicApp.controller('BatchCtrl', function ($rootScope, $scope, $http) {
 				chart.end.setDate (chart.end.getDate () + (6 - chart.end.getDay ()));
 			}
 		}
-	}
+	};
 
 	$scope.setAllDates = function () {
 		for (var i in $scope.charts) {
@@ -1034,7 +1034,7 @@ musicApp.controller('BatchCtrl', function ($rootScope, $scope, $http) {
 		}
 
 		$scope.adjustDates ();
-	}
+	};
 
 	$scope.prepareRun = function () {
 		$scope.chartIndex = 0;
@@ -1047,7 +1047,7 @@ musicApp.controller('BatchCtrl', function ($rootScope, $scope, $http) {
 			$scope.charts[i].cur.setDate ($scope.charts[i].cur.getDate () - 7);
 			$scope.charts[i].progress = 0;
 		}
-	}
+	};
 
 	$scope.advance = function () {
 		while ($scope.chartIndex < $scope.charts.length) {
@@ -1069,7 +1069,7 @@ musicApp.controller('BatchCtrl', function ($rootScope, $scope, $http) {
 				break;
 			}
 		}
-	}
+	};
 
 	$scope.run = function () {
 		$scope.advance ();
@@ -1089,23 +1089,23 @@ musicApp.controller('BatchCtrl', function ($rootScope, $scope, $http) {
 		else {
 			$scope.running = false;
 		}
-	}
+	};
 
 	$scope.fetchMatchSingle = function () {
 		$scope.urlPrefix = '/chart/';
 		$scope.prepareRun ();
 		$scope.run ();
-	}
+	};
 
 	$scope.fetchAlbum = function () {
 		$scope.urlPrefix = '/chart/album/fetch/';
 		$scope.prepareRun ();
 		$scope.run ();
-	}
+	};
 
 	$scope.matchAlbum = function () {
 		$scope.urlPrefix = '/chart/album/match/';
 		$scope.prepareRun ();
 		$scope.run ();
-	}
+	};
 });
