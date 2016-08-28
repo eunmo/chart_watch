@@ -380,10 +380,25 @@
 			});
 		});
 
-		router.get('/chart/missing/album', function (req, res) {
+		router.get('/chart/missing/album/:_rank', function (req, res) {
 			var queryString =
-				"SELECT artist as name, title, count(*) as count, min(type) as chart, min(week) as week " + 
-				"FROM AlbumCharts where rank = 1 and AlbumId is null " +
+				"SELECT artist as name, min(rank) as rank, title, count(*) as count, min(type) as chart, min(week) as week " + 
+				"FROM AlbumCharts where rank <= " + req.params._rank +
+				" AND AlbumId is null " +
+				"GROUP BY artist, title " +
+				"ORDER BY week, chart";
+			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
+			.then(function (rows) {
+				res.json(rows);
+			});
+		});
+
+		router.get('/chart/missing/album/:_rank/:_year', function (req, res) {
+			var queryString =
+				"SELECT artist as name, min(rank) as rank, title, count(*) as count, min(type) as chart, min(week) as week " + 
+				"FROM AlbumCharts where rank <= " + req.params._rank +
+			  " AND YEAR (week) = " + req.params._year +
+				" AND AlbumId is null " +
 				"GROUP BY artist, title " +
 				"ORDER BY week, chart";
 			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })

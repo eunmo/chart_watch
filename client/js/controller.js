@@ -1035,6 +1035,7 @@ musicApp.controller('ChartMissingCtrl', function ($rootScope, $scope, $routePara
 
 musicApp.controller('ChartMissing1Ctrl', function ($rootScope, $scope, $routeParams, $http) {
 	$scope.data = [];
+	$scope.rank = 1;
 	$scope.type = 'No.1 Songs';
 
 	$http.get('chart/missing/1').success(function (data) {
@@ -1044,10 +1045,22 @@ musicApp.controller('ChartMissing1Ctrl', function ($rootScope, $scope, $routePar
 
 musicApp.controller('ChartMissingAlbumCtrl', function ($rootScope, $scope, $routeParams, $http) {
 	$scope.data = [];
-	$scope.type = 'No.1 Albums';
+	$scope.rank = $routeParams.rank;
+	$scope.type = 'No.' + $routeParams.rank + ' Albums';
 	$scope.q = "";
 
-	$http.get('chart/missing/album').success(function (data) {
+	$http.get('chart/missing/album/' + $routeParams.rank).success(function (data) {
+		$scope.data = data;
+	});
+});
+
+musicApp.controller('ChartMissingAlbumYearCtrl', function ($rootScope, $scope, $routeParams, $http) {
+	$scope.data = [];
+	$scope.rank = $routeParams.rank;
+	$scope.type = 'No.' + $routeParams.rank + ' Albums of ' + $routeParams.year;
+	$scope.q = "";
+
+	$http.get('chart/missing/album/' + $routeParams.rank + '/' + $routeParams.year).success(function (data) {
 		$scope.data = data;
 	});
 });

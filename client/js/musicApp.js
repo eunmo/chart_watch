@@ -49,9 +49,13 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		templateUrl: '/partials/missing1.html',
 		controller: 'ChartMissing1Ctrl'
 	})
-	.when('/chart/missing/album', {
+	.when('/chart/missing/album/:rank', {
 		templateUrl: '/partials/missing1.html',
 		controller: 'ChartMissingAlbumCtrl'
+	})
+	.when('/chart/missing/album/:rank/:year', {
+		templateUrl: '/partials/missing1.html',
+		controller: 'ChartMissingAlbumYearCtrl'
 	})
 	.when('/chart/missing/', {
 		templateUrl: '/partials/missing.html',
