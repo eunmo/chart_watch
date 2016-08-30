@@ -742,6 +742,18 @@ musicApp.controller('AlbumChartCtrl', function ($rootScope, $scope, $routeParams
 		});
 	};
 
+	$scope.clear = function () {
+		$http.get('chart/album/clear/' + $scope.chart,
+							{ params: { 
+								year: $scope.date.getFullYear(),
+								month: $scope.date.getMonth() + 1,
+								day: $scope.date.getDate()
+							} })
+		.success(function () {
+			$scope.view ();
+		});
+	};
+
 	$scope.view();
 
 	$scope.updateDate = function (offset) {
