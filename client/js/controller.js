@@ -1077,6 +1077,16 @@ musicApp.controller('ChartMissingAlbumYearCtrl', function ($rootScope, $scope, $
 	});
 });
 
+musicApp.controller('AlbumCtrl', function ($rootScope, $scope, $routeParams, $http) {
+
+	$scope.loaded = false;
+
+	$http.get('api/album/' + $routeParams.id).success(function (album) {
+		$scope.album = album;
+		$scope.loaded = true;
+	});
+});
+
 musicApp.controller('SongCtrl', function ($rootScope, $scope, $routeParams, $http) {
 
 	$scope.loaded = false;

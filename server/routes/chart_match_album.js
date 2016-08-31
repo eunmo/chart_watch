@@ -48,7 +48,8 @@
 									  "AND aa.ArtistId = ar.id;";
 					
 			if (entry.artist === 'Soundtrack' ||
-					entry.artist === 'Various Artists') {
+					entry.artist === 'Various Artists' ||
+					entry.artist === 'サウンドトラック') {
 					entry.AlbumId = entry.candidateAlbums[0].id;
 					return;
 			}

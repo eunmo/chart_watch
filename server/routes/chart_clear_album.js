@@ -13,7 +13,7 @@
 				where: { type: chartName, week: date },
 			})
 			.then (function (charts) {
-				res.sendStatus (200)
+				res.sendStatus (200);
 			});
 		});
 	};

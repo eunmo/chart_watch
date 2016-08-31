@@ -16,6 +16,8 @@
 			Album.belongsToMany(models.Artist, {through: models.AlbumArtist});
 
 			Album.belongsToMany(models.Song, {through: models.AlbumSong});
+
+			Album.hasMany(models.AlbumChart);
 			
 			Album.hasMany(models.AlbumAlias);
 		};

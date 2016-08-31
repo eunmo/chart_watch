@@ -24,7 +24,9 @@
 			{{row.rank}}
 		</td>
 		<td class="td-img-list">
-			<img src="/{{row.AlbumId}}.30px.jpg" class="img-rounded img-album-up-list" ng-show="row.AlbumId">
+			<a href="#/album/{{row.AlbumId}}">
+				<img src="/{{row.AlbumId}}.30px.jpg" class="img-rounded img-album-up-list" ng-show="row.AlbumId">
+			</a>
 		</td>
 		<td>
 			{{row.artist}}
