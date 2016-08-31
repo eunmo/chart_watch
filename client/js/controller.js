@@ -909,7 +909,7 @@ musicApp.controller('StatsPlaysChartCtrl', function ($rootScope, $scope, $routeP
 	}
 	$scope.ranks[10] = { name: '11+', active: true, data: [] };
 
-	$http.get('stats/plays').success(function (data) {
+	$http.get('stats/plays-by-' + $routeParams.type).success(function (data) {
 		var i, datum, tier;
 
 		for (i in data) {
@@ -1007,7 +1007,7 @@ musicApp.controller('StatsPlaysTableCtrl', function ($rootScope, $scope, $routeP
 
 	$scope.plays[100].play = '100+';
 
-	$http.get('stats/plays').success(function (data) {
+	$http.get('stats/plays-by-' + $routeParams.type).success(function (data) {
 		var i, j, datum, rank, plays;
 
 		for (i in data) {

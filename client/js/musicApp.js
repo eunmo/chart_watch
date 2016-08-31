@@ -93,11 +93,11 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		templateUrl: '/partials/recent.html',
 		controller: 'NewSongCtrl'
 	})
-	.when('/stats/plays-table', {
+	.when('/stats/plays-table/:type', {
 		templateUrl: '/partials/stats-plays-table.html',
 		controller: 'StatsPlaysTableCtrl'
 	})
-	.when('/stats/plays-chart', {
+	.when('/stats/plays-chart/:type', {
 		templateUrl: '/partials/stats-plays-chart.html',
 		controller: 'StatsPlaysChartCtrl'
 	})
