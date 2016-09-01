@@ -634,6 +634,15 @@ musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routePara
 
 	$http.get('chart/current')
 	.success(function (chartRows) {
+		for (var i in chartRows) {
+			var row = chartRows[i];
+			var minRank = row.curRank[0];
+
+			if (minRank == 2 || minRank == 4 || minRank > 5) {
+				row.active = true;
+			}
+		}
+
 		$scope.rows = chartRows;
 	});
 
@@ -775,51 +784,6 @@ musicApp.controller('AlbumChartCtrl', function ($rootScope, $scope, $routeParams
 		$scope.updateDate(7);
 	};
 });
-
-musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
-	$scope.rows = [];
-
-	$http.get('chart/current')
-	.success(function (chartRows) {
-		$scope.rows = chartRows;
-	});
-
-	$scope.addSongs = function (index) {
-		var i;
-		var row, song;
-		var songs = [];
-		var minRank, rank;
-
-		for (i = index; i < $scope.rows.length; i++) {
-			row = $scope.rows[i];
-
-			minRank = 100;
-			for (var prop in row.rank) {
-				if (row.rank.hasOwnProperty(prop)) {
-					rank = row.rank[prop].min;
-					if (rank < minRank)
-						minRank = rank;
-				}
-			}
-
-			song = {
-				id: row.song.id,
-				title: row.song.title,
-				albumId: row.song.Albums[0].id,
-				artists: row.songArtists,
-				rank: minRank,
-				plays: row.song.plays
-			};
-			songs.push(song);
-		}
-		songService.addSongs(songs);
-	};
-
-	$scope.addChart = function () {
-		$scope.addSongs(0);
-	};
-});
-
 
 musicApp.controller('OneSongsCtrl', function ($rootScope, $scope, $http, songService) {
 	$scope.headers = [];
