@@ -37,7 +37,7 @@
 				<td>{{week.week | date: 'yyyy-MM-dd'}}</td>
 				<td ng-repeat="rank in week.ranks track by $index">
 					<span ng-show="rank > 0">
-						<a href="#/chart/{{album.charts.headers[$index]}}/{{week.week | date: 'yyyy-MM-dd'}}">{{rank}}</a>
+						<a href="#/chart/album/{{album.charts.headers[$index]}}/{{week.week | date: 'yyyy-MM-dd'}}">{{rank}}</a>
 					</span>
 				</td>
 			</tr>
