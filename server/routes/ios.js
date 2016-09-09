@@ -342,6 +342,46 @@
 			});
 		}
 
+		function getCurrentAlbums () {
+			var query = "SELECT id FROM (";
+			var songIds;
+
+			for (var i in charts) {
+				var chart = charts[i];
+				if (i > 0)
+					query += " UNION ";
+				query += "SELECT SongId as id, AlbumId, disk, track FROM AlbumSongs";
+				query += " WHERE AlbumId = (SELECT AlbumId FROM AlbumCharts";
+				query +=                  " WHERE rank = 1 and type = \"" +  chart + "\"";
+				query +=                  " AND week = (SELECT max(week) FROM AlbumCharts";
+				query +=                              " WHERE type = \"" + chart + "\"))";
+			}
+
+			query += ") a ORDER BY AlbumId, disk, track;";
+
+			return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT 
+			}).then( function (ids) {
+				songIds = ids;
+				return idToSongs(ids);
+			}).then( function (songs) {
+				var resArray = [];
+
+				for (var i in songIds) {
+					var songId = songIds[i].id;
+					for (var j in songs) {
+						var song = songs[j];
+
+						if (song.id === songId) {
+							resArray.push(song);
+							break;
+						}
+					}
+				}
+
+				return resArray;
+			});
+		}
+
 		router.get('/api/ios/fetch', function (req, res) {
 			var promises = [];
 			var result = {};
@@ -349,10 +389,21 @@
 			var unchartedLimit = req.query.uncharted;
 			var seasonalLimit = req.query.seasonal;
 
+			chartedLimit = 200;
+		 	unchartedLimit = 200;
+			seasonalLimit = 3;	
+
 			promises.push(
 				getSortedCurrentSongs()
 				.then( function (array) {
 					result.current = array;
+				})
+			);
+
+			promises.push(
+				getCurrentAlbums()
+				.then( function (array) {
+					result.album = array;
 				})
 			);
 			
