@@ -73,7 +73,7 @@
 			var album = { 
 				id: albumRow.id,
 				title: albumRow.title,
-				type: albumRow.type,
+				format: albumRow.format,
 				release: albumRow.release,
 				albumArtists: [],
 			};

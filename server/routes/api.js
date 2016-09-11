@@ -397,21 +397,21 @@
 	};
 
 	var getAlbumSummary = function (models, artists, ids) {
-		var query = "SELECT ArtistId, `type`, count(*) AS count, max(a.id) As AlbumId " +
+		var query = "SELECT ArtistId, format, count(*) AS count, max(a.id) As AlbumId " +
 								"FROM AlbumArtists aa, Albums a " +
 								"WHERE aa.ArtistId in (" + ids.toString() + ") " + 
 								"AND aa.AlbumId = a.id " + 
-								"GROUP BY aa.ArtistId, a.`type`";
+								"GROUP BY aa.ArtistId, format";
 		return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
 		.then(function (rows) {
-			var i, albumCount, id, type;
+			var i, albumCount, id, format;
 
 			for (i in rows) {
 				albumCount = rows[i];
 				id = albumCount.ArtistId;
-				type = albumCount.type;
-				if (type) {
-					artists[id].albums[type] = albumCount.count;
+				format = albumCount.format;
+				if (format) {
+					artists[id].albums[format] = albumCount.count;
 					artists[id].maxAlbum = Math.max(artists[id].maxAlbum, albumCount.AlbumId);
 				}
 			}

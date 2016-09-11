@@ -6,7 +6,7 @@
 			title: { type: DataTypes.STRING, allowNull: false },
 			titleNorm: { type: DataTypes.STRING, allowNull: false },
 			release: DataTypes.DATEONLY,
-			type: DataTypes.ENUM('Single', 'EP', 'Studio', 'Compilation'),
+			format: DataTypes.STRING,
 			genre: DataTypes.STRING
 		});
 

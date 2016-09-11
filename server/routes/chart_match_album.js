@@ -49,7 +49,8 @@
 					
 			if (entry.artist === 'Soundtrack' ||
 					entry.artist === 'Various Artists' ||
-					entry.artist === 'サウンドトラック') {
+					entry.artist === 'サウンドトラック' ||
+					entry.artist === 'MOTION PICTURE CAST RECORDING') {
 					entry.AlbumId = entry.candidateAlbums[0].id;
 					return;
 			}

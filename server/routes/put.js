@@ -315,7 +315,7 @@
 					title: input.title,
 					titleNorm: input.titleNorm,
 					release: new Date(input.releaseDate),
-					type: input.type
+					format: input.format
 				},
 				{ where: { id: id } });
 			})
