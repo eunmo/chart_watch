@@ -163,7 +163,8 @@
 				}
 			}
 
-			if (album.songs.length === albumFeatCount) {
+			if (album.songs.length === albumFeatCount &&
+					album.songs.length > 0) {
 				album.isFeat = true;
 			}
 		}

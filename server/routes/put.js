@@ -179,7 +179,7 @@
 			});
 		});
 		
-		function addAlbumArtist(albumId, artistName, order, feat) {
+		function addAlbumArtist(albumId, artistName, order) {
 			return models.Artist.findOrCreate({
 				where: { name: artistName },
 				defaults: { nameNorm: artistName }
@@ -331,6 +331,44 @@
 						res.json(albumArtistRow.ArtistId);
 					}
 				}
+			});
+		});
+		
+		function addAlbumArtistById(albumId, artistId, order) {
+			return models.AlbumArtist.findOrCreate({
+				where: { AlbumId: albumId, ArtistId: artistId },
+				defaults: { order: order }
+			});
+		}
+		
+		router.put('/api/add/album', function (req, res) {
+			var input = req.body;
+
+			models.Album.create({
+				title: input.title,
+				titleNorm: input.title,
+				release: new Date(input.releaseDate),
+				format: input.format
+			})
+			.then(function (album) {
+				var promises = [];
+				var id = album.id;
+				var i;
+
+				promises.push (addAlbumArtistById (id, input.artist, 0));
+
+				for (i in input.newSongs) {
+					promises.push (addAlbumSong (id, input.newSongs[i]));
+				}
+
+				if (input.cover !== null) {
+					promises.push (addAlbumCover (id, input.cover));
+				}
+				
+				Promise.all(promises)
+				.then(function () {
+					res.json (input.artist);
+				});
 			});
 		});
 		

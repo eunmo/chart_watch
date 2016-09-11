@@ -98,6 +98,8 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 				$scope.showFeat = false;
 		}
 
+		console.log (artist);
+
 		$scope.artist = artist;
 		$scope.loaded = true;
 	});
@@ -167,6 +169,53 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 		dl.href = '/music/' + song.id + '.mp3';
 		dl.download = song.title + '.mp3';
 		dl.click();
+	};
+});
+
+musicApp.controller('AddArtistAlbumCtrl', function ($rootScope, $scope, $routeParams, $http, $location) {
+
+	$scope.loaded = false;
+	$scope.showFeat = true;
+	$scope.album = {
+		artist: $routeParams.id,
+		title: '',
+		releaseDate: new Date(Date.UTC(2000, 0, 1)), // Jan 1st, 2000
+		newSongs: [],
+	};
+
+	$http.get('api/artist/' + $routeParams.id).success(function (artist) {
+		$scope.artist = artist;
+	});
+	
+	$scope.addSong = function () {
+		$scope.album.newSongs.push ({
+			disk: 1,
+			track: null,
+			id: null
+		});
+	};
+
+	$scope.add = function () {
+		var album = $scope.album;
+		var i;
+		album.title = album.title.replace (/\'/g, '`');
+
+		var newSongs = [];
+		for (i in album.newSongs) {
+			var newSong = album.newSongs[i];
+			if (newSong.disk !== null && newSong.track !== null && newSong.id !== null) {
+				newSongs.push (newSong);
+			}
+		}
+
+		album.newSongs = newSongs;
+
+		console.log (album);
+
+		$http.put('api/add/album', $scope.album)
+		.then(function (res) {
+			$location.url('/artist/' + res.data);
+		});
 	};
 });
 
@@ -349,9 +398,7 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 			}
 		}
 
-		if (newSongs.length > 0) {
-			album.newSongs = newSongs;
-		}
+		album.newSongs = newSongs;
 
 		for (i in album.editAliases) {
 			var alias = album.editAliases[i];
