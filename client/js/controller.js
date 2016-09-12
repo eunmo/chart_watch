@@ -181,6 +181,7 @@ musicApp.controller('AddArtistAlbumCtrl', function ($rootScope, $scope, $routePa
 		title: '',
 		releaseDate: new Date(Date.UTC(2000, 0, 1)), // Jan 1st, 2000
 		newSongs: [],
+		cover: null
 	};
 
 	$http.get('api/artist/' + $routeParams.id).success(function (artist) {
@@ -191,7 +192,7 @@ musicApp.controller('AddArtistAlbumCtrl', function ($rootScope, $scope, $routePa
 		$scope.album.newSongs.push ({
 			disk: 1,
 			track: null,
-			id: null
+			id: null,
 		});
 	};
 
@@ -209,8 +210,6 @@ musicApp.controller('AddArtistAlbumCtrl', function ($rootScope, $scope, $routePa
 		}
 
 		album.newSongs = newSongs;
-
-		console.log (album);
 
 		$http.put('api/add/album', $scope.album)
 		.then(function (res) {
