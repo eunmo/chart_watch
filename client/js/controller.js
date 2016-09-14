@@ -1238,3 +1238,15 @@ musicApp.controller('BatchCtrl', function ($rootScope, $scope, $http) {
 		$scope.run ();
 	};
 });
+
+musicApp.controller ('CompilationAlbumCtrl', function ($rootScope, $scope, $routeParams, $http) {
+
+	$scope.loaded = false;
+
+	$http.get ('api/album-compilations').success (function (albums) {
+		$scope.albums = albums;
+		$scope.loaded = true;
+
+		console.log (albums);
+	});
+});

@@ -25,6 +25,10 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		templateUrl: '/partials/add-artist-album.html',
 		controller: 'AddArtistAlbumCtrl'
 	})
+	.when('/album/compilations', {
+		templateUrl: '/partials/compilations.html',
+		controller: 'CompilationAlbumCtrl'
+	})
 	.when('/album/:id', {
 		templateUrl: '/partials/album.html',
 		controller: 'AlbumCtrl'

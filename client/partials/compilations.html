@@ -1,0 +1,19 @@
+<h1>
+	Compilations
+</h1>
+<table class="table table-hover" ng-show="loaded">
+	<tr ng-repeat="album in albums">
+		<td>
+			{{album.release | date: 'yyyy/MM/dd'}}
+		</td>
+		<td class="td-img-list">
+			<img src="/{{album.id}}.30px.jpg" class="img-rounded img-album-up-list">
+		</td>
+		<td>
+			<artist-array array="album.artists"></artist-array>
+		</td>
+		<td>
+			{{album.title | normalizeString}}
+		</td>
+	</tr>
+</table>
