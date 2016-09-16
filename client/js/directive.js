@@ -54,7 +54,8 @@ musicApp.directive('rankBadge', function () {
 			run: '=?run',
 			prefix: '=prefix',
 			showMin: '=?showMin',
-			song: '=song'
+			song: '=song',
+			detailedSong: '=detailedSong'
 		},
 		compile: function() {
 			return {
@@ -78,6 +79,25 @@ musicApp.directive('rankBadge', function () {
 						scope.showCount = true;
 						scope.min = scope.song.rank;
 						scope.count = scope.song.plays;
+						scope.style = { "background-color" : "#777" };
+					} else if (scope.detailedSong && scope.detailedSong.plays) {
+						scope.show = true;
+						scope.showCount = true;
+
+						var song = scope.detailedSong;
+						var rank, min = 100;
+						for (var prop in song.rank) {
+							if (song.rank.hasOwnProperty(prop)) {
+								rank = song.rank[prop].min;
+								if (rank < min)
+									min = rank;
+							}
+						}
+
+						if (min < 10)
+							scope.min = min;
+
+						scope.count = song.plays;
 						scope.style = { "background-color" : "#777" };
 					}	else if (scope.count) {
 						scope.show = true;

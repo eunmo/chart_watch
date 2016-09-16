@@ -4,7 +4,8 @@
 <table class="table table-hover">
 	<tr ng-repeat="song in rows">
 		<td>
-			{{song.lastPlayed | date: 'MM/dd@hh:mma'}}
+			<span class="visible-xs-inline">{{song.lastPlayed | date: 'HH:mm'}}</span>
+			<span class="hidden-xs">{{song.lastPlayed | date: 'MM/dd@hh:mma'}}</span>
 		</td>
 		<td class="td-img-list">
 			<img src="/{{song.albumId}}.30px.jpg" class="img-rounded img-album-up-list">
@@ -19,14 +20,19 @@
 		<td>
 			{{song.title | normalizeString}}
 			<span class="pull-right song-desc-right">
-				<rank-badge rank="song.rank.billboard" prefix="'US'"></rank-badge>
-				<rank-badge rank="song.rank.oricon" prefix="'オ'"></rank-badge>
-				<rank-badge rank="song.rank.deutsche" prefix="'D'"></rank-badge>
-				<rank-badge rank="song.rank.uk" prefix="'UK'"></rank-badge>
-				<rank-badge rank="song.rank.francais" prefix="'F'"></rank-badge>
-				<rank-badge rank="song.rank.melon" prefix="'M'"></rank-badge>
-				<rank-badge rank="song.rank.gaon" prefix="'G'"></rank-badge>
-				<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>
+				<span class="hidden-xs">
+					<rank-badge rank="song.rank.billboard" prefix="'US'"></rank-badge>
+					<rank-badge rank="song.rank.oricon" prefix="'オ'"></rank-badge>
+					<rank-badge rank="song.rank.deutsche" prefix="'D'"></rank-badge>
+					<rank-badge rank="song.rank.uk" prefix="'UK'"></rank-badge>
+					<rank-badge rank="song.rank.francais" prefix="'F'"></rank-badge>
+					<rank-badge rank="song.rank.melon" prefix="'M'"></rank-badge>
+					<rank-badge rank="song.rank.gaon" prefix="'G'"></rank-badge>
+					<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>
+				</span>
+				<span class="visible-xs-inline">
+					<rank-badge detailed-song="song"></rank-badge>
+				</span>
 			</span>
 		</td>
 	</tr>

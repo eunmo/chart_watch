@@ -22,6 +22,19 @@ h1.shuffle {
 	margin-bottom: -7px;
 }
 
+.recent-artists {
+	max-width: 100px;
+	height: 20px;
+}
+
+.recent-artist-list {
+	display: inline-block;
+	max-width: 100px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 @media only screen and (min-width: 768px) {
 	a.initial {
 		padding: 25px;
@@ -29,6 +42,19 @@ h1.shuffle {
 
 	img.artist-album-image {
 		margin-top: 20px;
+	}
+
+	.recent-artists {
+		max-width: 200px;
+		height: 20px;
+	}
+
+	.recent-artist-list {
+		display: inline-block;
+		max-width: 200px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 }
 
@@ -164,20 +190,6 @@ h1.shuffle {
 
 .ones-week {
 	width: 40px;
-}
-
-.recent-artists {
-	width: 200px;
-	height: 20px;
-}
-
-.recent-artist-list {
-	display: inline-block;
-	width: 200px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	font-size: 14px;
 }
 
 .up-next-artists {
