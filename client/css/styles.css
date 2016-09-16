@@ -1,5 +1,5 @@
 body {
-	font-family: 'Noto Sans', 'Noto Sans CJK KR', 'Noto Sans JP',	나눔고딕, sans-serif;
+	font-family: 'Noto Sans', 'Noto Sans CJK KR', 'Noto Sans JP',	나눔고딕, AppleSDGothicNeo-Regular, sans-serif;
 }
 
 .initial {
@@ -19,7 +19,7 @@ h1.initial {
 h1.shuffle {
 	margin: 0px;
 	margin-top: 2px;
-	margin-bottom: -5px;
+	margin-bottom: -7px;
 }
 
 @media only screen and (min-width: 768px) {
