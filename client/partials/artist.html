@@ -1,116 +1,112 @@
-<div ng-show="loaded">
-	<div>
-		<h1>
-			{{artist.name | normalizeString}}
-			<small>
-				{{artist.gender}}
-				{{artist.type | artistType}}
-				<span ng-show="artist.origin">from </span>{{artist.origin}}
-				{{artist.albums.length | numAlbums}}
-			</small>
-			<div class="btn-group pull-right">
-				<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"
-					data-toggle="dropdown" aria-expanded="false">
-					<span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu dropdown-menu-right dropdown-song" role="menu">
-					<li role="presentation"><a href="#/edit/artist/{{artist.id}}">Edit artist</a></li>
-					<li role="presentation" ng-show="artist.hasFeat && showFeat"><a ng-click="hideFeatures()">Hide Features</a></li>
-					<li role="presentation" ng-show="artist.hasFeat && !showFeat"><a ng-click="showFeatures()">Show Features</a></li>
-					<li role="presentation"><a href="#/add/artist-album/{{artist.id}}">Add album</a></li>
-				</ul>
-			</div>
-		</h1>
-		<h2 ng-show="artist.groups.length + artist.members.length">
-			<span ng-show="artist.groups.length">
-				<small>Part of</small>
-				<artist-array array="artist.groups"></artist-array>
-			</span>
-			<span ng-show="artist.members.length">
-				<small>Includes</small>
-				<artist-array array="artist.members"></artist-array>
-			</span>
-		</h2>
+<h1>
+	{{artist.name | normalizeString}}
+	<div class="btn-group pull-right">
+		<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"
+			data-toggle="dropdown" aria-expanded="false">
+			<span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu dropdown-menu-right dropdown-song" role="menu">
+			<li role="presentation"><a href="#/edit/artist/{{artist.id}}">Edit artist</a></li>
+			<li role="presentation" ng-show="artist.hasFeat && showFeat"><a ng-click="hideFeatures()">Hide Features</a></li>
+			<li role="presentation" ng-show="artist.hasFeat && !showFeat"><a ng-click="showFeatures()">Show Features</a></li>
+			<li role="presentation"><a href="#/add/artist-album/{{artist.id}}">Add album</a></li>
+		</ul>
 	</div>
-	<table class="table" ng-repeat="album in artist.albums | orderBy : 'release' : true" ng-hide="!showFeat && album.isFeat">
-		<tr>
-			<td class="td-img">
-				<img src="/{{album.id}}.jpg" class="img-rounded img-album">
-			</td>
-			<td>
-				<h3>
-					<span ng-click="addAlbum(album)">{{album.title | normalizeString}}</span>
-					<small>{{album.format}}</small>
-					<span class="pull-right album-desc-right">
-						<rank-badge rank="album.rank.billboard" prefix="'US'"></rank-badge>
-						<rank-badge rank="album.rank.oricon" prefix="'オ'"></rank-badge>
-						<rank-badge rank="album.rank.deutsche" prefix="'D'"></rank-badge>
-						<rank-badge rank="album.rank.uk" prefix="'UK'"></rank-badge>
-						<rank-badge rank="album.rank.francais" prefix="'F'"></rank-badge>
-						<rank-badge rank="album.rank.gaon" prefix="'G'"></rank-badge>
-						<div class="btn-group">
-							<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"
-								data-toggle="dropdown" aria-expanded="false">
-								<span class="caret"></span>
-							</button>
-							<ul class="dropdown-menu dropdown-menu-right dropdown-song" role="menu">
-								<li role="presentation"><a ng-click="addNextAlbum(album)">Play next</a></li>
-								<li role="presentation"><a href="#/edit/album/{{album.id}}">Edit album</a></li>
-								<li role="presentation"><a href="#/album/{{album.id}}">Details</a></li>
-							</ul>
-						</div>
-					</span>
-				</h3>
-				<h4>
-					<small>by</small>
-					<artist-array array="album.albumArtists"></artist-array>
-					<small class="pull-right">{{album.release | date}}</small>
-				</h4>
-				<table class="table table-hover">
-					<tr	ng-repeat="song in album.songs">
-						<td>
-							<div class="song-desc">
-								<span class="song-desc-title" ng-click="addSong(song, album)">
-									<span class="song-track"><span ng-show="album.maxDisk > 1">{{song.disk}}-</span>{{song.track}}</span>
-									{{song.title | normalizeString}}
-								</span>
-								<span class="pull-right song-desc-right">
-									<rank-badge rank="song.rank.billboard" prefix="'US'"></rank-badge>
-									<rank-badge rank="song.rank.oricon" prefix="'オ'"></rank-badge>
-									<rank-badge rank="song.rank.deutsche" prefix="'D'"></rank-badge>
-									<rank-badge rank="song.rank.uk" prefix="'UK'"></rank-badge>
-									<rank-badge rank="song.rank.francais" prefix="'F'"></rank-badge>
-									<rank-badge rank="song.rank.melon" prefix="'M'"></rank-badge>
-									<rank-badge rank="song.rank.gaon" prefix="'G'"></rank-badge>
-									<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>
-									<div class="btn-group">
-										<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"
-											data-toggle="dropdown" aria-expanded="false">
-											<span class="caret"></span>
-										</button>
-										<ul class="dropdown-menu dropdown-menu-right dropdown-song" role="menu">
-											<li role="presentation"><a ng-click="addNext(song, album)">Play next</a></li>
-											<li role="presentation"><a href="#/edit/song/{{song.id}}">Edit song</a></li>
-											<li role="presentation"><a href="#/song/{{song.id}}">Details</a></li>
-											<li role="presentation"><a ng-click="download(song)">Download</a></li>
-										</ul>
-									</div>
-								</span>
+	<br class="visible-xs-block">
+	<small>
+		{{artist.gender}}
+		{{artist.type | artistType}}
+		<span ng-show="artist.origin">from </span>{{artist.origin}}
+		{{artist.albums.length | numAlbums}}
+	</small>
+</h1>
+<h2 ng-show="artist.groups.length + artist.members.length">
+	<span ng-show="artist.groups.length">
+		<small>Part of</small>
+		<artist-array array="artist.groups"></artist-array>
+	</span>
+	<span ng-show="artist.members.length">
+		<small>Includes</small>
+		<artist-array array="artist.members"></artist-array>
+	</span>
+</h2>
+<div class="row" ng-repeat="album in artist.albums | orderBy : 'release' : true" ng-hide="!showFeat && album.isFeat">
+	<div class="col-xs-12 col-sm-4">
+		<img src="/{{album.id}}.jpg" class="img-rounded img-responsive center-block artist-album-image">
+	</div>
+	<div class="col-xs-12 col-sm-8">
+		<h3>
+			<span ng-click="addAlbum(album)">{{album.title | normalizeString}}</span>
+			<small>{{album.format}}</small>
+			<span class="pull-right album-desc-right">
+				<rank-badge rank="album.rank.billboard" prefix="'US'"></rank-badge>
+				<rank-badge rank="album.rank.oricon" prefix="'オ'"></rank-badge>
+				<rank-badge rank="album.rank.deutsche" prefix="'D'"></rank-badge>
+				<rank-badge rank="album.rank.uk" prefix="'UK'"></rank-badge>
+				<rank-badge rank="album.rank.francais" prefix="'F'"></rank-badge>
+				<rank-badge rank="album.rank.gaon" prefix="'G'"></rank-badge>
+				<div class="btn-group">
+					<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"
+						data-toggle="dropdown" aria-expanded="false">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu dropdown-menu-right dropdown-song" role="menu">
+						<li role="presentation"><a ng-click="addNextAlbum(album)">Play next</a></li>
+						<li role="presentation"><a href="#/edit/album/{{album.id}}">Edit album</a></li>
+						<li role="presentation"><a href="#/album/{{album.id}}">Details</a></li>
+					</ul>
+				</div>
+			</span>
+		</h3>
+		<h4>
+			<small>by</small>
+			<artist-array array="album.albumArtists"></artist-array>
+			<small class="pull-right">{{album.release | date}}</small>
+		</h4>
+		<table class="table table-hover">
+			<tr	ng-repeat="song in album.songs">
+				<td>
+					<div class="song-desc">
+						<span class="song-desc-title" ng-click="addSong(song, album)">
+							<span class="song-track"><span ng-show="album.maxDisk > 1">{{song.disk}}-</span>{{song.track}}</span>
+							{{song.title | normalizeString}}
+						</span>
+						<span class="pull-right song-desc-right">
+							<rank-badge rank="song.rank.billboard" prefix="'US'"></rank-badge>
+							<rank-badge rank="song.rank.oricon" prefix="'オ'"></rank-badge>
+							<rank-badge rank="song.rank.deutsche" prefix="'D'"></rank-badge>
+							<rank-badge rank="song.rank.uk" prefix="'UK'"></rank-badge>
+							<rank-badge rank="song.rank.francais" prefix="'F'"></rank-badge>
+							<rank-badge rank="song.rank.melon" prefix="'M'"></rank-badge>
+							<rank-badge rank="song.rank.gaon" prefix="'G'"></rank-badge>
+							<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>
+							<div class="btn-group">
+								<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"
+									data-toggle="dropdown" aria-expanded="false">
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu dropdown-menu-right dropdown-song" role="menu">
+									<li role="presentation"><a ng-click="addNext(song, album)">Play next</a></li>
+									<li role="presentation"><a href="#/edit/song/{{song.id}}">Edit song</a></li>
+									<li role="presentation"><a href="#/song/{{song.id}}">Details</a></li>
+									<li role="presentation"><a ng-click="download(song)">Download</a></li>
+								</ul>
 							</div>
-							<div ng-show="{{song.artists.length}}">
-								<span class="song-track"></span>
-								<small>by</small>
-								<artist-array array="song.artists"></artist-array>
-							</div>
-							<div ng-show="{{song.features.length}}">
-								<span class="song-track"></span>
-								<small>Feat.</small>
-								<artist-array array="song.features"></artist-array>
-							</div>
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-	</table>
+						</span>
+					</div>
+					<div ng-show="{{song.artists.length}}">
+						<span class="song-track"></span>
+						<small>by</small>
+						<artist-array array="song.artists"></artist-array>
+					</div>
+					<div ng-show="{{song.features.length}}">
+						<span class="song-track"></span>
+						<small>Feat.</small>
+						<artist-array array="song.features"></artist-array>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<hr>
 </div>

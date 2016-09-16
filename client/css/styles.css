@@ -26,6 +26,10 @@ h1.shuffle {
 	a.initial {
 		padding: 25px;
 	}
+
+	img.artist-album-image {
+		margin-top: 20px;
+	}
 }
 
 .h2-upnext {
@@ -42,10 +46,6 @@ h1.shuffle {
 
 .img-album-up-list {
 	width: 30px;
-}
-
-.td-img {
-	width: 330px;
 }
 
 .td-img-list {
