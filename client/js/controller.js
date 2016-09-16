@@ -1088,10 +1088,19 @@ musicApp.controller('ChartMissingAlbumCtrl', function ($rootScope, $scope, $rout
 	$scope.rank = $routeParams.rank;
 	$scope.type = 'No.' + $routeParams.rank + ' Albums';
 	$scope.q = "";
+	$scope.showNote = true;
 
 	$http.get('chart/missing/album/' + $routeParams.rank).success(function (data) {
 		$scope.data = data;
 	});
+
+	$scope.hide = function () {
+		$scope.showNote = false;
+	};
+
+	$scope.myFilter = function (row) {
+		return $scope.showNote || row.note === null;
+	};
 });
 
 musicApp.controller('ChartMissingAlbumYearCtrl', function ($rootScope, $scope, $routeParams, $http) {
@@ -1267,4 +1276,50 @@ musicApp.controller ('CompilationAlbumCtrl', function ($rootScope, $scope, $rout
 
 		console.log (albums);
 	});
+});
+
+musicApp.controller ('AddAlbumChartNoteCtrl', function ($rootScope, $scope, $http) {
+
+	$scope.notes = [];
+
+	$scope.newNote = function () {
+		$scope.notes.push({
+			artist: null,
+			title: null,
+			note: null
+		});
+	};
+
+	$scope.newNote();
+
+	$scope.newAlbum = function (note) {
+		var index = note.artist.indexOf('\t');
+
+		console.log (index);
+
+		if (index !== -1) {
+			note.title = note.artist.substr (index + 1).trim ();
+			note.artist = note.artist.substr (0, index).trim ();
+		}
+	};
+
+	$scope.submit = function () {
+		var notes = [];
+		var note;
+
+		for (var i in $scope.notes) {
+			note = $scope.notes[i];
+			if (note.artist !== null && note.title !== null && note.note !== null) {
+				note.artist = note.artist.replace (/\'/g, '`');
+				note.title = note.title.replace (/\'/g, '`');
+				notes.push (note);
+			}
+		}
+
+		$http.put ('api/add/album-chart-note', notes)
+		.then (function (res) {
+			$scope.notes = [];
+			$scope.newNote();
+		});
+	};
 });

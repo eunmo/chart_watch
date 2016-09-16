@@ -2,6 +2,7 @@
 	<span ng-click="refresh()">Missing {{type}}</span>
 	<small>
 		<input type="search" ng-model="q" />
+		<button class="btn btn-default pull-right" ng-click="hide()">Hide notes</button>
 	</small>
 </h1>
 <table class="table table-hover">
@@ -13,8 +14,9 @@
 		<th>Chart</th>
 		<th>Name</th>
 		<th>Title</th>
+		<th ng-show="showNote">Note</th>
 	</tr>
-	<tr ng-repeat="song in data | filter : q">
+	<tr ng-repeat="song in data | filter : q | filter : myFilter">
 		<td>
 			{{$index + 1}}
 		</td>
@@ -35,6 +37,11 @@
 		</td>
 		<td>
 			{{song.title | normalizeString}}
+		</td>
+		<td ng-show="showNote">
+			<span class="label label-danger" ng-show="song.note">
+				{{song.note}}
+			</span>
 		</td>
 	</tr>
 </table>

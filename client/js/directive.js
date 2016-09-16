@@ -202,10 +202,13 @@ musicApp.directive('d3BarPlays', function () {
 				var maxCount = d3.max(dataSeries, function (d) { return d.count + d.offset; } );
 
 				var xMax = Math.ceil(d3.max(dataSeries, function (d) { return d.plays; }) / 10) * 10;
-				var barWidth = Math.floor(width / (xMax + 1)) - 1;
+				var barWidth = Math.floor(width / (xMax + 1));
 				var x = d3.scale.linear()
 				.range([0, width])
 				.domain([0, xMax]);
+
+				if (width >= 768)
+					barWidth -= 1;
 
 				var yMax, yTicks = [], y;
 

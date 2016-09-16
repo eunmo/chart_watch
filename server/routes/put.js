@@ -490,5 +490,26 @@
 				res.sendStatus(200);
 			});
 		});
+
+		function addAlbumChartNote (note) {
+			return models.AlbumChartNote.findOrCreate({
+				where: { artist: note.artist, title: note.title },
+				defaults: { note: note.note }
+			});
+		}
+		
+		router.put ('/api/add/album-chart-note', function (req, res) {
+			var input = req.body;
+			var promises = [];
+
+			for (var i in input) {
+				promises.push (addAlbumChartNote (input[i]));
+			}
+
+			Promise.all (promises)
+			.then (function () {
+				res.sendStatus(200);
+			});
+		});
 	};
 }());
