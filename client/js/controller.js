@@ -2,9 +2,16 @@ musicApp.controller('InitialCtrl', function ($rootScope, $scope, $http, songServ
  
   $scope.initials = [];
 
-	$scope.initials.push.apply($scope.initials, '가나다라마바사아자차카타파하'.split(''));
-	$scope.initials.push.apply($scope.initials, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
-	$scope.initials.push('0-9');
+	var initials = '가나다라마바사아자차카타파하ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	var split = initials.split('');
+	var initial;
+
+	for (var i in split) {
+		initial = split[i];
+		$scope.initials.push ({ name: initial, link: initial });
+	}
+
+	$scope.initials.push ({ name: '#', link: '0-9' });
 });
 
 musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routeParams, $http) {

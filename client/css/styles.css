@@ -3,24 +3,29 @@ body {
 }
 
 .initial {
-	padding: 15px;
-}
-
-.btn-initial {
 	padding: 0px;
-	border: 7px solid;
-	border-radius: 20px;
 }
 
-.h1-initial {
+a.initial {
 	padding: 10px;
-	margin: 10px;
+	background-color: #f9f9f9;
+	border: 3px solid #fff;
 }
 
-.h1-shuffle {
-	padding: 10px;
-	margin: 10px;
-	margin-bottom: 7px;
+h1.initial {
+	margin: 0px;
+}
+
+h1.shuffle {
+	margin: 0px;
+	margin-top: 2px;
+	margin-bottom: -5px;
+}
+
+@media only screen and (min-width: 768px) {
+	a.initial {
+		padding: 25px;
+	}
 }
 
 .h2-upnext {
