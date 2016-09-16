@@ -690,10 +690,21 @@ musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routePara
 		for (var i in chartRows) {
 			var row = chartRows[i];
 			var minRank = row.curRank[0];
+			row.sum = { min: minRank };
 
 			if (minRank == 2 || minRank == 4 || minRank > 5) {
 				row.active = true;
 			}
+
+			var rank;
+			for (var prop in row.rank) {
+				if (row.rank.hasOwnProperty(prop)) {
+					rank = row.rank[prop].min;
+					if (rank < minRank)
+						minRank = rank;
+				}
+			}
+			row.song.rank = minRank;
 		}
 
 		$scope.rows = chartRows;
