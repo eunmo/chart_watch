@@ -273,33 +273,8 @@
 			});
 		}
 
-		function getSeasonalWeeks () {
-			var date = new Date();
-			var dates = "";
-			var mm = date.getMonth();
-			var dd = date.getDate();
-			var append = false;
-
-			for (var yy = date.getFullYear() - 1; yy >= 2000; yy--) {
-				date = new Date(Date.UTC(yy, mm, dd));
-				date.setDate(date.getDate() + (6 - date.getDay()));
-				console.log(date);
-				
-				if (append) {
-					dates += ",";
-				}
-
-				dates += "'" + date.getFullYear() +
-					"-" + (date.getMonth() + 1) +
-					"-" + date.getDate() + "'";
-				append = true;
-			}
-
-			return dates;
-		}
-
 		function getSeasonal (limit) {
-			var weeks = getSeasonalWeeks();
+			var weeks = common.getSeasonalWeeks(new Date());
 			var queryString =
 				"SELECT week, SongId " +
 				"FROM SongCharts " +

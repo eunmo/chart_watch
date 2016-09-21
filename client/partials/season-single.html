@@ -1,0 +1,45 @@
+<h1>
+	Singles of the day
+</h1>
+<div ng-repeat="week in weeks | orderBy: '-week'">
+	<h2>
+		{{ week.week | date }}
+	</h2>
+<table class="table table-hover table-bordered table-condensed">
+	<tr>
+		<th ng-repeat="chart in charts">
+			<a href="#/chart/{{chart}}/{{week.week | date: 'yyyy-MM-dd'}}">{{chart}}</a>
+		</th>
+	</tr>
+	<tr ng-repeat="songRow in week.songs">
+		<td ng-repeat="song in songRow track by $index">
+			<div class="media" ng-show="song.id">
+				<a class="media-left" ng-click="addNext(song)">
+					<img src="/{{song.albumId}}.40px.jpg" class="img-rounded img-album-up-next">
+				</a>
+				<div class="media-body media-body-ones">
+					<div class="media-desc-ones" ng-click="addSong(song)">
+						<span class="song-desc-up-ones">{{song.title | normalizeString}}</span>
+					</div>
+					<div class="media-desc-ones">
+						<span class="song-desc-up-ones"><artist-array array="song.artists"></artist-array></span>
+					</div>
+				</div>
+			</div>
+			<div class="media media-ones" ng-hide="song.id">
+				<a class="media-left" ng-click="addNext(song)">
+					<img src="/0.jpg" class="img-rounded img-album-up-next">
+				</a>
+				<div class="media-body media-body-ones">
+					<div class="media-desc-ones">
+						<span class="song-desc-up-ones">{{song.title | normalizeString}}</span>
+					</div>
+					<div class="media-desc-ones">
+						<span class="song-desc-up-ones">{{song.artist | normalizeString}}</span>
+					</div>
+				</div>				
+			</div>
+		</td>
+	</td>
+</table>
+</div>

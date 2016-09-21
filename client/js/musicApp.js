@@ -117,6 +117,10 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		templateUrl: '/partials/ios.html',
 		controller: 'IOSCtrl'
 	})
+	.when('/season/single', {
+		templateUrl: '/partials/season-single.html',
+		controller: 'SeasonSingleCtrl'
+	})
 	.when('/blank', {
 		templateUrl: '/partials/blank.html',
 	})

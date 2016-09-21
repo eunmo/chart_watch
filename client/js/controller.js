@@ -1351,3 +1351,54 @@ musicApp.controller ('IOSCtrl', function ($rootScope, $scope, $routeParams, $htt
 		$scope.loaded = true;
 	});
 });
+
+musicApp.controller ('SeasonSingleCtrl', function ($rootScope, $scope, $routeParams, $http) {
+
+	var limit = 3;
+
+	$scope.loaded = false;
+	$scope.charts = [];
+	$scope.weeks = [];
+
+	$http.get ('api/season').success (function (data) {
+		var songs = [];
+		var i, j, k;
+		var song;
+
+		for (i in data.songs) {
+			song = data.songs[i];
+			songs[song.id] = song;
+		}
+
+		var weekRow, week;
+		
+		for (i in data.weeks) {
+			weekRow = data.weeks[i];
+			week = { week: weekRow.week, songs: [] };
+				
+			for (k = 0; k < limit; k++) {
+				week.songs[k] = [];
+			}
+	
+			for (j in weekRow.songs) {
+				for (k = 0; k < limit; k++) {
+					song = weekRow.songs[j][k];
+
+					if (song === null || song === undefined) {
+						week.songs[k][j] = {};
+					}
+					else {
+						week.songs[k][j] = songs[song];
+					}
+				}
+			}
+
+			$scope.weeks.push (week);
+		}
+
+		console.log (data);
+		console.log ($scope.weeks);
+		$scope.charts = data.charts;
+		$scope.loaded = true;
+	});
+});

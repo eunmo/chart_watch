@@ -97,6 +97,28 @@
 		},
 		weekToNum: function (week) {
 			return week.getFullYear() * 10000 + week.getMonth() * 100 + week.getDate();
+		},
+		getSeasonalWeeks: function (date) {
+			var dates = "";
+      var mm = date.getMonth();
+      var dd = date.getDate();
+      var append = false;
+
+      for (var yy = date.getFullYear() - 1; yy >= 2000; yy--) {
+        date = new Date(Date.UTC(yy, mm, dd));
+        date.setDate(date.getDate() + (6 - date.getDay()));
+
+        if (append) {
+          dates += ",";
+        }
+
+        dates += "'" + date.getFullYear() +
+          "-" + (date.getMonth() + 1) +
+          "-" + date.getDate() + "'";
+        append = true;
+      }
+
+      return dates;
 		}
 	};
 }());
