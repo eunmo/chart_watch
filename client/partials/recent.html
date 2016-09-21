@@ -5,7 +5,7 @@
 	<tr ng-repeat="song in rows">
 		<td>
 			<span class="visible-xs-inline">{{song.lastPlayed | date: 'HH:mm'}}</span>
-			<span class="hidden-xs">{{song.lastPlayed | date: 'MM/dd@hh:mma'}}</span>
+			<span class="hidden-xs">{{song.lastPlayed | date: 'MM/dd hh:mma'}}</span>
 		</td>
 		<td class="td-img-list">
 			<img src="/{{song.albumId}}.30px.jpg" class="img-rounded img-album-up-list">

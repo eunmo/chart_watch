@@ -113,6 +113,10 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		templateUrl: '/partials/add-album-chart-note.html',
 		controller: 'AddAlbumChartNoteCtrl'
 	})
+	.when('/ios', {
+		templateUrl: '/partials/ios.html',
+		controller: 'IOSCtrl'
+	})
 	.when('/blank', {
 		templateUrl: '/partials/blank.html',
 	})

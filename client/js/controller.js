@@ -915,7 +915,7 @@ musicApp.controller('NewSongCtrl', function ($rootScope, $scope, $http) {
 	$scope.title = 'Added';
 
 	$scope.refresh = function () {
-		$http.get('api/newSongs/100')
+		$http.get('api/newSongs/200')
 		.success(function (lastPlayed) {
 			$scope.rows = lastPlayed;
 		});
@@ -1273,8 +1273,6 @@ musicApp.controller ('CompilationAlbumCtrl', function ($rootScope, $scope, $rout
 	$http.get ('api/album-compilations').success (function (albums) {
 		$scope.albums = albums;
 		$scope.loaded = true;
-
-		console.log (albums);
 	});
 });
 
@@ -1322,4 +1320,34 @@ musicApp.controller ('AddAlbumChartNoteCtrl', function ($rootScope, $scope, $htt
 			$scope.newNote();
 		});
 	};
+});
+
+musicApp.controller ('IOSCtrl', function ($rootScope, $scope, $routeParams, $http) {
+
+	$scope.loaded = false;
+	$scope.sections = [];
+
+	$http.get ('api/ios/fetch').success (function (data) {
+		$scope.sections.push ({ name: 'Current', songs: data.current });
+		$scope.sections.push ({ name: 'Album', songs: data.album });
+		$scope.sections.push ({ name: 'Seasonal', songs: data.seasonal });
+		$scope.sections.push ({ name: 'Charted', songs: data.charted });
+		$scope.sections.push ({ name: 'Uncharted', songs: data.uncharted });
+
+		var total = 0;
+		var songs = [];
+		var i, j;
+		for (i in $scope.sections) {
+			for (j in $scope.sections[i].songs) {
+				songs[$scope.sections[i].songs[j].id] = 1;
+			}
+		}
+
+		for (i in songs) {
+			total++;
+		}
+
+		$scope.total = total;
+		$scope.loaded = true;
+	});
 });
