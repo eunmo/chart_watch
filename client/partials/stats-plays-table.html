@@ -3,13 +3,13 @@
 		<td>
 			<b>{{play.play}}</b>
 		</td>
+		<td>
+			<b>{{play.cumul[10]}}</b>
+		</td>
 		<td ng-repeat="rank in play.rank track by $index">
 			<span ng-show="rank">
 				{{rank}}
 			</span>
-		</td>
-		<td>
-			<b>{{play.cumul[10]}}</b>
 		</td>
 	</tr>
 </table>

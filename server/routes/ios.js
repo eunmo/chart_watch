@@ -366,7 +366,7 @@
 
 			chartedLimit = 200;
 		 	unchartedLimit = 200;
-			seasonalLimit = 3;	
+			seasonalLimit = 2;
 
 			promises.push(
 				getSortedCurrentSongs()

@@ -11,10 +11,27 @@ my $yy = $ARGV[0];
 my $mm = $ARGV[1];
 my $dd = $ARGV[2];
 
+my $od = DateTime->new( year => $yy, month => $mm, day => $dd );
 my $ld = DateTime->new( year => $yy, month => $mm, day => $dd )
 								 ->truncate( to => 'week' )
 								 ->add( weeks => 2);
+my $od_ymd = $od->ymd('');
 my $ld_ymd = $ld->ymd();
+
+if ($od_ymd == '20000101' ||
+	  $od_ymd == '20001230' ||
+	  $od_ymd == '20011229' ||
+	  $od_ymd == '20021228' ||
+	  $od_ymd == '20031227' ||
+	  $od_ymd == '20050101' ||
+	  $od_ymd == '20051231' ||
+	  $od_ymd == '20061230' ||
+	  $od_ymd == '20071229' ||
+	  $od_ymd == '20081227' ||
+	  $od_ymd == '20100102') {
+	print "[]";
+	exit;
+}
 
 my $rank = 1;
 my $count;
