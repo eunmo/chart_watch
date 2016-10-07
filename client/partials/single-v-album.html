@@ -1,0 +1,18 @@
+<table class="table table-bordered">
+	<tr>
+		<th>
+			Album<span class="pull-right">Single</span>
+		</th>
+		<th ng-repeat="s in arr" class="text-right">
+			{{$index + 1}}
+		</th>
+	</tr>
+	<tr ng-repeat="s in arr" class="text-right">
+		<th class="text-right">
+			{{$index + 1}}
+		</td>
+		<td ng-repeat="a in s track by $index">
+			{{a}}
+		</td>
+	</tr>
+</table>

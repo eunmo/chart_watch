@@ -1402,3 +1402,35 @@ musicApp.controller ('SeasonSingleCtrl', function ($rootScope, $scope, $routePar
 		$scope.loaded = true;
 	});
 });
+
+musicApp.controller ('SingleVAlbumCtrl', function ($rootScope, $scope, $routeParams, $http) {
+
+	$scope.arr = [];
+
+	$http.get ('chart/single_v_album').success (function (data) {
+		var arr = [];
+		var i, j;
+		var row, s, a;
+
+		for (i = 0; i <= 11; i++) {
+			arr[i] = [];
+
+			for (j = 0; j <= 11; j++) {
+				arr[i][j] = 0;
+			}
+		}
+
+		for (i in data) {
+			row = data[i];
+			s = (row.s <= 10 && row.s !== null) ? row.s - 1 : 10;
+			a = (row.a <= 10 && row.a !== null) ? row.a - 1 : 10;
+
+			arr[s][a]++;
+			arr[s][11]++;
+			arr[11][a]++;
+			arr[11][11]++;
+		}
+
+		$scope.arr = arr;
+	});
+});

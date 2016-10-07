@@ -408,5 +408,63 @@
 				res.json(rows);
 			});
 		});
+
+		function query (q, result, type) {
+			return models.sequelize.query (q, { type: models.sequelize.QueryTypes.SELECT })
+			.then (function (rows) {
+				result[type] = rows;
+			});
+		}
+
+		router.get('/chart/single_v_album', function (req, res) {
+			var q1 = "SELECT a.id, min(b.rank) as rank " +
+					 		 "FROM Songs a LEFT JOIN SongCharts b ON (a.id = b.SongId)" +
+							 "GROUP BY a.id";
+			var q2 = "SELECT a.id, min(b.rank) as rank " +
+							 "FROM Albums a LEFT JOIN AlbumCharts b ON (a.id = b.AlbumId)" +
+							 "GROUP BY a.id";
+			var q3 = "SELECT SongId, AlbumId FROM AlbumSongs";
+			var result = {};
+			var promises = [];
+
+			promises.push (query (q1, result, 'q1'));
+			promises.push (query (q2, result, 'q2'));
+			promises.push (query (q3, result, 'q3'));
+
+			Promise.all (promises)
+			.then (function () {
+				var songs = [];
+				var albums = [];
+				var i, row, song, album;
+
+				for (i in result.q1) {
+					row = result.q1[i];
+					songs[row.id] = { id: row.id, s: row.rank, a: null };
+				}
+
+				for (i in result.q2) {
+					row = result.q2[i];
+					albums[row.id] = row;
+				}
+
+				for (i in result.q3) {
+					row = result.q3[i];
+					song = songs[row.SongId];
+					album = albums[row.AlbumId];
+
+					if (album.rank !== null && (song.a === null || album.rank < song.a)) {
+						song.a = album.rank;
+					}
+				}
+
+				var out = [];
+
+				for (i in songs) {
+					out.push (songs[i]);
+				}
+
+				res.json (out);
+			});
+		});
 	};
 }());
