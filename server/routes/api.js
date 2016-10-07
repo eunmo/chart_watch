@@ -541,7 +541,7 @@
 				}
 			} else if (initial.match(/0-9/)) {
 				// numbers
-				query += "nameNorm < 'a' ";
+				query += "nameNorm < '가' and not nameNorm regexp '^[A-Za-z]'";
 			} else if (initial.match(/Favorites/)) {
 				query += "favorites = true ";
 			} else {
