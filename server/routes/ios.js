@@ -364,9 +364,9 @@
 			var unchartedLimit = req.query.uncharted;
 			var seasonalLimit = req.query.seasonal;
 
-			chartedLimit = 200;
-		 	unchartedLimit = 200;
-			seasonalLimit = 2;
+			chartedLimit = 100;
+		 	unchartedLimit = 100;
+			seasonalLimit = 3;
 
 			promises.push(
 				getSortedCurrentSongs()
