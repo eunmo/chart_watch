@@ -135,6 +135,8 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	$scope.upNextLimit = 10;
 	$scope.expanded = false;
 
+	$scope.isNative = false;
+
 	$scope.initAudio = function () {
 		alert('init audio for iOS');
 		$rootScope.audios[0].init();
@@ -193,17 +195,29 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	};
 	
 	$scope.$on('handleAddNext', function () {
-		for (var i in songService.next) {
-			$scope.songs.splice(i, 0, songService.next[i]);
+		if ($scope.isNative) {
+			var songs = JSON.stringify(songService.next);
+			document.location = "js://songs" + encodeURIComponent(songs);
 		}
-		$scope.loadSong(0);
+		else {
+			for (var i in songService.next) {
+				$scope.songs.splice(i, 0, songService.next[i]);
+			}
+			$scope.loadSong(0);
+		}
 	});
 
 	$scope.$on('handleAddSong', function () {
-		for (var i in songService.songs) {
-			$scope.songs.push(songService.songs[i]);
+		if ($scope.isNative) {
+			var songs = JSON.stringify(songService.songs);
+			document.location = "js://songs" + encodeURIComponent(songs);
 		}
-		$scope.loadSong(0);
+		else {
+			for (var i in songService.songs) {
+				$scope.songs.push(songService.songs[i]);
+			}
+			$scope.loadSong(0);
+		}
 	});
 
 	$scope.removeSong = function (song) {
@@ -298,5 +312,9 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 		percent = (ratio < 0 ? 0 : (ratio > 1 ? 1 : ratio)) * 100;
 
 		$('#timeline-bar').css('width', percent + '%');
+	};
+
+	window.setNative = function () {
+		$scope.isNative = true;
 	};
 });
