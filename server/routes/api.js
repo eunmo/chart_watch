@@ -589,5 +589,28 @@
 				res.json(result);
 			});
 		});
+
+		function getTableSummary (table, summary) {
+			var query = "SELECT count(*) as count FROM " + table + ";";
+
+			return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
+				.then(function (rows) {
+					summary[table] = rows[0].count;
+				});
+		}
+		
+		router.get('/api/summary', function (req, res) {
+			var promises = [];
+			var summary = {};
+
+			promises.push (getTableSummary('Artists', summary));
+			promises.push (getTableSummary('Albums', summary));
+			promises.push (getTableSummary('Songs', summary));
+
+			Promise.all (promises)
+			.then (function () {
+				res.json (summary);
+			});
+		});
 	};
 }());

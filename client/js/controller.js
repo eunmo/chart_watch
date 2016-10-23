@@ -12,6 +12,13 @@ musicApp.controller('InitialCtrl', function ($rootScope, $scope, $http, songServ
 	}
 
 	$scope.initials.push ({ name: '#', link: '0-9' });
+
+	$scope.summaryLoaded = false;
+	
+	$http.get('api/summary').success(function (data) {
+		$scope.summaryLoaded = true;
+		$scope.summary = data;
+	});
 });
 
 musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routeParams, $http) {
