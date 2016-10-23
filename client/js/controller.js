@@ -53,7 +53,6 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
 			artist.songChartSum = [];
 			artist.songChartSum[1] = 0;
 			for (i = 1; i <= 1; i++) {
-				console.log (artist.songs[i]);
 				if (artist.songs[i] !== undefined)
 					artist.songChartSum[1] += artist.songs[i];
 				if (artist.feats[i] !== undefined)

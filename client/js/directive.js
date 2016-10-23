@@ -44,6 +44,44 @@ musicApp.directive('artistRows', function () {
 	};
 });
 
+musicApp.directive('albumImage', function () {
+	return {
+		restrict: 'E',
+		scope: {
+			albumId: '=albumId',
+			s: '=?s',
+			c: '=?c'
+		},
+		compile: function () {
+			return {
+				pre: function (scope, element, attrs) {
+					if (scope.albumId) {
+						scope.url = '/' + scope.albumId;
+						scope.xsurl = scope.url; 
+
+						if (scope.s !== undefined) {
+							s = parseInt(scope.s);
+							if (s === 30) {
+								scope.url += '.30px';
+								scope.xsurl += '.80px';
+							}	else if (s === 40) {
+								scope.url += '.40px';
+								scope.xsurl += '.80px';
+							}
+						}
+
+						scope.url += '.jpg';
+						scope.xsurl += '.jpg';
+					} else {
+						scope.url = scope.xsurl = 'null.jpg';
+					}
+				}
+			};
+		},
+		templateUrl: 'partials/album-image.html'
+	};
+});
+
 musicApp.directive('rankBadge', function () {
 	return {
 		restrict: 'E',

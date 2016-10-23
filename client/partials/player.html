@@ -2,8 +2,8 @@
 	<div class="row">
 		<div class="col-md-6 col-lg-6">
 			<div ng-repeat="song in nowPlaying">
-				<div class="td-img">
-					<img src="/{{song.albumId}}.jpg" class="img-rounded img-album center-block" ng-click="toggle()">
+				<div class="td-img" ng-click="toggle()">
+					<album-image album-id="song.albumId" c="'img-album center-block'"></album-image>
 				</div>
 				<h4 style="text-align: center">
 					{{song.title | normalizeString}}
@@ -49,7 +49,7 @@
 			<table class="table">
 				<tr ng-repeat="song in songs | limitTo: upNextLimit">
 					<td class="td-img-list">
-						<img src="/{{song.albumId}}.30px.jpg" class="img-rounded img-album-up-list">
+						<album-image album-id="song.albumId" s="30" c="'img-album-up-list'"></album-image>
 					</td>
 					<td>
 						<div class="up-next-artists">

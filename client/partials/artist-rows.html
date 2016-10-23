@@ -15,7 +15,7 @@
 	</tr>
 	<tr ng-repeat="artist in artists | orderBy:'nameNorm'">
 		<td class="td-img-list" ng-show="{{desc === 'Album' || desc === 'Single'}}">
-			<img src="/{{artist.maxAlbum}}.40px.jpg" class="img-rounded img-album-up-list">
+			<album-image album-id="artist.maxAlbum" s="30" c="'img-album-up-list'"></album-image>
 		</td>
 		<td>
 			<artist-link artist="artist"></artist-link>
