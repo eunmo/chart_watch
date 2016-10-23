@@ -326,8 +326,8 @@
 				if (i > 0)
 					query += " UNION ";
 				query += "SELECT SongId as id, AlbumId, disk, track FROM AlbumSongs";
-				query += " WHERE AlbumId = (SELECT AlbumId FROM AlbumCharts";
-				query +=                  " WHERE rank = 1 and type = \"" +  chart + "\"";
+				query += " WHERE AlbumId in (SELECT AlbumId FROM AlbumCharts";
+				query +=                  " WHERE rank <= 5 and type = \"" +  chart + "\"";
 				query +=                  " AND week = (SELECT max(week) FROM AlbumCharts";
 				query +=                              " WHERE type = \"" + chart + "\"))";
 			}
@@ -364,9 +364,9 @@
 			var unchartedLimit = req.query.uncharted;
 			var seasonalLimit = req.query.seasonal;
 
-			chartedLimit = 100;
-		 	unchartedLimit = 100;
-			seasonalLimit = 3;
+			chartedLimit = 200;
+		 	unchartedLimit = 200;
+			seasonalLimit = 5;
 
 			promises.push(
 				getSortedCurrentSongs()
