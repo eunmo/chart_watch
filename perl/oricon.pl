@@ -2,6 +2,7 @@ use LWP::Simple;
 use feature 'unicode_strings';
 use utf8;
 use Encode;
+use File::Slurp 'slurp';
 use Mojo::DOM;
 use Mojo::Collection;
 use DateTime;
@@ -16,7 +17,7 @@ my $ld = DateTime->new( year => $yy, month => $mm, day => $dd )
 								 ->truncate( to => 'week' )
 								 ->add( weeks => 2);
 my $od_ymd = $od->ymd('');
-my $ld_ymd = $ld->ymd();
+my $ld_ymd = $ld->ymd('');
 
 if ($od_ymd == '20000101' ||
 	  $od_ymd == '20001230' ||
@@ -33,42 +34,67 @@ if ($od_ymd == '20000101' ||
 	exit;
 }
 
+$count = 2;
+$count = 1 if $od_ymd < '20031122';
+
+my $you_date = $ld->ymd(' ');
+
+my $perl_dir = "/Users/eunmo/dev/chart_watch/perl";
+chdir $perl_dir;
+
+system "/bin/bash oricon.sh $you_date $count";
+my $html_dir = "$perl_dir/html";
+
 my $rank = 1;
-my $count;
 
 print "[";
 
-for (my $i = 1; $i <= 5; $i++) {
-	my $url = "http://www.oricon.co.jp/rank/js/w/$ld_ymd/p/$i/";
-	my $html = get("$url");
-	my $dom = Mojo::DOM->new($html);
+for (my $i = 1; $i <= $count; $i++) {
 
-	for my $div ($dom->find('section[class*="box-rank-entry"]')->each) {
-		my $title;
-		if ($div->find('h2[class="title"]')->first) {
-			$title = $div->find('h2[class="title"]')->first->text;
+	my $dom = Mojo::DOM->new(scalar slurp "$html_dir/$ld_ymd-$i.html");
+	my $odd = 1;
+	my $artist, $title;
+	
+	for my $a ($dom->find('table[bgcolor="#C1C1C1"]')->first->find('a')->each) {
+		if ($odd % 2) {
+			$title = normalize_title(get_text($a->text));
+		} else {
+			$artist = normalize_artist(get_text($a->text));
+			print ",\n" if $rank > 1;
+			print "{ \"rank\": $rank, \"artist\": \"$artist\", \"titles\": [";
+			$count = 1;
+			my @tokens = split(/\/|\|/, $title);
+			foreach my $token (@tokens) {
+				my $token_norm = normalize_title($token);
+				print ", " if $count > 1;	
+				print "\"$token_norm\"";
+				$count++;
+			}
+			print "]}";
+			$rank++;
 		}
-		my $artist_norm;
-		if ($div->find('p[class="name"]')->first) {
-			my $artist = $div->find('p[class="name"]')->first->text;
-			$artist_norm = normalize_artist($artist);
-		}
-		print ",\n" if $rank > 1;
-		print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\": [";
-		$count = 1;
-		my @tokens = split(/\//, $title);
-		foreach my $token (@tokens) {
-			my $token_norm = normalize_title($token);
-		  print ", " if $count > 1;	
-			print "\"$token_norm\"";
-			$count++;
-		}
-		print "]}";
-		$rank++;
+		$odd++;
 	}
 }
 
 print "]";
+
+system "rm $html_dir/$ld_ymd*";
+
+sub get_text($)
+{
+	my $s = shift;
+
+	$s = decode('shiftjis', $s);
+
+	$s =~ tr/　！＂＃＄％＆＇（）＊＋，－．／/ !"#$%&'()*+,-.\//;
+	$s =~ tr/０-９：；＜＝＞？＠Ａ-Ｚ［＼］＾/0-9:;<=>?@A-Z[\\]^/;
+	$s =~ tr/＿｀ａ-ｚ｛｜｝￠￡￢￣￤￥￦/_`a-z{|}\¢£¬¯¦¥₩/;
+	$s =~ tr/−/-/;
+	$s =~ s/�U/Ⅱ/g;
+
+	return $s;
+}
 
 sub normalize_title($)
 {
@@ -76,7 +102,7 @@ sub normalize_title($)
 
 	$string =~ s/\s+$//g;
 	$string =~ s/^\s+//g;
-	$string =~ s/[\'’]/`/g;
+	$string =~ s/[\'’"`]/`/g;
 	$string =~ s/\\/¥/g;
 
 	return $string;
@@ -88,7 +114,7 @@ sub normalize_artist($)
 
 	$string =~ s/\s+$//g;
 	$string =~ s/^\s+//g;
-	$string =~ s/[\'’]/`/g;
+	$string =~ s/[\'’"`]/`/g;
 
 	return $string;
 }

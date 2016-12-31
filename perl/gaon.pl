@@ -14,14 +14,11 @@ my $dd = $ARGV[2];
 my $date = DateTime->new( year => $yy, month => $mm, day => $dd )
 									 ->add( weeks => 1)
 									 ->add( days => 1);
-
-my $jan2 = DateTime->new( year => $yy, month => 1, day => 2)->week_number();
-my $jan4 = DateTime->new( year => $yy, month => 1, day => 4)->week_number();
-
-$date = $date->add( weeks => 1) if ($jan2 != $jan4);
+$date = $date->add( weeks => 1) if ($yy == 2010);
 
 my $year = $date->week_year();
 my $week = $date->week_number();
+$week++ if $year == 2011 && $yy == 2011;
 my $week_string = sprintf("%02d", $week);
 
 my $url = "http://www.gaonchart.co.kr/main/section/chart/online.gaon?nationGbn=T&serviceGbn=ALL&targetTime=$week_string&hitYear=$year&termGbn=week";
