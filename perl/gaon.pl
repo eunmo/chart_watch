@@ -18,6 +18,15 @@ $date = $date->add( weeks => 1) if ($yy == 2010);
 
 my $year = $date->week_year();
 my $week = $date->week_number();
+
+if ($year == 2017) {
+	if ($week == 1) {
+		$year = 2016;
+		$week = 53;
+	} else {
+		$week -= 1;
+	}
+}
 $week++ if $year == 2011 && $yy == 2011;
 my $week_string = sprintf("%02d", $week);
 

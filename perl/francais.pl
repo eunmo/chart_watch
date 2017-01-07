@@ -90,9 +90,16 @@ if (($year == 2005 && $date->month() == 3 && $date->day() == 4) ||
 
 	if ($year == 2016) {
 		$week++;
+
+		if ($week == 53) {
+			$year = 2017;
+			$week = 1;
+		}
 	}	elsif ($year == 2016 && $week == 53) {
 		$year = 2016;
 		$week = 1;
+	} elsif ($year == 2017) {
+		$week -= 1;
 	}
 	
 	my $week_string = sprintf("%02d", $week);
