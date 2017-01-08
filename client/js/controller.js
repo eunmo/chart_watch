@@ -929,148 +929,6 @@ musicApp.controller('NewSongCtrl', function ($rootScope, $scope, $http) {
 	$scope.refresh();
 });
 
-musicApp.controller('StatsPlaysChartCtrl', function ($rootScope, $scope, $routeParams, $http) {
-	$scope.rawData = [];
-	$scope.data = [];
-	$scope.ranks = [];
-	$scope.tiers = [];
-	$scope.songs = [];
-	$scope.total = { sum: 0, count: 0 };
-	$scope.allVisible = true;
-
-	for (i = 0; i < 10; i++) {
-		$scope.ranks[i] = { name: i + 1, active: true, data: [] };
-	}
-	$scope.ranks[10] = { name: '11+', active: true, data: [] };
-
-	$http.get('stats/plays-by-' + $routeParams.type).success(function (data) {
-		var i, datum, tier;
-
-		for (i in data) {
-			datum = data[i];
-			
-			if (datum.rank) {
-				if (datum.plays >= 10) {
-					tier = 0;
-				} else {
-					tier = 1;
-				}
-
-				$scope.ranks[datum.rank - 1].data.push(datum);
-			} else {
-				if (datum.plays <= 2) {
-					tier = 2;
-				} else {
-					tier = 3;
-				}
-				$scope.ranks[10].data.push(datum);
-			}
-
-			if ($scope.tiers[tier] === undefined)
-				$scope.tiers[tier] = { sum: 0, count: 0 };
-			$scope.tiers[tier].count += datum.count;
-			$scope.tiers[tier].sum += datum.count * datum.plays;
-			$scope.total.count += datum.count;
-			$scope.total.sum += datum.count * datum.plays;
-		}
-
-		$scope.rawData = data;
-		$scope.data = data;
-	});
-
-	function updateData () {
-		var i, data = [];
-		
-		$scope.allVisible = true;
-		for (i in $scope.ranks) {
-			if ($scope.ranks[i].active)
-				data = data.concat($scope.ranks[i].data);
-			else
-				$scope.allVisible = false;
-		}
-
-		$scope.data = data;
-	}
-
-	$scope.toggle = function (index) {
-		if ($scope.ranks[index]) {
-			if ($scope.ranks[index].active) {
-				$scope.ranks[index].active = false;
-			} else {
-				$scope.ranks[index].active = true;
-			}
-
-			updateData();
-		}
-	};
-
-	$scope.setAll = function (bool) {
-		var i;
-
-		for (i in $scope.ranks) {
-			$scope.ranks[i].active = bool;
-		}
-
-		updateData();
-		
-		if (!bool) {
-			$scope.selectedPlayCount = undefined;
-			$scope.songs = [];
-		}
-	};
-
-	$scope.showSongs = function (play) {
-		$http.get('api/plays/' + play).success(function (data) {
-			$scope.selectedPlayCount = play;
-			$scope.songs = data;
-		});
-	};
-});
-
-musicApp.controller('StatsPlaysTableCtrl', function ($rootScope, $scope, $routeParams, $http) {
-	$scope.rawData = [];
-	$scope.data = [];
-	$scope.plays = [];
-
-	for (var i = 0; i <= 100; i++) {
-		$scope.plays[i] = { play: i, rank: [], cumul: [] };
-		for (var j = 0; j <= 10; j++) {
-			$scope.plays[i].rank[j] = 0;
-		}
-	}
-
-	$scope.plays[100].play = '100+';
-
-	$http.get('stats/plays-by-' + $routeParams.type).success(function (data) {
-		var i, j, datum, rank, plays;
-
-		for (i in data) {
-			datum = data[i];
-
-			plays = Math.min(datum.plays, 100);
-			rank = (datum.rank !== null) ? datum.rank - 1 : 10;
-
-			$scope.plays[plays].rank[rank] += datum.count;
-		}
-
-		for (i = 0; i <= 100; i++) {
-			$scope.plays[i].cumul[0] = $scope.plays[i].rank[0];
-			for (j = 1; j <= 10; j++) {
-				$scope.plays[i].cumul[j] = $scope.plays[i].cumul[j - 1] + $scope.plays[i].rank[j];
-			}
-		}
-
-		for (i in $scope.plays) {
-			for (j in $scope.plays.rank) {
-
-			}
-		}
-
-		$scope.rawData = data;
-		$scope.data = data;
-	});
-});
-
 musicApp.controller('ChartMissingCtrl', function ($rootScope, $scope, $routeParams, $http) {
 	$scope.data = [];
 
@@ -1439,4 +1297,137 @@ musicApp.controller ('SingleVAlbumCtrl', function ($rootScope, $scope, $routePar
 
 		$scope.arr = arr;
 	});
+});
+
+musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams, $http) {
+
+	$scope.rawData = [];
+	$scope.data = [];
+	$scope.ranks = [];
+	$scope.tiers = [];
+	$scope.songs = [];
+	$scope.total = { sum: 0, count: 0 };
+	$scope.allVisible = true;
+	$scope.plays = [];
+	$scope.viewTypes = [ { name: 'Chart', active : true },
+											 { name: 'Table', active : false },
+											 { name: 'Cumul', active : false } ];
+	
+	for (i = 0; i < 10; i++) {
+		$scope.ranks[i] = { name: i + 1, active: true, data: [] };
+	}
+	$scope.ranks[10] = { name: '11+', active: true, data: [] };
+
+	for (var i = 0; i <= 100; i++) {
+		$scope.plays[i] = { play: i, rank: [], cumul: [] };
+		for (var j = 0; j <= 10; j++) {
+			$scope.plays[i].rank[j] = 0;
+		}
+	}
+
+	$scope.plays[100].play = '100+';
+
+	$http.get('stats/plays-by-' + $routeParams.type).success(function (data) {
+		var i, j, datum, tier, rank, plays;
+		
+		$scope.rawData = data;
+
+		for (i in data) {
+			datum = data[i];
+			
+			if (datum.rank) {
+				if (datum.plays >= 10) {
+					tier = 0;
+				} else {
+					tier = 1;
+				}
+
+				$scope.ranks[datum.rank - 1].data.push(datum);
+			} else {
+				if (datum.plays <= 2) {
+					tier = 2;
+				} else {
+					tier = 3;
+				}
+				$scope.ranks[10].data.push(datum);
+			}
+
+			if ($scope.tiers[tier] === undefined)
+				$scope.tiers[tier] = { sum: 0, count: 0 };
+			$scope.tiers[tier].count += datum.count;
+			$scope.tiers[tier].sum += datum.count * datum.plays;
+			$scope.total.count += datum.count;
+			$scope.total.sum += datum.count * datum.plays;
+			
+			plays = Math.min(datum.plays, 100);
+			rank = (datum.rank !== null) ? datum.rank - 1 : 10;
+
+			$scope.plays[plays].rank[rank] += datum.count;
+		}
+		
+		for (i = 0; i <= 100; i++) {
+			$scope.plays[i].cumul[0] = $scope.plays[i].rank[0];
+			for (j = 1; j <= 10; j++) {
+				$scope.plays[i].cumul[j] = $scope.plays[i].cumul[j - 1] + $scope.plays[i].rank[j];
+			}
+		}
+
+		$scope.data = data;
+	});
+
+	function updateData () {
+		var i, data = [];
+		
+		$scope.allVisible = true;
+		for (i in $scope.ranks) {
+			if ($scope.ranks[i].active)
+				data = data.concat($scope.ranks[i].data);
+			else
+				$scope.allVisible = false;
+		}
+
+		$scope.data = data;
+	}
+
+	$scope.toggleRank = function (index) {
+		if ($scope.ranks[index]) {
+			if ($scope.ranks[index].active) {
+				$scope.ranks[index].active = false;
+			} else {
+				$scope.ranks[index].active = true;
+			}
+
+			updateData();
+		}
+	};
+
+	$scope.toggleType = function (viewType) {
+		for (var i in $scope.viewTypes) {
+			$scope.viewTypes[i].active = false;
+		}
+
+		viewType.active = true;
+	};
+
+	$scope.setAllRanks = function (bool) {
+		var i;
+
+		for (i in $scope.ranks) {
+			$scope.ranks[i].active = bool;
+		}
+
+		updateData();
+		
+		if (!bool) {
+			$scope.selectedPlayCount = undefined;
+			$scope.songs = [];
+		}
+	};
+
+	$scope.showSongs = function (play) {
+		$http.get('api/plays/' + play).success(function (data) {
+			$scope.selectedPlayCount = play;
+			$scope.songs = data;
+		});
+	};
 });

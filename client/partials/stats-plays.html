@@ -1,0 +1,105 @@
+<div class="btn-group btn-group-justified">
+	<div class="btn btn-default" ng-repeat="viewType in viewTypes" ng-class="{active: viewType.active}"
+		ng-click="toggleType(viewType)">
+		{{viewType.name}}
+	</div>
+</div>
+<div ng-show="viewTypes[0].active">
+	<div id="d3-bar-plays">
+		<d3-bar-plays data='data' on-click="showSongs(play)"></d3-bar-plays>
+	</div>
+	<div class="btn-group btn-group-justified">
+		<div class="btn btn-default" ng-repeat="rank in ranks" ng-class="{active: rank.active}" ng-click="toggleRank($index)">
+			{{rank.name}}
+		</div>
+		<div class="btn btn-default" ng-show="allVisible" ng-click="setAllRanks(false)">clear</div>
+		<div class="btn btn-default" ng-hide="allVisible" ng-click="setAllRanks(true)">see all</div>
+	</div>
+	<div ng-show="tiers" ng-hide="selectedPlayCount">
+		<div ng-repeat="tier in tiers">
+			Tier {{$index + 1}}: {{tier.count}} (avg. {{tier.sum / tier.count | number:2}})
+		</div>
+		<div>Total {{total.count}} (avg. {{total.sum / total.count | number:2}})</div>
+	</div>
+</div>
+<div ng-show="viewTypes[1].active">
+	<table class="table table-bordered table-hover" ng-show="plays.length">
+		<tr ng-repeat="play in plays track by $index" class="text-right">
+			<td>
+				<b>{{play.play}}</b>
+			</td>
+			<td>
+				<b>{{play.cumul[10]}}</b>
+			</td>
+			<td ng-repeat="rank in play.rank track by $index">
+				<span ng-show="rank">
+					{{rank}}
+				</span>
+			</td>
+		</tr>
+	</table>
+</div>
+<div ng-show="viewTypes[2].active">
+	<table class="table table-bordered table-hover" ng-show="plays.length">
+		<tr>
+			<th class="text-right">Plays</th>
+			<th class="text-right">Total</th>
+			<th class="text-right">Top 5</th>
+			<th class="text-right">Top 10</th>
+			<th class="text-right"></th>
+		</tr>
+		<tr ng-repeat="play in plays track by $index" class="text-right">
+			<td>
+				<b>{{play.play}}</b>
+			</td>
+			<td>
+				<b>{{play.cumul[10]}}</b>
+			</td>
+			<td>
+				{{play.cumul[4]}}
+			</td>
+			<td>
+				{{play.cumul[9] - play.cumul[4]}}
+			</td>
+			<td>
+				{{play.rank[10]}}
+			</td>
+		</tr>
+	</table>
+</div>
+<h1 ng-show="selectedPlayCount">
+	{{songs.length | numSongsWithPlay}} with {{selectedPlayCount}} plays
+</h1>
+<table class="table table-hover" ng-show="songs.length">
+	<tr ng-repeat="song in songs">
+		<td>
+			{{$index + 1}}
+		</td>
+		<td>
+			{{song.lastPlayed | date: 'yy/MM/dd' }}
+		</td>
+		<td class="td-img-list">
+			<album-image album-id="song.albumId" s="30" c="'img-album-up-list'"></album-image>
+		</td>
+		<td>
+			<div class="recent-artists">
+				<span class="recent-artist-list">
+					<artist-array array="song.songArtists"></artist-array>
+				</span>
+			</div>
+		</td>
+		<td>
+			{{song.title | normalizeString}}
+			<span class="pull-right song-desc-right">
+				<rank-badge rank="song.rank.billboard" prefix="'US'"></rank-badge>
+				<rank-badge rank="song.rank.oricon" prefix="'オ'"></rank-badge>
+				<rank-badge rank="song.rank.deutsche" prefix="'D'"></rank-badge>
+				<rank-badge rank="song.rank.uk" prefix="'UK'"></rank-badge>
+				<rank-badge rank="song.rank.francais" prefix="'F'"></rank-badge>
+				<rank-badge rank="song.rank.melon" prefix="'M'"></rank-badge>
+				<rank-badge rank="song.rank.gaon" prefix="'G'"></rank-badge>
+				<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>
+			</span>
+		</td>
+	</tr>
+</table>

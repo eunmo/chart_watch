@@ -132,7 +132,7 @@ musicApp.directive('rankBadge', function () {
 							}
 						}
 
-						if (min < 10)
+						if (min <= 10)
 							scope.min = min;
 
 						scope.count = song.plays;
