@@ -8,9 +8,10 @@
 					<span class="caret"></span>
 				</button>
 				<ul class="dropdown-menu dropdown-menu-right dropdown-song" role="menu">
-					<li role="presentation"><a href="#/edit/album/{{album.id}}">Edit song</a></li>
+					<li role="presentation"><a href="#/edit/album/{{album.id}}">Edit</a></li>
 				</ul>
 			</div>
+			<small>{{album.format}}</small>
 		</h1>
 		<h2 ng-show="album.artists.length">
 			<span ng-show="album.artists.length">

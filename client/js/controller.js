@@ -1431,3 +1431,15 @@ musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams
 		});
 	};
 });
+
+musicApp.controller('AlbumListCtrl', function ($rootScope, $scope, $http) {
+	$scope.albums = [];
+
+	$http.get('api/all-albums').success(function (data) {
+		for (var i in data) {
+			if (data[i] !== null) {
+				$scope.albums.push (data[i]);
+			}
+		}
+	});	
+});

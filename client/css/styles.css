@@ -30,9 +30,15 @@ h1.shuffle {
 .recent-artist-list {
 	display: inline-block;
 	max-width: 100px;
-	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	overflow: hidden;
+}
+
+.ellipsis {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 @media only screen and (min-width: 768px) {
@@ -52,9 +58,9 @@ h1.shuffle {
 	.recent-artist-list {
 		display: inline-block;
 		max-width: 200px;
-		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		overflow: hidden;
 	}
 }
 

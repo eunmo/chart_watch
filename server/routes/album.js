@@ -148,5 +148,30 @@
 				res.json(out);
 			});
 		});
+		
+		router.get('/api/all-albums', function (req, res) {
+			var query = 'SELECT id, title, `release`, format FROM Albums';
+			var albums = [];
+			var album, row;
+
+			models.sequelize.query (query, { type: models.sequelize.QueryTypes.SELECT })
+			.then (function (rows) {
+				for (var i in rows) {
+					album = rows[i];
+					album.artists = [];
+					album.release = new Date(album.release);
+					albums[album.id] = album;
+				}
+				query = 'Select AlbumId, ArtistId, `order`, name FROM AlbumArtists a, Artists b where a.ArtistId = b.id';
+			
+				return models.sequelize.query (query, { type: models.sequelize.QueryTypes.SELECT });
+			}).then (function (rows) {
+				for (var i in rows) {
+					row = rows[i];
+					albums[row.AlbumId].artists[row.order] = { id: row.ArtistId, name: row.name };
+				}
+				res.json (albums);
+			});
+		});
 	};
 }());
