@@ -99,7 +99,7 @@ if (($year == 2005 && $date->month() == 3 && $date->day() == 4) ||
 		$year = 2016;
 		$week = 1;
 	} elsif ($year == 2017) {
-		$week -= 1;
+		$week += 1;
 	}
 	
 	my $week_string = sprintf("%02d", $week);
