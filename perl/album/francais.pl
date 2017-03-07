@@ -87,7 +87,7 @@ if (($year == 2005 && $date->month() == 3 && $date->day() == 4) ||
 	
 	my $week_string = sprintf("%02d", $week);
 
-	my $url = "http://www.snepmusique.com/tops-semaine/top-albums-fusionnes/?ye=$year&we=$week_string";
+	my $url = "http://www.snepmusique.com/tops-semaine/top-album-megafusion/?ye=$year&we=$week_string";
 	my $html = `curl -s "$url"`;
 	my $dom = Mojo::DOM->new($html);
 	my $rank = 1;
