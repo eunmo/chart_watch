@@ -104,7 +104,13 @@ if (($year == 2005 && $date->month() == 3 && $date->day() == 4) ||
 	
 	my $week_string = sprintf("%02d", $week);
 
-	my $url = "http://www.snepmusique.com/tops-semaine/top-singles-telecharges/?ye=$year&we=$week_string";
+	my $path = "top-singles-telecharges";
+
+	if ($year > 2017 || ($year == 2017 && $week >= 7)) {
+		$path = "top-singles-megafusion";
+	}
+
+	my $url = "http://www.snepmusique.com/tops-semaine/$path/?ye=$year&we=$week_string";
 	my $html = `curl -s "$url"`;
 	my $dom = Mojo::DOM->new($html);
 	my $rank = 1;

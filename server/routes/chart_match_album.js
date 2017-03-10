@@ -50,7 +50,8 @@
 			if (entry.artist === 'Soundtrack' ||
 					entry.artist === 'Various Artists' ||
 					entry.artist === 'サウンドトラック' ||
-					entry.artist === 'MOTION PICTURE CAST RECORDING') {
+					entry.artist === 'MOTION PICTURE CAST RECORDING' ||
+					entry.artist === 'Multi Interprètes') {
 					entry.AlbumId = entry.candidateAlbums[0].id;
 					return;
 			}
