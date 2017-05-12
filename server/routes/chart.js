@@ -241,6 +241,15 @@
 						return 'Outta Control (Remix)';
 					}
 				}
+			} else if (artistId === 5649) { // Luis Fonsi
+				var DespacitoRemixDate = new Date (2017, 3, 22); // 2017-04-22
+				if (chart === 'billboard') {
+					if (title === 'Despacito') {
+						if (date >= DespacitoRemixDate) {
+							return 'Despacito (Remix)';
+						}
+					}
+				}
 			}
 
 			return null;
