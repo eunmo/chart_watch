@@ -44,31 +44,19 @@ musicApp.directive('artistRows', function () {
 	};
 });
 
-musicApp.directive('albumImage', function () {
+musicApp.directive('imageLarge', function () {
 	return {
 		restrict: 'E',
 		scope: {
 			albumId: '=albumId',
-			s: '=?s',
 			c: '=?c'
 		},
 		compile: function () {
 			return {
 				pre: function (scope, element, attrs) {
 					if (scope.albumId) {
-						scope.url = '/' + scope.albumId;
+						scope.url = '/' + scope.albumId + '.jpg';
 						scope.xsurl = scope.url; 
-
-						if (scope.s !== undefined) {
-							s = parseInt(scope.s);
-							if (s <= 40) {
-								scope.xsurl += '.80px';
-							}
-							scope.url += '.' + s + 'px';
-						}
-
-						scope.url += '.jpg';
-						scope.xsurl += '.jpg';
 					} else {
 						scope.url = scope.xsurl = 'null.jpg';
 					}
@@ -78,6 +66,44 @@ musicApp.directive('albumImage', function () {
 		templateUrl: 'partials/album-image.html'
 	};
 });
+
+musicApp.directive('imageSmall', function () {
+	return {
+		restrict: 'E',
+		scope: {
+			albumId: '=albumId',
+			s: '=s'
+		},
+		compile: function () {
+			return {
+				pre: function (scope, element, attrs) {
+					if (scope.albumId) {
+						scope.url = '/' + scope.albumId;
+						scope.xsurl = scope.url; 
+
+						s = parseInt(scope.s);
+						if (s <= 40) {
+							scope.xsurl += '.80px';
+						}
+						scope.url += '.' + s + 'px';
+
+						scope.url += '.jpg';
+						scope.xsurl += '.jpg';
+					} else {
+						scope.url = scope.xsurl = 'null.jpg';
+					}
+
+					if (scope.s !== undefined) {
+						scope.inner = 'max-height: ' + scope.s + 'px; max-width: ' + scope.s + 'px';
+						scope.outer = 'height: ' + scope.s + 'px; width: ' + scope.s + 'px';
+					}
+				}
+			};
+		},
+		templateUrl: 'partials/image-small.html'
+	};
+});
+
 
 musicApp.directive('rankBadge', function () {
 	return {

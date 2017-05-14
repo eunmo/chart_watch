@@ -16,7 +16,7 @@
 		<td ng-repeat="song in week.songs">
 			<div class="media" ng-show="song.id">
 				<a class="media-left" ng-click="addNext(song)">
-					<album-image album-id="song.albumId" s="40" c="'img-album-up-next'"></album-image>
+					<image-small album-id="song.albumId" s="40"></image-small>
 				</a>
 				<div class="media-body media-body-ones">
 					<div class="media-desc-ones" ng-click="addSong(song)">
@@ -29,7 +29,7 @@
 			</div>
 			<div class="media media-ones" ng-show="song.extra">
 				<a class="media-left" ng-click="addNext(song)">
-					<album-image album-id="-1" s="40" c="'img-album-up-next'"></album-image>
+					<image-small album-id="-1" s="40"></image-small>
 				</a>
 				<div class="media-body media-body-ones">
 					<div class="media-desc-ones">

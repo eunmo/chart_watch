@@ -72,12 +72,8 @@ h1.shuffle {
 	width: 300px;
 }
 
-.img-album-up-next {
-	width: 40px;
-}
-
-.img-album-up-list {
-	width: 30px;
+.div-img {
+	display: inline-block;
 }
 
 .td-img-list {
