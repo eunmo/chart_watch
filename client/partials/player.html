@@ -3,7 +3,7 @@
 		<div class="col-md-6 col-lg-6">
 			<div ng-repeat="song in nowPlaying">
 				<div class="td-img" ng-click="toggle()">
-					<album-image album-id="song.albumId" c="'img-album center-block'"></album-image>
+					<image-large album-id="song.albumId" c="'img-album center-block'"></image-large>
 				</div>
 				<h4 style="text-align: center">
 					{{song.title | normalizeString}}

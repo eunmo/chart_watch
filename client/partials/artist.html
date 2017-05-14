@@ -32,7 +32,7 @@
 </h2>
 <div class="row" ng-repeat="album in artist.albums | orderBy : 'release' : true" ng-hide="!showFeat && album.isFeat">
 	<div class="col-xs-12 col-sm-4">
-		<album-image album-id="album.id" c="'img-responsive center-block artist-album-image'"></album-image>
+		<image-large album-id="album.id" c="'img-responsive center-block artist-album-image'"></image-large>
 	</div>
 	<div class="col-xs-12 col-sm-8">
 		<h3>
