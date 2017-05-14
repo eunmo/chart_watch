@@ -232,7 +232,7 @@
 		function addAlbumCover (id, url) {
 			var sizes = [80, 40, 30];
 			var imgPath = path.resolve (imageDir, id + '.jpg');
-			var execStr = 'curl ' + url + ' -o ' + imgPath + '; ';
+			var execStr = 'curl "' + url + '" -o ' + imgPath + '; ';
 
 			for (var i in sizes) {
 				var size = sizes[i];
