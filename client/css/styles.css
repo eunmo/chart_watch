@@ -246,3 +246,7 @@ h1.shuffle {
 	background: rgba(0, 0, 0, 0.8);
 	color: #fff;
 }
+
+.artist-rows-detail {
+	color: grey;
+}

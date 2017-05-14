@@ -61,13 +61,10 @@ musicApp.directive('albumImage', function () {
 
 						if (scope.s !== undefined) {
 							s = parseInt(scope.s);
-							if (s === 30) {
-								scope.url += '.30px';
-								scope.xsurl += '.80px';
-							}	else if (s === 40) {
-								scope.url += '.40px';
+							if (s <= 40) {
 								scope.xsurl += '.80px';
 							}
+							scope.url += '.' + s + 'px';
 						}
 
 						scope.url += '.jpg';

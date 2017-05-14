@@ -3,32 +3,35 @@
 	{{desc}} Artist<span ng-show="artists.length > 1">s</span>
 </h2>
 <table class="table table-hover">
-	<tr>
-		<th ng-show="{{desc === 'Album' || desc === 'Single'}}"></th>
-		<th>Name</th>
-		<th class="hidden-xs" ng-show="{{desc === 'Album'}}">Comp.</th>
-		<th class="hidden-xs" ng-show="{{desc === 'Album'}}">Studio</th>
-		<th class="hidden-xs" ng-show="{{desc === 'Album'}}">EP</th>
-		<th class="hidden-xs" ng-show="{{desc === 'Album' || desc === 'Single'}}">Single</th>
-		<th class="hidden-xs" ng-hide="{{desc === 'Other'}}" ng-repeat="song in [1,5,10]">Top {{song}} Song</th>
-		<th class="hidden-xs" ng-hide="{{desc === 'Other'}}" ng-repeat="song in [1,5,10]">Top {{song}} Album</th>
-	</tr>
 	<tr ng-repeat="artist in artists | orderBy:'nameNorm'">
-		<td class="td-img-list" ng-show="{{desc === 'Album' || desc === 'Single'}}">
-			<album-image album-id="artist.maxAlbum" s="30" c="'img-album-up-list'"></album-image>
-		</td>
 		<td>
-			<artist-link artist="artist"></artist-link>
-		</td>
-		<td class="hidden-xs" ng-show="{{desc === 'Album'}}"><span ng-show="artist.albums.Compilation">{{artist.albums.Compilation}}</span></td>
-		<td class="hidden-xs" ng-show="{{desc === 'Album'}}"><span ng-show="artist.albums.Studio">{{artist.albums.Studio}}</span></td>
-		<td class="hidden-xs" ng-show="{{desc === 'Album'}}"><span ng-show="artist.albums.EP">{{artist.albums.EP}}</span></td>
-		<td class="hidden-xs" ng-show="{{desc === 'Album' || desc === 'Single'}}"><span ng-show="artist.albums.Single">{{artist.albums.Single}}</span></td>
-		<td class="hidden-xs" ng-hide="{{desc === 'Other'}}" ng-repeat="song in [1,2,6]">
-			<rank-badge class="pull-right span-rank" min="song" show-min="false" count="artist.songChartSum[song]"></rank-badge>
-		</td>
-		<td class="hidden-xs" ng-hide="{{desc === 'Other'}}" ng-repeat="song in [1,2,6]">
-			<rank-badge class="pull-right span-rank" min="song" show-min="false" count="artist.albumChartSum[song]"></rank-badge>
+			<div class="media">
+				<a class="media-left" ng-show="artist.maxAlbum">
+					<album-image album-id="artist.maxAlbum" s="40" c="'img-album-up-next'"></album-image>
+				</a>
+				<div class="media-body">
+					<div class="media-desc-ones">
+						<artist-link artist="artist"></artist-link>
+					</div>
+					<div class="media-desc-ones artist-rows-detail">
+						<span ng-show="artist.albumCount">
+							{{artist.albumCount}} album<span ng-show="artist.albumCount > 1">s</span>
+							<span ng-show="artist.singleCount || artist.songCount || artist.chartedSongs">·</span>
+						</span>
+						<span ng-show="artist.singleCount">
+							{{artist.singleCount}} single<span ng-show="artist.singleCount > 1">s</span>
+							<span ng-show="artist.songCount || artist.chartedSongs">·</span>
+						</span>
+						<span ng-show="artist.songCount">
+							{{artist.songCount}} song<span ng-show="artist.songCount > 1">s</span>
+							<span ng-show="artist.chartedSongs">·</span>
+						</span>
+						<span ng-show="artist.chartedSongs">
+							{{artist.chartedSongs}} hit<span ng-show="artist.chartedSongs > 1">s</span>
+						</span>
+					</div>
+				</div>
+			</div>
 		</td>
 	</tr>
 </table>

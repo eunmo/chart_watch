@@ -30,59 +30,32 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
 	$scope.others = [];
 
 	$http.get('api/initial/' + $routeParams.initial).success(function (data) {
-		var i, j, count;
+		var i, j, count, artist, albumType;
 		for (i in data) {
-			var artist = data[i];
-			if (artist.albums.EP || artist.albums.Studio || artist.albums.Compilation)
+			artist = data[i];
+
+			artist.albumCount = 0;
+			artist.singleCount = 0;
+			for (albumType in artist.albums) {
+				if (albumType === 'Single') {
+					artist.singleCount += artist.albums[albumType];
+				} else {
+					artist.albumCount += artist.albums[albumType];
+				}
+			}
+
+			if (artist.albumCount > 0) {
 				$scope.albumArtists.push(artist);
-			else if (artist.albums.Single)
+			} else if (artist.singleCount > 0) {
 				$scope.singleArtists.push(artist);
-			else if (artist.songs.length > 1 || artist.feats.length > 1)
+			} else if (artist.chartedSongs > 0) {
 				$scope.chartedArtists.push(artist);
-			else
+			} else {
 				$scope.others.push(artist);
-
-			artist.albumChartSum = [];
-			artist.albumChartSum[1] = artist.albumCharts[1];
-
-			artist.albumChartSum[2] = 0;
-			for (i = 2; i <= 5; i++) {
-				if (artist.albumCharts[i] !== undefined)
-					artist.albumChartSum[2] += artist.albumCharts[i];
-			}
-
-			artist.albumChartSum[6] = 0;
-			for (i = 6; i <= 10; i++) {
-				if (artist.albumCharts[i] !== undefined)
-					artist.albumChartSum[6] += artist.albumCharts[i];
-			}
-
-			artist.songChartSum = [];
-			artist.songChartSum[1] = 0;
-			for (i = 1; i <= 1; i++) {
-				if (artist.songs[i] !== undefined)
-					artist.songChartSum[1] += artist.songs[i];
-				if (artist.feats[i] !== undefined)
-					artist.songChartSum[1] += artist.feats[i];
-			}
-
-			artist.songChartSum[2] = 0;
-			for (i = 2; i <= 5; i++) {
-				if (artist.songs[i] !== undefined)
-					artist.songChartSum[2] += artist.songs[i];
-				if (artist.feats[i] !== undefined)
-					artist.songChartSum[2] += artist.feats[i];
-			}
-
-			artist.songChartSum[6] = 0;
-			for (i = 6; i <= 10; i++) {
-				if (artist.songs[i] !== undefined)
-					artist.songChartSum[6] += artist.songs[i];
-				if (artist.feats[i] !== undefined)
-					artist.songChartSum[6] += artist.feats[i];
 			}
 		}
 		console.log ($scope.albumArtists);
+		console.log ($scope.singleArtists);
 	});
 });
 

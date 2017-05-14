@@ -419,38 +419,14 @@
 		});
 	};
 
-	var getAlbumChartSummary = function (models, artists, ids) {
+	var getChartedSongSummary = function (models, artists, ids) {
 		var idString = ids.toString();
-		var query = "SELECT ArtistId, IFNULL (rank, 0) AS rank, count(*) AS count " +
-								"FROM (" +
-											 "SELECT ArtistId, IF (min(rank) <= 10, min(rank), NULL) AS rank " +
-											 "FROM AlbumArtists a LEFT JOIN AlbumCharts c " +
-											 "ON a.AlbumId = c.AlbumId " +
-											 "WHERE a.ArtistId in (" + ids.toString() + ") " +
-											 "GROUP BY ArtistId, a.AlbumId) a " + 
-								"GROUP BY ArtistId, rank;";
-		return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
-		.then(function (rows) {
-			var i, albumCount, id;
-
-			for (i in rows) {
-				albumCount = rows[i];
-				id = albumCount.ArtistId;
-				artists[id].albumCharts[albumCount.rank] = albumCount.count;
-			}
-		});
-	};
-
-	var getSongSummary = function (models, artists, ids) {
-		var idString = ids.toString();
-		var query = "SELECT ArtistId, feat, IFNULL (rank, 0) AS rank, count(*) AS count " +
-								"FROM (" +
-											 "SELECT ArtistId, feat, sa.SongId, IF (min(rank) <= 10, min(rank), NULL) AS rank " +
-											 "FROM SongArtists sa LEFT JOIN SongCharts sc " +
-											 "ON sa.SongId = sc.SongId " +
-											 "WHERE sa.ArtistId in (" + ids.toString() + ") " +
-											 "GROUP BY ArtistId, SongId) a " + 
-								"GROUP BY ArtistId, feat, rank;";
+		var query = "SELECT ArtistId, count(distinct sa.SongId) AS count " +
+									"FROM SongArtists sa, SongCharts sc " +
+								 "WHERE sa.SongId = sc.SongId " +
+								   "AND sa.ArtistId in (" + ids.toString() + ") " +
+								   "AND sc.rank <= 10 " +
+							"GROUP BY ArtistId;";
 		return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
 		.then(function (rows) {
 			var i, songCount, id, feat;
@@ -458,13 +434,32 @@
 			for (i in rows) {
 				songCount = rows[i];
 				id = songCount.ArtistId;
-				if (songCount.feat) {
-					artists[id].feats[songCount.rank] = songCount.count;
-				} else {
-					artists[id].songs[songCount.rank] = songCount.count;
-				}
+				artists[id].chartedSongs = songCount.count;
 			}
 		});
+	};
+	
+	var getSongCount = function (models, artists, ids) {
+		var idString = ids.toString();
+		var query = "SELECT ArtistId, count(*) AS count " +
+									"FROM SongArtists sa " +
+								 "WHERE sa.ArtistId in (" + ids.toString() + ") " +
+						  "GROUP BY sa.ArtistId;";
+		return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
+		.then(function (rows) {
+			var i, songCount, id, feat;
+
+			for (i in rows) {
+				songCount = rows[i];
+				id = songCount.ArtistId;
+				artists[id].songCount = songCount.count;
+			}
+		});
+	};
+
+	var printTime = function() {
+		var d = new Date();
+		console.log (d.toISOString());
 	};
 
 	module.exports = function (router, models) {
@@ -549,10 +544,14 @@
 				query += "nameNorm like '" + initial + "%' ";
 			}
 
+			printTime();
+
 			return models.sequelize.query(query + ';', { type: models.sequelize.QueryTypes.SELECT })
 		 	.then(function (rows) {
 				var ids = [];
 				var artist, i, id;
+			
+				printTime();
 
 				for (i in rows) {
 					artist = rows[i];
@@ -567,20 +566,21 @@
 						gender: artist.gender,
 						maxAlbum: 0,
 						albums: {},
-						songs: [],
-						feats: [],
-						albumCharts: []
+						chartedSongs: 0,
+						songCount: 0
 					};
 				}
 
 				promises.push(getPrimaryGroupSummary(models, artists, ids));
 				promises.push(getAlbumSummary(models, artists, ids));
-				promises.push(getAlbumChartSummary(models, artists, ids));
-				promises.push(getSongSummary(models, artists, ids));
+				promises.push(getChartedSongSummary(models, artists, ids));
+				promises.push(getSongCount(models, artists, ids));
 
 				return Promise.all(promises);
 		 	}).then(function () {
 				var result = [];
+			
+				printTime();
 
 				for (var i in artists) {
 					result.push(artists[i]);
