@@ -62,13 +62,13 @@ for (my $i = 1; $i <= $count; $i++) {
 			$artist = normalize_artist(get_text($a->text));
 			print ",\n" if $rank > 1;
 			print "{ \"rank\": $rank, \"artist\": \"$artist\", \"titles\": [";
-			$count = 1;
+			my $titleCount = 1;
 			my @tokens = split(/\/|\|/, $title);
 			foreach my $token (@tokens) {
 				my $token_norm = normalize_title($token);
-				print ", " if $count > 1;	
+				print ", " if $titleCount > 1;	
 				print "\"$token_norm\"";
-				$count++;
+				$titleCount++;
 			}
 			print "]}";
 			$rank++;
