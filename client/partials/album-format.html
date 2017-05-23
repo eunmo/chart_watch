@@ -1,0 +1,22 @@
+<h1>
+	{{format}}	
+</h1>
+<table class="table table-hover" ng-show="loaded">
+	<tr ng-repeat="album in albums">
+		<td>
+			{{$index + 1}}
+		</td>
+		<td>
+			{{album.release | date: 'yyyy/MM/dd'}}
+		</td>
+		<td class="td-img-list">
+			<image-small album-id="album.id" s="30"></image-small>
+		</td>
+		<td>
+			<artist-array array="album.artists"></artist-array>
+		</td>
+		<td>
+			{{album.title | normalizeString}}
+		</td>
+	</tr>
+</table>
