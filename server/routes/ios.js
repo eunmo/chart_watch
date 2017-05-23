@@ -239,6 +239,7 @@
 					songRow = songs[i];
 					song = common.newSong(songRow);
 					song.songArtists = common.getSongArtists(songRow);
+					songRow.Albums.sort(function (a, b) { return a.release - b.release; });
 					song.albumId = songRow.Albums[0].id;
 					resArray.push(song);
 				}
