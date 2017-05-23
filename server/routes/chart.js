@@ -259,6 +259,7 @@
 			var titleNorm = title;
 
 			titleNorm = titleNorm.replace(/\(.*/g, '');
+			titleNorm = titleNorm.replace(/\).*/g, '');
 
 			if (chart === 'oricon') {
 				titleNorm = titleNorm.replace(/(\s|。)feat\..*$/, '');
