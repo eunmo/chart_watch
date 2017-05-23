@@ -63,29 +63,46 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 
 	$scope.loaded = false;
 	$scope.showFeat = true;
+	$scope.selectedAlbum = null;
+	$scope.years = [];
 
 	$http.get('api/artist/' + $routeParams.id).success(function (artist) {
 
-		var onlyFeat = true;
+		var years = {};
+		var i, j, album, maxDisk, song;
+		var release, year;
 
-		for (var i in artist.albums) {
-			var album = artist.albums[i];
-			var maxDisk = 0;
-			var song;
-			for (var j in album.songs) {
+		for (i in artist.albums) {
+			album = artist.albums[i];
+			maxDisk = 0;
+
+			for (j in album.songs) {
 				song = album.songs[j];
 				song.albumId = album.id;
 				if (maxDisk < song.disk)
 					maxDisk = song.disk;
 			}
+
 			album.maxDisk = maxDisk;
 
 			if (!album.isFeat)
 				$scope.showFeat = false;
+
+			release = new Date(album.release);
+			year = release.getFullYear();
+
+			if (years[year] === undefined)
+				years[year] = { year: year, albums: [album] };
+			else
+				years[year].albums.push(album);
 		}
 
-		console.log (artist);
+		for (i in years) {
+			year = years[i];
+			$scope.years.push(year);
+		}
 
+		console.log ($scope.years);
 		$scope.artist = artist;
 		$scope.loaded = true;
 	});
@@ -155,6 +172,14 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 		dl.href = '/music/' + song.id + '.mp3';
 		dl.download = song.title + '.mp3';
 		dl.click();
+	};
+
+	$scope.selectAlbum = function (album) {
+		$scope.selectedAlbum = album;
+	};
+	
+	$scope.deselectAlbum = function () {
+		$scope.selectedAlbum = null;
 	};
 });
 

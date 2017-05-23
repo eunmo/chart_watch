@@ -51,18 +51,6 @@ musicApp.directive('imageLarge', function () {
 			albumId: '=albumId',
 			c: '=?c'
 		},
-		compile: function () {
-			return {
-				pre: function (scope, element, attrs) {
-					if (scope.albumId) {
-						scope.url = '/' + scope.albumId + '.jpg';
-						scope.xsurl = scope.url; 
-					} else {
-						scope.url = scope.xsurl = 'null.jpg';
-					}
-				}
-			};
-		},
 		templateUrl: 'partials/album-image.html'
 	};
 });
@@ -85,7 +73,9 @@ musicApp.directive('imageSmall', function () {
 						if (s <= 40) {
 							scope.xsurl += '.80px';
 						}
-						scope.url += '.' + s + 'px';
+						if (s <= 100) {
+							scope.url += '.' + s + 'px';
+						}
 
 						scope.url += '.jpg';
 						scope.xsurl += '.jpg';
