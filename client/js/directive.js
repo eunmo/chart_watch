@@ -88,10 +88,6 @@ musicApp.directive('imageSmall', function () {
 
 						scope.inner = 'max-height: ' + scope.s + 'px; max-width: ' + scope.s + 'px';
 						scope.outer = 'height: ' + scope.s + 'px; width: ' + scope.s + 'px';
-
-						if (s === 80) {
-							scope.innerxs = 'margin-left: -3.25px;';
-						}
 					}
 				}
 			};

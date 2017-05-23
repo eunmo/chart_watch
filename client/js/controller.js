@@ -1120,11 +1120,12 @@ musicApp.controller('BatchCtrl', function ($rootScope, $scope, $http) {
 	};
 });
 
-musicApp.controller ('CompilationAlbumCtrl', function ($rootScope, $scope, $routeParams, $http) {
+musicApp.controller ('AlbumFormatCtrl', function ($rootScope, $scope, $routeParams, $http) {
 
 	$scope.loaded = false;
+	$scope.format = $routeParams.format;
 
-	$http.get ('api/album-compilations').success (function (albums) {
+	$http.get ('api/album/format/' + $routeParams.format).success (function (albums) {
 		$scope.albums = albums;
 		$scope.loaded = true;
 	});

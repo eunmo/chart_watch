@@ -117,6 +117,44 @@
 			});
 		});
 		
+		router.get('/api/album/format/:_format', function (req, res) {
+
+			var filter = 'a.format = \"' + req.params._format + '\"';
+
+			if (req.params._format === 'null')
+				filter = 'a.format is null';
+
+			var query = '';
+		 	query	+= 'SELECT AlbumId, title, `release`, ArtistId, `order`, name FROM Albums a, AlbumArtists b, Artists c ';
+			query += 'WHERE ' + filter + ' AND a.id = b.AlbumId and c.id = b.ArtistId;';
+			
+			models.sequelize.query (query, { type: models.sequelize.QueryTypes.SELECT })
+			.then (function (rows) {
+				var albums = [];
+				var i, row;
+
+				for (i in rows) {
+					row = rows[i];
+
+					if (albums[row.AlbumId] === undefined) {
+						albums[row.AlbumId] = { id: row.AlbumId, title: row.title, artists: [], release: new Date(row.release) };
+					}
+
+					albums[row.AlbumId].artists[row.order] = { id: row.ArtistId, name: row.name };
+				}
+
+				var out = [];
+
+				for (i in albums) {
+					out.push (albums[i]);
+				}
+
+				out.sort(function (a, b) { return a.release - b.release; });
+
+				res.json(out);
+			});
+		});
+		
 		router.get('/api/album-compilations/', function (req, res) {
 			var query = '';
 		 	query	+= 'SELECT AlbumId, title, `release`, ArtistId, `order`, name FROM Albums a, AlbumArtists b, Artists c ';
