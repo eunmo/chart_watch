@@ -7,8 +7,6 @@
 		</button>
 		<ul class="dropdown-menu dropdown-menu-right dropdown-song" role="menu">
 			<li role="presentation"><a href="#/edit/artist/{{artist.id}}">Edit artist</a></li>
-			<li role="presentation" ng-show="artist.hasFeat && showFeat"><a ng-click="hideFeatures()">Hide Features</a></li>
-			<li role="presentation" ng-show="artist.hasFeat && !showFeat"><a ng-click="showFeatures()">Show Features</a></li>
 			<li role="presentation"><a href="#/add/artist-album/{{artist.id}}">Add album</a></li>
 		</ul>
 	</div>
@@ -30,16 +28,16 @@
 		<artist-array array="artist.members"></artist-array>
 	</span>
 </h2>
-<div class="row" ng-repeat="year in years | orderBy : '-year'" ng-hide="selectedAlbum">
+<div class="row" ng-repeat="year in years | orderBy : '-year'" ng-hide="selectedAlbums[0]">
 	<span class="hidden-xs">
 		<div class="col-sm-2">
-			<div style="display: flex; align-content: center; height: 185px;">
-				<h2 class="text-center" style="margin: auto; padding-bottom: 10px;">
+			<div style="display: flex; align-content: center; height: 190px;">
+				<h2 class="text-center" style="margin: auto; padding-bottom: 13px;">
 					{{year.year}}
 				</h2>
 			</div>
 		</div>
-		<div class="col-sm-2 text-center" ng-repeat-start="album in year.albums | orderBy : '-release'" style="height: 185px">
+		<div class="col-sm-2 text-center" ng-repeat-start="album in year.albums | orderBy : '-release'" style="height: 190px">
 			<image-small album-id="album.id" s="160" ng-click="selectAlbum(album)"></image-small>
 			{{album.isFeat ? 'Feature' : album.format}}
 		</div>
@@ -62,45 +60,45 @@
 		<div ng-repeat-end=""></div>
 	</span>
 </div>
-<div class="row" ng-show="selectedAlbum">
+<div class="row" ng-repeat="album in selectedAlbums">
 	<div class="col-xs-12 col-sm-4">
-		<image-large album-id="selectedAlbum.id" c="'img-responsive center-block artist-album-image'" ng-click="deselectAlbum()"></image-large>
+		<image-large album-id="album.id" c="'img-responsive center-block artist-album-image'" ng-click="deselectAlbum()"></image-large>
 	</div>
 	<div class="col-xs-12 col-sm-8">
 		<h3>
-			<span ng-click="addAlbum(selectedAlbum)">{{selectedAlbum.title | normalizeString}}</span>
-			<small>{{selectedAlbum.format}}</small>
+			<span ng-click="addAlbum(album)">{{album.title | normalizeString}}</span>
+			<small>{{album.format}}</small>
 			<span class="pull-right album-desc-right">
-				<rank-badge rank="selectedAlbum.rank.billboard" prefix="'US'"></rank-badge>
-				<rank-badge rank="selectedAlbum.rank.oricon" prefix="'オ'"></rank-badge>
-				<rank-badge rank="selectedAlbum.rank.deutsche" prefix="'D'"></rank-badge>
-				<rank-badge rank="selectedAlbum.rank.uk" prefix="'UK'"></rank-badge>
-				<rank-badge rank="selectedAlbum.rank.francais" prefix="'F'"></rank-badge>
-				<rank-badge rank="selectedAlbum.rank.gaon" prefix="'G'"></rank-badge>
+				<rank-badge rank="album.rank.billboard" prefix="'US'"></rank-badge>
+				<rank-badge rank="album.rank.oricon" prefix="'オ'"></rank-badge>
+				<rank-badge rank="album.rank.deutsche" prefix="'D'"></rank-badge>
+				<rank-badge rank="album.rank.uk" prefix="'UK'"></rank-badge>
+				<rank-badge rank="album.rank.francais" prefix="'F'"></rank-badge>
+				<rank-badge rank="album.rank.gaon" prefix="'G'"></rank-badge>
 				<div class="btn-group">
 					<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"
 						data-toggle="dropdown" aria-expanded="false">
 						<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu dropdown-menu-right dropdown-song" role="menu">
-						<li role="presentation"><a ng-click="addNextAlbum(selectedAlbum)">Play next</a></li>
-						<li role="presentation"><a href="#/edit/album/{{selectedAlbum.id}}">Edit album</a></li>
-						<li role="presentation"><a href="#/album/{{selectedAlbum.id}}">Details</a></li>
+						<li role="presentation"><a ng-click="addNextAlbum(album)">Play next</a></li>
+						<li role="presentation"><a href="#/edit/album/{{album.id}}">Edit album</a></li>
+						<li role="presentation"><a href="#/album/{{allbum.id}}">Details</a></li>
 					</ul>
 				</div>
 			</span>
 		</h3>
 		<h4>
 			<small>by</small>
-			<artist-array array="selectedAlbum.albumArtists"></artist-array>
-			<small class="pull-right">{{selectedAlbum.release | date}}</small>
+			<artist-array array="album.albumArtists"></artist-array>
+			<small class="pull-right">{{album.release | date}}</small>
 		</h4>
 		<table class="table table-hover">
-			<tr	ng-repeat="song in selectedAlbum.songs">
+			<tr	ng-repeat="song in album.songs">
 				<td>
 					<div class="song-desc">
-						<span class="song-desc-title" ng-click="addSong(song, selectedAlbum)">
-							<span class="song-track"><span ng-show="selectedAlbum.maxDisk > 1">{{song.disk}}-</span>{{song.track}}</span>
+						<span class="song-desc-title" ng-click="addSong(song, album)">
+							<span class="song-track"><span ng-show="album.maxDisk > 1">{{song.disk}}-</span>{{song.track}}</span>
 							{{song.title | normalizeString}}
 						</span>
 						<span class="pull-right song-desc-right">
@@ -118,7 +116,7 @@
 									<span class="caret"></span>
 								</button>
 								<ul class="dropdown-menu dropdown-menu-right dropdown-song" role="menu">
-									<li role="presentation"><a ng-click="addNext(song, selectedAlbum)">Play next</a></li>
+									<li role="presentation"><a ng-click="addNext(song, album)">Play next</a></li>
 									<li role="presentation"><a href="#/edit/song/{{song.id}}">Edit song</a></li>
 									<li role="presentation"><a href="#/song/{{song.id}}">Details</a></li>
 									<li role="presentation"><a ng-click="download(song)">Download</a></li>

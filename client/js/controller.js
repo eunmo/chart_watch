@@ -63,7 +63,7 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 
 	$scope.loaded = false;
 	$scope.showFeat = true;
-	$scope.selectedAlbum = null;
+	$scope.selectedAlbums = [];
 	$scope.years = [];
 
 	$http.get('api/artist/' + $routeParams.id).success(function (artist) {
@@ -159,14 +159,6 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 		songService.addSongs(songs);
 	};
 
-	$scope.showFeatures = function () {
-		$scope.showFeat = true;
-	};
-
-	$scope.hideFeatures = function () {
-		$scope.showFeat = false;
-	};
-
 	$scope.download = function (song) {
 		var dl = document.createElement('a');
 		dl.href = '/music/' + song.id + '.mp3';
@@ -175,11 +167,11 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 	};
 
 	$scope.selectAlbum = function (album) {
-		$scope.selectedAlbum = album;
+		$scope.selectedAlbums = [album];
 	};
 	
 	$scope.deselectAlbum = function () {
-		$scope.selectedAlbum = null;
+		$scope.selectedAlbums = [];
 	};
 });
 
