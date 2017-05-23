@@ -398,22 +398,26 @@
 	};
 
 	var getAlbumSummary = function (models, artists, ids) {
-		var query = "SELECT ArtistId, format, count(*) AS count, max(a.id) As AlbumId " +
+		var query = "SELECT ArtistId, format, AlbumId, `release` " +
 								"FROM AlbumArtists aa, Albums a " +
 								"WHERE aa.ArtistId in (" + ids.toString() + ") " + 
-								"AND aa.AlbumId = a.id " + 
-								"GROUP BY aa.ArtistId, format";
+								"AND aa.AlbumId = a.id;"; 
 		return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
 		.then(function (rows) {
-			var i, albumCount, id, format;
+			var i, album, id, format;
 
 			for (i in rows) {
-				albumCount = rows[i];
-				id = albumCount.ArtistId;
-				format = albumCount.format;
+				album = rows[i];
+				id = album.ArtistId;
+				format = album.format;
 				if (format) {
-					artists[id].albums[format] = albumCount.count;
-					artists[id].maxAlbum = Math.max(artists[id].maxAlbum, albumCount.AlbumId);
+					if (artists[id].albums[format] === undefined)
+						artists[id].albums[format] = 0;
+					artists[id].albums[format] += 1;
+				}
+				if (artists[id].maxDate < album.release) {
+					artists[id].maxDate = album.release;
+					artists[id].maxAlbum = album.AlbumId;
 				}
 			}
 		});
@@ -564,6 +568,7 @@
 						origin: artist.origin,
 						type: artist.type,
 						gender: artist.gender,
+						maxDate: '0',
 						maxAlbum: 0,
 						albums: {},
 						chartedSongs: 0,
