@@ -8,3 +8,5 @@ db.json
 *.mp3
 *.jpg
 *.sh
+*.DS_Store
+server/sv.js
