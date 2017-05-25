@@ -1,5 +1,18 @@
 (function () {
 	"use strict";
+
+	var initChart = function (charts, id, type) {
+		if (charts[id] === undefined) {
+			charts[id] = {};
+		}
+		if (charts[id][type] === undefined) {
+			charts[id][type] = {
+				min: 11,
+				run: 0,
+				count: 0
+			};
+		} 
+	};
 	
 	var getChartSummary = function (db, query) {
 		return db.promisifyQuery(query)
@@ -14,23 +27,14 @@
 					type = row.type;
 					rank = row.rank;
 					count = row.count;
-				
-					if (charts[id] === undefined) {
-						charts[id] = {};
-					}
-					if (charts[id][type] === undefined) {
-						charts[id][type] = {
-							min: 11,
-							run: 0,
-							count: 0
-						};
-					} 
+
+					initChart(charts, id, type);
 					chart = charts[id][type];
 
 					/* min: min rank
 					 * run: number of weeks in top 10 not counting weeks at min rank
 					 * count: weeks at min rank */
-					if (rank < charts[id][type].min) {
+					if (rank < chart.min) {
 						chart.min = rank;
 						chart.run += chart.count;
 						chart.count = count;

@@ -5,21 +5,6 @@
 		artistCmpOrder: function (a, b) {
 			return a.order - b.order;
 		},
-		sortWeeks: function (weeks) {
-			var results = [];
-
-			var weekCmp = function (a, b) {
-				return b.week - a.week;
-			};
-
-			weeks.sort(weekCmp);
-
-			for (var i in weeks) {
-				results.push(weeks[i]);
-			}
-
-			return results;
-		},
 		getPrimaryGroup: function (artist) {
 			var primaryGroup = null;
 			for (var i in artist.Group) {
