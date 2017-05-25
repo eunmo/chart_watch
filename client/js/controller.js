@@ -102,8 +102,11 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 			$scope.years.push(year);
 		}
 
-		console.log ($scope.years);
 		$scope.artist = artist;
+
+		if (artist.albums.length === 1)
+			$scope.selectAlbum(artist.albums[0]);
+
 		$scope.loaded = true;
 	});
 
