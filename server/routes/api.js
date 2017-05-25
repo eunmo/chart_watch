@@ -275,7 +275,7 @@
 		});
 	};
 
-	var getSongChart = function (models, artist) {
+	var getSongChart = function (db, artist) {
 		var array = [];
 		var idArray = [];
 		var rankArray = [];
@@ -297,41 +297,17 @@
 			idArray.push(i);
 		}
 
-		return models.SongChart.findAll({
-			where: { SongId: { $in: idArray }, rank: { $lte: 10 } }
-		}).then(function (results) {
-			for (i in results) {
-				chartRow = results[i];
-				songId = chartRow.SongId;
-				if (rankArray[songId] === undefined) {
-					rankArray[songId] = {};
+		return db.songChartSummaryByIds(idArray)
+			.then(function(charts) {
+				for (i in charts) {
+					for (j in array[i]) {
+						array[i][j].rank = charts[i];
+					}
 				}
-				if (rankArray[songId][chartRow.type] === undefined) {
-					rankArray[songId][chartRow.type] = {
-						min: chartRow.rank,
-						run: 0,
-						count: 1
-					};
-				} else if (chartRow.rank < rankArray[songId][chartRow.type].min) {
-					rankArray[songId][chartRow.type].min = chartRow.rank;
-					rankArray[songId][chartRow.type].run += rankArray[songId][chartRow.type].count;
-					rankArray[songId][chartRow.type].count = 1;
-				} else if (chartRow.rank === rankArray[songId][chartRow.type].min) {
-					rankArray[songId][chartRow.type].count++;
-				} else {
-					rankArray[songId][chartRow.type].run++;
-				}
-			}
-
-			for (i in rankArray) {
-				for (j in array[i]) {
-					array[i][j].rank = rankArray[i];
-				}
-			}
-		});
+			});
 	};
 
-	var getAlbumChart = function (models, artist) {
+	var getAlbumChart = function (db, artist) {
 		var array = [];
 		var idArray = [];
 		var rankArray = [];
@@ -345,36 +321,12 @@
 			idArray.push (albumId);
 		}
 
-		return models.AlbumChart.findAll({
-			where: { AlbumId: { $in: idArray }, rank: { $lte: 10 } }
-		}).then(function (results) {
-			for (i in results) {
-				chartRow = results[i];
-				albumId = chartRow.AlbumId;
-				if (rankArray[albumId] === undefined) {
-					rankArray[albumId] = {};
+		return db.albumChartSummaryByIds(idArray)
+			.then(function(charts) {
+				for (i in charts) {
+					array[i].rank = charts[i];
 				}
-				if (rankArray[albumId][chartRow.type] === undefined) {
-					rankArray[albumId][chartRow.type] = {
-						min: chartRow.rank,
-						run: 0,
-						count: 1
-					};
-				} else if (chartRow.rank < rankArray[albumId][chartRow.type].min) {
-					rankArray[albumId][chartRow.type].min = chartRow.rank;
-					rankArray[albumId][chartRow.type].run += rankArray[albumId][chartRow.type].count;
-					rankArray[albumId][chartRow.type].count = 1;
-				} else if (chartRow.rank === rankArray[albumId][chartRow.type].min) {
-					rankArray[albumId][chartRow.type].count++;
-				} else {
-					rankArray[albumId][chartRow.type].run++;
-				}
-			}
-
-			for (i in rankArray) {
-				array[i].rank = rankArray[i];
-			}
-		});
+			});
 	};
 
 	var getPrimaryGroupSummary = function (models, artists, ids) {
@@ -466,7 +418,7 @@
 		console.log (d.toISOString());
 	};
 
-	module.exports = function (router, models) {
+	module.exports = function (router, models, db) {
 		router.get('/api/artist', function (req, res) {
 			models.Artist.findAll({
 				include: [ {model: models.Album}, {model: models.Song} ],
@@ -507,8 +459,8 @@
 
 				promises.push(getArtistGroup(models, artist));
 				if (albums.length > 0) {
-					promises.push(getSongChart(models, artist));
-					promises.push(getAlbumChart(models, artist));
+					promises.push(getSongChart(db, artist));
+					promises.push(getAlbumChart(db, artist));
 				}
 
 				return Promise.all(promises);

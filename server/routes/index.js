@@ -5,7 +5,7 @@
 	var path = require('path');
 	var fs = require('fs');
 	var models = require('../models/index');
-	var dbpool = require('../db/index');
+	var db = require('../db/index');
 
   var router = express.Router();
 	
@@ -16,7 +16,7 @@
 			return (file.indexOf('.') !== 0) && (file !== 'index.js');
 		})
 		.forEach(function (file) {
-			require(path.join(routeDir, file))(router, models, dbpool);
+			require(path.join(routeDir, file))(router, models, db);
 		});
 
   /* GET home page. */

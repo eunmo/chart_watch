@@ -6,6 +6,8 @@
 	var mysql			= require('mysql');
 	var dbconfig 	= require(process.env.PWD + '/db.json');
 	var Promise = require('bluebird');
+	
+	var curDir = path.resolve('server/db');
 
 	var pool = mysql.createPool({
 		connectionLimit : 100, //important
@@ -42,6 +44,15 @@
 			});
 		});
 	};
+	
+	fs.readdirSync(curDir)
+		.filter(function (file) {
+			return (file.indexOf('.') !== 0) && (file !== 'index.js');
+		})
+		.forEach(function (file) {
+			require(path.join(curDir, file))(db);
+		});
+
 
 	module.exports = db;
 }());
