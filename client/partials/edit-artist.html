@@ -149,6 +149,28 @@
 			</div>
 		</div>
 	</div>
+	<div ng-repeat="artist in artist.editRelations">
+		<div class="form-group">
+			<label class="col-sm-3 control-label">Artist Relation</label>
+			<div class="col-sm-4">
+				<input class="form-control" ng-model="artist.name" ng-show="artist.created" />
+				<input class="form-control" ng-model="artist.name" ng-hide="artist.created" disabled />
+			</div>
+			<div class="col-sm-2">
+				<select class="form-control" ng-model="artist.type"
+					ng-options="type as (type | artistRelationFull) for type in relations">
+				</select>
+			</div>
+			<div class="col-sm-1">
+				<input type="number" class="form-control" ng-model="artist.order" />
+			</div>
+			<div class="col-sm-1">
+				<label class="checkbox-inline">
+					<input type="checkbox" ng-model="artist.deleted" /> Delete
+				</label>
+			</div>
+		</div>
+	</div>
 	<div ng-repeat="alias in artist.editAliases">
 		<div class="form-group">
 			<label class="col-sm-3 control-label">Alias</label>
@@ -178,6 +200,7 @@
 			<button class="btn btn-default" ng-click="edit()">Edit</button>
 			<button class="btn btn-default" ng-click="addGroup()">Add Group</button>
 			<button class="btn btn-default" ng-click="addMember()">Add Member</button>
+			<button class="btn btn-default" ng-click="addRelation()">Add Relation</button>
 			<button class="btn btn-default" ng-click="addAlias()">Add Alias</button>
 			<button class="btn btn-danger" ng-click="deleteArtist()">Delete</button>
 		</div>

@@ -70,3 +70,18 @@ musicApp.filter('capitalize', function () {
 		return string.charAt(0).toUpperCase() + string.slice(1);
 	};
 });
+
+musicApp.filter('artistRelationFull', function () {
+	var relations = {
+		a: 'Alias',
+		c: 'Character Voice',
+		f: 'Former Member',
+		m: 'Member',
+		p: 'Project Group',
+		u: 'Unit'
+	};
+
+	return function (string) {
+		return relations[string] ? relations[string] : string;
+	};
+});

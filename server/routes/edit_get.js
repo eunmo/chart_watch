@@ -8,6 +8,7 @@
 				include: [
 					{ model: models.Artist, as: 'Group' },
 					{ model: models.Artist, as: 'Member' },
+					{ model: models.Artist, as: 'B' },
 					{ model: models.ArtistAlias }
 				]
 			}).then(function (artist) {

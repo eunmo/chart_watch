@@ -68,6 +68,32 @@
 				});
 			});
 		}
+		
+		function addArtistRelation(artistId, relation) {
+			return models.Artist.findOrCreate({
+				where: { name: relation.name },
+				defaults: { nameNorm: relation.name }
+			})
+			.spread(function (artist, created) {
+				return models.ArtistRelation.findOrCreate({
+					where: { A: artistId, B: artist.id },
+					defaults: { type: relation.type, order: relation.order }
+				});
+			});
+		}
+		
+		function updateArtistRelation(artistId, relation) {
+			return models.ArtistRelation.update(
+			{	type: relation.type, order: relation.order },
+			{ where: { A: artistId, B: relation.id } }
+			);
+		}
+
+		function deleteArtistRelation(artistId, relation) {
+			return models.ArtistRelation.destroy({
+				where: { A: artistId, B: relation.id }
+			});
+		}
 
 		function addArtistAlias(artistId, alias, chart) {
 			return models.ArtistAlias.findOrCreate({
@@ -122,6 +148,19 @@
 					promises.push(deleteArtistGroup(id, editMember.id));
 				} else {
 					promises.push(updateArtistGroup(id, editMember.id, editMember.primary));
+				}
+			}
+			
+			for (i in input.editRelations) {
+				var editRelation = input.editRelations[i];
+				if (editRelation.created) {
+					if (editRelation.name !== null) {
+						promises.push(addArtistRelation(id, editRelation));
+					}
+				} else if (editRelation.deleted) {
+					promises.push(deleteArtistRelation(id, editRelation));
+				} else {
+					promises.push(updateArtistRelation(id, editRelation));
 				}
 			}
 

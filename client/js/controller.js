@@ -227,11 +227,13 @@ musicApp.controller('AddArtistAlbumCtrl', function ($rootScope, $scope, $routePa
 musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams, $http, $location) {
 
 	$scope.artist = {};
+	$scope.relations = [ 'a', 'c', 'f', 'm', 'p', 'u' ];
 
 	$http.get('api/edit/artist/' + $routeParams.id).success(function (artist) {
-		var i, artistGroup;
+		var i, artistGroup, artistRelation;
 		artist.editGroups = [];
 		artist.editMembers = [];
+		artist.editRelations = [];
 		artist.editAliases = [];
 
 		for (i in artist.Group) {
@@ -258,6 +260,19 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 			};
 		}
 
+		for (i in artist.B) {
+			var b = artist.B[i];
+			artistRelation = b.ArtistRelation;
+			artist.editRelations[i] = {
+				name: b.name,
+				id: b.id,
+				type: b.ArtistRelation.type,
+				order: b.ArtistRelation.order,
+				deleted: false,
+				created: false
+			};
+		}
+
 		for (i in artist.ArtistAliases) {
 			var alias = artist.ArtistAliases[i];
 			artist.editAliases[i] = {
@@ -270,6 +285,8 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 		}
 
 		$scope.artist = artist;
+
+		console.log(artist);
 	});
 
 	$scope.edit = function () {
@@ -312,6 +329,19 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 				created: true
 			};
 			$scope.artist.editMembers.push(artist);
+		}
+	};
+
+	$scope.addRelation = function () {
+		if ($scope.artist.editRelations.length === 0 ||
+				$scope.artist.editRelations[$scope.artist.editRelations.length - 1].name !== null) {
+			console.log('called');
+			var artist = {
+				name: null,
+				deleted: false,
+				created: true
+			};
+			$scope.artist.editRelations.push(artist);
 		}
 	};
 	

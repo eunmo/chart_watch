@@ -17,18 +17,29 @@
 			Artist.belongsToMany(models.Artist,
 													 { through: models.ArtistGroup,
 													   as: 'Group',
-													   foreignKey: 'MemberId'});
+													   foreignKey: 'MemberId',
+													 	 otherKey: 'GroupId'});
 			Artist.belongsToMany(models.Artist,
 													 { through: models.ArtistGroup,
 													   as: 'Member',
-													   foreignKey: 'GroupId'});
+													   foreignKey: 'GroupId',
+													 	 otherKey: 'MemberId'});
+
+			Artist.belongsToMany(models.Artist,
+													 { through: models.ArtistRelation,
+													   as: 'B',
+													   foreignKey: 'A',
+													 	 otherKey: 'B'});
+			Artist.belongsToMany(models.Artist,
+													 { through: models.ArtistRelation,
+													   as: 'A',
+													   foreignKey: 'B',
+													 	 otherKey: 'A'});
 			
 			Artist.belongsToMany(models.Song, {through: models.SongArtist});
 			
 			Artist.hasMany(models.ArtistAlias);
 		};
-
-		// need views to show notable songs
 
 		return Artist;
 	};

@@ -177,7 +177,7 @@
 				where: {id: id},
 				include: [
 					{ model: models.Artist, as: 'Group', attributes: [ 'id', 'name' ] },
-					{ model: models.Artist, as: 'Member', attributes: [ 'id', 'name' ] },
+					{ model: models.Artist, as: 'Member', attributes: [ 'id', 'name' ] }
 				]
 			}).then(function (result) {
 				results[index] = result;
