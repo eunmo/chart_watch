@@ -65,7 +65,7 @@
 					album.songs.sort(songCmp);
 					var songs = [album.songs[0]];
 					var a, b;
-					for (j = 1; i < album.songs.length; j++) {
+					for (j = 1; j < album.songs.length; j++) {
 						a = album.songs[j-1];
 						b = album.songs[j];
 						if (a.disk !== b.disk || a.track !== b.track)
