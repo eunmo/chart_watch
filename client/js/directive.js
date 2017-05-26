@@ -49,7 +49,8 @@ musicApp.directive('imageLarge', function () {
 		restrict: 'E',
 		scope: {
 			albumId: '=albumId',
-			c: '=?c'
+			c: '=?c',
+			s: '=?s'
 		},
 		templateUrl: 'partials/album-image.html'
 	};
@@ -73,7 +74,11 @@ musicApp.directive('imageSmall', function () {
 						if (s <= 40) {
 							scope.xsurl += '.80px';
 						}
-						if (s <= 100) {
+						else if (s <= 160) {
+							scope.xsurl += '.160px';
+						}
+						
+						if (s <= 200) {
 							scope.url += '.' + s + 'px';
 						}
 
