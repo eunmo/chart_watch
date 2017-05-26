@@ -18,15 +18,13 @@
 		{{artist.albums.length | numAlbums}}
 	</small>
 </h1>
-<h2 ng-show="artist.groups.length + artist.members.length">
-	<span ng-show="artist.groups.length">
-		<small>Part of</small>
-		<artist-array array="artist.groups"></artist-array>
-	</span>
-	<span ng-show="artist.members.length">
-		<small>Includes</small>
-		<artist-array array="artist.members"></artist-array>
-	</span>
+<h2 ng-repeat="A in As">
+	<small>{{A.type | artistRelationA}}</small>
+	<artist-array array="A.artists"></artist-array>
+</h2>
+<h2 ng-repeat="B in Bs">
+	<small>{{B.type | artistRelationB}}</small>
+	<artist-array array="B.artists"></artist-array>
 </h2>
 <div class="row" ng-repeat="year in years | orderBy : '-year'" ng-hide="selectedAlbums[0]">
 	<span class="hidden-xs">

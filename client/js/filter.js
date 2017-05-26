@@ -85,3 +85,33 @@ musicApp.filter('artistRelationFull', function () {
 		return relations[string] ? relations[string] : string;
 	};
 });
+
+musicApp.filter('artistRelationA', function () {
+	var relations = {
+		a: 'Alias of',
+		c: 'Voiced Character',
+		f: 'Had Former Member',
+		m: 'Has Member',
+		p: 'In Project Group',
+		u: 'Has Unit'
+	};
+
+	return function (string) {
+		return relations[string] ? relations[string] : string;
+	};
+});
+
+musicApp.filter('artistRelationB', function () {
+	var relations = {
+		a: 'Alias of',
+		c: 'Voiced by',
+		f: 'Former Member of',
+		m: 'Member of',
+		p: 'Is Project Group of',
+		u: 'Unit of'
+	};
+
+	return function (string) {
+		return relations[string] ? relations[string] : string;
+	};
+});

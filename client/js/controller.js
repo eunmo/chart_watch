@@ -66,6 +66,77 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 	$scope.selectedAlbums = [];
 	$scope.years = [];
 
+	var hideRedundantArtists = function (artist) {
+		var i, j, k, album, song;
+		var hide;
+
+		for (i in artist.albums) {
+			album = artist.albums[i];
+			for (j in album.songs) {
+				song = album.songs[j];
+				hide = true;
+
+				if (album.albumArtists.length !== song.artists.length)
+					continue;
+
+				for (k in album.albumArtists) {
+					if (album.albumArtists[k].id !== song.artists[k].id) {
+						hide = false;
+						break;
+					}
+				}
+
+				if (hide) {
+					song.artists = [];
+				}
+			}
+		}
+	};
+
+	var getA = function (artist) {
+		if (artist.As.length === 0)
+			return;
+
+		var i, A;
+		var As = {};
+
+		for (i in artist.As) {
+			A = artist.As[i];
+			if (As[A.type] === undefined)
+				As[A.type] = [];
+
+			As[A.type].push(A);
+		}
+
+		var array = [];
+		for (i in As) {
+			As[i].sort(function (a, b) { var x = a.name; var y = b.name; return ((x < y) ? -1 : ((x > y) ? 1 : 0)); });
+			array.push({ type: i, artists: As[i] });
+		}
+
+		array.sort(function (a, b) { var x = a.type; var y = b.type; return ((x < y) ? -1 : ((x > y) ? 1 : 0)); });
+		$scope.As = array;
+	}
+	
+	var getB = function (artist) {
+		if (artist.Bs === undefined)
+			return;
+
+		var array = [];
+		for (i in artist.Bs) {
+			if (i === 'p') {
+				array.push({ type: i, artists: artist.Bs[i] });
+			}else {
+				array.push({ type: i, artists: [artist.Bs[i]] });
+			}
+		}
+
+		console.log(array);
+
+		array.sort(function (a, b) { var x = a.type; var y = b.type; return ((x < y) ? -1 : ((x > y) ? 1 : 0)); });
+		$scope.Bs = array;
+	}
+
 	$http.get('api/artist/' + $routeParams.id).success(function (artist) {
 
 		var years = {};
@@ -85,9 +156,6 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 
 			album.maxDisk = maxDisk;
 
-			if (!album.isFeat)
-				$scope.showFeat = false;
-
 			release = new Date(album.release);
 			year = release.getFullYear();
 
@@ -102,8 +170,11 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 			$scope.years.push(year);
 		}
 
+		hideRedundantArtists(artist);
+		getA(artist);
+		getB(artist);
+
 		$scope.artist = artist;
-		console.log(artist);
 
 		if (artist.albums.length === 1)
 			$scope.selectAlbum(artist.albums[0]);
@@ -128,7 +199,7 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 			albumId: album.id,
 			plays: song.plays,
 		};
-		if (song.artists === undefined) {
+		if (song.artists === undefined || song.artists.length === 0) {
 			sendSong.artists = album.albumArtists;
 		} else {
 			sendSong.artists = song.artists;
