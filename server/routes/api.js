@@ -550,7 +550,7 @@
 		function getTableSummary (table, summary) {
 			var query = "SELECT count(*) as count FROM " + table + ";";
 
-			return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
+			return db.promisifyQuery(query)
 				.then(function (rows) {
 					summary[table] = rows[0].count;
 				});
