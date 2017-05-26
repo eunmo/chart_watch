@@ -29,6 +29,39 @@ musicApp.directive('artistLink', function () {
 			artist: '=artist',
 			suffix: '=suffix'
 		},
+		compile: function () {
+			return {
+				pre: function (scope, element, attrs) {
+					var artist = scope.artist;
+					artist.Btype = '';
+
+					var Bs = [];
+					if (artist.primaryGroup) {
+						Bs = [artist.primaryGroup];
+					}
+					else if (artist.Bs) {
+						// display precedence -> a, p, c, m, u, f
+						if (artist.Bs.a) {
+							Bs = [artist.Bs.a];
+							artist.Btype = 'aka ';
+						} else if (artist.Bs.p) {
+							Bs = artist.Bs.p;
+						} else if (artist.Bs.c) {
+							Bs = [artist.Bs.c];
+							artist.Btype = 'cv ';
+						} else if (artist.Bs.m) {
+							Bs = [artist.Bs.m];
+						} else if (artist.Bs.u) {
+							Bs = [artist.Bs.u];
+						} else if (artist.Bs.f) {
+							Bs = [artist.Bs.f];
+						}
+					}
+
+					scope.Bs = Bs;
+				}
+			};
+		},
 		templateUrl: 'partials/artist-link.html'
 	};
 });

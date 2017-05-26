@@ -1,1 +1,1 @@
-<a href="#/artist/{{artist.id}}">{{artist.name | normalizeString}}</a><span ng-show="artist.primaryGroup"> (<a href="#/artist/{{artist.primaryGroup.id}}">{{artist.primaryGroup.name | normalizeString}}</a>)</span>{{suffix}}
+<a href="#/artist/{{artist.id}}">{{artist.name | normalizeString}}</a><span ng-show="Bs.length"> ({{artist.Btype}}<span ng-repeat="artist in Bs"><a href="#/artist/{{artist.id}}">{{artist.name | normalizeString}}</a><span ng-show="!$last">+</span></span>)</span>{{suffix}}

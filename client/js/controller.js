@@ -103,6 +103,7 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 		}
 
 		$scope.artist = artist;
+		console.log(artist);
 
 		if (artist.albums.length === 1)
 			$scope.selectAlbum(artist.albums[0]);
