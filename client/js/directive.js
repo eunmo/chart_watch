@@ -36,10 +36,7 @@ musicApp.directive('artistLink', function () {
 					artist.Btype = '';
 
 					var Bs = [];
-					if (artist.primaryGroup) {
-						Bs = [artist.primaryGroup];
-					}
-					else if (artist.Bs) {
+					if (artist.Bs) {
 						// display precedence -> a, p, c, m, u, f
 						if (artist.Bs.a) {
 							Bs = [artist.Bs.a];

@@ -116,14 +116,14 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 
 		array.sort(function (a, b) { var x = a.type; var y = b.type; return ((x < y) ? -1 : ((x > y) ? 1 : 0)); });
 		$scope.As = array;
-	}
+	};
 	
 	var getB = function (artist) {
 		if (artist.Bs === undefined)
 			return;
 
 		var array = [];
-		for (i in artist.Bs) {
+		for (var i in artist.Bs) {
 			if (i === 'p') {
 				array.push({ type: i, artists: artist.Bs[i] });
 			}else {
@@ -135,7 +135,7 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 
 		array.sort(function (a, b) { var x = a.type; var y = b.type; return ((x < y) ? -1 : ((x > y) ? 1 : 0)); });
 		$scope.Bs = array;
-	}
+	};
 
 	$http.get('api/artist/' + $routeParams.id).success(function (artist) {
 

@@ -107,7 +107,7 @@ musicApp.filter('artistRelationB', function () {
 		c: 'Voiced by',
 		f: 'Former Member of',
 		m: 'Member of',
-		p: 'Is Project Group of',
+		p: 'Project Group of',
 		u: 'Unit of'
 	};
 
