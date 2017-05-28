@@ -1,20 +1,10 @@
 (function () {
 	'use strict';
 
-	var common = require('../common/cwcommon.js');	
 	var Sequelize = require('sequelize');
 	var Promise = require('bluebird');
 
-	module.exports = function (router, models, db) {
-		router.get('/api/artist', function (req, res) {
-			models.Artist.findAll({
-				include: [ {model: models.Album}, {model: models.Song} ],
-				order: '`nameNorm`'
-			}).then(function (artists) {
-				res.json(artists);
-			});
-		});
-		
+	module.exports = function (router, _, db) {
 		function getTableSummary (table, summary) {
 			var query = "SELECT count(*) as count FROM " + table + ";";
 
