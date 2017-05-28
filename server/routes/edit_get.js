@@ -6,8 +6,6 @@
 			models.Artist.findOne({
 				where: {id: id},
 				include: [
-					{ model: models.Artist, as: 'Group' },
-					{ model: models.Artist, as: 'Member' },
 					{ model: models.Artist, as: 'B' },
 					{ model: models.ArtistAlias }
 				]
