@@ -62,5 +62,19 @@
 					return albumArtists;
 				});
 		};
+
+		db.album.getByFormat = function (format) {
+			var filter = " WHERE format = '" + format + "';";
+
+			if (format === 'null') {
+				filter = " WHERE format is null;";
+			}
+
+			var query = 
+				"SELECT id, title, format, `release` " +
+			  "  FROM Albums " + filter;
+
+			return db.promisifyQuery(query);
+		};
 	};
 }());

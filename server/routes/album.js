@@ -1,84 +1,88 @@
 (function () {
 	'use strict';
 
-	var common = require('../common/cwcommon');
 	var Promise = require('bluebird');
 
-	var getArtists = function (models, id, results) {
-		return models.Album.findOne({
-			where: {id: id},
-			include: [
-				{ model: models.Artist, attributes: [ 'id', 'name' ],
-					include: [
-						{ model: models.Artist, as: 'Group', attributes: [ 'id', 'name' ] }
-					]
-				}
-			]
-		}).then(function (array) {
-			results.artists = array;
-		});
-	};
-	
-	var getCharts = function (db, id, results) {
-		return db.chartWeeks.getOneAlbum(id)
-			.then(function (charts) {
-				results.charts = charts;
+	var getDetail = function (db, album) {
+		return db.album.getDetails([album.id])
+			.then(function (rows) {
+				var row = rows[0];
+				album.title = row.title;
+				album.format = row.format;
+				album.release = row.release;
 			});
 	};
 
-	module.exports = function (router, models, db) {
+	var getArtist = function (db, album) {
+		return db.album.getArtists([album.id])
+			.then(function (albumArtists) {
+				album.artists = albumArtists[album.id];
+			});
+	};
+	
+	var getChart = function (db, album) {
+		return db.chartWeeks.getOneAlbum(album.id)
+			.then(function (charts) {
+				album.charts = charts;
+			});
+	};
+
+	var getArtists = function (db, albums) {
+		var i;
+		var ids = [];
+
+		for (i in albums) {
+			ids.push(albums[i].id);
+		}
+		
+		return db.album.getArtists(ids)
+			.then(function (albumArtists) {
+				var i, album;
+
+				for (i in albums) {
+					album = albums[i];
+					album.artists = albumArtists[album.id];
+				}
+			});
+	};
+
+	module.exports = function (router, _, db) {
 		router.get('/api/album/:_id', function (req, res) {
 			var id = req.params._id;
 			var promises = [];
-			var results = {};
+			var album = { id: id };
 
-			promises.push(getArtists(models, id, results));
-			promises.push(getCharts(db, id, results));
+			promises.push(getDetail(db, album));
+			promises.push(getArtist(db, album));
+			promises.push(getChart(db, album));
 
 			Promise.all(promises)
 			.then(function () {
-				var album = common.newAlbum(results.artists);
-				album.artists = results.artists.Artists;
-				album.charts = results.charts;
 				res.json(album);
 			});
 		});
 		
 		router.get('/api/album/format/:_format', function (req, res) {
+			var albums = [];
 
-			var filter = 'a.format = \"' + req.params._format + '\"';
+			return db.album.getByFormat(req.params._format)
+				.then(function(rows) {
+					var i, row;
 
-			if (req.params._format === 'null')
-				filter = 'a.format is null';
-
-			var query = '';
-		 	query	+= 'SELECT AlbumId, title, `release`, ArtistId, `order`, name FROM Albums a, AlbumArtists b, Artists c ';
-			query += 'WHERE ' + filter + ' AND a.id = b.AlbumId and c.id = b.ArtistId;';
-
-			db.handleQuery(query, function (rows) {
-				var albums = [];
-				var i, row;
-
-				for (i in rows) {
-					row = rows[i];
-
-					if (albums[row.AlbumId] === undefined) {
-						albums[row.AlbumId] = { id: row.AlbumId, title: row.title, artists: [], release: new Date(row.release) };
+					for (i in rows) {
+						row = rows[i];
+						albums.push({
+							id: row.id,
+							title: row.title,
+							format: row.format,
+							release: row.release
+						});
 					}
 
-					albums[row.AlbumId].artists[row.order] = { id: row.ArtistId, name: row.name };
-				}
-
-				var out = [];
-
-				for (i in albums) {
-					out.push (albums[i]);
-				}
-
-				out.sort(function (a, b) { return a.release - b.release; });
-
-				res.json(out);
-			});
+					return getArtists(db, albums);
+				}).then(function () {
+					res.json(albums);
+				});
 		});
 		
 		router.get('/api/all-albums', function (req, res) {
