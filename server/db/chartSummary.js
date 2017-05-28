@@ -50,7 +50,7 @@
 	module.exports = function (db) {
 		db.chartSummary = {};
 
-		db.albumChartSummaryByIds = function (ids) {
+		db.chartSummary.getAlbums = function (ids) {
 			var query = "  SELECT AlbumId as id, `type`, rank, count(*) as count " +
 									"    FROM AlbumCharts " +
 									"   WHERE AlbumId in (" + ids.join() + ") " +
@@ -59,9 +59,8 @@
 
 			return getChartSummary(db, query);
 		};
-		db.chartSummary.getAlbums = db.albumChartSummaryByIds;
 
-		db.songChartSummaryByIds = function (ids) {
+		db.chartSummary.getSongs = function (ids) {
 			var query = "  SELECT SongId as id, `type`, rank, count(*) as count " +
 									"    FROM SongCharts " +
 									"   WHERE SongId in (" + ids.join() + ") " +
@@ -70,6 +69,5 @@
 
 			return getChartSummary(db, query);
 		};
-		db.chartSummary.getSongs = db.songChartSummaryByIds;
 	};
 }());

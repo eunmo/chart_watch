@@ -132,7 +132,7 @@
 	};
 
 	var findAlbumChartSummary = function (db, artist, maps) {
-		return db.albumChartSummaryByIds(artist.albumIds)
+		return db.chartSummary.getAlbums(artist.albumIds)
 			.then(function (charts) {
 				for (var i in charts) {
 					maps.albumMap[i].rank = charts[i];
@@ -183,7 +183,7 @@
 	};
 
 	var findSongChartSummary = function (db, artist, maps) {
-		return db.songChartSummaryByIds(artist.songIds)
+		return db.chartSummary.getSongs(artist.songIds)
 			.then(function (charts) {
 				var i, j, songs;
 				for (i in charts) {
