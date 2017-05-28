@@ -188,7 +188,7 @@
 		artistMap[artist.id].artists.push(artist);
 	};
 
-	module.exports = function (router, models, db) {
+	module.exports = function (router, _, db) {
 		router.get('/api/artist/:_id', function (req, res) {
 			var id = parseInt(req.params._id);
 			var artist = { id: id };
