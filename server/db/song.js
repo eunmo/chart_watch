@@ -87,7 +87,6 @@
 
 					return songArtists;
 				});
-
 		};
 			
 		db.song.getAlbums = function (ids) {

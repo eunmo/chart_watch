@@ -35,6 +35,13 @@
 			});
 	};
 
+	var findBs = function (db, artist) {
+		return db.artist.getBs([artist.id])
+			.then(function (Bs) {
+				artist.Bs = Bs[artist.id];
+			});
+	};
+
 	var findAlbumsAndSongs = function (db, artist, maps) {
 		return db.artist.getAlbumsAndSongs(artist.ids)
 			.then(function (rows) {
@@ -114,18 +121,10 @@
 	};
 
 	var findAlbumArtists = function (db, artist, maps) {
-		return db.album.getAlbumArtists(artist.albumIds)
-			.then(function (rows) {
-				var i, album, row;
-
-				for (i in rows) {
-					row = rows[i];
-					album = maps.albumMap[row.AlbumId];
-					album.albumArtists[row.order] = {
-						id: row.ArtistId,
-						name: row.name,
-						order: row.order
-					};
+		return db.album.getArtists(artist.albumIds)
+			.then(function (albumArtists) {
+				for (var i in albumArtists) {
+					maps.albumMap[i].albumArtists = albumArtists[i];
 				}
 			});
 	};
@@ -157,25 +156,13 @@
 	};
 
 	var findSongArtists = function (db, artist, maps) {
-		return db.song.getSongArtists(artist.songIds)
-			.then(function (rows) {
-				var i, j, row, songs, song, songArtist;
-
-				for (i in rows) {
-					row = rows[i];
-					songs = maps.songMap[row.SongId].songs;
-					songArtist = {
-						id: row.ArtistId,
-						name: row.name,
-						order: row.order
-					};
-					for (j in songs) {
-						song = songs[j];
-						if (row.feat) {
-							song.features[row.order] = songArtist;
-						} else {
-							song.artists[row.order] = songArtist;
-						}
+		return db.song.getArtists(artist.songIds)
+			.then(function (songArtists) {
+				var i, j;
+				for (i in songArtists) {
+					for (j in maps.songMap[i].songs) {
+						maps.songMap[i].songs[j].artists = songArtists[i].artists;
+						maps.songMap[i].songs[j].features = songArtists[i].features;
 					}
 				}
 			});
@@ -201,52 +188,6 @@
 		artistMap[artist.id].artists.push(artist);
 	};
 
-	var findBs = function (db, artist, maps) {
-		var map = {};
-		var i, j, k, album, song;
-
-		updateArtistMap(map, artist);
-		for (i in artist.albums) {
-			album = artist.albums[i];
-
-			for (k in album.albumArtists) {
-				updateArtistMap(map, album.albumArtists[k]);
-			}
-
-			for (j in album.songs) {
-				song = album.songs[j];
-
-				for (k in song.artists) {
-					updateArtistMap(map, song.artists[k]);
-				}
-
-				for (k in song.features) {
-					updateArtistMap(map, song.features[k]);
-				}
-			}
-		}
-
-		var artistIds = [];
-		for (i in map) {
-			artistIds.push(map[i].id);
-			map[i].Bs = {};
-			map[i].found = false;
-		}
-
-		return db.artist.getBs(artistIds)
-			.then(function (Bs) {
-				var i, j;
-
-				for (i in map) {
-					if (Bs[i] !== undefined) {
-						for (j in map[i].artists) {
-							map[i].artists[j].Bs = Bs[i];
-						}
-					}
-				}
-			});
-	};
-
 	module.exports = function (router, models, db) {
 		router.get('/api/artist/:_id', function (req, res) {
 			var id = parseInt(req.params._id);
@@ -256,6 +197,7 @@
 
 			promises.push(findArtist(db, artist));
 			promises.push(findAs(db, artist));
+			promises.push(findBs(db, artist));
 			
 			Promise.all(promises)
 				.then(function () {
@@ -272,13 +214,10 @@
 					promises.push(findSongArtists(db, artist, maps));
 					promises.push(findSongChartSummary(db, artist, maps));
 
-					return Promise.all(promises);
-				})
-				.then(function () {
-					return findBs(db, artist, maps);
-				})
-				.then(function () {
-					res.json(artist);
+					return Promise.all(promises)
+						.then(function () {
+							res.json(artist);
+						});
 				});
 		});
 	};
