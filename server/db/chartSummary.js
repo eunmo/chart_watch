@@ -48,6 +48,8 @@
 	};
 	
 	module.exports = function (db) {
+		db.chartSummary = {};
+
 		db.albumChartSummaryByIds = function (ids) {
 			var query = "  SELECT AlbumId as id, `type`, rank, count(*) as count " +
 									"    FROM AlbumCharts " +
@@ -57,6 +59,7 @@
 
 			return getChartSummary(db, query);
 		};
+		db.chartSummary.getAlbums = db.albumChartSummaryByIds;
 
 		db.songChartSummaryByIds = function (ids) {
 			var query = "  SELECT SongId as id, `type`, rank, count(*) as count " +
@@ -67,5 +70,6 @@
 
 			return getChartSummary(db, query);
 		};
+		db.chartSummary.getSongs = db.songChartSummaryByIds;
 	};
 }());

@@ -45,5 +45,37 @@
 				
 			return db.promisifyQuery(query);
 		};
+
+		db.artist.getBs = function (ids) {
+			return db.artist.getB(ids)
+				.then(function (rows) {
+					var Bs = {};
+					var i, row, b, type, artist;
+
+					for (i in rows) {
+						row = rows[i];
+						type = row.type;
+
+						if (Bs[row.a] === undefined) {
+							Bs[row.a] = {};
+						}
+
+						artist = Bs[row.a];
+
+						b = { id: row.b, name: row.name };
+
+						if (type !== 'p') {
+							artist[type] = b;
+						} else if (row.order !== undefined) { // project group needs an order.
+							if (artist[type] === undefined) {
+								artist[type] = [];
+							}
+							artist[type][row.order] = b;
+						}
+					}
+
+					return Bs;
+				});
+		};
 	};
 }());

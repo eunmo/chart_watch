@@ -1,121 +1,97 @@
 (function () {
 	'use strict';
+
+	var getArtists = function (db, songs, ids) {
+		return db.song.getArtists(ids)
+			.then(function (songArtists) {
+				var i, song;
+
+				for (i in songs) {
+					song = songs[i];
+
+					if (songArtists[song.id] !== undefined) {
+						song.artists = songArtists[song.id].artists;
+						song.features = songArtists[song.id].features;
+					}
+				}
+			});
+	};
 	
-	var common = require('../common/cwcommon');
+	var getOldestAlbum = function (db, songs, ids) {
+		return db.song.getAlbums(ids)
+			.then(function (songAlbums) {
+				var i, song;
 
-	var getRank = function (charts) {
-		var i;
-		var rank = {};
-		var chartRow;
+				for (i in songs) {
+					song = songs[i];
 
-		for (i in charts) {
-			chartRow = charts[i];
-
-			if (chartRow.rank > 10)
-				continue;
-
-			if (rank[chartRow.type] === undefined) {
-				rank[chartRow.type] = {
-					min: chartRow.rank,
-					run: 0,
-					count: 1
-				};
-			} else if (chartRow.rank < rank[chartRow.type].min) {
-				rank[chartRow.type].min = chartRow.rank;
-				rank[chartRow.type].run += rank[chartRow.type].count;
-				rank[chartRow.type].count = 1;
-			} else if (chartRow.rank === rank[chartRow.type].min) {
-				rank[chartRow.type].count++;
-			} else {
-				rank[chartRow.type].run++;
-			}
-		}
-
-		return rank;
+					if (songAlbums[song.id] !== undefined) {
+						song.albumId = songAlbums[song.id][0].id;
+					}
+				}
+			});
 	};
 
-	module.exports = function (router, models) {
-		function getLastPlayed (limit) {
-			return models.Song.findAll({
-				where: { lastPlayed: { ne: null } },
-				order: 'lastPlayed DESC',
-				limit: limit
-			}).then(function (Songs) {
-				var ids = [];
+	var getChartSummary =  function (db, songs, ids) {
+		return db.chartSummary.getSongs(ids)
+			.then(function (charts) {
+				var i, song;
+				for (i in songs) {
+					song = songs[i];
 
-				for (var row in Songs) {
-					ids.push(Songs[row].id);
+					if (charts[song.id] !== undefined) {
+						song.rank = charts[song.id];
+					}
 				}
-
-				return models.Song.findAll({
-					where: { id: { in: ids } },
-					include: [
-						{ model: models.Album },
-						{ model: models.Artist, include: [
-							{ model: models.Artist, as: 'Group' }
-						]},
-						{ model: models.SongChart }
-					],
-					order: 'lastPlayed DESC'
-				});
-			}).then(function (Songs) {
-				var i;
-				var resArray = [];
-				var song, songRow;
-
-				for (i in Songs) {
-					songRow = Songs[i];
-					song = common.newSong(songRow);
-					song.lastPlayed = songRow.lastPlayed;
-					song.songArtists = common.getSongArtists(songRow);
-					song.rank = getRank(songRow.SongCharts);
-					song.albumId = songRow.Albums[0].id;
-					resArray.push(song);
-				}
-
-				return resArray;
 			});
+	};
+
+	var getExternals = function (db, rows) {
+		var i, row;
+		var songs = [];
+		var ids = [];
+		var promises = [];
+
+		for (i in rows) {
+			row = rows[i];
+			ids.push(row.id);
+			songs.push({
+				id: row.id,
+				title: row.title,
+				plays: row.plays,
+				lastPlayed: row.lastPlayed	
+			});
+		}
+
+		promises.push(getArtists(db, songs, ids));
+		promises.push(getOldestAlbum(db, songs, ids));
+		promises.push(getChartSummary(db, songs, ids));
+
+		return Promise.all(promises)
+			.then(function () {
+				return songs;
+			});
+	};
+
+	module.exports = function (router, models, db) {
+		function getLastPlayed (limit) {
+			var columns = ", lastPlayed";
+			var filter = "WHERE lastPlayed is not null ORDER BY lastPlayed DESC LIMIT " + limit;
+
+			return db.song.get(columns, filter)
+				.then(function (rows) {
+					return getExternals (db, rows);
+				});
 		}
 		
 		function getRecentlyAdded (limit) {
-			return models.Song.findAll({
-				order: 'createdAt DESC',
-				limit: limit
-			}).then(function (Songs) {
-				var ids = [];
+			var columns = ", createdAt as lastPlayed";
+			var filter = "ORDER BY createdAt DESC LIMIT " + limit;
 
-				for (var row in Songs) {
-					ids.push(Songs[row].id);
-				}
-
-				return models.Song.findAll({
-					where: { id: { in: ids } },
-					include: [
-						{ model: models.Album },
-						{ model: models.Artist, include: [
-							{ model: models.Artist, as: 'Group' }
-						]},
-						{ model: models.SongChart }
-					],
-					order: 'createdAt DESC',
+			return db.song.get(columns, filter)
+				.then(function (rows) {
+					return getExternals (db, rows);
 				});
-			}).then(function (Songs) {
-				var i;
-				var resArray = [];
-				var song, songRow;
-
-				for (i in Songs) {
-					songRow = Songs[i];
-					song = common.newSong(songRow);
-					song.lastPlayed = songRow.createdAt;
-					song.songArtists = common.getSongArtists(songRow);
-					song.rank = getRank(songRow.SongCharts);
-					song.albumId = songRow.Albums[0].id;
-					resArray.push(song);
-				}
-
-				return resArray;
-			});
 		}
 
 		router.get('/api/lastPlayed', function (req, res) {
@@ -148,66 +124,13 @@
 		
 		router.get('/api/plays/:_play', function (req, res) {
 			var play = req.params._play;
-			var whereClause, orderByClause;
-			var order = [];
-
-			if (play == 100) {
-				whereClause = "WHERE s.plays >= 100 ";
-				orderByClause = "ORDER BY plays DESC, ISNULL(rank), rank, s.id ";
-			} else {
-				whereClause = "WHERE s.plays = " + req.params._play + " ";
-				orderByClause = "ORDER BY ISNULL(rank), rank, s.id ";
-			}
-
-			var queryString =
-				"SELECT s.id " +
-				"FROM Songs s " +
-				"LEFT JOIN (SELECT SongId, min(rank) as rank " +
-									 "FROM SongCharts " +
-									 "WHERE rank <= 10  " +
-									 "GROUP BY SongId) c " +
-				"ON s.id = c.SongId " +
-				whereClause +
-				orderByClause +
-			  "LIMIT 200 ";
-
-			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
-			.then(function (Songs) {
-				var ids = [], id;
-
-				for (var row in Songs) {
-					id = Songs[row].id;
-					ids.push(id);
-					order[id] = row;
-				}
-
-				return models.Song.findAll({
-					where: { id: { in: ids } },
-					include: [
-						{ model: models.Album },
-						{ model: models.Artist, include: [
-							{ model: models.Artist, as: 'Group' }
-						]},
-						{ model: models.SongChart }
-					],
+			
+			return db.song.getByPlays(play)
+				.then(function (rows) {
+					return getExternals (db, rows);
+				}).then(function (songs) {
+					res.json(songs);
 				});
-			}).then(function (Songs) {
-				var i;
-				var resArray = [];
-				var song, songRow;
-
-				for (i in Songs) {
-					songRow = Songs[i];
-					song = common.newSong(songRow);
-					song.lastPlayed = songRow.lastPlayed;
-					song.songArtists = common.getSongArtists(songRow);
-					song.rank = getRank(songRow.SongCharts);
-					song.albumId = songRow.Albums[0].id;
-					resArray[order[song.id]] = song;
-				}
-
-				res.json(resArray);
-			});
 		});
 	};
 }());
