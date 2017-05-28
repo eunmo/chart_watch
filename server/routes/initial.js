@@ -73,28 +73,15 @@
 	};
 
 	var getBs = function (db, artists, ids) {
+		return db.artist.getBs(ids)
+			.then(function (Bs) {
+				var i, artist;
 
-		return db.artist.getB(ids)
-			.then(function (rows) {
-				var i, row, b, type, artist;
+				for (i in artists) {
+					artist = artists[i];
 
-				for (i in rows) {
-					row = rows[i];
-					type = row.type;
-					artist = artists[row.a];
-
-					if (artist.Bs === undefined)
-						artist.Bs = {};
-
-					b = { id: row.b, name: row.name };
-
-					if (type !== 'p') {
-						artist.Bs[type] = b;
-					} else if (row.order !== undefined) { // project group needs an order.
-						if (artist.Bs[type] === undefined) {
-							artist.Bs[type] = [];
-						}
-						artist.Bs[type][row.order] = b;
+					if (Bs[artist.id] !== undefined) {
+						artist.Bs = Bs[artist.id];
 					}
 				}
 			});

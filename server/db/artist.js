@@ -10,26 +10,6 @@
 
 			return db.promisifyQuery(query);
 		};
-
-		db.artist.getA = function (id) {
-			var query =
-				"SELECT ar.`type`, ar.order, a.name, a.id " +
-				"  FROM ArtistRelations ar, Artists a " +
-				" WHERE ar.b = " + id +
-				"   AND ar.a = a.id";
-
-				return db.promisifyQuery(query);
-		};
-
-		db.artist.getB = function (ids) {
-			var query =
-				"SELECT ar.a, ar.b, ar.`type`, ar.order, a.name " +
-				"  FROM ArtistRelations ar, Artists a " +
-				" WHERE ar.a in (" + ids.join() + ") " +
-				"   AND ar.b = a.id";
-
-				return db.promisifyQuery(query);
-		};
 		
 		db.artist.getAlbumsAndSongs = function (ids) {
 			var query =
@@ -46,8 +26,24 @@
 			return db.promisifyQuery(query);
 		};
 
+		db.artist.getA = function (id) {
+			var query =
+				"SELECT ar.`type`, ar.order, a.name, a.id " +
+				"  FROM ArtistRelations ar, Artists a " +
+				" WHERE ar.b = " + id +
+				"   AND ar.a = a.id";
+
+				return db.promisifyQuery(query);
+		};
+
 		db.artist.getBs = function (ids) {
-			return db.artist.getB(ids)
+			var query =
+				"SELECT ar.a, ar.b, ar.`type`, ar.order, a.name " +
+				"  FROM ArtistRelations ar, Artists a " +
+				" WHERE ar.a in (" + ids.join() + ") " +
+				"   AND ar.b = a.id";
+
+			return db.promisifyQuery(query)
 				.then(function (rows) {
 					var Bs = {};
 					var i, row, b, type, artist;

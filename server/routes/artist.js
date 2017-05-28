@@ -1,7 +1,6 @@
 (function () {
 	'use strict';
 
-	var common = require('../common/cwcommon.js');	
 	var Sequelize = require('sequelize');
 	var Promise = require('bluebird');
 
@@ -234,36 +233,15 @@
 			map[i].found = false;
 		}
 
-		return db.artist.getB(artistIds)
-			.then(function (rows) {
-				var i, j, row, artists, elem, type, b;
-				for (i in rows) {
-					row = rows[i];
-					elem = map[row.a];
-					elem.found = true;
-					artists = map[row.a].artists;
-					type = row.type;
-					b = { id: row.b, name: row.name };
-
-					if (row.type !== 'p') {
-						elem.Bs[type] = b;
-					} else if (row.order !== undefined) {	// project group needs an order.
-						if (elem.Bs[type] === undefined) {
-							elem.Bs[type] = [];
-						}
-						elem.Bs[type][row.order] = b;
-					}
-				}
+		return db.artist.getBs(artistIds)
+			.then(function (Bs) {
+				var i, j;
 
 				for (i in map) {
-					elem = map[i];
-					artists = elem.artists;
-
-					if (elem.found === false)
-						continue;
-
-					for (j in artists) {
-						artists[j].Bs = elem.Bs;
+					if (Bs[i] !== undefined) {
+						for (j in map[i].artists) {
+							map[i].artists[j].Bs = Bs[i];
+						}
 					}
 				}
 			});
