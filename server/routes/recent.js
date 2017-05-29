@@ -16,8 +16,6 @@
 				plays: row.plays,
 				lastPlayed: row.lastPlayed	
 			});
-
-			console.log(row.lastPlayed);
 		}
 
 		promises.push(db.song.fetchArtists(songs, ids));

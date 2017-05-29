@@ -15,7 +15,8 @@
 		user     : dbconfig.user,
 		password : dbconfig.password,
 		database : dbconfig.database,
-		debug    : false
+		debug    : false,
+		timezone : 'UTC+0'
 	});
 
 	var db = {pool: pool};
