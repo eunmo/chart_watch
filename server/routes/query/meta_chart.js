@@ -1,11 +1,10 @@
 (function () {
 	'use strict';
 
-	var common = require('../common/cwcommon');
+	var common = require('../../common/cwcommon');
 	var path = require('path');
 	var fs = require('fs');
 	var Promise = require('bluebird');
-	var exec = Promise.promisify(require('child_process').exec);
 
 	var charts = ['billboard', 'oricon', 'deutsche', 'uk', 'francais', 'melon', 'gaon'];
 	var headers = ['US', 'オリコン', 'Deutsche', 'UK', 'Francais', '멜론', '가온'];

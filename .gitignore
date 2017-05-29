@@ -1,7 +1,7 @@
 node_modules/
 client/lib/
 uploads/
-chart/
+/chart/
 *.swp
 resetdb.js
 db.json

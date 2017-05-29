@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 
-	var common = require('../common/cwcommon');
+	var common = require('../../common/cwcommon');
 	var path = require('path');
 	var fs = require('fs');
 	var Promise = require('bluebird');

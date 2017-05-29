@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 
-	var common = require('../common/cwcommon');
+	var common = require('../../common/cwcommon');
 	var Promise = require('bluebird');
 	
 	var charts = ['billboard', 'oricon', 'deutsche', 'uk', 'francais', 'melon', 'gaon'];

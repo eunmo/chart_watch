@@ -1,7 +1,6 @@
 (function () {
 	'use strict';
 
-	var common = require('../common/cwcommon');
 	var Promise = require('bluebird');
 	
 	var getArtists = function (models, id, results) {

@@ -1,7 +1,6 @@
 (function () {
 	'use strict';
 
-	var common = require('../common/cwcommon.js');	
 	var Sequelize = require('sequelize');
 	var Promise = require('bluebird');
 

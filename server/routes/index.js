@@ -8,15 +8,23 @@
 	var db = require('../db/index');
 
   var router = express.Router();
-	
-	var routeDir = path.resolve('server/routes');
 
-	fs.readdirSync(routeDir)
-		.filter(function (file) {
-			return (file.indexOf('.') !== 0) && (file !== 'index.js');
-		})
-		.forEach(function (file) {
-			require(path.join(routeDir, file))(router, models, db);
+	var dir = path.resolve('server/routes');	
+
+	function getRoutes (dir) {
+		fs.readdirSync(dir)
+			.filter(function (file) {
+				return (file.indexOf('.') !== 0);
+			}).forEach(function (file) {
+				require(path.join(dir, file))(router, models, db);
+			});
+	}
+
+	fs.readdirSync(dir)
+		.filter(function (subDir) {
+			return (subDir.indexOf('.') !== 0) && (subDir !== 'index.js');
+		}).forEach(function (subDir) {
+			getRoutes(path.join(dir, subDir));
 		});
 
   /* GET home page. */
