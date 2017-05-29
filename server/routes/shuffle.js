@@ -9,8 +9,8 @@
 		var i, index;
 
 		for (i = 0; i < count; i++) {
-			index = Math.floor (Math.random () * rows.length);
-			array.push ({ id: rows[index].id, code: code });
+			index = Math.floor(Math.random () * rows.length);
+			array.push(rows[index].id);
 		}
 	};
 	
@@ -28,7 +28,7 @@
 
 		for (i = 0; i < count; i++) {
 			index = Math.floor (Math.random () * weightedArray.length);
-			array.push ({ id: weightedArray[index], code: code });
+			array.push(weightedArray[index]);
 		}
 	};
 
@@ -38,31 +38,55 @@
 			code: 'B', callback: simpleRandom },
 		{ query: "SELECT s.id,  11 - min(rank) as weight FROM Songs s, SongCharts sc WHERE s.id = sc.SongId AND sc.rank <= 10 GROUP BY s.id;", 
 			code: 'C', callback: weightedRandom },
-		/*
-		{ query: "SELECT a.SongId as id,  11 - min(rank) as weight FROM AlbumSongs a, AlbumCharts b " +
-						 "WHERE a.AlbumId = b.AlbumId AND b.rank <= 10 GROUP BY a.SongId;", 
-			code: 'D', callback: weightedRandom },
-			*/
-		{ query: "SELECT SongId id FROM Artists a, AlbumArtists aa, AlbumSongs s " +
-						 "WHERE a.favorites = true AND a.id = aa.ArtistId AND aa.AlbumId = s.AlbumId GROUP BY SongId " +
-						 "UNION " +
-		 				 "SELECT SongId id FROM SongArtists sa, Artists a WHERE a.favorites = true AND a.id = sa.ArtistId GROUP BY SongId;",
-			code: 'E', callback: simpleRandom }
+		{ query:
+				"SELECT DISTINCT id " +
+				"  FROM (" +
+								"SELECT SongId id FROM Artists a, AlbumArtists aa, AlbumSongs s " +
+	 							" WHERE a.favorites = true AND a.id = aa.ArtistId AND aa.AlbumId = s.AlbumId " +
+								"UNION " +
+						 		"SELECT SongId id FROM SongArtists sa, Artists a " +
+								" WHERE a.favorites = true AND a.id = sa.ArtistId " +
+								"UNION " +
+								"SELECT SongId id FROM Artists a, ArtistRelations b, AlbumArtists aa, AlbumSongs s " +
+ 								" WHERE a.favorites = true AND a.id = b.b AND b.a = aa.ArtistId AND aa.AlbumId = s.AlbumId " +
+								"UNION " +
+ 								"SELECT SongId id FROM SongArtists sa, Artists a, ArtistRelations b " +
+								" WHERE a.favorites = true AND a.id = b.b AND b.a = sa.ArtistId) a;",
+			code: 'D', callback: simpleRandom }
 		];
 
-	var getSongIds = function (models, query, array, count) {
-		return models.sequelize.query (query.query, { type: models.sequelize.QueryTypes.SELECT })
-		.then (function (rows) {
-			query.callback (rows, array, count, query.code);
+	var getSongIds = function (db, query, array, count) {
+		return db.promisifyQuery(query.query)
+		.then(function (rows) {
+			query.callback(rows, array, count, query.code);
 		});
 	};
+	
+	var getDetails = function (db, doc) {
+		return db.song.getDetails(doc.ids)
+			.then(function (rows) {
+				var i, row, song;
+				var	details = {};
 
+				for (i in rows) {
+					row = rows[i];
+					details[row.id] = row;
+				}
+
+				for (i in doc.songs) {
+					song = doc.songs[i];
+					row = details[song.id];
+
+					song.title = row.title;
+					song.plays = row.plays;
+				}
+			});
+	};
 		
-	module.exports = function (router, models) {
-		function getRandomSongIds () {
+	module.exports = function (router, _, db) {
+		function getRandomSongs () {
 			var promises = [];
 			var songIds = [];
-			var songs = [];
 			var limits = [];
 			var random;
 			var i;
@@ -72,135 +96,43 @@
 			}
 
 			for (i = 0; i < 100; i++) {
-				random = Math.floor (Math.random () * queries.length);
+				random = Math.floor(Math.random () * queries.length);
 				limits[random]++;
 			}
 
 			for (i in queries) {
-				promises.push (getSongIds (models, queries[i], songIds, limits[i]));
+				promises.push(getSongIds(db, queries[i], songIds, limits[i]));
 			}
 
 			return Promise.all (promises)
-				.then (function () {
-					var i;
-					var songId;
-					var idArray = [];
+				.then(function () {
+					var songs = {};
+					var ids = [];
+					var i, id;
 
 					for (i in songIds) {
-						songId = songIds[i];
+						id = songIds[i];
 
-						if (songs[songId.id]) {
-							songs[songId.id].codes.push (songId.code);
-						}
-						else {
-							songs[songId.id] = {
-								id: songId.id, 
-								codes: [songId.code], 
-								artists: []
-							};
-
-							idArray.push (songId.id);
+						if (songs[id] === undefined) {
+							songs[id] = { id: id };
+							ids.push(id);
 						}
 					}
-
-					var ids = "(";
-					for (i in idArray) {
-						if (i > 0)
-							ids += ",";
-						ids += idArray[i];
-					}
-					ids += ")";
 
 					return { ids: ids, songs: songs };
 				});
 		}
 
-		function getSongs (doc) {
-			var query = "SELECT id, title, plays FROM Songs WHERE id IN " + doc.ids + ";";
-			return models.sequelize.query (query, { type: models.sequelize.QueryTypes.SELECT })
-				.then (function (rows) {
-					var i;
-					var song;
+		function fillSongs (doc) {
+			var promises = [];
 
-					for (i in rows) {
-						song = rows[i];
-						doc.songs[song.id].title = song.title;
-						doc.songs[song.id].plays = song.plays;
-					}
+			promises.push(getDetails(db, doc));
+			promises.push(db.song.fetchArtists(doc.songs, doc.ids));
+			promises.push(db.song.fetchOldestAlbum(doc.songs, doc.ids));
+			promises.push(db.song.fetchMinChartRank(doc.songs, doc.ids));
 
-					return doc;
-				});
-		}
-
-		function getAlbums (doc) {
-			var query = "SELECT SongId, AlbumId " +
-				          "FROM AlbumSongs s, Albums a " +
-									"WHERE s.AlbumId = a.id " +
-									"AND s.SongId in " + doc.ids + " " +
-									"ORDER BY s.SongId, a.release;";
-			
-			return models.sequelize.query (query, { type: models.sequelize.QueryTypes.SELECT })
-				.then (function (rows) {
-					var i;
-					var album;
-					var song;
-
-					for (i in rows) {
-						album = rows[i];
-						song = doc.songs[album.SongId];
-
-						if (song.albumId === undefined) {
-							song.albumId = album.AlbumId;
-						}												
-					}
-
-					return doc;
-				});
-		}
-		
-		function getArtists (doc) {
-			var query = "SELECT SongId, ArtistId, name " +
-									"FROM SongArtists s, Artists a " +
-									"WHERE s.SongId in " + doc.ids + " " +
-									"AND s.ArtistId = a.id " +
-									"AND s.feat = false " +
-									"ORDER BY s.order;";
-			
-			return models.sequelize.query (query, { type: models.sequelize.QueryTypes.SELECT })
-				.then (function (rows) {
-					var i;
-					var artist;
-					var song;
-
-					for (i in rows) {
-						artist = rows[i];
-						song = doc.songs[artist.SongId];
-						song.artists.push ({ id: artist.ArtistId, name: artist.name });
-					}
-
-					return doc;
-				});
-		}
-
-		function getCharts (doc) {
-			var query = "SELECT SongId, MIN(rank) as rank " +
-									"FROM SongCharts " +
-									"WHERE SongId in " + doc.ids + " " +
-									"AND rank <= 10 " + 
-									"GROUP BY SongId;";
-
-			return models.sequelize.query (query, { type: models.sequelize.QueryTypes.SELECT })
-				.then (function (rows) {
-					var i;
-					var chart;
-					var song;
-
-					for (i in rows) {
-						chart = rows[i];
-						song = doc.songs[chart.SongId];
-					 	song.rank = chart.rank;
-					}
-
+			return Promise.all (promises)
+				.then(function () {
 					return doc;
 				});
 		}
@@ -224,11 +156,8 @@
 		}
 
 		router.get('/shuffle', function (req, res) {
-			getRandomSongIds ()
-			.then (getSongs)
-			.then (getAlbums)
-			.then (getArtists)
-			.then (getCharts)
+			getRandomSongs ()
+			.then (fillSongs)
 			.then (trimSongArray)
 			.then (function (doc) {
 				res.json (doc);

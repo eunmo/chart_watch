@@ -146,5 +146,77 @@
 
 			return db.promisifyQuery(query);
 		};
+
+		db.song.fetchArtists = function (songs, ids) {
+			return db.song.getArtists(ids)
+				.then(function (songArtists) {
+					var i, song;
+
+					for (i in songs) {
+						song = songs[i];
+
+						if (songArtists[song.id] !== undefined) {
+							song.artists = songArtists[song.id].artists;
+							song.features = songArtists[song.id].features;
+						}
+					}
+				});
+		};
+	
+		db.song.fetchOldestAlbum = function (songs, ids) {
+			return db.song.getAlbums(ids)
+				.then(function (songAlbums) {
+					var i, song;
+
+					for (i in songs) {
+						song = songs[i];
+
+						if (songAlbums[song.id] !== undefined) {
+							song.albumId = songAlbums[song.id][0].id;
+						}
+					}
+				});
+		};
+		
+		db.song.fetchMinChartRank =  function (songs, ids) {
+			var query = "  SELECT SongId id, min(rank) rank " +
+									"    FROM SongCharts " +
+									"   WHERE SongId in (" + ids.join() + ") " +
+									"     AND rank <= 10 " +
+									"GROUP BY SongId;";
+			
+			return db.promisifyQuery(query)
+				.then(function (rows) {
+					var i, row, song;
+				 	var	charts = {};
+
+					for (i in rows) {
+						row = rows[i];
+						charts[row.id] = row.rank;
+					}
+
+					for (i in songs) {
+						song = songs[i];
+
+						if (charts[song.id] !== undefined) {
+							song.rank = charts[song.id];
+						}
+					}
+				});
+		};
+
+		db.song.fetchChartSummary =  function (songs, ids) {
+			return db.chartSummary.getSongs(ids)
+				.then(function (charts) {
+					var i, song;
+					for (i in songs) {
+						song = songs[i];
+
+						if (charts[song.id] !== undefined) {
+							song.rank = charts[song.id];
+						}
+					}
+				});
+		};
 	};
 }());

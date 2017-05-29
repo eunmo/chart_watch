@@ -1,51 +1,6 @@
 (function () {
 	'use strict';
 
-	var getArtists = function (db, songs, ids) {
-		return db.song.getArtists(ids)
-			.then(function (songArtists) {
-				var i, song;
-
-				for (i in songs) {
-					song = songs[i];
-
-					if (songArtists[song.id] !== undefined) {
-						song.artists = songArtists[song.id].artists;
-						song.features = songArtists[song.id].features;
-					}
-				}
-			});
-	};
-	
-	var getOldestAlbum = function (db, songs, ids) {
-		return db.song.getAlbums(ids)
-			.then(function (songAlbums) {
-				var i, song;
-
-				for (i in songs) {
-					song = songs[i];
-
-					if (songAlbums[song.id] !== undefined) {
-						song.albumId = songAlbums[song.id][0].id;
-					}
-				}
-			});
-	};
-
-	var getChartSummary =  function (db, songs, ids) {
-		return db.chartSummary.getSongs(ids)
-			.then(function (charts) {
-				var i, song;
-				for (i in songs) {
-					song = songs[i];
-
-					if (charts[song.id] !== undefined) {
-						song.rank = charts[song.id];
-					}
-				}
-			});
-	};
-
 	var getExternals = function (db, rows) {
 		var i, row;
 		var songs = [];
@@ -61,11 +16,13 @@
 				plays: row.plays,
 				lastPlayed: row.lastPlayed	
 			});
+
+			console.log(row.lastPlayed);
 		}
 
-		promises.push(getArtists(db, songs, ids));
-		promises.push(getOldestAlbum(db, songs, ids));
-		promises.push(getChartSummary(db, songs, ids));
+		promises.push(db.song.fetchArtists(songs, ids));
+		promises.push(db.song.fetchOldestAlbum(songs, ids));
+		promises.push(db.song.fetchChartSummary(songs, ids));
 
 		return Promise.all(promises)
 			.then(function () {
