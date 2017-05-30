@@ -86,7 +86,7 @@
 			});
 	};
 	
-	module.exports = function (router, models, db) {
+	module.exports = function (router, _, db) {
 		router.get('/api/initial/:_initial', function (req, res) {
 			var initial = req.params._initial;
 			var queryOption = {};

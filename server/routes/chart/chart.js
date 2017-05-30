@@ -359,9 +359,7 @@
 				where: { id: id },
 				include: [
 					{ model: models.Album },
-					{ model: models.Artist, include: [
-						{ model: models.Artist, as: 'Group' }
-					]}
+					{ model: models.Artist }
 				]
 			})
 			.then(function (song) {
@@ -416,9 +414,7 @@
 						{ model: models.Song,
 							include: [
 								{ model: models.Album },
-								{ model: models.Artist, include: [
-									{ model: models.Artist, as: 'Group' }
-								]}
+								{ model: models.Artist }
 							]
 					}
 					]

@@ -15,17 +15,6 @@
 			Artist.belongsToMany(models.Album, {through: models.AlbumArtist});
 
 			Artist.belongsToMany(models.Artist,
-													 { through: models.ArtistGroup,
-													   as: 'Group',
-													   foreignKey: 'MemberId',
-													 	 otherKey: 'GroupId'});
-			Artist.belongsToMany(models.Artist,
-													 { through: models.ArtistGroup,
-													   as: 'Member',
-													   foreignKey: 'GroupId',
-													 	 otherKey: 'MemberId'});
-
-			Artist.belongsToMany(models.Artist,
 													 { through: models.ArtistRelation,
 													   as: 'B',
 													   foreignKey: 'A',

@@ -81,9 +81,7 @@
 					{ model: models.Song,
 						include: [
 							{ model: models.Album },
-							{ model: models.Artist, include: [
-								{ model: models.Artist, as: 'Group' }
-							]}
+							{ model: models.Artist }
 						]
 					}
 				]
@@ -227,9 +225,7 @@
 				where: { id: { in: ids } },
 						 include: [
 			{ model: models.Album },
-						 { model: models.Artist, include: [
-							 { model: models.Artist, as: 'Group' }
-							 ]}
+						 { model: models.Artist }
 							 ]
 			}).then(function (songs) {
 				var resArray = [];

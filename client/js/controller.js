@@ -303,34 +303,8 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 
 	$http.get('api/edit/artist/' + $routeParams.id).success(function (artist) {
 		var i, artistGroup, artistRelation;
-		artist.editGroups = [];
-		artist.editMembers = [];
 		artist.editRelations = [];
 		artist.editAliases = [];
-
-		for (i in artist.Group) {
-			var group = artist.Group[i];
-			artistGroup = group.ArtistGroup;
-			artist.editGroups[i] = {
-				name: group.name,
-				id: group.id,
-				primary: artistGroup.primary,
-				deleted: false,
-				created: false
-			};
-		}
-
-		for (i in artist.Member) {
-			var member = artist.Member[i];
-			artistGroup = member.ArtistGroup;
-			artist.editMembers[i] = {
-				name: member.name,
-				id: member.id,
-				primary: artistGroup.primary,
-				deleted: false,
-				created: false
-			};
-		}
 
 		for (i in artist.B) {
 			var b = artist.B[i];
@@ -376,32 +350,6 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 		.then(function (res) {
 			$location.url('/');
 		});
-	};
-
-	$scope.addGroup = function () {
-		if ($scope.artist.editGroups.length === 0 ||
-				$scope.artist.editGroups[$scope.artist.editGroups.length - 1].name !== null) {
-			var artist = {
-				name: null,
-				primary: false,
-				deleted: false,
-				created: true
-			};
-			$scope.artist.editGroups.push(artist);
-		}
-	};
-
-	$scope.addMember = function () {
-		if ($scope.artist.editMembers.length === 0 ||
-				$scope.artist.editMembers[$scope.artist.editMembers.length - 1].name !== null) {
-			var artist = {
-				name: null,
-				primary: false,
-				deleted: false,
-				created: true
-			};
-			$scope.artist.editMembers.push(artist);
-		}
 	};
 
 	$scope.addRelation = function () {

@@ -10,7 +10,7 @@
 			var promises = [];
 			var songArtistCount = 0;
 			var albumArtistCount = 0;
-			var artistGroupCount = 0;
+			var artistRelationCount = 0;
 
 			promises.push(models.SongArtist.count({
 					where: { ArtistId: id } 
@@ -24,17 +24,17 @@
 				albumArtistCount = count;
 			}));
 
-			promises.push(models.ArtistGroup.count({
-					where: Sequelize.or({ GroupId: id }, { MemberId: id })
+			promises.push(models.ArtistRelation.count({
+					where: Sequelize.or({ A: id }, { B: id })
 			}).then(function (count) {
-				artistGroupCount = count;
+				artistRelationCount = count;
 			}));
 
 			Promise.all(promises)
 			.then(function () {
 				if (songArtistCount === 0 &&
 						albumArtistCount === 0 &&
-					  artistGroupCount === 0) {
+					  artistRelationCount === 0) {
 					models.Artist.destroy({
 						where: { id: id }
 					})

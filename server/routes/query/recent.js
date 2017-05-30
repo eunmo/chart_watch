@@ -28,7 +28,7 @@
 			});
 	};
 
-	module.exports = function (router, models, db) {
+	module.exports = function (router, _, db) {
 		function getLastPlayed (limit) {
 			var columns = ", lastPlayed";
 			var filter = "WHERE lastPlayed is not null ORDER BY lastPlayed DESC LIMIT " + limit;

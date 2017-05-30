@@ -9,66 +9,6 @@
 
 	module.exports = function (router, models) {
 		
-		function addArtistGroup(artistId, groupName, primary) {
-			return models.Artist.findOrCreate({
-				where: { name: groupName },
-				defaults: { nameNorm: groupName }
-			})
-			.spread(function (artist, created) {
-				return models.ArtistGroup.findOne({
-					where: { GroupId: { ne: artist.id },
-									 MemberId: artistId, primary: true }
-				})
-				.then(function (artistGroup) {
-					return models.ArtistGroup.findOrCreate({
-						where: { MemberId: artistId, GroupId: artist.id },
-						defaults: { primary: artistGroup === null && primary }
-					});
-				});
-			});
-		}
-		
-		function addArtistMember(artistId, memberName, primary) {
-			return models.Artist.findOrCreate({
-				where: { name: memberName },
-				defaults: { nameNorm: memberName }
-			})
-			.spread(function (artist, created) {
-				return models.ArtistGroup.findOne({
-					where: { GroupId: { ne: artistId },
-									 MemberId: artist.id, primary: true }
-				})
-				.then(function (artistGroup) {
-					return models.ArtistGroup.findOrCreate({
-						where: { GroupId: artistId, MemberId: artist.id },
-						defaults: { primary: artistGroup === null && primary }
-					});
-				});
-			});
-		}
-
-		function deleteArtistGroup(groupId, memberId) {
-			return models.ArtistGroup.destroy({
-				where: { GroupId: groupId, MemberId: memberId }
-			});
-		}
-
-		function updateArtistGroup(groupId, memberId, primary) {
-			return models.ArtistGroup.findOne({
-				where: { GroupId: { ne: groupId }, MemberId: memberId, primary: true }
-			})
-			.then(function (artistGroup) {
-				if (artistGroup !== null && primary)
-					return;
-
-				return models.ArtistGroup.update({
-					primary: primary
-				},
-				{ where: { GroupId: groupId, MemberId: memberId }
-				});
-			});
-		}
-		
 		function addArtistRelation(artistId, relation) {
 			return models.Artist.findOrCreate({
 				where: { name: relation.name },
@@ -124,32 +64,6 @@
 
 			if (favorites === false)
 				favorites = null;
-			
-			for (i in input.editGroups) {
-				var editGroup = input.editGroups[i];
-				if (editGroup.created) {
-					if (editGroup.name !== null) {
-						promises.push(addArtistGroup(id, editGroup.name, editGroup.primary));
-					}
-				} else if (editGroup.deleted) {
-					promises.push(deleteArtistGroup(editGroup.id, id));
-				} else {
-					promises.push(updateArtistGroup(editGroup.id, id, editGroup.primary));
-				}
-			}
-			
-			for (i in input.editMembers) {
-				var editMember = input.editMembers[i];
-				if (editMember.created) {
-					if (editMember.name !== null) {
-						promises.push(addArtistMember(id, editMember.name, editMember.primary));
-					}
-				} else if (editMember.deleted) {
-					promises.push(deleteArtistGroup(id, editMember.id));
-				} else {
-					promises.push(updateArtistGroup(id, editMember.id, editMember.primary));
-				}
-			}
 			
 			for (i in input.editRelations) {
 				var editRelation = input.editRelations[i];

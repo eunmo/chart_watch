@@ -7,11 +7,7 @@
 		return models.Song.findOne({
 			where: {id: id},
 			include: [
-				{ model: models.Artist, attributes: [ 'id', 'name' ],
-					include: [
-						{ model: models.Artist, as: 'Group', attributes: [ 'id', 'name' ] }
-					]
-				}
+				{ model: models.Artist, attributes: [ 'id', 'name' ] }
 			]
 		}).then(function (array) {
 			results.artists = array;
@@ -24,11 +20,7 @@
 			include: [
 				{ model: models.Album,
 					include: [
-						{ model: models.Artist, attributes: [ 'id', 'name' ],
-							include: [
-								{ model: models.Artist, as: 'Group', attributes: [ 'id', 'name' ] }
-							]
-						}
+						{ model: models.Artist, attributes: [ 'id', 'name' ] }
 					]
 				}
 			]
