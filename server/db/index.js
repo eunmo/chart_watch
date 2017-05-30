@@ -32,6 +32,10 @@
 		});
 	};
 
+	db.jsonQuery = function (query, res) {
+		db.handleQuery(query, function (rows) { res.json(rows); });
+	};
+
 	db.promisifyQuery = function (query) {
 		return new Promise(function (resolve, reject) {
 			db.pool.getConnection(function (err, connection) {

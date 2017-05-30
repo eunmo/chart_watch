@@ -9,7 +9,7 @@
 	var charts = ['billboard', 'oricon', 'deutsche', 'uk', 'francais', 'melon', 'gaon'];
 	var headers = ['US', 'オリコン', 'Deutsche', 'UK', 'Francais', '멜론', '가온'];
 	
-	module.exports = function (router, models) {
+	module.exports = function (router, models, db) {
 		
 		function getMaxDate (type, dates) {
 			return models.SongChart.max('week', { where: { type: type } } )
@@ -263,118 +263,28 @@
 			});
 		});
 
-		function getTop10 (arr, chart) {
-			return models.SongChart.findAll({
-				where: { type: { $eq: chart }, rank: { $lte: 10 }, order: { $eq: 0 } },
-				include: [
-					{ model: models.Song,
-						include: [
-							{ model: models.Album },
-							{ model: models.Artist }
-						]
-				}
-				]
-			}).then(function (rows) {
-				arr[0] = rows;
-			});
-		}
-
-		function getExtra10 (arr, chart) {
-			return models.ChartExtra.findAll({
-				where: { type: { $eq: chart }, rank: { $lte: 10 } }
-			})
-			.then(function (rows) {
-				arr[1] = rows;
-			});
-		}
-		
-		router.get('/chart/history/:_chart', function (req, res) {
-			var chart = req.params._chart;
-			var arr = [];
-			var promises = [];
-			var headers = [];
-
-			for (var i = 1; i <= 10; i++) {
-				headers.push(i);
-			}
-
-			promises.push(getTop10(arr, chart));
-			promises.push(getExtra10(arr, chart));
-
-			Promise.all(promises)
-			.then(function () {
-				var weeks = [];
-				var week, weekNum, rankRow, song, i;
-
-				for (i in arr[0]) {
-					rankRow = arr[0][i];
-					weekNum = initWeek(weeks, rankRow.week, headers);
-
-					song = rankRow.Song;
-					weeks[weekNum].songs[rankRow.rank - 1] = {
-						id: song.id,
-						title: song.title,
-						albumId: song.Albums[0].id,
-						artists: common.getSongArtists(song)
-					};
-				}
-				
-				for (i in arr[1]) {
-					rankRow = arr[1][i];
-					weekNum = initWeek(weeks, rankRow.week);
-					
-					weeks[weekNum].songs[rankRow.rank - 1] = {
-						extra: true,
-						artist: rankRow.name,
-						title: rankRow.title
-					};
-				}
-
-				res.json({
-					headers: headers,
-					weeks: common.sortWeeks(weeks)
-				});
-			});
-		});
-
 		router.get('/chart/missing/', function (req, res) {
-			var queryString =
+			var query =
 				"SELECT name, title, min(rank) as rank, count(*) as count, min(type) as chart, max(week) as week " + 
 				"FROM ChartExtras " +
 				"GROUP BY name, title "+
 				"ORDER BY rank, count DESC, week DESC";
-			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
-			.then(function (rows) {
-				res.json(rows);
-			});
+			
+			db.jsonQuery(query, res);
 		});
 
 		router.get('/chart/missing/1', function (req, res) {
-			var queryString =
+			var query =
 				"SELECT name, title, count(*) as count, min(type) as chart, min(week) as week " + 
 				"FROM ChartExtras where rank = 1 " +
 				"GROUP BY name, title "+
 				"ORDER BY week, chart";
-			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
-			.then(function (rows) {
-				res.json(rows);
-			});
-		});
-
-		router.get('/chart/missingA/', function (req, res) {
-			var queryString =
-				"SELECT name, min(rank) as rank, count(*) as count, min(type) as chart, max(week) as week " + 
-				"FROM ChartExtras " +
-				"GROUP BY name "+
-				"ORDER BY rank, count DESC, week DESC";
-			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
-			.then(function (rows) {
-				res.json(rows);
-			});
+			
+			db.jsonQuery(query, res);
 		});
 
 		router.get('/chart/missing/album/:_rank', function (req, res) {
-			var queryString =
+			var query =
 				"(SELECT name, rank, a.title, count, chart, week, note FROM " +
 				 "(SELECT artist as name, min(rank) as rank, title, count(*) as count, min(type) as chart, min(week) as week " + 
 				    "FROM AlbumCharts where rank <= " + req.params._rank +
@@ -387,91 +297,20 @@
 					 " AND AlbumId in (SELECT id from Albums WHERE format = 'Partial') " +
 					"GROUP BY artist, title) " +
 				"ORDER BY week, chart;";
-				/*
-				"SELECT name, rank, a.title, count, chart, week, note FROM " +
-				"(SELECT artist as name, min(rank) as rank, title, count(*) as count, min(type) as chart, min(week) as week " + 
-				 "FROM AlbumCharts where rank <= " + req.params._rank +
-				 " AND AlbumId is null " +
-				 "GROUP BY artist, title " +
-				 "ORDER BY week, chart) a " +
-				"LEFT JOIN AlbumChartNotes b ON (a.name = b.artist AND a.title = b.title) ORDER BY week, chart;";
-				*/
-			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
-			.then(function (rows) {
-				res.json(rows);
-			});
+
+			db.jsonQuery(query, res);
 		});
 
 		router.get('/chart/missing/album/:_rank/:_year', function (req, res) {
-			var queryString =
+			var query =
 				"SELECT artist as name, min(rank) as rank, title, count(*) as count, min(type) as chart, min(week) as week " + 
 				"FROM AlbumCharts where rank <= " + req.params._rank +
 			  " AND YEAR (week) = " + req.params._year +
 				" AND AlbumId is null " +
 				"GROUP BY artist, title " +
 				"ORDER BY week, chart";
-			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
-			.then(function (rows) {
-				res.json(rows);
-			});
-		});
 
-		function query (q, result, type) {
-			return models.sequelize.query (q, { type: models.sequelize.QueryTypes.SELECT })
-			.then (function (rows) {
-				result[type] = rows;
-			});
-		}
-
-		router.get('/chart/single_v_album', function (req, res) {
-			var q1 = "SELECT a.id, min(b.rank) as rank " +
-					 		 "FROM Songs a LEFT JOIN SongCharts b ON (a.id = b.SongId)" +
-							 "GROUP BY a.id";
-			var q2 = "SELECT a.id, min(b.rank) as rank " +
-							 "FROM Albums a LEFT JOIN AlbumCharts b ON (a.id = b.AlbumId)" +
-							 "GROUP BY a.id";
-			var q3 = "SELECT SongId, AlbumId FROM AlbumSongs";
-			var result = {};
-			var promises = [];
-
-			promises.push (query (q1, result, 'q1'));
-			promises.push (query (q2, result, 'q2'));
-			promises.push (query (q3, result, 'q3'));
-
-			Promise.all (promises)
-			.then (function () {
-				var songs = [];
-				var albums = [];
-				var i, row, song, album;
-
-				for (i in result.q1) {
-					row = result.q1[i];
-					songs[row.id] = { id: row.id, s: row.rank, a: null };
-				}
-
-				for (i in result.q2) {
-					row = result.q2[i];
-					albums[row.id] = row;
-				}
-
-				for (i in result.q3) {
-					row = result.q3[i];
-					song = songs[row.SongId];
-					album = albums[row.AlbumId];
-
-					if (album.rank !== null && (song.a === null || album.rank < song.a)) {
-						song.a = album.rank;
-					}
-				}
-
-				var out = [];
-
-				for (i in songs) {
-					out.push (songs[i]);
-				}
-
-				res.json (out);
-			});
+			db.jsonQuery(query, res);
 		});
 	};
 }());

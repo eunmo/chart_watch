@@ -1,9 +1,9 @@
 (function () {
 	'use strict';
 	
-	module.exports = function (router, models) {
+	module.exports = function (router, _, db) {
 		router.get('/stats/plays-by-song', function (req, res) {
-			var queryString =
+			var query =
 				"SELECT plays, rank, count(*) as count " +
 				"FROM Songs " +
 				"LEFT JOIN (SELECT SongId, min(rank) as rank " +
@@ -13,14 +13,11 @@
 				"ON Songs.id = Charts.SongId " +
 				"GROUP BY plays, rank";
 
-			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
-			.then(function (plays) {
-				res.json(plays);
-			});
+			db.jsonQuery(query, res);
 		});
 		
 		router.get('/stats/plays-by-album', function (req, res) {
-			var queryString =
+			var query =
 				"SELECT plays, rank, count(*) as count " +
 				"FROM Songs " +
 				"LEFT JOIN (SELECT SongId, min(rank) as rank " +
@@ -31,10 +28,7 @@
 				"ON Songs.id = Charts.SongId " +
 				"GROUP BY plays, rank";
 
-			models.sequelize.query(queryString, { type: models.sequelize.QueryTypes.SELECT })
-			.then(function (plays) {
-				res.json(plays);
-			});
+			db.jsonQuery(query, res);
 		});
 	};
 }());
