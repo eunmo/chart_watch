@@ -2,7 +2,7 @@ musicApp.controller('InitialCtrl', function ($rootScope, $scope, $http, songServ
  
   $scope.initials = [];
 
-	var initials = '가나다라마바사아자차카타파하ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	var initials = '가나다라마바사아자차카타파하ABCDEFGHIJKLMNOPQRSTUVWX';
 	var split = initials.split('');
 	var initial;
 
@@ -11,6 +11,7 @@ musicApp.controller('InitialCtrl', function ($rootScope, $scope, $http, songServ
 		$scope.initials.push ({ name: initial, link: initial });
 	}
 
+	$scope.initials.push ({ name: 'YZ', link: 'YZ' });
 	$scope.initials.push ({ name: '#', link: '0-9' });
 
 	$scope.summaryLoaded = false;
