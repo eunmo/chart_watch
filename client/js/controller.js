@@ -1387,6 +1387,10 @@ musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams
 
 		$scope.data = data;
 	});
+		
+	$http.get('api/lastPlayed/10').success(function (lastPlayed) {
+		$scope.recentSongs = lastPlayed;
+	});
 
 	function updateData () {
 		var i, data = [];

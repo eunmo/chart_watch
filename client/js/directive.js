@@ -74,6 +74,16 @@ musicApp.directive('artistRows', function () {
 	};
 });
 
+musicApp.directive('songRows', function () {
+	return {
+		restrict: 'E',
+		scope: {
+			songs: '=songs'
+		},
+		templateUrl: 'partials/song-rows.html'
+	};
+});
+
 musicApp.directive('imageLarge', function () {
 	return {
 		restrict: 'E',

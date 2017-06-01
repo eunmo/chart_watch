@@ -21,6 +21,7 @@
 			Tier {{$index + 1}}: {{tier.count}} (avg. {{tier.sum / tier.count | number:2}})
 		</div>
 		<div>Total {{total.count}} (avg. {{total.sum / total.count | number:2}})</div>
+		<song-rows songs="recentSongs"></song-rows>
 	</div>
 </div>
 <div ng-show="viewTypes[1].active">
