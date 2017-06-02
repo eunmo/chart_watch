@@ -16,11 +16,29 @@
 		<div class="btn btn-default" ng-show="allVisible" ng-click="setAllRanks(false)">clear</div>
 		<div class="btn btn-default" ng-hide="allVisible" ng-click="setAllRanks(true)">see all</div>
 	</div>
-	<div ng-show="tiers" ng-hide="selectedPlayCount">
-		<div ng-repeat="tier in tiers">
-			Tier {{$index + 1}}: {{tier.count}} (avg. {{tier.sum / tier.count | number:2}})
-		</div>
-		<div>Total {{total.count}} (avg. {{total.sum / total.count | number:2}})</div>
+	<div class="row" ng-show="tiers" ng-hide="selectedPlayCount">
+		<div style="height: 15px;"></div>
+		<table class="table table-bordered table-condensed text-center">
+			<tr>
+				<td ng-repeat="tier in tiers">
+					<span class="hidden-xs">Tier {{$index + 1}}: {{tier.count}} (avg. {{tier.sum / tier.count | number:3}})</span>
+					<span class="visible-xs-block">T.{{$index + 1}}: {{tier.count}}<br>(avg. {{tier.sum / tier.count | number: 3}})</span>
+				</td>
+			</tr>
+			<tr class="hidden-xs">
+				<td colspan=2>
+					T.1+2: {{tiers[0].count + tiers[1].count}} (avg. {{ (tiers[0].sum + tiers[1].sum) / (tiers[0].count + tiers[1].count) | number:3}})
+				</td>
+				<td colspan=2>
+					T.3+4: {{tiers[2].count + tiers[3].count}} (avg. {{ (tiers[2].sum + tiers[3].sum) / (tiers[2].count + tiers[3].count) | number:3}})
+				</td>
+			</tr>
+			<tr class="hidden-xs">
+				<td colspan=4>
+					Total {{total.count}} (avg. {{total.sum / total.count | number:3}})
+				</td>
+			</tr>
+		</table>
 		<song-rows songs="recentSongs"></song-rows>
 	</div>
 </div>
