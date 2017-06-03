@@ -226,15 +226,15 @@ musicApp.directive('d3BarPlays', function () {
 			showSongs: '&onClick'
 		},
 		link: function (scope, element) {
-			var margin = {top: 10, right: 10, bottom: 20, left: 50},
+			var margin = {top: 10, right: 20, bottom: 20, left: 50},
 			width = parseInt(d3.select('#d3-bar-plays').style('width')),
 			aspectRatio = 3/4;
 			height = width * aspectRatio;
 
 			var svg = d3.select(element[0])
 			.append("svg")
-			.attr('width', width + margin.left + margin.right)
-			.attr('height', height + margin.top + margin.bottom)
+			.attr('width', width)
+			.attr('height', height)
 			.append("g")
 			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 			
