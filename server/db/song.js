@@ -220,7 +220,7 @@
 						song = songs[i];
 
 						if (charts[song.id] !== undefined) {
-							song.rank = charts[song.id];
+							song.minRank = charts[song.id];
 						}
 					}
 				});

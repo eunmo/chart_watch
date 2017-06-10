@@ -55,8 +55,6 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
 				$scope.others.push(artist);
 			}
 		}
-		console.log ($scope.albumArtists);
-		console.log ($scope.singleArtists);
 	});
 });
 
@@ -131,8 +129,6 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 				array.push({ type: i, artists: [artist.Bs[i]] });
 			}
 		}
-
-		console.log(array);
 
 		array.sort(function (a, b) { var x = a.type; var y = b.type; return ((x < y) ? -1 : ((x > y) ? 1 : 0)); });
 		$scope.Bs = array;
@@ -332,8 +328,6 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 		}
 
 		$scope.artist = artist;
-
-		console.log(artist);
 	});
 
 	$scope.edit = function () {
@@ -356,7 +350,6 @@ musicApp.controller('EditArtistCtrl', function ($rootScope, $scope, $routeParams
 	$scope.addRelation = function () {
 		if ($scope.artist.editRelations.length === 0 ||
 				$scope.artist.editRelations[$scope.artist.editRelations.length - 1].name !== null) {
-			console.log('called');
 			var artist = {
 				name: null,
 				deleted: false,
@@ -461,8 +454,6 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 			alias.alias = alias.alias.replace (/\'/g, '`');
 		}
 
-		console.log (album);
-
 		$http.put('api/edit/album', $scope.album)
 		.then(function (res) {
 			$location.url('/artist/' + res.data);
@@ -547,7 +538,6 @@ musicApp.controller('EditSongCtrl', function ($rootScope, $scope, $routeParams, 
 		/* remove artists without a name */
 		for (var i in song.editArtists) {
 			var artist = song.editArtists[i];
-			console.log (artist);
 
 			if (artist.name !== null && artist.name !== "") {
 				artists.push(artist);
@@ -640,135 +630,20 @@ function getMinDate (chart) {
 	}
 }
 
-musicApp.controller('ChartCtrl', function ($rootScope, $scope, $routeParams, $http, $location, songService) {
-
-	$scope.adjustDate = function () {
-		var time = $scope.date.getTime();
-		if ($scope.max < time) {
-			$scope.date = new Date($scope.max);
-		} else if (time < $scope.min) {
-			$scope.date = new Date($scope.min);
-		} else {
-			$scope.date = new Date($scope.date);
-		}
-	};
-
-	$scope.chart = $routeParams.name;
-	$scope.maxDate = getMaxDate($scope.chart);
-	$scope.minDate = getMinDate($scope.chart);
-	
-	$scope.max = $scope.maxDate.getTime();
-	$scope.min = $scope.minDate.getTime();
-	$scope.rows = [];
-
-	if ($routeParams.date) {
-		$scope.date = toUTCDate(new Date($routeParams.date));
-		$scope.adjustDate();
-		var dateString = $scope.date.toISOString().substr(0, 10);
-		if ($routeParams.date !== dateString) {
-			$location.url('/chart/' + $scope.chart + '/'  + dateString);
-		}
-	} else {
-		$scope.date = $scope.maxDate;
-	} 
-
-	$scope.fetch = function () {
-		$scope.rows = [];
-		$http.get('chart/' + $scope.chart,
-							{ params: { 
-								year: $scope.date.getFullYear(),
-								month: $scope.date.getMonth() + 1,
-								day: $scope.date.getDate()
-							} })
-		.success(function (chartRows) {
-			$scope.rows = chartRows;
-		});
-	};
-
-	$scope.fetch();
-
-	$scope.updateDate = function (offset) {
-		$scope.date.setDate($scope.date.getDate() + offset);
-		$scope.adjustDate();
-		var dateString = $scope.date.toISOString().substr(0, 10);
-		$location.url('/chart/' + $scope.chart + '/'  + dateString);
-	};
-
-	$scope.go = function () {
-		$scope.updateDate(6 - $scope.date.getDay());
-	};
-	
-	$scope.prev = function () {
-		$scope.updateDate(-7);
-	};
-	
-	$scope.next = function () {
-		$scope.updateDate(7);
-	};
-
-	$scope.history = function () {
-		$location.url('/chart/history/' + $scope.chart);
-	};
-
-	$scope.addChart = function () {
-		var i;
-		var row, song;
-		var songs = [];
-		
-		for (i in $scope.rows) {
-			row = $scope.rows[i];
-			if (row.songFound) {
-				song = {
-					id: row.song.id,
-					title: row.song.title,
-					albumId: row.song.Albums[0].id,
-					artists: row.songArtists,
-					plays: row.song.plays
-				};
-				songs.push(song);
-			}
-		}
-		songService.addSongs(songs);
-	};
-});
-
 musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
-	$scope.rows = [];
+	$scope.songs = [];
+	$scope.charts = ['billboard', 'oricon', 'deutsche', 'uk', 'francais', 'melon', 'gaon'];
 
-	$http.get('chart/current')
+	$http.get('chart/single/current')
 	.success(function (chartRows) {
 		for (var i in chartRows) {
 			var row = chartRows[i];
 			var minRank = row.curRank[0];
-			row.sum = { min: minRank };
 
 			if (minRank == 2 || minRank == 4 || minRank > 5) {
 				row.active = true;
 			}
-
-			var rank;
-			for (var prop in row.rank) {
-				if (row.rank.hasOwnProperty(prop)) {
-					rank = row.rank[prop].min;
-					if (rank < minRank)
-						minRank = rank;
-				}
-			}
-			row.song.rank = minRank;
-		}
-
-		$scope.rows = chartRows;
-	});
-
-	$scope.addSongs = function (index) {
-		var i;
-		var row, song;
-		var songs = [];
-		var minRank, rank;
-
-		for (i = index; i < $scope.rows.length; i++) {
-			row = $scope.rows[i];
-
+			
 			minRank = 100;
 			for (var prop in row.rank) {
 				if (row.rank.hasOwnProperty(prop)) {
@@ -777,22 +652,35 @@ musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routePara
 						minRank = rank;
 				}
 			}
+			row.minRank = minRank;
+		}
 
-			song = {
-				id: row.song.id,
-				title: row.song.title,
-				albumId: row.song.Albums[0].id,
-				artists: row.songArtists,
-				rank: minRank,
-				plays: row.song.plays
-			};
-			songs.push(song);
+		$scope.songs = chartRows;
+	});
+
+	$scope.addSongs = function (index) {
+		var i;
+		var row, song;
+		var songs = [];
+		var minRank, rank;
+
+		for (i = index; i < $scope.songs.length; i++) {
+			songs.push($scope.songs[i]);
 		}
 		songService.addSongs(songs);
 	};
 
 	$scope.addChart = function () {
 		$scope.addSongs(0);
+	};
+
+	$scope.getRankCellStyle = function (rank) {
+		if (rank === undefined)
+			return "";
+						
+		var colors = ["#9ecae1","#6baed6","#4292c6","#2171b5","#ef6548"];
+		return "color: white; text-align: center; font-weight: bold; background-color: " + 
+			(rank < 6 ? colors[5 - rank] : "#c6dbef");
 	};
 });
 
@@ -1077,24 +965,6 @@ musicApp.controller('NewSongCtrl', function ($rootScope, $scope, $http) {
 	$scope.refresh();
 });
 
-musicApp.controller('ChartMissingCtrl', function ($rootScope, $scope, $routeParams, $http) {
-	$scope.data = [];
-
-	$http.get('chart/missing').success(function (data) {
-		$scope.data = data;
-	});
-});
-
-musicApp.controller('ChartMissing1Ctrl', function ($rootScope, $scope, $routeParams, $http) {
-	$scope.data = [];
-	$scope.rank = 1;
-	$scope.type = 'No.1 Songs';
-
-	$http.get('chart/missing/1').success(function (data) {
-		$scope.data = data;
-	});
-});
-
 musicApp.controller('ChartMissingAlbumCtrl', function ($rootScope, $scope, $routeParams, $http) {
 	$scope.data = [];
 	$scope.rank = $routeParams.rank;
@@ -1318,8 +1188,6 @@ musicApp.controller ('AddAlbumChartNoteCtrl', function ($rootScope, $scope, $htt
 	$scope.newAlbum = function (note) {
 		var index = note.artist.indexOf('\t');
 
-		console.log (index);
-
 		if (index !== -1) {
 			note.title = note.artist.substr (index + 1).trim ();
 			note.artist = note.artist.substr (0, index).trim ();
@@ -1352,7 +1220,7 @@ musicApp.controller ('IOSCtrl', function ($rootScope, $scope, $routeParams, $htt
 	$scope.loaded = false;
 	$scope.sections = [];
 
-	$http.get ('api/ios/fetch').success (function (data) {
+	$http.get ('ios/fetch').success (function (data) {
 		$scope.sections.push ({ name: 'Current', songs: data.current });
 		$scope.sections.push ({ name: 'Album', songs: data.album });
 		$scope.sections.push ({ name: 'Seasonal', songs: data.seasonal });
@@ -1421,8 +1289,6 @@ musicApp.controller ('SeasonSingleCtrl', function ($rootScope, $scope, $routePar
 			$scope.weeks.push (week);
 		}
 
-		console.log (data);
-		console.log ($scope.weeks);
 		$scope.charts = data.charts;
 		$scope.loaded = true;
 	});

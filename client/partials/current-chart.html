@@ -15,45 +15,41 @@
 		<th>Artist</th>
 		<th>Song</th>
 	</tr>
-	<tr ng-repeat="row in rows" ng-class="{active: row.active}">
-		<td>
-			<span class="hidden-xs">{{row.index}}</span>
-			<span class="pull-right song-desc-right visible-xs-inline">
-				<rank-badge rank="row.sum"></rank-badge>
-			</span>
+	<tr ng-repeat="song in songs" ng-class="{active: row.active}">
+		<td class="hidden-xs">
+			<span class="hidden-xs">{{$index + 1}}</span>
 		</td>
-		<td class="hidden-xs"><span class="pull-left span-rank"><rank-badge rank="row.billboard"></rank-badge></span></td>
-		<td class="hidden-xs"><span class="pull-left span-rank"><rank-badge rank="row.oricon"></rank-badge></span></td>
-		<td class="hidden-xs"><span class="pull-left span-rank"><rank-badge rank="row.deutsche"></rank-badge></span></td>
-		<td class="hidden-xs"><span class="pull-left span-rank"><rank-badge rank="row.uk"></rank-badge></span></td>
-		<td class="hidden-xs"><span class="pull-left span-rank"><rank-badge rank="row.francais"></rank-badge></span></td>
-		<td class="hidden-xs"><span class="pull-left span-rank"><rank-badge rank="row.melon"></rank-badge></span></td>
-		<td class="hidden-xs"><span class="pull-left span-rank"><rank-badge rank="row.gaon"></rank-badge></span></td>
+		<td class="visible-xs-block" style="{{getRankCellStyle(song.curRank[0])}}">
+			{{song.curRank[0]}}
+		</td>
+		<td ng-repeat="chart in charts" class="hidden-xs" style="{{getRankCellStyle(song[chart])}}">
+			{{song[chart]}}
+		</td>
 		<td class="td-img-list">
-			<image-small album-id="row.song.Albums[0].id" s="30"></image-small>
+			<image-small album-id="song.albumId" s="30"></image-small>
 		</td>
 		<td>
 			<div class="recent-artists">
 				<span class="recent-artist-list">
-					<artist-array array="row.songArtists"></artist-array>
+					<artist-array array="song.artists"></artist-array>
 				</span>
 			</div>
 		</td>
 		<td>
-			<span ng-click="addSongs($index)">{{row.song.title | normalizeString}}</span>
+			<span ng-click="addSongs($index)">{{song.title | normalizeString}}</span>
 			<span class="pull-right song-desc-right">
 				<span class="hidden-xs">
-					<rank-badge rank="row.rank.billboard" prefix="'US'"></rank-badge>
-					<rank-badge rank="row.rank.oricon" prefix="'オ'"></rank-badge>
-					<rank-badge rank="row.rank.deutsche" prefix="'D'"></rank-badge>
-					<rank-badge rank="row.rank.uk" prefix="'UK'"></rank-badge>
-					<rank-badge rank="row.rank.francais" prefix="'F'"></rank-badge>
-					<rank-badge rank="row.rank.melon" prefix="'M'"></rank-badge>
-					<rank-badge rank="row.rank.gaon" prefix="'G'"></rank-badge>
-					<span class="badge badge-plays" ng-show="{{row.song.plays}}">{{row.song.plays}}</span>
+					<rank-badge rank="song.rank.billboard" prefix="'US'"></rank-badge>
+					<rank-badge rank="song.rank.oricon" prefix="'オ'"></rank-badge>
+					<rank-badge rank="song.rank.deutsche" prefix="'D'"></rank-badge>
+					<rank-badge rank="song.rank.uk" prefix="'UK'"></rank-badge>
+					<rank-badge rank="song.rank.francais" prefix="'F'"></rank-badge>
+					<rank-badge rank="song.rank.melon" prefix="'M'"></rank-badge>
+					<rank-badge rank="song.rank.gaon" prefix="'G'"></rank-badge>
+					<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>
 				</span>
 				<span class="visible-xs-inline">
-					<rank-badge song="row.song"></rank-badge>
+					<rank-badge song="song"></rank-badge>
 				</span>
 			</span>
 		</td>

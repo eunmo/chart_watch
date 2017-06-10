@@ -298,9 +298,6 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 				if (song.plays > 0) {
 					array.push (song);
 				}
-				else {
-					console.log (song);
-				}
 			}
 
 			songService.addSongs(array);

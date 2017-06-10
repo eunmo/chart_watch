@@ -175,7 +175,7 @@ musicApp.directive('rankBadge', function () {
 					} else if (scope.song && scope.song.plays) {
 						scope.show = true;
 						scope.showCount = true;
-						scope.min = scope.song.rank;
+						scope.min = scope.song.minRank;
 						scope.count = scope.song.plays;
 						scope.style = { "background-color" : "#777" };
 					} else if (scope.detailedSong && scope.detailedSong.plays) {

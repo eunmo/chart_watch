@@ -61,10 +61,6 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		templateUrl: '/partials/chart-history.html',
 		controller: 'OneSongsCtrl'
 	})
-	.when('/chart/missing/1', {
-		templateUrl: '/partials/missing1.html',
-		controller: 'ChartMissing1Ctrl'
-	})
 	.when('/chart/missing/album/:rank', {
 		templateUrl: '/partials/missing1.html',
 		controller: 'ChartMissingAlbumCtrl'
@@ -72,10 +68,6 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 	.when('/chart/missing/album/:rank/:year', {
 		templateUrl: '/partials/missing1.html',
 		controller: 'ChartMissingAlbumYearCtrl'
-	})
-	.when('/chart/missing/', {
-		templateUrl: '/partials/missing.html',
-		controller: 'ChartMissingCtrl'
 	})
 	.when('/chart/history/:name', {
 		templateUrl: '/partials/chart-history.html',
@@ -96,14 +88,6 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 	.when('/chart/single/:name/:date', {
 		templateUrl: '/partials/single-chart.html',
 		controller: 'SingleChartCtrl'
-	})
-	.when('/chart/:name', {
-		templateUrl: '/partials/chart.html',
-		controller: 'ChartCtrl'
-	})
-	.when('/chart/:name/:date', {
-		templateUrl: '/partials/chart.html',
-		controller: 'ChartCtrl'
 	})
 	.when('/recent', {
 		templateUrl: '/partials/recent.html',

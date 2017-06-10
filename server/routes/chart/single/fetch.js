@@ -2,12 +2,8 @@
 	'use strict';
 
 	var path = require('path');
-	var fs = require('fs');
 	var Promise = require('bluebird');
 	var exec = Promise.promisify(require('child_process').exec);
-
-	var chartInitial = { gaon: 'g', melon: 'm', billboard: 'b', uk: 'u', oricon: 'o', deutsche: 'd',
-		francais: 'f'};
 	
 	module.exports = function (router, models) {
 
@@ -33,16 +29,8 @@
 			var day = req.query.day;
 			var date = new Date (Date.UTC (year, month - 1, day));
 			
-			var chartFile = path.resolve('chart/' + chartInitial[chartName]) + '.' + year +
-											(month < 10 ? '.0' : '.') + month +
-											(day < 10 ? '.0' : '.') + day;
-
 			var dateStr = year + ' ' + month + ' ' + day;
 			var execStr = 'perl ' + path.resolve ('perl/single/' + chartName + '.pl') + ' ' + dateStr;
-			
-			if (fs.existsSync(chartFile)) {
-				execStr = 'cat ' + chartFile;
-			}
 			
 			models.SingleChart.findAll ({
 				where: { type: chartName, week: date },
