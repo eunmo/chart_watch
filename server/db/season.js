@@ -33,7 +33,7 @@
 				"SELECT week, SongId, type, rank " +
 				"FROM SingleCharts " +
 				"WHERE rank <= " + 5 + " " +
-				"AND week IN (" + weeks + ") AND `order` = 0;";
+				"AND week IN (" + weeks + ") AND `order` = 0 AND SongId is not null;";
 
 			return db.promisifyQuery(query);
 		};

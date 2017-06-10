@@ -45,7 +45,7 @@
 					}
 
 					var promises = [];
-
+					songs = outParam.songs;
 					promises.push(db.song.fetchDetails(songs, songIds));
 					promises.push(db.song.fetchArtists(songs, songIds));
 					promises.push(db.song.fetchOldestAlbum(songs, songIds));
