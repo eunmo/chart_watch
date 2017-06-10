@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 	
-	module.exports = function (router, models, db) {
+	module.exports = function (router, _, db) {
 		router.get ('/chart/single/view/:_chart', function (req, res) {
 			var chartName = req.params._chart;
 			var year = req.query.year;
@@ -15,8 +15,6 @@
 				" WHERE `type` = \'" + chartName + "\' " +
 				"   AND `week` = \'" + date.toISOString() + "\' "+
 			  "	ORDER BY `rank`, `order`;";
-
-			console.log(query);
 
 			db.promisifyQuery(query)
 				.then(function (songs) {
