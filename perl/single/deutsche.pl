@@ -35,19 +35,35 @@ for my $td ($dom->find('td[class*="ch-info"]')->each) {
 	my $artist_norm = normalize_artist($artist);
 	print ",\n" if $rank > 1;
 	print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\": [";
-	$count = 1;
-	my @tokens = split(/\//, $title);
-	foreach my $token (@tokens) {
-		my $token_norm = normalize_title($token);
-		print ", " if $count > 1;	
-		print "\"$token_norm\"";
-		$count++;
-	}
+	print separate_titles($title);
 	print "]}";
 	$rank++;
 }
 
 print "]";
+
+sub separate_titles($)
+{
+	my $title = shift;
+
+	if ($title eq "Do They Know It's Christmas? (Deutsche Version / 2014)" ||
+			$title eq "One Day / Reckoning Song (Wankelmut Rmx)") {
+		return "\"$title\"";
+	}
+
+	my $count = 1;
+	my @tokens = split(/\//, $title);
+
+	my $titles = "";
+	foreach my $token (@tokens) {
+		my $token_norm = normalize_title($token);
+		$titles .= ", " if $count > 1;	
+		$titles .= "\"$token_norm\"";
+		$count++;
+	}
+
+	return $titles;
+}
 
 sub normalize_title($)
 {
