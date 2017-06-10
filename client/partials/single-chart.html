@@ -18,23 +18,23 @@
 		</small>
 	</form>
 </h2>
-<table class="table table-hover">
+<table class="table table-condensed">
 	<tr ng-repeat="row in rows">
-		<td>
+		<td ng-show="row.order === 0" rowspan="{{row.rowspan}}">
 			{{row.rank}}
 		</td>
-		<td>
-			{{row.SongId}}
-		</td>
-		<!--
-		<td class="td-img-list">
-			<a href="#/album/{{row.AlbumId}}">
-				<image-small album-id="row.AlbumId" s="30"></image-small>
+		<td class="td-img-list" ng-show="row.order === 0" rowspan="{{row.rowspan}}">
+			<a href="#/album/{{row.albumId}}">
+				<image-small album-id="row.albumId" s="40"></image-small>
 			</a>
 		</td>
-		 -->
-		<td>
-			{{row.artist}}
+		<td ng-show="row.order === 0" rowspan="{{row.rowspan}}">
+			<div>
+				{{row.artist}}
+			</div>
+			<div>
+				<artist-array array="row.artists"></artist-array>
+			</div>
 		</td>
 		<td>
 			{{row.title}}

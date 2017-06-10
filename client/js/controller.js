@@ -828,6 +828,20 @@ musicApp.controller('SingleChartCtrl', function ($rootScope, $scope, $routeParam
 								day: $scope.date.getDate()
 							} })
 		.success(function (chartRows) {
+
+			var prevRow = { rank: 0};
+			var curRow;
+			for (var i in chartRows) {
+				curRow = chartRows[i];
+
+				if (prevRow.rank === curRow.rank) {
+					prevRow.rowspan = curRow.order + 1;
+				} else {
+					prevRow = curRow;
+					curRow.rowspan = 1;
+				}
+			}
+
 			$scope.rows = chartRows;
 		});
 	};
