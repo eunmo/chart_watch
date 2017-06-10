@@ -1143,12 +1143,6 @@ musicApp.controller('BatchCtrl', function ($rootScope, $scope, $http) {
 		}
 	};
 
-	$scope.fetchMatchSingle = function () {
-		$scope.urlPrefix = '/chart/';
-		$scope.prepareRun ();
-		$scope.run ();
-	};
-
 	$scope.fetchAlbum = function () {
 		$scope.urlPrefix = '/chart/album/fetch/';
 		$scope.prepareRun ();

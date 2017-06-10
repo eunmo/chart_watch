@@ -37,7 +37,7 @@
 		function getCharted (count) {
 			var query =
 				"SELECT distinct SongId as id " +
-				"FROM Songs s, SongCharts c " +
+				"FROM Songs s, SingleCharts c " +
 				"WHERE s.id = c.SongId and rank <= 10 and plays < 10 " +
 				"ORDER BY SongId " +
 				"LIMIT " + count;
