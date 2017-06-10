@@ -69,10 +69,6 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		templateUrl: '/partials/missing1.html',
 		controller: 'ChartMissingAlbumYearCtrl'
 	})
-	.when('/chart/history/:name', {
-		templateUrl: '/partials/chart-history.html',
-		controller: 'ChartHistoryCtrl'
-	})
 	.when('/chart/album/:name', {
 		templateUrl: '/partials/album-chart.html',
 		controller: 'AlbumChartCtrl'
@@ -80,6 +76,10 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 	.when('/chart/album/:name/:date', {
 		templateUrl: '/partials/album-chart.html',
 		controller: 'AlbumChartCtrl'
+	})
+	.when('/chart/single/ones/:name', {
+		templateUrl: '/partials/single-ones.html',
+		controller: 'SingleOnesCtrl'
 	})
 	.when('/chart/single/:name', {
 		templateUrl: '/partials/single-chart.html',

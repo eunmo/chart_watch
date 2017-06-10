@@ -902,8 +902,34 @@ musicApp.controller('SingleChartCtrl', function ($rootScope, $scope, $routeParam
 	$scope.next = function () {
 		$scope.updateDate(7);
 	};
+
+	$scope.history = function () {
+		$location.url('/chart/single/ones/' + $scope.chart);
+	};
 });
 
+musicApp.controller('SingleOnesCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
+	$scope.weeks = [];
+	$scope.chart = $routeParams.name;
+
+	$http.get('chart/single/ones/' + $routeParams.name)
+	.success(function (results) {
+		$scope.weeks = results.weeks;
+
+		var songs = {};
+		var song, i;
+		for (i in results.songs) {
+			song = results.songs[i];
+			songs[song.id] = song;
+		}
+		
+		var week;
+		for (i in results.weeks) {
+			week = results.weeks[i];
+			week.song = songs[week.song];
+		}
+	});
+});
 
 musicApp.controller('OneSongsCtrl', function ($rootScope, $scope, $http, songService) {
 	$scope.headers = [];

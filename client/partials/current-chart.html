@@ -15,7 +15,7 @@
 		<th>Artist</th>
 		<th>Song</th>
 	</tr>
-	<tr ng-repeat="song in songs" ng-class="{active: row.active}">
+	<tr ng-repeat="song in songs" ng-class="{active: song.active}">
 		<td class="hidden-xs">
 			<span class="hidden-xs">{{$index + 1}}</span>
 		</td>

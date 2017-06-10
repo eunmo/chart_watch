@@ -1,0 +1,28 @@
+<h1>
+		{{chart | capitalize}} Single Number 1s
+</h1>
+<table class="table table-hover">
+	<tr ng-repeat="week in weeks">
+		<td>
+			<a href="#/chart/single/{{chart}}/{{week.week | date: 'yyyy-MM-dd'}}">
+				{{week.week | date: 'yyyy-MM-dd'}}
+			</a>
+		</td>
+		<td class="td-img-list">
+			<image-small album-id="week.song.albumId" s="30"></image-small>
+		</td>
+		<td>
+			<div class="recent-artists">
+				<span class="recent-artist-list">
+					<artist-array array="week.song.artists"></artist-array>
+				</span>
+			</div>
+		</td>
+		<td>
+			{{week.song.title | normalizeString}}
+			<span class="pull-right song-desc-right">
+				<span class="badge badge-plays" ng-show="{{week.song.plays}}">{{week.song.plays}}</span>
+			</span>
+		</td>
+	</tr>
+</table>
