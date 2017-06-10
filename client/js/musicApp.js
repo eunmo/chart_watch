@@ -89,6 +89,14 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		templateUrl: '/partials/album-chart.html',
 		controller: 'AlbumChartCtrl'
 	})
+	.when('/chart/single/:name', {
+		templateUrl: '/partials/single-chart.html',
+		controller: 'SingleChartCtrl'
+	})
+	.when('/chart/single/:name/:date', {
+		templateUrl: '/partials/single-chart.html',
+		controller: 'SingleChartCtrl'
+	})
 	.when('/chart/:name', {
 		templateUrl: '/partials/chart.html',
 		controller: 'ChartCtrl'

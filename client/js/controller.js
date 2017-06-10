@@ -899,6 +899,110 @@ musicApp.controller('AlbumChartCtrl', function ($rootScope, $scope, $routeParams
 	};
 });
 
+musicApp.controller('SingleChartCtrl', function ($rootScope, $scope, $routeParams, $http, $location) {
+
+	$scope.adjustDate = function () {
+		var time = $scope.date.getTime();
+		if ($scope.max < time) {
+			$scope.date = new Date($scope.max);
+		} else if (time < $scope.min) {
+			$scope.date = new Date($scope.min);
+		} else {
+			$scope.date = new Date($scope.date);
+		}
+	};
+
+	$scope.chart = $routeParams.name;
+	$scope.maxDate = getMaxDate($scope.chart);
+	$scope.minDate = getMinDate($scope.chart);
+	
+	$scope.max = $scope.maxDate.getTime();
+	$scope.min = $scope.minDate.getTime();
+	$scope.rows = [];
+
+	if ($routeParams.date) {
+		$scope.date = toUTCDate(new Date($routeParams.date));
+		$scope.adjustDate();
+		var dateString = $scope.date.toISOString().substr(0, 10);
+		if ($routeParams.date !== dateString) {
+			$location.url('/chart/single/' + $scope.chart + '/'  + dateString);
+		}
+	} else {
+		$scope.date = $scope.maxDate;
+	} 
+
+	$scope.view = function () {
+		$scope.rows = [];
+		$http.get('chart/single/view/' + $scope.chart,
+							{ params: { 
+								year: $scope.date.getFullYear(),
+								month: $scope.date.getMonth() + 1,
+								day: $scope.date.getDate()
+							} })
+		.success(function (chartRows) {
+			$scope.rows = chartRows;
+		});
+	};
+
+	$scope.fetch = function () {
+		$http.get('chart/single/fetch/' + $scope.chart,
+							{ params: { 
+								year: $scope.date.getFullYear(),
+								month: $scope.date.getMonth() + 1,
+								day: $scope.date.getDate()
+							} })
+		.success(function () {
+			$scope.view ();
+		});
+	};
+
+	$scope.match = function () {
+		$http.get('chart/single/match/' + $scope.chart,
+							{ params: { 
+								year: $scope.date.getFullYear(),
+								month: $scope.date.getMonth() + 1,
+								day: $scope.date.getDate()
+							} })
+		.success(function () {
+			$scope.view ();
+		});
+	};
+
+	$scope.clear = function () {
+		$http.get('chart/single/clear/' + $scope.chart,
+							{ params: { 
+								year: $scope.date.getFullYear(),
+								month: $scope.date.getMonth() + 1,
+								day: $scope.date.getDate()
+							} })
+		.success(function () {
+			$scope.view ();
+		});
+	};
+
+	$scope.view();
+
+	$scope.updateDate = function (offset) {
+		$scope.date.setDate($scope.date.getDate() + offset);
+		$scope.adjustDate();
+		var dateString = $scope.date.toISOString().substr(0, 10);
+		$location.url('/chart/single/' + $scope.chart + '/'  + dateString);
+	};
+
+	$scope.go = function () {
+		$scope.updateDate(6 - $scope.date.getDay());
+	};
+	
+	$scope.prev = function () {
+		$scope.updateDate(-7);
+	};
+	
+	$scope.next = function () {
+		$scope.updateDate(7);
+	};
+});
+
+
 musicApp.controller('OneSongsCtrl', function ($rootScope, $scope, $http, songService) {
 	$scope.headers = [];
 	$scope.weeks = [];
@@ -1169,6 +1273,18 @@ musicApp.controller('BatchCtrl', function ($rootScope, $scope, $http) {
 
 	$scope.matchAlbum = function () {
 		$scope.urlPrefix = '/chart/album/match/';
+		$scope.prepareRun ();
+		$scope.run ();
+	};
+
+	$scope.fetchSingle = function () {
+		$scope.urlPrefix = '/chart/single/fetch/';
+		$scope.prepareRun ();
+		$scope.run ();
+	};
+	
+	$scope.matchSingle = function () {
+		$scope.urlPrefix = '/chart/single/match/';
 		$scope.prepareRun ();
 		$scope.run ();
 	};

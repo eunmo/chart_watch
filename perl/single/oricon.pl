@@ -8,33 +8,67 @@ use Mojo::Collection;
 use DateTime;
 binmode(STDOUT, ":utf8");
 
-my $date = $ARGV[0];
+my $yy = $ARGV[0];
+my $mm = $ARGV[1];
+my $dd = $ARGV[2];
+
+my $od = DateTime->new( year => $yy, month => $mm, day => $dd );
+my $ld = DateTime->new( year => $yy, month => $mm, day => $dd )
+								 ->truncate( to => 'week' )
+								 ->add( weeks => 2);
+my $od_ymd = $od->ymd('');
+my $ld_ymd = $ld->ymd('');
+
+if ($od_ymd == '20000101' ||
+	  $od_ymd == '20001230' ||
+	  $od_ymd == '20011229' ||
+	  $od_ymd == '20021228' ||
+	  $od_ymd == '20031227' ||
+	  $od_ymd == '20050101' ||
+	  $od_ymd == '20051231' ||
+	  $od_ymd == '20061230' ||
+	  $od_ymd == '20071229' ||
+	  $od_ymd == '20081227' ||
+	  $od_ymd == '20100102') {
+	print "[]";
+	exit;
+}
+
+$count = 2;
+$count = 1 if $od_ymd < '20031122';
+
+my $you_date = $ld->ymd(' ');
+
+my $perl_dir = "/Users/eunmo/dev/chart_watch/perl/single";
+chdir $perl_dir;
+
+system "/bin/bash you.sh $you_date $count";
+my $html_dir = "$perl_dir/html";
 
 my $rank = 1;
-my $count;
 
 print "[";
 
-for (my $i = 1; $i <= 2; $i++) {
+for (my $i = 1; $i <= $count; $i++) {
 
-	my $dom = Mojo::DOM->new(scalar slurp "$date-$i.html");
+	my $dom = Mojo::DOM->new(scalar slurp "$html_dir/$ld_ymd-$i.html");
 	my $odd = 1;
 	my $artist, $title;
-
+	
 	for my $a ($dom->find('table[bgcolor="#C1C1C1"]')->first->find('a')->each) {
 		if ($odd % 2) {
-			$title = get_text($a->text);
+			$title = normalize_title(get_text($a->text));
 		} else {
 			$artist = normalize_artist(get_text($a->text));
 			print ",\n" if $rank > 1;
 			print "{ \"rank\": $rank, \"artist\": \"$artist\", \"titles\": [";
-			$count = 1;
+			my $titleCount = 1;
 			my @tokens = split(/\/|\|/, $title);
 			foreach my $token (@tokens) {
 				my $token_norm = normalize_title($token);
-				print ", " if $count > 1;	
+				print ", " if $titleCount > 1;	
 				print "\"$token_norm\"";
-				$count++;
+				$titleCount++;
 			}
 			print "]}";
 			$rank++;
@@ -44,6 +78,8 @@ for (my $i = 1; $i <= 2; $i++) {
 }
 
 print "]";
+
+system "rm $html_dir/$ld_ymd*";
 
 sub get_text($)
 {
@@ -66,7 +102,7 @@ sub normalize_title($)
 
 	$string =~ s/\s+$//g;
 	$string =~ s/^\s+//g;
-	$string =~ s/[\'’]/`/g;
+	$string =~ s/[\'’"`]/`/g;
 	$string =~ s/\\/¥/g;
 
 	return $string;
@@ -78,7 +114,7 @@ sub normalize_artist($)
 
 	$string =~ s/\s+$//g;
 	$string =~ s/^\s+//g;
-	$string =~ s/[\'’]/`/g;
+	$string =~ s/[\'’"`]/`/g;
 
 	return $string;
 }

@@ -14,7 +14,7 @@
 	function getRoutes (dir) {
 		fs.readdirSync(dir)
 			.filter(function (file) {
-				return (file.indexOf('.') !== 0);
+				return (file.indexOf('.js') > 0 && file.indexOf('.swp') < 0);
 			}).forEach(function (file) {
 				require(path.join(dir, file))(router, models, db);
 			});
@@ -22,7 +22,7 @@
 
 	fs.readdirSync(dir)
 		.filter(function (subDir) {
-			return (subDir.indexOf('.') !== 0) && (subDir !== 'index.js');
+			return (subDir.indexOf('.js') < 0);
 		}).forEach(function (subDir) {
 			getRoutes(path.join(dir, subDir));
 		});

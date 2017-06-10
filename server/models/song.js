@@ -19,10 +19,10 @@
 
 			Song.hasMany(models.SongChart);
 			
+			Song.hasMany(models.SingleChart);
+			
 			Song.hasMany(models.SongAlias);
 		};
-
-		// (tentative) hasOne song (for skits)
 
 		return Song;
 	};
