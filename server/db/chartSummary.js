@@ -62,7 +62,7 @@
 
 		db.chartSummary.getSongs = function (ids) {
 			var query = "  SELECT SongId as id, `type`, rank, count(*) as count " +
-									"    FROM SongCharts " +
+									"    FROM SingleCharts " +
 									"   WHERE SongId in (" + ids.join() + ") " +
 									"     AND rank <= 10 " +
 									"GROUP BY SongId, `type`, rank;";

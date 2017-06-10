@@ -138,7 +138,7 @@
 			var query =
 				"SELECT id, title, plays, lastPlayed " +
 				"  FROM Songs a LEFT JOIN (SELECT SongId, min(rank) as rank " +
-																	"  FROM SongCharts " +
+																	"  FROM SingleCharts " +
 																	" WHERE rank <= 10 " +
 																"GROUP BY SongId) b " +
 				"    ON a.id = b.SongId " + whereClause + orderByClause +
@@ -201,7 +201,7 @@
 		
 		db.song.fetchMinChartRank =  function (songs, ids) {
 			var query = "  SELECT SongId id, min(rank) rank " +
-									"    FROM SongCharts " +
+									"    FROM SingleCharts " +
 									"   WHERE SongId in (" + ids.join() + ") " +
 									"     AND rank <= 10 " +
 									"GROUP BY SongId;";

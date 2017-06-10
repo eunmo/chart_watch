@@ -53,7 +53,7 @@
 	var getHitSummary = function (db, artists, ids) {
 		var idString = ids.toString();
 		var query = "SELECT ArtistId, count(distinct sa.SongId) AS count " +
-									"FROM SongArtists sa, SongCharts sc " +
+									"FROM SongArtists sa, SingleCharts sc " +
 								 "WHERE sa.SongId = sc.SongId " +
 								   "AND sa.ArtistId in (" + ids.toString() + ") " +
 								   "AND sc.rank <= 10 " +

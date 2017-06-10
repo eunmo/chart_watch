@@ -92,7 +92,7 @@
 		};
 
 		db.chartWeeks.getOneSong = function (id) {
-			var query = "SELECT `type`, week, rank FROM SongCharts WHERE SongId = " + id + ";";
+			var query = "SELECT `type`, week, rank FROM SingleCharts WHERE SongId = " + id + ";";
 
 			return getChartWeeks(db, query);
 		};

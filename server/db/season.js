@@ -31,7 +31,7 @@
 			var weeks = getSeasonalWeeks(new Date());
 			var query =
 				"SELECT week, SongId, type, rank " +
-				"FROM SongCharts " +
+				"FROM SingleCharts " +
 				"WHERE rank <= " + 5 + " " +
 				"AND week IN (" + weeks + ") AND `order` = 0;";
 

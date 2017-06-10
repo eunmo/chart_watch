@@ -7,7 +7,7 @@
 				"SELECT plays, rank, count(*) as count " +
 				"FROM Songs " +
 				"LEFT JOIN (SELECT SongId, min(rank) as rank " +
-									 "FROM SongCharts " +
+									 "FROM SingleCharts " +
 									 "WHERE rank <= 10  " +
 									 "GROUP BY SongId) Charts " +
 				"ON Songs.id = Charts.SongId " +
