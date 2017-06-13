@@ -139,19 +139,31 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 		var years = {};
 		var i, j, album, maxDisk, song;
 		var release, year;
+		var disks;
 
 		for (i in artist.albums) {
 			album = artist.albums[i];
 			maxDisk = 0;
+			disks = {};
 
 			for (j in album.songs) {
 				song = album.songs[j];
 				song.albumId = album.id;
-				if (maxDisk < song.disk)
-					maxDisk = song.disk;
+				if (disks[song.disk] === undefined) {
+					disks[song.disk] = { disk: song.disk, songs: [] };
+				}
+				disks[song.disk].songs.push(song);
 			}
 
-			album.maxDisk = maxDisk;
+			album.disks = [];
+			for (j in disks) {
+				disks[j].songs.sort(function (a, b) { return a.track - b.track; });
+				album.disks.push(disks[j]);
+			}
+			album.disks.sort(function (a, b) { return a.disk - b.disk; });
+			if (album.disks.length >= 1 && album.disks[album.disks.length - 1].disk > 1) {
+				album.showDisk = true;
+			}
 
 			release = new Date(album.release);
 			year = release.getFullYear();
@@ -160,6 +172,8 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 				years[year] = { year: year, albums: [album] };
 			else
 				years[year].albums.push(album);
+
+			console.log(album);
 		}
 
 		for (i in years) {
@@ -227,6 +241,14 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 		var songs = [];
 		for (var i in album.songs) {
 			songs.push(getSendSong(album.songs[i], album));
+		}
+		songService.addSongs(songs);
+	};
+
+	$scope.addDisk = function (disk, album) {
+		var songs = [];
+		for (var i in disk.songs) {
+			songs.push(getSendSong(disk.songs[i], album));
 		}
 		songService.addSongs(songs);
 	};

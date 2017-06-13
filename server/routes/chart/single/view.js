@@ -26,8 +26,10 @@
 					}
 
 					var promises = [];
-					promises.push(db.song.fetchArtists(songs, ids));
-					promises.push(db.song.fetchOldestAlbum(songs, ids));
+					if (ids.length > 0) {
+						promises.push(db.song.fetchArtists(songs, ids));
+						promises.push(db.song.fetchOldestAlbum(songs, ids));
+					}
 
 					Promise.all(promises)
 						.then(function () {

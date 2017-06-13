@@ -92,48 +92,57 @@
 			<small class="pull-right">{{album.release | date}}</small>
 		</h4>
 		<table class="table table-hover">
-			<tr	ng-repeat="song in album.songs">
-				<td>
-					<div class="song-desc">
-						<span class="song-desc-title" ng-click="addSong(song, album)">
-							<span class="song-track"><span ng-show="album.maxDisk > 1">{{song.disk}}-</span>{{song.track}}</span>
-							{{song.title | normalizeString}}
+			<tbody ng-repeat="disk in album.disks">
+				<tr ng-show="album.disks.length > 1">
+					<th>
+						<span ng-click="addDisk(disk, album)">
+							Disk {{disk.disk}}
 						</span>
-						<span class="pull-right song-desc-right">
-							<rank-badge rank="song.rank.billboard" prefix="'US'"></rank-badge>
-							<rank-badge rank="song.rank.oricon" prefix="'オ'"></rank-badge>
-							<rank-badge rank="song.rank.deutsche" prefix="'D'"></rank-badge>
-							<rank-badge rank="song.rank.uk" prefix="'UK'"></rank-badge>
-							<rank-badge rank="song.rank.francais" prefix="'F'"></rank-badge>
-							<rank-badge rank="song.rank.melon" prefix="'M'"></rank-badge>
-							<rank-badge rank="song.rank.gaon" prefix="'G'"></rank-badge>
-							<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>
-							<div class="btn-group">
-								<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"
-									data-toggle="dropdown" aria-expanded="false">
-									<span class="caret"></span>
-								</button>
-								<ul class="dropdown-menu dropdown-menu-right dropdown-song" role="menu">
-									<li role="presentation"><a ng-click="addNext(song, album)">Play next</a></li>
-									<li role="presentation"><a href="#/edit/song/{{song.id}}">Edit song</a></li>
-									<li role="presentation"><a href="#/song/{{song.id}}">Details</a></li>
-									<li role="presentation"><a ng-click="download(song)">Download</a></li>
-								</ul>
-							</div>
-						</span>
-					</div>
-					<div ng-show="{{song.artists.length}}">
-						<span class="song-track"></span>
-						<small>by</small>
-						<artist-array array="song.artists"></artist-array>
-					</div>
-					<div ng-show="{{song.features.length}}">
-						<span class="song-track"></span>
-						<small>Feat.</small>
-						<artist-array array="song.features"></artist-array>
-					</div>
-				</td>
-			</tr>
+					</th>
+				</tr>
+				<tr	ng-repeat="song in disk.songs">
+					<td>
+						<div class="song-desc">
+							<span class="song-desc-title" ng-click="addSong(song, album)">
+								<span class="song-track"><span ng-show="album.showDisk">{{song.disk}}-</span>{{song.track}}</span>
+								{{song.title | normalizeString}}
+							</span>
+							<span class="pull-right song-desc-right">
+								<rank-badge rank="song.rank.billboard" prefix="'US'"></rank-badge>
+								<rank-badge rank="song.rank.oricon" prefix="'オ'"></rank-badge>
+								<rank-badge rank="song.rank.deutsche" prefix="'D'"></rank-badge>
+								<rank-badge rank="song.rank.uk" prefix="'UK'"></rank-badge>
+								<rank-badge rank="song.rank.francais" prefix="'F'"></rank-badge>
+								<rank-badge rank="song.rank.melon" prefix="'M'"></rank-badge>
+								<rank-badge rank="song.rank.gaon" prefix="'G'"></rank-badge>
+								<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>
+								<div class="btn-group">
+									<button type="button" class="btn btn-default btn-song-dropdown dropdown-toggle"
+															 data-toggle="dropdown" aria-expanded="false">
+										<span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu dropdown-menu-right dropdown-song" role="menu">
+										<li role="presentation"><a ng-click="addNext(song, album)">Play next</a></li>
+										<li role="presentation"><a href="#/edit/song/{{song.id}}">Edit song</a></li>
+										<li role="presentation"><a href="#/song/{{song.id}}">Details</a></li>
+										<li role="presentation"><a ng-click="download(song)">Download</a></li>
+									</ul>
+								</div>
+							</span>
+						</div>
+						<div ng-show="{{song.artists.length}}">
+							<span class="song-track"></span>
+							<small>by</small>
+							<artist-array array="song.artists"></artist-array>
+						</div>
+						<div ng-show="{{song.features.length}}">
+							<span class="song-track"></span>
+							<small>Feat.</small>
+							<artist-array array="song.features"></artist-array>
+						</div>
+					</td>
+				</tr>
+			</tbody>
 		</table>
 	</div>
 
