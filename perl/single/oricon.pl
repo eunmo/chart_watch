@@ -91,7 +91,59 @@ sub get_text($)
 	$s =~ tr/０-９：；＜＝＞？＠Ａ-Ｚ［＼］＾/0-9:;<=>?@A-Z[\\]^/;
 	$s =~ tr/＿｀ａ-ｚ｛｜｝￠￡￢￣￤￥￦/_`a-z{|}\¢£¬¯¦¥₩/;
 	$s =~ tr/−/-/;
-	$s =~ s/�U/Ⅱ/g;
+
+	# circle + number
+	$s =~ s/�@/①/g;
+	$s =~ s/�A/②/g;
+	$s =~ s/�B/③/g;
+	$s =~ s/�C/④/g;
+	$s =~ s/�D/⑤/g;
+	$s =~ s/�E/⑥/g;
+	$s =~ s/�F/⑦/g;
+	$s =~ s/�G/⑧/g;
+	$s =~ s/�H/⑨/g;
+	$s =~ s/�I/⑩/g;
+	$s =~ s/�J/⑪/g;
+	$s =~ s/�K/⑫/g;
+	$s =~ s/�L/⑬/g;
+	$s =~ s/�M/⑭/g;
+	$s =~ s/�N/⑮/g;
+
+	# roman numerics
+	$s =~ s/�T/I/g;
+	$s =~ s/�U/II/g;
+	$s =~ s/�V/III/g;
+	$s =~ s/�W/IV/g;
+	$s =~ s/�X/V/g;
+	$s =~ s/�Y/VI/g;
+	$s =~ s/�Z/VII/g;
+	$s =~ s/�\[/VIII/g;
+	$s =~ s/�\\/IX/g;
+	$s =~ s/�\]/X/g;
+
+	# heart
+	$s =~ s/■/♥/g;
+	$s =~ s/�ｫ/♥/g;
+	
+	# delta
+	$s =~ s/�凾c/⊿D/g;
+	$s =~ s/�凵@/⊿ /g;
+	$s =~ s/^�$/⊿/g;
+
+	# what should I say
+	$s =~ s/�煤n/∑\]/g;
+	$s =~ s/�髞V/隆之/g;
+	$s =~ s/��P/`P/g;
+	$s =~ s/ever�/ever`/g;
+	$s =~ s/�ｮ/₂/g;
+	$s =~ s/�唐�/∮あ/g;
+	$s =~ s/�揩ｽ/﨟た/g;
+
+	# difficult kanji
+	$s =~ s/�ｱ/﨑/g;
+	$s =~ s/��/髙/g;
+	$s =~ s/�`/蓜/g;
+	$s =~ s/�~/神/g;
 
 	return $s;
 }
