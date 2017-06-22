@@ -112,8 +112,6 @@
 				query += "nameNorm < '가' and not nameNorm regexp '^[A-Za-z]'";
 			} else if (initial.match(/Favorites/)) {
 				query += "favorites = true ";
-			} else if (initial.match(/YZ/)) {
-				query += "nameNorm like 'Y%' or nameNorm like 'Z%' ";
 			} else {
 				// alphabet
 				query += "nameNorm like '" + initial + "%' ";
