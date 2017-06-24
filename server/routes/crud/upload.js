@@ -144,7 +144,12 @@
 					});
 				})
 				.then(function (song) {
-					song.addAlbum(this.album, {disk: tag.disk, track: tag.track});
+					var disk = tag.disk;
+
+					if (disk === 0)
+						disk = 1;
+
+					song.addAlbum(this.album, {disk: disk, track: tag.track});
 					for (i = 0; i < songArtistArray.length; i++) {
 						song.addArtist(songArtistArray[i], {order: i});
 					}
