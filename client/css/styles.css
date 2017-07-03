@@ -246,3 +246,11 @@ h1.shuffle {
 .artist-rows-detail {
 	color: grey;
 }
+
+.td-rowspan {
+	vertical-align: middle !important;
+}
+
+.multi-streak {
+	font-size: 30px;
+}

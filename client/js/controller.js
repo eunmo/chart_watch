@@ -952,6 +952,36 @@ musicApp.controller('SingleOnesCtrl', function ($rootScope, $scope, $routeParams
 				week.songs[j] = songs[week.songIds[j]];
 			}
 		}
+		
+		function weekMatch(a, b) {
+			var match = false;
+			
+			if (a.length !== b.length) {
+				return false;
+			}
+
+			for (var i = 0; i < a.length; i++) {
+				if (a[i] !== b[i]) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		var prevWeek = {songIds: []};
+		for (i in results.weeks) {
+			week = results.weeks[i];
+
+			if (weekMatch(week.songIds, prevWeek.songIds)) {
+				week.display = false;
+				prevWeek.streak++;
+			} else {
+				prevWeek = week;
+				week.display = true;
+				week.streak = 1;
+			}
+		}
 	});
 });
 
