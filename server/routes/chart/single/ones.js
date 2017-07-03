@@ -16,18 +16,29 @@
 			
 			db.promisifyQuery(query)
 				.then(function (rows) {
+					var weekMap = {};
 					var songMap = {};
 					var ids = [];
 					var songs = out.songs;
-					var id;
+					var i, row, id, week;
 
 					for (var i in rows) {
-						id = rows[i].id;
+						row = rows[i];
+						id = row.id;
 						if (id !== null && songMap[id] === undefined) {
 							ids.push(id);
 							songs.push({ id: id });
 						}
-						out.weeks.push({ week: rows[i].week, song: id });
+						
+						if (weekMap[row.week] === undefined) {
+							weekMap[row.week] = { week: rows[i].week, songIds: [] };
+						}
+						week = weekMap[row.week];
+						week.songIds[row.order] = id;
+					}
+
+					for (week in weekMap) {
+						out.weeks.push(weekMap[week]);
 					}
 
 					var promises = [];

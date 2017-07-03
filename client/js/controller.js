@@ -944,10 +944,13 @@ musicApp.controller('SingleOnesCtrl', function ($rootScope, $scope, $routeParams
 			songs[song.id] = song;
 		}
 		
-		var week;
+		var week, j;
 		for (i in results.weeks) {
 			week = results.weeks[i];
-			week.song = songs[week.song];
+			week.songs = [];
+			for (j in week.songIds) {
+				week.songs[j] = songs[week.songIds[j]];
+			}
 		}
 	});
 });

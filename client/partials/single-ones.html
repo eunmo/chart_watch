@@ -3,25 +3,30 @@
 </h1>
 <table class="table table-hover">
 	<tr ng-repeat="week in weeks">
-		<td>
+		<td class="ones-week">
 			<a href="#/chart/single/{{chart}}/{{week.week | date: 'yyyy-MM-dd'}}">
 				{{week.week | date: 'yyyy-MM-dd'}}
 			</a>
 		</td>
 		<td class="td-img-list">
-			<image-small album-id="week.song.albumId" s="30"></image-small>
+			<image-small album-id="week.songs[0].albumId" s="30"></image-small>
 		</td>
 		<td>
 			<div class="recent-artists">
 				<span class="recent-artist-list">
-					<artist-array array="week.song.artists"></artist-array>
+					<artist-array array="week.songs[0].artists"></artist-array>
 				</span>
 			</div>
 		</td>
 		<td>
-			{{week.song.title | normalizeString}}
+			<span ng-repeat="song in week.songs">
+				<span ng-show="!$first">/</span>
+				{{song.title | normalizeString}}
+			</span>
 			<span class="pull-right song-desc-right">
-				<span class="badge badge-plays" ng-show="{{week.song.plays}}">{{week.song.plays}}</span>
+				<span ng-repeat="song in week.songs">
+					<span class="badge badge-plays" ng-show="{{song.plays}}">{{song.plays}}</span>
+				</span>
 			</span>
 		</td>
 	</tr>

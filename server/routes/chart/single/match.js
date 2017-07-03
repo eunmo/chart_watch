@@ -253,8 +253,12 @@
 		function normalizeTitle (artistId, title, chart, date) {
 			var titleNorm = title;
 
-			titleNorm = titleNorm.replace(/\(.*/g, '');
-			titleNorm = titleNorm.replace(/\).*/g, '');
+			if (titleNorm.includes(')')) {
+				titleNorm = titleNorm.replace(/\(.*/g, '');
+				titleNorm = titleNorm.replace(/\).*/g, '');
+			} else {
+				titleNorm = titleNorm.replace(/^.*\(/, '');
+			}
 
 			if (chart === 'oricon') {
 				titleNorm = titleNorm.replace(/(\s|。)feat\..*$/, '');
