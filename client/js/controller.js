@@ -1382,6 +1382,22 @@ musicApp.controller ('SeasonSingleCtrl', function ($rootScope, $scope, $routePar
 	});
 });
 
+musicApp.controller ('SeasonSingleListCtrl', function ($scope, $http, songService) {
+
+	$scope.songs = [];
+
+	$http.get ('api/season-detail').success (function (data) {
+		$scope.songs = data;
+		$scope.songs.sort(function (a, b) {
+			return a.plays - b.plays;
+		});
+	});
+	
+	$scope.addSong = function (song) {
+		songService.addSongs([song]);
+	};
+});
+
 musicApp.controller('StatsPlaysCtrl', function ($rootScope, $scope, $routeParams, $http) {
 
 	$scope.rawData = [];
