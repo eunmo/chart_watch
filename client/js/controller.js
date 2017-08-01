@@ -1389,6 +1389,10 @@ musicApp.controller ('SeasonSingleListCtrl', function ($scope, $http, songServic
 	$http.get ('api/season-detail').success (function (data) {
 		$scope.songs = data;
 		$scope.songs.sort(function (a, b) {
+			if (a.plays === b.plays) {
+				return a.id - b.id;
+			}
+
 			return a.plays - b.plays;
 		});
 	});

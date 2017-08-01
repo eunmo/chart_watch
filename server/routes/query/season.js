@@ -59,7 +59,7 @@
 		router.get('/api/season-detail', function (req, res) {
 			var outSongs = [];
 
-			db.season.getSongsOfThisWeek()
+			db.season.getAllSongsOfThisWeek()
 				.then(function(rows) {
 					var i, j, row, id;
 					var songs = [];
@@ -67,7 +67,7 @@
 					
 					for (i in rows) {
 						row = rows[i];
-						id = row.SongId;
+						id = row.id;
 
 						if (songs[id] === undefined) {
 							songs[id] = { id: id };
