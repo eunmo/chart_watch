@@ -1314,6 +1314,7 @@ musicApp.controller ('IOSCtrl', function ($rootScope, $scope, $routeParams, $htt
 		$scope.sections.push ({ name: 'Seasonal', songs: data.seasonal });
 		$scope.sections.push ({ name: 'Charted', songs: data.charted });
 		$scope.sections.push ({ name: 'Uncharted', songs: data.uncharted });
+		$scope.sections.push ({ name: 'Favorites', songs: data.favorite });
 
 		var total = 0;
 		var songs = [];

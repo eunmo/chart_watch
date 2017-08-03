@@ -102,16 +102,44 @@
 				});
 		}
 
+		function getFavoriteAlbums () {
+			var albumQuery =
+				"SELECT AlbumId, `release` FROM (" +
+					"SELECT AlbumId FROM AlbumArtists a, Artists b " +
+					"	WHERE a.ArtistId = b.id AND b.favorites = true " +
+					" UNION " +
+					"SELECT AlbumId FROM AlbumArtists a, ArtistRelations b, Artists c " +
+					" WHERE a.ArtistId = b.b AND b.a = c.id AND c.favorites = true" +
+				") a, Albums b " +
+				" WHERE a.AlbumId = b.id " +
+				"	ORDER BY `release` DESC LIMIT 50";
+
+			return db.promisifyQuery(albumQuery)
+				.then(function (albumIds) {
+					var ids = [];
+
+					for (var i in albumIds) {
+						ids.push(albumIds[i].AlbumId);
+					}
+
+					var query =
+						"SELECT SongId as id FROM AlbumSongs " +
+						" WHERE AlbumId in (" + ids.join() + ") " +
+					  " ORDER BY FIELD(AlbumId, " + ids.join() + "), disk, track";
+
+					return db.promisifyQuery(query);
+				}).then(function (songs) {
+					return getMore(songs, true);
+				});
+		}
+
 		router.get('/ios/fetch', function (req, res) {
 			var promises = [];
 			var result = {};
-			var chartedLimit = req.query.charted;
-			var unchartedLimit = req.query.uncharted;
-			var seasonalLimit = req.query.seasonal;
 
-			chartedLimit = 200;
-		 	unchartedLimit = 200;
-			seasonalLimit = 5;
+			var chartedLimit = 200;
+		 	var unchartedLimit = 200;
+			var seasonalLimit = 5;
 
 			promises.push(
 				getSortedCurrentSongs()
@@ -145,6 +173,13 @@
 				getSeasonal(seasonalLimit)
 				.then( function (array) {
 					result.seasonal = array;
+				})
+			);
+
+			promises.push(
+				getFavoriteAlbums()
+				.then( function (array) {
+					result.favorite = array;
 				})
 			);
 
