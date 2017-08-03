@@ -109,7 +109,7 @@
 					"	WHERE a.ArtistId = b.id AND b.favorites = true " +
 					" UNION " +
 					"SELECT AlbumId FROM AlbumArtists a, ArtistRelations b, Artists c " +
-					" WHERE a.ArtistId = b.b AND b.a = c.id AND c.favorites = true" +
+					" WHERE a.ArtistId = b.a AND b.b = c.id AND c.favorites = true" +
 				") a, Albums b " +
 				" WHERE a.AlbumId = b.id " +
 				"	ORDER BY `release` DESC LIMIT 50";
