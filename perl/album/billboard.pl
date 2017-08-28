@@ -35,6 +35,8 @@ for my $div ($dom->find('div[class*="row__title"]')->each) {
 		$artist = $div->find('a[data-tracklabel="Artist Name"]')->first->text;
 	} elsif ($div->find('h3')->first) {
 		$artist = $div->find('h3')->first->text;
+	} elsif ($div->find('span[class="chart-row__artist"]')->first) {
+	  $artist = $div->find('span[class="chart-row__artist"]')->first->text;
 	}
 	my $artist_norm = normalize_artist($artist);
 	print ",\n" if $rank > 1;
