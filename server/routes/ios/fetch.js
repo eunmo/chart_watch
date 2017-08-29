@@ -77,6 +77,16 @@
 					}
 
 					return getMore(songs, true);
+				}).then(function (array) {
+					array.sort(function (a, b) {
+						if (a.plays === b.plays) {
+							return a.id - b.id;
+						}
+
+						return a.plays - b.plays;
+					});
+
+					return array;
 				});
 		}
 
