@@ -3,7 +3,7 @@
 	
 	module.exports = function (router, _, db) {
 		router.get('/chart/single/current', function (req, res) {
-			db.chartCurrent.getSortedSongs()
+			db.chartCurrent.getExpandedSongs()
 			.then(function (songs) {
 				var songIds = [];
 
@@ -18,7 +18,18 @@
 		
 				return Promise.all(promises)
 					.then(function() {
-						res.json(songs);
+						var filteredSongs = [];
+						var song;
+
+						for (var i in songs) {
+							song = songs[i];
+							if (song.curRank[0] <= 5 ||
+									(song.plays <= 10 && song.rank)) {
+								filteredSongs.push(song);
+							}
+						}
+
+						res.json(filteredSongs);
 					});
 			});
 		});

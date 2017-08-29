@@ -32,6 +32,24 @@
 			
 			return db.promisifyQuery(query + ';');
 		}
+		
+		function getCurrentSongIdsExpanded (currentWeeks) {
+			var query = '';
+
+			for (var i = 0; i < currentWeeks.length; i++) {
+				if (i > 0)
+					query += " UNION ALL ";
+				query +=
+					"SELECT SongId, `type`, `rank`, `order` " +
+					"  FROM SingleCharts " +
+					" WHERE `type` = \'" + currentWeeks[i].type + "\' " +
+					"   AND `week` = \'" + currentWeeks[i].week.toISOString() + "\' " +
+					"   AND SongId is not null";
+			}
+			
+			return db.promisifyQuery(query + ';');
+		}
+
 
 		function sortCurRank (a, b) {
 			return (a.rank === b.rank) ? charts.indexOf(a.type) - charts.indexOf(b.type) : a.rank - b.rank;
@@ -121,6 +139,27 @@
 					}
 
 					return songs;
+				});
+		};
+
+		db.chartCurrent.getExpandedSongs = function () {
+			var sortedSongs = [];
+
+			return getCurrentWeeks('SingleCharts')
+				.then(getCurrentSongIdsExpanded)
+				.then(sortCurrentSongIds)
+				.then(function (songs) {
+					var ids = [];
+
+					for (var i in songs) {
+						ids.push(songs[i].id);
+					}
+
+					sortedSongs = songs;
+
+					return db.song.fetchDetails(songs, ids);
+				}).then(function () {
+					return sortedSongs;
 				});
 		};
 	};

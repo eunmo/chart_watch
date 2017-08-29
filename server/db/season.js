@@ -15,9 +15,7 @@
 				dates += ",";
 			}
 
-			dates += "'" + date.getFullYear() +
-				"-" + (date.getMonth() + 1) +
-				"-" + date.getDate() + "'";
+			dates += "'" + date.toISOString() + "'";
 			append = true;
 		}
 

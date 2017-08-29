@@ -660,7 +660,7 @@ musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routePara
 			var row = chartRows[i];
 			var minRank = row.curRank[0];
 
-			if (minRank == 2 || minRank == 4 || minRank > 5) {
+			if (minRank == 2 || minRank == 4 || (minRank > 5 && minRank <= 10)) {
 				row.active = true;
 			}
 			
