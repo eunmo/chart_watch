@@ -5,7 +5,7 @@
 		
 		db.album.getDetails = function (ids) {
 			var query =
-				"SELECT id, title, format, `release` " +
+				"SELECT id, title, format, format2, `release` " +
 			  "  FROM Albums " +
 				" WHERE id in (" + ids.join() + ");";
 
@@ -72,6 +72,20 @@
 
 			var query = 
 				"SELECT id, title, format, `release` " +
+			  "  FROM Albums " + filter;
+
+			return db.promisifyQuery(query);
+		};
+		
+		db.album.getByFormat2 = function (format) {
+			var filter = " WHERE format2 = '" + format + "';";
+
+			if (format === 'null') {
+				filter = " WHERE format2 is null;";
+			}
+
+			var query = 
+				"SELECT id, title, format2, `release` " +
 			  "  FROM Albums " + filter;
 
 			return db.promisifyQuery(query);

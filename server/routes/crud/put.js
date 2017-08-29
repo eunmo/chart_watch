@@ -268,7 +268,8 @@
 					title: input.title,
 					titleNorm: input.titleNorm,
 					release: new Date(input.releaseDate),
-					format: input.format
+					format: input.format,
+					format2: input.format2,
 				},
 				{ where: { id: id } });
 			})

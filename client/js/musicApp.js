@@ -29,6 +29,10 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		templateUrl: '/partials/album-format.html',
 		controller: 'AlbumFormatCtrl'
 	})
+	.when('/album/format2/:format', {
+		templateUrl: '/partials/album-format.html',
+		controller: 'AlbumFormat2Ctrl'
+	})
 	.when('/album/all', {
 		templateUrl: '/partials/album-list.html',
 		controller: 'AlbumListCtrl'

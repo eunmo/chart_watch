@@ -6,7 +6,8 @@
 			title: { type: DataTypes.STRING, allowNull: false },
 			titleNorm: { type: DataTypes.STRING, allowNull: false },
 			release: DataTypes.DATEONLY,
-			format: DataTypes.STRING,
+			format: DataTypes.STRING, // single, EP, studio, greatest, compilation (latter 3 all full)
+			format2: DataTypes.STRING, // deluxe, soundtrack, partial
 			genre: DataTypes.STRING
 		});
 

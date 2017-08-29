@@ -127,6 +127,26 @@
 																				{ type: models.sequelize.QueryTypes.SELECT });
 
 				}
+			}).then(function (results) {
+				if (results.length === 0 && chart === 'oricon') {
+					var titleNorm = title;
+
+					titleNorm = titleNorm.replace(/.*?\(/, '');
+					titleNorm = titleNorm.replace(/\).*/, '');
+					titleNorm = titleNorm.trim();
+
+					if (titleNorm !== title) {
+						return models.sequelize.query("Select id, title from Songs where id in " +
+																					"(select SongId from SongArtists where ArtistId = " + artistId + ") " +
+																					"and title = \"" + titleNorm + "\"",
+																					{ type: models.sequelize.QueryTypes.SELECT })
+
+					} else {
+						return results;
+					}
+				} else {
+					return results;
+				}
 			});
 		};
 
@@ -147,6 +167,27 @@
 																				" and alias = \"" + title + "\" and chart = \"" + chart + "\")",
 																				{ type: models.sequelize.QueryTypes.SELECT });
 
+				}
+			}).then(function (results) {
+				if (results.length === 0 && chart === 'oricon') {
+					var titleNorm = title;
+
+					titleNorm = titleNorm.replace(/.*?\(/, '');
+					titleNorm = titleNorm.replace(/\).*/, '');
+					titleNorm = titleNorm.trim();
+
+					if (titleNorm !== title) {
+						return models.sequelize.query("Select id, title from Songs where id in " +
+																					"(select SongId from AlbumSongs where AlbumId in " +
+																					"	(select AlbumId from AlbumArtists where ArtistId = " + artistId + ")) " +
+																					"and title = \"" + titleNorm + "\"",
+																					{ type: models.sequelize.QueryTypes.SELECT })
+
+					} else {
+						return results;
+					}
+				} else {
+					return results;
 				}
 			});
 		};

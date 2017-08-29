@@ -85,6 +85,28 @@
 				});
 		});
 		
+		router.get('/api/album/format2/:_format', function (req, res) {
+			var albums = [];
+
+			return db.album.getByFormat2(req.params._format)
+				.then(function(rows) {
+					var i, row;
+
+					for (i in rows) {
+						row = rows[i];
+						albums.push({
+							id: row.id,
+							title: row.title,
+							release: row.release
+						});
+					}
+
+					return getArtists(db, albums);
+				}).then(function () {
+					res.json(albums);
+				});
+		});
+		
 		router.get('/api/all-albums', function (req, res) {
 			var query = 'SELECT id, title, `release`, format FROM Albums';
 			var albums = [];

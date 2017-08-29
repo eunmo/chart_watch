@@ -115,6 +115,7 @@
 					album = maps.albumMap[row.id];
 					album.title = row.title;
 					album.format = row.format;
+					album.format2 = row.format2;
 					album.release = row.release;
 				}
 			});

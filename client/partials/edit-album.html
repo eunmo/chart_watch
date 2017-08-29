@@ -22,7 +22,7 @@
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-sm-3 control-label">Type</label>
+		<label class="col-sm-3 control-label">Format</label>
 		<div class="col-sm-8">
 			<label class="radio-inline">
 				<input type="radio" ng-model="album.format" value="Single" /> Single
@@ -39,11 +39,22 @@
 			<label class="radio-inline">
 				<input type="radio" ng-model="album.format" value="Compilation" /> Compilation
 			</label>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">Format 2</label>
+		<div class="col-sm-8">
 			<label class="radio-inline">
-				<input type="radio" ng-model="album.format" value="Soundtrack" /> Soundtrack
+				<input type="radio" ng-model="album.format2" value="Deluxe" /> Deluxe
 			</label>
 			<label class="radio-inline">
-				<input type="radio" ng-model="album.format" value="Partial" /> Partial Album
+				<input type="radio" ng-model="album.format2" value="Soundtrack" /> Soundtrack
+			</label>
+			<label class="radio-inline">
+				<input type="radio" ng-model="album.format2" value="Partial" /> Partial
+			</label>
+			<label class="radio-inline">
+				<input type="radio" ng-model="album.format2" value="Null" /> Null
 			</label>
 		</div>
 	</div>

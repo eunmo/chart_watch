@@ -452,6 +452,9 @@ musicApp.controller('EditAlbumCtrl', function ($rootScope, $scope, $routeParams,
 		album.title = album.title.replace (/\'/g, '`');
 		album.titleNorm = album.titleNorm.replace (/\'/g, '`');
 
+		if (album.format2 === 'Null')
+			album.format2 = null;
+
 		for (i in album.editSongs) {
 			var song = album.editSongs[i];
 			song.title = song.title.replace (/\'/g, '`');
@@ -1253,6 +1256,17 @@ musicApp.controller ('AlbumFormatCtrl', function ($rootScope, $scope, $routePara
 	$scope.format = $routeParams.format;
 
 	$http.get ('api/album/format/' + $routeParams.format).success (function (albums) {
+		$scope.albums = albums;
+		$scope.loaded = true;
+	});
+});
+
+musicApp.controller ('AlbumFormat2Ctrl', function ($rootScope, $scope, $routeParams, $http) {
+
+	$scope.loaded = false;
+	$scope.format = $routeParams.format;
+
+	$http.get ('api/album/format2/' + $routeParams.format).success (function (albums) {
 		$scope.albums = albums;
 		$scope.loaded = true;
 	});
