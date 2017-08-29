@@ -59,6 +59,7 @@ musicApp.controller('ArtistInitialCtrl', function ($rootScope, $scope, $routePar
 
 musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
 
+	$scope.id = $routeParams.id;
 	$scope.loaded = false;
 	$scope.showFeat = true;
 	$scope.selectedAlbums = [];
@@ -171,8 +172,6 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 				years[year] = { year: year, albums: [album] };
 			else
 				years[year].albums.push(album);
-
-			console.log(album);
 		}
 
 		for (i in years) {
