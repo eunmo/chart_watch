@@ -653,11 +653,12 @@ function getMinDate (chart) {
 	}
 }
 
-musicApp.controller('CurrentChartCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
+musicApp.controller('MetaChartCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
 	$scope.songs = [];
 	$scope.charts = ['billboard', 'oricon', 'deutsche', 'uk', 'francais', 'melon', 'gaon'];
+	$scope.type = $routeParams.type;
 
-	$http.get('chart/single/current')
+	$http.get('chart/single/' + $routeParams.type)
 	.success(function (chartRows) {
 		for (var i in chartRows) {
 			var row = chartRows[i];

@@ -159,7 +159,17 @@
 
 					return db.song.fetchDetails(songs, ids);
 				}).then(function () {
-					return sortedSongs;
+					var songs = [];
+					var song;
+
+					for (var i in sortedSongs) {
+						song = sortedSongs[i];
+						if (song.curRank[0] > 10 && song.plays <= 10) {
+							songs.push(song);
+						}
+					}
+
+					return songs;
 				});
 		};
 	};

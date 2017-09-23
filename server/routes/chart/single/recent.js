@@ -2,8 +2,8 @@
 	'use strict';
 	
 	module.exports = function (router, _, db) {
-		router.get('/chart/single/current', function (req, res) {
-			db.chartCurrent.getSortedSongs()
+		router.get('/chart/single/recent', function (req, res) {
+			db.chartCurrent.getExpandedSongs()
 			.then(function (songs) {
 				var songIds = [];
 

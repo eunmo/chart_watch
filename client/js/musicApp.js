@@ -57,9 +57,9 @@ musicApp = angular.module('musicApp', ['ngRoute'])
 		templateUrl: '/partials/batch.html',
 		controller: 'BatchCtrl'
 	})
-	.when('/chart/current', {
-		templateUrl: '/partials/current-chart.html',
-		controller: 'CurrentChartCtrl'
+	.when('/chart/meta/:type', {
+		templateUrl: '/partials/meta-chart.html',
+		controller: 'MetaChartCtrl'
 	})
 	.when('/chart/ones', {
 		templateUrl: '/partials/chart-history.html',
