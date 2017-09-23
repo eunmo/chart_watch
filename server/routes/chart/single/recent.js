@@ -23,8 +23,7 @@
 
 						for (var i in songs) {
 							song = songs[i];
-							if (song.curRank[0] <= 5 ||
-									(song.plays <= 10 && song.rank)) {
+							if (song.rank) {
 								filteredSongs.push(song);
 							}
 						}

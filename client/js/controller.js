@@ -1,8 +1,16 @@
 musicApp.controller('InitialCtrl', function ($rootScope, $scope, $http, songService) {
- 
+
+ 	$scope.shortcuts = [];	
   $scope.initials = [];
 
-	var initials = '가나다라마바사아자차카타파하ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	$scope.shortcuts.push({ glyph: 'stats', link: 'stats/plays/song' });
+	$scope.shortcuts.push({ glyph: 'globe', link: 'chart/meta/current' });
+	$scope.shortcuts.push({ glyph: 'music', link: 'chart/summary/single' });
+	$scope.shortcuts.push({ glyph: 'cd', link: 'chart/meta/current' });
+	$scope.shortcuts.push({ glyph: 'time', link: 'newSongs' });
+	$scope.shortcuts.push({ glyph: 'fire', link: 'initial/Favorites' });
+
+	var initials = 'ㄱㅇABCDㄴㅈEFGHㄷㅊIJKLㄹㅋMNOPㅁㅌQRSTㅂㅍUVWXㅅㅎYX';
 	var split = initials.split('');
 	var initial;
 
@@ -1564,4 +1572,16 @@ musicApp.controller('AlbumListCtrl', function ($rootScope, $scope, $http) {
 			}
 		}
 	});	
+});
+
+musicApp.controller('SummarySingleCtrl', function ($rootScope, $scope, $http) {
+	$scope.charts = [];
+	var chartNames = ['billboard', 'oricon',	'deutsche', 'uk', 'francais', 'melon', 'gaon'];
+
+	$http.get('chart/single/summary').success(function (data) {
+
+		for (var i in data) {
+			$scope.charts[chartNames.indexOf(data[i].type)] = data[i];
+		}
+	});
 });

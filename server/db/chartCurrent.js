@@ -15,7 +15,7 @@
 			return db.promisifyQuery(query);
 		}
 
-		function getCurrentSongIds (currentWeeks) {
+		function getCurrentSongIds(currentWeeks) {
 			var query = '';
 
 			for (var i = 0; i < currentWeeks.length; i++) {
@@ -33,7 +33,7 @@
 			return db.promisifyQuery(query + ';');
 		}
 		
-		function getCurrentSongIdsExpanded (currentWeeks) {
+		function getCurrentSongIdsExpanded(currentWeeks) {
 			var query = '';
 
 			for (var i = 0; i < currentWeeks.length; i++) {
@@ -49,8 +49,7 @@
 			
 			return db.promisifyQuery(query + ';');
 		}
-
-
+		
 		function sortCurRank (a, b) {
 			return (a.rank === b.rank) ? charts.indexOf(a.type) - charts.indexOf(b.type) : a.rank - b.rank;
 		}
@@ -170,6 +169,102 @@
 					}
 
 					return songs;
+				});
+		};
+		
+		function getCurrentTopSongIds(currentWeeks) {
+			var query = '';
+
+			for (var i = 0; i < currentWeeks.length; i++) {
+				if (i > 0)
+					query += " UNION ALL ";
+				query +=
+					"SELECT SongId id, artist, title, `type`, `rank`, `order` " +
+					"  FROM SingleCharts " +
+					" WHERE `type` = \'" + currentWeeks[i].type + "\' " +
+					"   AND `week` = \'" + currentWeeks[i].week.toISOString() + "\' " +
+					"   AND `rank` = 1";
+			}
+
+			return db.promisifyQuery(query + ';');
+		}
+
+		function getCount(currentWeeks) {
+			var query = '';
+
+			for (var i = 0; i < currentWeeks.length; i++) {
+				if (i > 0)
+					query += " UNION ALL ";
+				query +=
+					"SELECT `type`, count(*) `entry`, count(SongId) `match` " +
+					"  FROM SingleCharts " +
+					" WHERE `type` = \'" + currentWeeks[i].type + "\' " +
+					"   AND `week` = \'" + currentWeeks[i].week.toISOString() + "\' ";
+			}
+			
+			return db.promisifyQuery(query + ';');
+		}
+
+		db.chartCurrent.getSingleSummary = function () {
+			var weeks = [];
+			var songs = [];
+
+			return getCurrentWeeks('SingleCharts')
+				.then(function (rows) {
+					weeks = rows;
+					return getCurrentTopSongIds(weeks);
+				}).then(function (rows) {
+					var ids = [];
+					var id;
+					var matchedSongs = [];
+
+					for (var i in rows) {
+						id = rows[i].id;
+						if (id) {
+							ids.push(id);
+							matchedSongs.push(rows[i]);
+						}
+					}
+
+					songs = rows;
+
+					return db.song.fetchDetails(matchedSongs, ids);
+				}).then(function () {
+					return getCount(weeks);
+				}).then(function (counts) {
+					var week, count, song;
+					var i, j;
+
+					for (i in weeks) {
+						week = weeks[i];
+						week.summary = {};
+						week.songs = [];
+					}
+
+					for (i in songs) {
+						song = songs[i];
+						for (j in weeks) {
+							week = weeks[j];
+
+							if (week.type === song.type) {
+								week.songs[song.order] = song;
+							}
+						}
+					}
+					
+					for (i in counts) {
+						count = counts[i];
+						for (j in weeks) {
+							week = weeks[j];
+
+							if (week.type === count.type) {
+								week.summary.entry = count.entry;
+								week.summary.match = count.match;
+							}
+						}
+					}
+
+					return weeks;
 				});
 		};
 	};
