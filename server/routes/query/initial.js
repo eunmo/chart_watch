@@ -97,10 +97,11 @@
 									"FROM Artists " +
 									"WHERE ";
 
-			if (initial.match(/[가나다라마바사아자차카타파하]/)) {
+			if (initial.match(/[ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ]/)) {
 				// korean
+				var initials = 'ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ';
 				var krnInitials = '가나다라마바사아자차카타파하';
-				var index = krnInitials.indexOf(initial);
+				var index = initials.indexOf(initial);
 
 				query += "nameNorm >= '" + krnInitials[index] + "' ";
 
