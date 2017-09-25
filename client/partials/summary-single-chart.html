@@ -23,7 +23,8 @@
 						{{chart.songs[0].title}}
 					</div>
 					<div>
-						<artist-array array="chart.songs[0].artists"></artist-array>
+						<span ng-show="chart.songs[0].artists"><artist-array array="chart.songs[0].artists"></artist-array></span>
+						<span ng-hide="chart.songs[0].artists">{{chart.songs[0].artist}}</span>
 					</div>
 				</div>
 		</td>
