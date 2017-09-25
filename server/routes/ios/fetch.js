@@ -113,6 +113,8 @@
 		}
 
 		function getFavoriteAlbums () {
+			var curDate = new Date();
+			var limitDate = new Date(Date.UTC(curDate.getFullYear() - 1, curDate.getMonth(), curDate.getDate()));
 			var albumQuery =
 				"SELECT AlbumId, `release` FROM (" +
 					"SELECT AlbumId FROM AlbumArtists a, Artists b " +
@@ -122,7 +124,8 @@
 					" WHERE a.ArtistId = b.a AND b.b = c.id AND c.favorites = true" +
 				") a, Albums b " +
 				" WHERE a.AlbumId = b.id " +
-				"	ORDER BY `release` DESC LIMIT 50";
+				"   AND `release` >= '" + limitDate.toISOString() + "' " +
+				"	ORDER BY `release` DESC";
 
 			return db.promisifyQuery(albumQuery)
 				.then(function (albumIds) {
