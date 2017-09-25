@@ -1,0 +1,36 @@
+<h1>
+	Single Charts
+</h1>
+<table class="table table-hover table-condensed">
+	<tr ng-repeat="chart in charts">
+		<td class="text-right">
+			<h4>
+				<a href="#/chart/single/{{chart.type}}"><b>{{chart.type | capitalize}}</b></a>
+			</h4>
+		</td>
+		<td>
+			<h4>
+				{{chart.week | date: 'MM/dd'}}
+			</h4>
+		</td>
+		<td>
+			<div class="media">
+				<a class="media-left">
+					<image-small album-id="chart.songs[0].albumId" s="40"></image-small>
+				</a>
+				<div class="media-body">
+					<div>
+						{{chart.songs[0].title}}
+					</div>
+					<div>
+						<artist-array array="chart.songs[0].artists"></artist-array>
+					</div>
+				</div>
+		</td>
+		<td>
+			<h4 class="pull-right">
+				{{chart.summary.match}}/{{chart.summary.entry}}
+			</h4>
+		</td>
+	</tr>
+</table>

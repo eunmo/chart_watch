@@ -172,72 +172,27 @@
 				});
 		};
 		
-		function getCurrentTopSongIds(currentWeeks) {
+		function getCurrentTopSongIds(weeks) {
 			var query = '';
 
-			for (var i = 0; i < currentWeeks.length; i++) {
+			for (var i = 0; i < weeks.length; i++) {
 				if (i > 0)
 					query += " UNION ALL ";
 				query +=
 					"SELECT SongId id, artist, title, `type`, `rank`, `order` " +
 					"  FROM SingleCharts " +
-					" WHERE `type` = \'" + currentWeeks[i].type + "\' " +
-					"   AND `week` = \'" + currentWeeks[i].week.toISOString() + "\' " +
+					" WHERE `type` = \'" + weeks[i].type + "\' " +
+					"   AND `week` = \'" + weeks[i].week.toISOString() + "\' " +
 					"   AND `rank` = 1";
 			}
 
-			return db.promisifyQuery(query + ';');
-		}
-
-		function getCount(currentWeeks) {
-			var query = '';
-
-			for (var i = 0; i < currentWeeks.length; i++) {
-				if (i > 0)
-					query += " UNION ALL ";
-				query +=
-					"SELECT `type`, count(*) `entry`, count(SongId) `match` " +
-					"  FROM SingleCharts " +
-					" WHERE `type` = \'" + currentWeeks[i].type + "\' " +
-					"   AND `week` = \'" + currentWeeks[i].week.toISOString() + "\' ";
-			}
-			
-			return db.promisifyQuery(query + ';');
-		}
-
-		db.chartCurrent.getSingleSummary = function () {
-			var weeks = [];
-			var songs = [];
-
-			return getCurrentWeeks('SingleCharts')
-				.then(function (rows) {
-					weeks = rows;
-					return getCurrentTopSongIds(weeks);
-				}).then(function (rows) {
-					var ids = [];
-					var id;
-					var matchedSongs = [];
-
-					for (var i in rows) {
-						id = rows[i].id;
-						if (id) {
-							ids.push(id);
-							matchedSongs.push(rows[i]);
-						}
-					}
-
-					songs = rows;
-
-					return db.song.fetchDetails(matchedSongs, ids);
-				}).then(function () {
-					return getCount(weeks);
-				}).then(function (counts) {
+			return db.promisifyQuery(query + ';')
+				.then(function (songs) {
 					var week, count, song;
 					var i, j;
 
 					for (i in weeks) {
 						week = weeks[i];
-						week.summary = {};
 						week.songs = [];
 					}
 
@@ -251,6 +206,31 @@
 							}
 						}
 					}
+				});
+		}
+
+		function getCount(weeks, chart, column) {
+			var query = '';
+
+			for (var i = 0; i < weeks.length; i++) {
+				if (i > 0)
+					query += " UNION ALL ";
+				query +=
+					"SELECT `type`, count(*) `entry`, count(" + column + ") `match` " +
+					"  FROM " + chart +
+					" WHERE `type` = \'" + weeks[i].type + "\' " +
+					"   AND `week` = \'" + weeks[i].week.toISOString() + "\' ";
+			}
+			
+			return db.promisifyQuery(query + ';')
+				.then(function (counts) {
+					var week, count;
+					var i, j;
+
+					for (i in weeks) {
+						week = weeks[i];
+						week.summary = {};
+					}
 					
 					for (i in counts) {
 						count = counts[i];
@@ -263,10 +243,73 @@
 							}
 						}
 					}
+				});
+		}
 
-					return weeks;
+		db.chartCurrent.getSingleSummary = function () {
+
+			return getCurrentWeeks('SingleCharts')
+				.then(function (weeks) {
+
+					var promises = [];
+					promises.push(getCurrentTopSongIds(weeks));
+					promises.push(getCount(weeks, 'SingleCharts', 'SongId'));
+
+					return Promise.all(promises)
+						.then(function () {
+							return weeks;
+						});
+				});
+		};
+		
+		function getCurrentTopAlbumIds(weeks) {
+			var query = '';
+
+			for (var i = 0; i < weeks.length; i++) {
+				if (i > 0)
+					query += " UNION ALL ";
+				query +=
+					"SELECT AlbumId id, artist, title, `type`, `rank` " +
+					"  FROM AlbumCharts " +
+					" WHERE `type` = \'" + weeks[i].type + "\' " +
+					"   AND `week` = \'" + weeks[i].week.toISOString() + "\' " +
+					"   AND `rank` = 1";
+			}
+
+			return db.promisifyQuery(query + ';')
+				.then(function (albums) {
+					var week, count, album;
+					var i, j;
+
+					for (i in albums) {
+						album = albums[i];
+						for (j in weeks) {
+							week = weeks[j];
+
+							if (week.type === album.type) {
+								week.album = album;
+							}
+						}
+					}
+				});
+		}
+
+		db.chartCurrent.getAlbumSummary = function () {
+			var weeks = [];
+			var albums = [];
+
+			return getCurrentWeeks('AlbumCharts')
+				.then(function (weeks) {
+					
+					var promises = [];
+					promises.push(getCurrentTopAlbumIds(weeks));
+					promises.push(getCount(weeks, 'AlbumCharts', 'AlbumId'));
+
+					return Promise.all(promises)
+						.then(function () {
+							return weeks;
+						});
 				});
 		};
 	};
 }());
-

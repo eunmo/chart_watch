@@ -148,24 +148,24 @@
 		};
 
 		db.song.fetchDetails = function (songs, ids) {
-		return db.song.getDetails(ids)
-			.then(function (rows) {
-				var i, row, song;
-				var	details = {};
+			return db.song.getDetails(ids)
+				.then(function (rows) {
+					var i, row, song;
+					var	details = {};
+	
+					for (i in rows) {
+						row = rows[i];
+						details[row.id] = row;
+					}
 
-				for (i in rows) {
-					row = rows[i];
-					details[row.id] = row;
-				}
+					for (i in songs) {
+						song = songs[i];
+						row = details[song.id];
 
-				for (i in songs) {
-					song = songs[i];
-					row = details[song.id];
-
-					song.title = row.title;
-					song.plays = row.plays;
-				}
-			});
+						song.title = row.title;
+						song.plays = row.plays;
+					}
+				});
 		};
 
 		db.song.fetchArtists = function (songs, ids) {

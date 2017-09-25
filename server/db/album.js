@@ -90,5 +90,44 @@
 
 			return db.promisifyQuery(query);
 		};
+
+		db.album.fetchDetails = function (albums, ids) {
+			return db.album.getDetails(ids)
+				.then(function (rows) {
+					var i, row, album;
+					var	details = {};
+	
+					for (i in rows) {
+						row = rows[i];
+						details[row.id] = row;
+					}
+
+					for (i in albums) {
+						album = albums[i];
+						row = details[album.id];
+
+						album.title = row.title;
+						album.format = row.format;
+						album.format2 = row.format2;
+						album.release = row.release;
+					}
+				});
+		};
+		
+		db.album.fetchArtists = function (albums, ids) {
+			return db.album.getArtists(ids)
+				.then(function (albumArtists) {
+					var i, album;
+
+					for (i in albums) {
+						album = albums[i];
+
+						if (albumArtists[album.id] !== undefined) {
+							album.artists = albumArtists[album.id];
+						}
+					}
+				});
+		};
+	
 	};
 }());

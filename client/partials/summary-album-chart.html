@@ -1,5 +1,5 @@
 <h1>
-	Single Charts
+	Album Charts
 </h1>
 <table class="table table-hover table-condensed">
 	<tr ng-repeat="chart in charts">
@@ -15,15 +15,16 @@
 		</td>
 		<td>
 			<div class="media">
-				<a class="media-left" ng-show="chart.songs[0].id">
-					<image-small album-id="chart.songs[0].albumId" s="40"></image-small>
+				<a class="media-left">
+					<image-small album-id="chart.album.id" s="40"></image-small>
 				</a>
 				<div class="media-body">
 					<div>
-						{{chart.songs[0].title}}
+						{{chart.album.title}}
 					</div>
 					<div>
-						<artist-array array="chart.songs[0].artists"></artist-array>
+						<span ng-show="chart.album.artists"><artist-array array="chart.album.artists"></artist-array></span>
+						<span ng-hide="chart.album.artists">{{chart.album.artist}}</span>
 					</div>
 				</div>
 		</td>
