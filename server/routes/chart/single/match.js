@@ -286,6 +286,15 @@
 						}
 					}
 				}
+			} else if (artistId === 6083) { // J Balvin
+				var MiGenteRemixDate = new Date (2017, 8, 30); // 2017-08-30
+				if (chart === 'billboard') {
+					if (title === 'Mi Gente') {
+						if (date >= MiGenteRemixDate) {
+							return 'Mi Gente (Remix)';
+						}
+					}
+				}
 			}
 
 			return null;
