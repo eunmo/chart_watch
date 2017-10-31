@@ -1,4 +1,4 @@
-musicApp.controller('InitialCtrl', function ($rootScope, $scope, $http, songService) {
+musicApp.controller('InitialCtrl', function ($rootScope, $scope, $http) {
 
  	$scope.shortcuts = [];	
   $scope.initials = [];
@@ -934,6 +934,11 @@ musicApp.controller('SingleChartCtrl', function ($rootScope, $scope, $routeParam
 	$scope.next = function () {
 		$scope.updateDate(7);
 	};
+	
+	$scope.album = function () {
+		var dateString = $scope.date.toISOString().substr(0, 10);
+		$location.url('/chart/single/album/' + $scope.chart + '/'  + dateString);
+	};
 
 	$scope.history = function () {
 		$location.url('/chart/single/ones/' + $scope.chart);
@@ -1596,4 +1601,25 @@ musicApp.controller('SummaryAlbumChartCtrl', function ($rootScope, $scope, $http
 			$scope.charts[chartNames.indexOf(data[i].type)] = data[i];
 		}
 	});
+});
+
+musicApp.controller('SingleChartAlbumCtrl', function ($rootScope, $scope, $routeParams, $http, songService) {
+	
+	$scope.chart = $routeParams.name;
+	$scope.date = toUTCDate(new Date($routeParams.date));
+	$scope.songs = [];
+		
+	$http.get('chart/single/album/' + $scope.chart,
+							{ params: { 
+								year: $scope.date.getFullYear(),
+								month: $scope.date.getMonth() + 1,
+								day: $scope.date.getDate()
+							} })
+		.success(function (songs) {
+			$scope.songs = songs;
+		});
+
+	$scope.play = function () {
+		songService.addSongs($scope.songs);
+	};
 });
