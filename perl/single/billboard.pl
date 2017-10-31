@@ -14,7 +14,7 @@ my $dd = $ARGV[2];
 my $ld = DateTime->new( year => $yy, month => $mm, day => $dd )
 								 ->truncate( to => 'week' )
 								 ->add( weeks => 2)
-								 ->add( days => 5 );
+								 ->add( days => 4 ); # need confirmation
 my $ld_ymd = $ld->ymd();
 
 my $url = "http://www.billboard.com/charts/hot-100/$ld_ymd";
