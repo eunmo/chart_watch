@@ -26,24 +26,6 @@
 					"  FROM SingleCharts " +
 					" WHERE `type` = \'" + currentWeeks[i].type + "\' " +
 					"   AND `week` = \'" + currentWeeks[i].week.toISOString() + "\' " +
-					"   AND `rank` <= 10 " +
-					"   AND SongId is not null";
-			}
-			
-			return db.promisifyQuery(query + ';');
-		}
-		
-		function getCurrentSongIdsExpanded(currentWeeks) {
-			var query = '';
-
-			for (var i = 0; i < currentWeeks.length; i++) {
-				if (i > 0)
-					query += " UNION ALL ";
-				query +=
-					"SELECT SongId, `type`, `rank`, `order` " +
-					"  FROM SingleCharts " +
-					" WHERE `type` = \'" + currentWeeks[i].type + "\' " +
-					"   AND `week` = \'" + currentWeeks[i].week.toISOString() + "\' " +
 					"   AND SongId is not null";
 			}
 			
@@ -125,45 +107,18 @@
 
 					sortedSongs = songs;
 
-					return db.song.fetchDetails(songs, ids);
+					var promises = [];
+					promises.push(db.song.fetchDetails(songs, ids));
+					promises.push(db.song.fetchChartSummary(songs, ids));
+					return Promise.all(promises);
 				}).then(function () {
 					var songs = [];
 					var song;
 
 					for (var i in sortedSongs) {
 						song = sortedSongs[i];
-						if (song.curRank[0] <= 5 || song.plays <= 10) {
-							songs.push(song);
-						}
-					}
-
-					return songs;
-				});
-		};
-
-		db.chartCurrent.getExpandedSongs = function () {
-			var sortedSongs = [];
-
-			return getCurrentWeeks('SingleCharts')
-				.then(getCurrentSongIdsExpanded)
-				.then(sortCurrentSongIds)
-				.then(function (songs) {
-					var ids = [];
-
-					for (var i in songs) {
-						ids.push(songs[i].id);
-					}
-
-					sortedSongs = songs;
-
-					return db.song.fetchDetails(songs, ids);
-				}).then(function () {
-					var songs = [];
-					var song;
-
-					for (var i in sortedSongs) {
-						song = sortedSongs[i];
-						if (song.curRank[0] > 10 && song.plays <= 10) {
+						if (song.curRank[0] <= 5 || 
+								(song.plays <= 10 && song.rank)) {
 							songs.push(song);
 						}
 					}

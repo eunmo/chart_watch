@@ -10,7 +10,7 @@ musicApp.controller('InitialCtrl', function ($rootScope, $scope, $http) {
 	$scope.shortcuts.push({ glyph: 'time', link: 'newSongs' });
 	$scope.shortcuts.push({ glyph: 'fire', link: 'initial/Favorites' });
 
-	var initials = 'ㄱㅇABCDㄴㅈEFGHㄷㅊIJKLㄹㅋMNOPㅁㅌQRSTㅂㅍUVWXㅅㅎYX';
+	var initials = 'ㄱㅇABCDㄴㅈEFGHㄷㅊIJKLㄹㅋMNOPㅁㅌQRSTㅂㅍUVWXㅅㅎYZ';
 	var split = initials.split('');
 	var initial;
 
