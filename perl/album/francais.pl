@@ -84,10 +84,16 @@ if (($year == 2005 && $date->month() == 3 && $date->day() == 4) ||
 	} elsif ($year == 2017) {
 		$week += 1;
 	}
-	
+
 	my $week_string = sprintf("%02d", $week);
 
-	my $url = "http://www.snepmusique.com/tops-semaine/top-album-megafusion/?ye=$year&we=$week_string";
+	my $path = "tops-mois/top-albums-fusionnes";
+
+	if ($year > 2017 || ($year == 2017 && $week >= 7)) {
+		$path = "tops-semaine/top-album-megafusion";
+	}
+
+	my $url = "http://www.snepmusique.com/$path/?ye=$year&we=$week_string";
 	my $html = `curl -s "$url"`;
 	my $dom = Mojo::DOM->new($html);
 	my $rank = 1;
