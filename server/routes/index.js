@@ -9,22 +9,20 @@
 
   var router = express.Router();
 
-	var dir = path.resolve('server/routes');	
-
-	function getRoutes (dir) {
-		fs.readdirSync(dir)
+	function getRoutes (__dirname) {
+		fs.readdirSync(__dirname)
 			.filter(function (file) {
 				return (file.indexOf('.js') > 0 && file.indexOf('.swp') < 0);
 			}).forEach(function (file) {
-				require(path.join(dir, file))(router, models, db);
+				require(path.join(__dirname, file))(router, models, db);
 			});
 	}
 
-	fs.readdirSync(dir)
+	fs.readdirSync(__dirname)
 		.filter(function (subDir) {
 			return (subDir.indexOf('.js') < 0);
 		}).forEach(function (subDir) {
-			getRoutes(path.join(dir, subDir));
+			getRoutes(path.join(__dirname, subDir));
 		});
 
   /* GET home page. */

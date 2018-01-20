@@ -4,10 +4,8 @@
 	var fs        = require('fs');
 	var path      = require('path');
 	var mysql			= require('mysql');
-	var dbconfig 	= require(process.env.PWD + '/db.json');
+	var dbconfig 	= require('../../db.json');
 	var Promise = require('bluebird');
-	
-	var curDir = path.resolve('server/db');
 
 	var pool = mysql.createPool({
 		connectionLimit : 100, //important
@@ -50,12 +48,12 @@
 		});
 	};
 	
-	fs.readdirSync(curDir)
+	fs.readdirSync(__dirname)
 		.filter(function (file) {
 			return (file.indexOf('.') !== 0) && (file !== 'index.js');
 		})
 		.forEach(function (file) {
-			require(path.join(curDir, file))(db);
+			require(path.join(__dirname, file))(db);
 		});
 
 

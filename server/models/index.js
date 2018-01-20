@@ -4,19 +4,17 @@
 	var fs        = require('fs');
 	var path      = require('path');
 	var Sequelize = require('sequelize');
-	var dbconfig = require(process.env.PWD + '/db.json');
+	var dbconfig 	= require('../../db.json');
 	var sequelize = new Sequelize(dbconfig.uri);
 	var db        = {};
 
-	var modelDir = path.resolve('server/models');
-
-	fs.readdirSync(modelDir)
+	fs.readdirSync(__dirname)
 		.filter(function (file) {
 			return (file.indexOf('.') !== 0) && (file !== 'index.js') &&
 				(path.extname(file) !== '.sql');
 		})
 		.forEach(function (file) {
-			var model = sequelize['import'](path.join(modelDir, file));
+			var model = sequelize['import'](path.join(__dirname, file));
 			db[model.name] = model;
 		});
 
