@@ -78,7 +78,8 @@ musicApp.directive('songRows', function () {
 	return {
 		restrict: 'E',
 		scope: {
-			songs: '=songs'
+			songs: '=songs',
+			addSongsFrom: '=addSongsFrom'
 		},
 		templateUrl: 'partials/song-rows.html'
 	};

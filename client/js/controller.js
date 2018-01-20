@@ -221,6 +221,7 @@ musicApp.controller('ArtistCtrl', function ($rootScope, $scope, $routeParams, $h
 		} else {
 			sendSong.artists = song.artists;
 		}
+		sendSong.features = song.features;
 		if (minRank < 10)
 			sendSong.rank = minRank;
 
@@ -641,11 +642,11 @@ function getMaxDate (chart) {
 			(chart === 'oricon' && date.getDay() < 2) ||
 			(chart === 'francais' && date.getDay() < 2) ||
 			(chart === 'billboard' && date.getDay() < 3) ||
+			(chart === 'deutsche' && date.getDay() < 3) ||
 			(chart === 'gaon' && date.getDay() < 4))
 		date.setDate(date.getDate() - 7);
 
-	if ((chart === 'deutsche' && date.getDay() === 6) ||
-			(chart === 'uk' && date.getDay() === 6))
+	if ((chart === 'uk' && date.getDay() === 6))
 		date.setDate(date.getDate() + 7);
 
 	date.setDate(date.getDate() - date.getDay() - 1);
@@ -1621,5 +1622,17 @@ musicApp.controller('SingleChartAlbumCtrl', function ($rootScope, $scope, $route
 
 	$scope.play = function () {
 		songService.addSongs($scope.songs);
+	};
+
+	$scope.addSongsFrom = function (index) {
+		var i;
+		var row, song;
+		var songs = [];
+		var minRank, rank;
+
+		for (i = index; i < $scope.songs.length; i++) {
+			songs.push($scope.songs[i]);
+		}
+		songService.addSongs(songs);
 	};
 });
