@@ -213,11 +213,35 @@
 		}
 
 		function handleTitleException (artistId, title, chart, date) {
-			if (artistId === 333) { // 소녀시대
+			if (artistId === 52) { // Bruno Mars
+				var FinesseRemixDate = new Date (2018,0, 6); // 2018-01-06
+				if (title === 'Finesse' ||
+						title === 'FINESSE') {
+					if (date >= FinesseRemixDate) {
+						return 'Finesse (Remix)';
+					}
+				}
+			} else if (artistId === 287) { // Ed Sheeran
+				var PerfectDuetDate = new Date (2017, 11, 9); // 2017-12-09
+				if (chart === 'billboard') {
+					if (title === 'Perfect') {
+						if (date >= PerfectDuetDate) {
+							return 'Perfect Duet';
+						}
+					}
+				}
+			} else if (artistId === 333) { // 소녀시대
 				if (chart === 'oricon') {
 					if (title === 'Oh!' ||
 							title === 'Run Devil Run' ||
 							title === 'Gee') {
+						return title + ' (Japanese Ver.)';
+					}
+				}
+			} else if (artistId === 681) { // 방탄소년단
+				if (chart === 'oricon') {
+					if (title === 'MIC Drop' ||
+							title === 'DNA') {
 						return title + ' (Japanese Ver.)';
 					}
 				}
@@ -287,7 +311,7 @@
 					}
 				}
 			} else if (artistId === 6083) { // J Balvin
-				var MiGenteRemixDate = new Date (2017, 8, 30); // 2017-08-30
+				var MiGenteRemixDate = new Date (2017, 8, 30); // 2017-09-30
 				if (chart === 'billboard') {
 					if (title === 'Mi Gente') {
 						if (date >= MiGenteRemixDate) {
