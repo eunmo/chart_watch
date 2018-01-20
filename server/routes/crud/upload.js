@@ -8,12 +8,11 @@
 	var Promise = require('bluebird');
 	var exec = Promise.promisify(require('child_process').exec);
 
-	var uploadDir = path.resolve('uploads/temp');
-	var musicDir = path.resolve('uploads/music');
-	var imageDir = path.resolve('uploads/img');
-	var tagScript = path.resolve('perl/tag.pl');
-	var imgScript = path.resolve('perl/img.pl');
-	var mp3Bucket = 'mp3-tokyo';
+	var uploadDir = path.join(__dirname, '../../../uploads/temp');
+	var musicDir = path.join(__dirname, '../../../uploads/music');
+	var imageDir = path.join(__dirname, '../../../uploads/img');
+	var tagScript = path.join(__dirname, '../../../perl/tag.pl');
+	var imgScript = path.join(__dirname, '../../../perl/img.pl');
 
 	module.exports = function (router, models) {
 
@@ -124,7 +123,7 @@
 								return Promise.all(albumArtistPromises).then(function () {return album;});
 							})
 							.then(function (album) {
-								var imgPath = path.resolve(imageDir, album.id + '.jpg');
+								var imgPath = path.join(imageDir, album.id + '.jpg');
 								var execImgStr = 'perl ' + imgScript + ' ' + filePath + ' ' + imgPath;
 								return exec(execImgStr).then(function () {
 									return album;
@@ -157,7 +156,7 @@
 						song.addArtist(featArtistArray[i], {order: i, feat: true});
 					}
 					return new Promise(function (resolve, reject) {
-						var newPath = path.resolve(musicDir, song.id.toString() + '.mp3');
+						var newPath = path.join(musicDir, song.id.toString() + '.mp3');
 						fs.renameSync(filePath, newPath);
 						tags.push(tag);
 						resolve(tag);

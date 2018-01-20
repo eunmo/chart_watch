@@ -5,7 +5,7 @@
 	var path = require('path');
 	var exec = Promise.promisify(require('child_process').exec);
 	
-	var imageDir = path.resolve('uploads/img');
+	var imageDir = path.join(__dirname, '../../../uploads/img');
 
 	module.exports = function (router, models) {
 		
@@ -184,12 +184,12 @@
 
 		function addAlbumCover (id, url) {
 			var sizes = [160, 80, 40, 30];
-			var imgPath = path.resolve (imageDir, id + '.jpg');
+			var imgPath = path.join(imageDir, id + '.jpg');
 			var execStr = 'curl "' + url + '" -o ' + imgPath + '; ';
 
 			for (var i in sizes) {
 				var size = sizes[i];
-				var smallImgPath = path.resolve (imageDir, id + '.' + size + 'px.jpg');
+				var smallImgPath = path.join(imageDir, id + '.' + size + 'px.jpg');
 				execStr += 'convert ' + imgPath + ' -resize ' + size + ' ' +  smallImgPath + '; ';
 			}
 

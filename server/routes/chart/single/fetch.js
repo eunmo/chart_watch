@@ -30,7 +30,7 @@
 			var date = new Date (Date.UTC (year, month - 1, day));
 			
 			var dateStr = year + ' ' + month + ' ' + day;
-			var execStr = 'perl ' + path.resolve ('perl/single/' + chartName + '.pl') + ' ' + dateStr;
+			var execStr = 'perl ' + path.join(__dirname, '../../../../perl/single', chartName + '.pl') + ' ' + dateStr;
 			
 			models.SingleChart.findAll ({
 				where: { type: chartName, week: date },

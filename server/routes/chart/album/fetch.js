@@ -25,7 +25,7 @@
 			var date = new Date (Date.UTC (year, month - 1, day));
 
 			var dateStr = year + ' ' + month + ' ' + day;
-			var execStr = 'perl ' + path.resolve ('perl/album/' + chartName + '.pl') + ' ' + dateStr;
+			var execStr = 'perl ' + path.join(__dirname, '../../../../perl/album', chartName + '.pl') + ' ' + dateStr;
 			
 			models.AlbumChart.findAll ({
 				where: { type: chartName, week: date },
