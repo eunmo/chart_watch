@@ -71,18 +71,13 @@ if (($year == 2005 && $date->month() == 3 && $date->day() == 4) ||
 } else {
 	my $week = $date->week_number();
 
-	if ($year == 2016) {
+	if ($year >= 2016) { # 16, 17, 18
 		$week++;
 
 		if ($week == 53) {
-			$year = 2017;
+			$year++;
 			$week = 1;
 		}
-	}	elsif ($year == 2016 && $week == 53) {
-		$year = 2016;
-		$week = 1;
-	} elsif ($year == 2017) {
-		$week += 1;
 	}
 
 	my $week_string = sprintf("%02d", $week);

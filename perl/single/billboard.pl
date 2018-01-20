@@ -15,6 +15,13 @@ my $ld = DateTime->new( year => $yy, month => $mm, day => $dd )
 								 ->truncate( to => 'week' )
 								 ->add( weeks => 2)
 								 ->add( days => 4 ); # need confirmation
+
+if ($ld->ymd() =~ '2018-01-05') { #2018-01-03 (matches chart date 2017-12-23)
+	$ld = $ld->subtract( days => 2 );
+} elsif ($ld->year() == 2018) {
+	$ld = $ld->subtract( weeks => 1 );
+}
+
 my $ld_ymd = $ld->ymd();
 
 my $url = "http://www.billboard.com/charts/hot-100/$ld_ymd";

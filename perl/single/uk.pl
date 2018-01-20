@@ -20,10 +20,6 @@ my $cur_date = DateTime->today();
 
 my $url = "http://www.officialcharts.com/charts/singles-chart/$ld_ymd/7501";
 
-if ($cur_date->add( days => 2) == $ld) {
-	$url = "http://www.officialcharts.com/charts/singles-chart";
-}
-
 my $html = get("$url");
 my $dom = Mojo::DOM->new($html);
 my $rank = 1;
