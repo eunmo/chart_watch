@@ -35,7 +35,6 @@
 						order = row.order;
 						ArtistId = row.ArtistId;
 						name = row.name;
-						feat = row.feat;
 
 						if (albumArtists[AlbumId] === undefined) {
 							albumArtists[AlbumId] = [];
@@ -60,6 +59,37 @@
 					}
 
 					return albumArtists;
+				});
+		};
+			
+		db.album.getSongs = function (ids) {
+			var query = 
+				"SELECT SongId, AlbumId, disk, track " +
+				"  FROM AlbumSongs a " +
+				" WHERE a.AlbumId in (" + ids.join() + ") " +
+				" ORDER BY AlbumId, disk, track";
+
+			return db.promisifyQuery(query)
+				.then(function(rows) {
+					var albumSongs = {};
+					var i, row;
+					var SongId, AlbumId, disk, track;
+
+					for (i in rows) {
+						row = rows[i];
+						SongId = row.SongId;
+						AlbumId = row.AlbumId;
+						disk = row.disk;
+						track = row.track;
+
+						if (albumSongs[AlbumId] === undefined) {
+							albumSongs[AlbumId] = [];
+						}
+
+						albumSongs[AlbumId].push({ id: parseInt(SongId), disk: disk, track: track });
+					}
+
+					return albumSongs;
 				});
 		};
 

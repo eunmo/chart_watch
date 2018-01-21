@@ -2,6 +2,15 @@
 	"use strict";
 	module.exports = function (db) {
 		db.artist = {};
+		
+		db.artist.getDetails = function (ids) {
+			var query =
+				"SELECT id, name, nameNorm " +
+			  "  FROM Artists " +
+				" WHERE id in (" + ids.join() + ");";
+
+			return db.promisifyQuery(query);
+		};
 
 		db.artist.getRow = function (id) {
 			var query =
@@ -73,5 +82,27 @@
 					return Bs;
 				});
 		};
+		
+		db.artist.fetchDetails = function (artists, ids) {
+			return db.artist.getDetails(ids)
+				.then(function (rows) {
+					var i, row, artist;
+					var	details = {};
+	
+					for (i in rows) {
+						row = rows[i];
+						details[row.id] = row;
+					}
+
+					for (i in artists) {
+						artist = artists[i];
+						row = details[artist.id];
+
+						artist.name = row.name;
+						artist.nameNorm = row.nameNorm;
+					}
+				});
+		};
+		
 	};
 }());

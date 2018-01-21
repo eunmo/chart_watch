@@ -266,5 +266,43 @@
 						});
 				});
 		};
+		
+		function getCurrentAlbumIds(weeks, limit) {
+			var query = '';
+
+			for (var i = 0; i < weeks.length; i++) {
+				if (i > 0)
+					query += " UNION ALL ";
+				query +=
+					"SELECT AlbumId id " +
+					"  FROM AlbumCharts " +
+					" WHERE `type` = \'" + weeks[i].type + "\' " +
+					"   AND `week` = \'" + weeks[i].week.toISOString() + "\' " +
+					"   AND AlbumId IS NOT NULL " +
+					"   AND `rank` <= " + limit;
+			}
+
+			query = "SELECT distinct id FROM (" + query + ") a ORDER BY id DESC;";
+
+			return db.promisifyQuery(query)
+				.then(function (albums) {
+					var albumIds = [];
+
+					for (i in albums) {
+						albumIds.push(albums[i].id);
+					}
+
+					return albumIds;
+				});
+		}
+		
+		db.chartCurrent.getAlbums = function (limit) {
+
+			return getCurrentWeeks('AlbumCharts')
+				.then(function (weeks) {
+
+					return getCurrentAlbumIds(weeks, limit);
+				});
+		};
 	};
 }());

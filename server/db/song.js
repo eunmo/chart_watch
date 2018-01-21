@@ -122,6 +122,37 @@
 					return songAlbums;
 				});
 		};
+			
+		db.song.getAlbumIds = function (ids) {
+			var query = 
+				"SELECT SongId, AlbumId, disk, track " +
+				"  FROM AlbumSongs a " +
+				" WHERE a.SongId in (" + ids.join() + ") " +
+				" ORDER BY SongId, disk, track";
+
+			return db.promisifyQuery(query)
+				.then(function(rows) {
+					var songAlbums = {};
+					var i, row;
+					var SongId, AlbumId, disk, track;
+
+					for (i in rows) {
+						row = rows[i];
+						SongId = row.SongId;
+						AlbumId = row.AlbumId;
+						disk = row.disk;
+						track = row.track;
+
+						if (songAlbums[SongId] === undefined) {
+							songAlbums[SongId] = [];
+						}
+
+						songAlbums[SongId].push({ id: AlbumId, disk: disk, track: track });
+					}
+
+					return songAlbums;
+				});
+		};
 		
 		db.song.getByPlays = function (play) {
 			var whereClause, orderByClause;
