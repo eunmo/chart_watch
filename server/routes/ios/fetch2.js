@@ -110,26 +110,32 @@
 		function getSongAlbums(songMap, albumMap) {
 			var songIds = toIdArray(songMap);
 			var albums, album, track;
-			var songId, i, j;
+			var id, songId, i, j;
 
 			return db.song.getAlbumIds(songIds)
 			.then(function (songAlbums) {
-				for (songId in songAlbums) {
+				for (id in songAlbums) {
+					songId = parseInt(id);
 					albums = songAlbums[songId];
 					addArrayToMap(toIdArray(albums), albumMap);
 					for (i in albums) {
 						album = albumMap[albums[i].id];
-						track = { id: parseInt(songId), disk: albums[i].disk, track: albums[i].track };
+						track = { id: songId, disk: albums[i].disk, track: albums[i].track };
 
 						if (album.tracks === undefined) {
 							album.tracks = [track];
 						} else {
+							var found = false;
 							for (j in album.tracks) {
-								if (album.tracks[j].id === songId)
+								if (album.tracks[j].id === songId) {
+									found = true;
 									break;
+								}
 							}
 
-							album.tracks.push(track);
+							if (found === false) {
+								album.tracks.push(track);
+							}
 						}
 					}
 				}
