@@ -73,7 +73,16 @@
 		
 		function getSeasonal() {
 			return db.season.getAllSongsOfThisWeek()
-			.then(idRowsToArray);
+			.then(function (rows) {
+				var map = {};
+				var i, row;
+				for (i in rows) {
+					row = rows[i];
+					map[row.id] = row.id;
+				}
+
+				return mapToArray(map);
+			});
 		}
 
 		function addArrayToMap(array, map) {
