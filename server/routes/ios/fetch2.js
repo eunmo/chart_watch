@@ -28,7 +28,7 @@
 			return db.chartCurrent.getAlbums(limit);
 		}
 		
-		function getCharted (count) {
+		function getCharted(count) {
 			var query =
 				"SELECT distinct SongId as id " +
 				"FROM Songs s, SingleCharts c " +
@@ -40,7 +40,7 @@
 			.then(idRowsToArray);
 		}
 		
-		function getUncharted (count) {
+		function getUncharted(count) {
 			var query =
 				"SELECT id " +
 				"FROM Songs " +
@@ -52,7 +52,7 @@
 			.then(idRowsToArray);
 		}
 		
-		function getFavoriteAlbums () {
+		function getFavoriteAlbums() {
 			var curDate = new Date();
 			var limitDate = new Date(Date.UTC(curDate.getFullYear() - 1, curDate.getMonth(), curDate.getDate()));
 			var albumQuery =
@@ -68,6 +68,11 @@
 				"	ORDER BY `release` DESC";
 
 			return db.promisifyQuery(albumQuery)
+			.then(idRowsToArray);
+		}
+		
+		function getSeasonal() {
+			return db.season.getAllSongsOfThisWeek()
 			.then(idRowsToArray);
 		}
 
@@ -189,6 +194,12 @@
 			return db.artist.fetchDetails(artistMap, artistIds);
 		}
 
+		function getSongMinChartRank(songMap) {
+			var songIds = toIdArray(songMap);
+
+			return db.song.fetchMinChartRank(songMap, songIds);
+		}
+
 		router.get('/ios/fetch2', function (req, res) {
 			var promises = [];
 			var result = {};
@@ -239,6 +250,14 @@
 					addArrayToMap(array, albumMap);
 				})
 			);
+		
+			promises.push(
+				getSeasonal()
+				.then(function (array) {
+					result.seasonal = array;
+					addArrayToMap(array, songMap);
+				})
+			);
 
 			Promise.all(promises)
 				.then(function () {
@@ -261,12 +280,25 @@
 					promises.push(getSongDetails(songMap));
 					promises.push(getAlbumDetails(albumMap));
 					promises.push(getArtistDetails(artistMap));
+					promises.push(getSongMinChartRank(songMap));
 					
 					return Promise.all(promises);
 				}).then(function () {
 					result.songs = mapToArray(songMap);
 					result.albums = mapToArray(albumMap);
 					result.artists = mapToArray(artistMap);
+
+					result.seasonal.sort(function (aId, bId) {
+						var a = songMap[aId];
+						var b = songMap[bId];
+
+						if (a.plays === b.plays) {
+							return a.id - b.id;
+						}
+
+						return a.plays - b.plays;
+					});
+
 					res.json(result);
 				});
 		});
