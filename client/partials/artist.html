@@ -35,7 +35,7 @@
 				</h2>
 			</div>
 		</div>
-		<div class="col-sm-2 text-center" ng-repeat-start="album in year.albums | orderBy : '-release'" style="height: 190px">
+		<div class="col-sm-2 text-center" ng-repeat-start="album in year.albums | orderBy : ['-release','id']" style="height: 190px">
 			<image-small album-id="album.id" s="160" ng-click="selectAlbum(album)"></image-small>
 			<small>{{album.format2}}</small>
 			<small>{{album.format}}</small>
@@ -51,7 +51,7 @@
 				</h2>
 			</div>
 		</div>
-		<div class="col-xs-3 text-center" ng-repeat-start="album in year.albums | orderBy : '-release'" style="height: 105px">
+		<div class="col-xs-3 text-center" ng-repeat-start="album in year.albums | orderBy : ['-release','id']" style="height: 105px">
 			<image-small album-id="album.id" s="80" ng-click="selectAlbum(album)"></image-small>
 			<small>{{album.format2}}</small>
 			<small>{{album.format}}</small>

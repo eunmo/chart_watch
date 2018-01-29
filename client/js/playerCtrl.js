@@ -136,6 +136,7 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	$scope.expanded = false;
 
 	$scope.isNative = false;
+	$scope.isWebkit = false;
 
 	$scope.initAudio = function () {
 		alert('init audio for iOS');
@@ -195,7 +196,10 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	};
 	
 	$scope.$on('handleAddNext', function () {
-		if ($scope.isNative) {
+		if ($scope.isWebkit) {
+			var songs = JSON.stringify(songService.next);
+			webkit.messageHandlers.addSongs.postMessage(encodeURIComponent(songs));
+		} else if ($scope.isNative) {
 			var songs = JSON.stringify(songService.next);
 			document.location = "js://songs" + encodeURIComponent(songs);
 		}
@@ -208,7 +212,10 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 	});
 
 	$scope.$on('handleAddSong', function () {
-		if ($scope.isNative) {
+		if ($scope.isWebkit) {
+			var songs = JSON.stringify(songService.songs);
+			webkit.messageHandlers.addSongs.postMessage(encodeURIComponent(songs));
+		} else if ($scope.isNative) {
 			var songs = JSON.stringify(songService.songs);
 			document.location = "js://songs" + encodeURIComponent(songs);
 		}
@@ -313,5 +320,9 @@ musicApp.controller('PlayerController', function ($rootScope, $scope, $http, $ti
 
 	window.setNative = function () {
 		$scope.isNative = true;
+	};
+	
+	window.setWebkit = function () {
+		$scope.isWebkit = true;
 	};
 });
