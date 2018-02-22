@@ -44,6 +44,9 @@
 			.then(function (song) {
 				results[i] =
 					{ id: id, plays: song.plays };
+			})
+			.catch(function () {
+				return; // handles phantom songs
 			});
 		}
 		
