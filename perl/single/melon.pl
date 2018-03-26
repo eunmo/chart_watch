@@ -103,7 +103,7 @@ sub get_url
 	my $age = int($fd->year() / 10) * 10;
 	my $fd_ymd = $fd->ymd('');
 	my $ld_ymd = $ld->ymd('');
-	my $url = sprintf("http://www.melon.com/chart/search/list.htm?chartType=WE&age=%d&year=%d&mon=%02d&day=%d%%5E%d&classCd=%s&startDay=%d&endDay=%d&moved=Y", $age, $yy, $ld->month(), $fd_ymd, $ld_ymd, $cd, $fd_ymd, $ld_ymd);
+	my $url = sprintf("https://www.melon.com/chart/search/list.htm?chartType=WE&age=%d&year=%d&mon=%02d&day=%d%%5E%d&classCd=%s&startDay=%d&endDay=%d&moved=Y", $age, $yy, $ld->month(), $fd_ymd, $ld_ymd, $cd, $fd_ymd, $ld_ymd);
 
 	return $url;
 }
