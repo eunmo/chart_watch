@@ -254,3 +254,13 @@ h1.shuffle {
 .multi-streak {
 	font-size: 30px;
 }
+
+.flex-container {
+  display: -webkit-flex;
+  display: flex;
+}
+
+.flex-1 {
+  -webkit-flex: 1;
+  flex: 1;
+}

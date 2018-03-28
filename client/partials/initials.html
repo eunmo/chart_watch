@@ -14,8 +14,27 @@
 </div>
 <br class="hidden-xs">
 <br class="hidden-xs">
-<h4 class="text-center" ng-show="summaryLoaded">
-	{{summary.Artists}} Artists,
-	{{summary.Albums}} Albums,
-	{{summary.Songs}} Songs
+<h4 ng-show="summaryLoaded">
+	<span class="hidden-xs text-center">
+		{{summary.Artists}} Artists,
+		{{summary.Albums}} Albums,
+		{{summary.Songs}} Songs
+	</span>
+	<span class="visible-xs">
+		<div class="flex-container">
+			<div class="flex-1 text-right">{{summary.Artists}} </div>
+			<div style="width: 3px"></div>
+			<div class="flex-1">Artists</div>
+		</div>
+		<div class="flex-container">
+			<div class="flex-1 text-right">{{summary.Albums}} </div>
+			<div style="width: 3px"></div>
+			<div class="flex-1">Albums</div>
+		</div>
+		<div class="flex-container">
+			<div class="flex-1 text-right">{{summary.Songs}} </div>
+			<div style="width: 3px"></div>
+			<div class="flex-1">Songs</div>
+		</div>
+	</span>
 </h4>
