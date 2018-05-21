@@ -13,8 +13,17 @@ my $dd = $ARGV[2];
 
 my $url = get_url();
 my $browser = LWP::UserAgent->new();
-$browser->agent('Mozilla/5.0');
-my $response = $browser->get($url);
+my @chrome_like_headers = (
+  'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
+  'Accept-Language' => 'en-US,en;q=0.9,ja;q=0.8,ko;q=0.7',
+  'Accept-Charset' => 'iso-8859-1,*,utf-8',
+  'Accept-Encoding' => 'gzip, deflate, br',
+  'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+	'Connection' => 'keep-alive',
+	'Upgrade-Insecure-Requests' => 1,
+	'Cookie' => 'SCOUTER=xtem39gaq7e39; PCID=14675479856998918986776; WMONID=gkvTQbFCj0d; charttutorial=true; POC=WP10',
+);
+my $response = $browser->get($url, @chrome_like_headers);
 my $html = $response->decoded_content;
 my $dom = Mojo::DOM->new($html);
 my $rank = 1;
@@ -98,6 +107,8 @@ sub get_url
 	if ($yy < 2008 ||
 			$yy == 2008 && ($mm < 10 || ($mm == 10 && $dd <= 25))) {
 		$cd = 'CL0000';
+	} elsif ($yy >= 2018) {
+		$cd = 'GN0000';
 	}
 
 	my $age = int($fd->year() / 10) * 10;
