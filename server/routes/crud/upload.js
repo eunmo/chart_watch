@@ -47,11 +47,19 @@
 		});
 
 		function getArtist(name, nameNorm, array, i) {
-			return models.Artist.findOrCreate({
-				where: models.sequelize.or({ name: name }, { nameNorm: nameNorm }),
-				defaults: { name: name, nameNorm: nameNorm }
-			})
-			.spread(function (artist, artistCreated) {
+			return models.ArtistAlias.findOne({
+				where: { alias: name, chart: 'upload' }
+			}).then(function (alias) {
+				var id;
+				if (alias) {
+					id = alias.ArtistId;
+				}
+
+				return models.Artist.findOrCreate({
+					where: models.sequelize.or({ name: name }, { nameNorm: nameNorm }, { id: id }),
+					defaults: { name: name, nameNorm: nameNorm }
+				})
+			}).spread(function (artist, artistCreated) {
 				array[i] = artist;
 			});
 		}
