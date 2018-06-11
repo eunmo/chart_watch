@@ -7,6 +7,7 @@
 		var dd = date.getDate();
 		var append = false;
 
+		/*
 		for (var yy = date.getFullYear() - 1; yy >= 2000; yy--) {
 			date = new Date(Date.UTC(yy, mm, dd));
 			date.setDate(date.getDate() + (6 - date.getDay()));
@@ -18,6 +19,31 @@
 			dates += "'" + date.toISOString() + "'";
 			append = true;
 		}
+		*/
+
+		var i;
+		
+		for (var yy = date.getFullYear() - 1; yy >= 2000; yy--) {
+			i = 0;
+			while (true) {
+				date = new Date(Date.UTC(yy, mm, dd + i * 7));
+
+				if (date.getMonth() === 6 && date.getDate() >= 7)
+					break;
+
+				date.setDate(date.getDate() + (6 - date.getDay()));
+
+				if (append) {
+					dates += ",";
+				}
+
+				dates += "'" + date.toISOString() + "'";
+				append = true;
+				i++;
+			}
+		}
+
+		console.log(dates);
 
 		return dates;
 	};
