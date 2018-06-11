@@ -27,11 +27,10 @@
 			i = 0;
 			while (true) {
 				date = new Date(Date.UTC(yy, mm, dd + i * 7));
-
-				if (date.getMonth() === 6 && date.getDate() >= 7)
-					break;
-
 				date.setDate(date.getDate() + (6 - date.getDay()));
+
+				if (date.getMonth() === 6 && date.getDate() >= 14)
+					break;
 
 				if (append) {
 					dates += ",";
