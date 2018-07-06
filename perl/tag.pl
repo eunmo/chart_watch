@@ -73,7 +73,7 @@ sub get_artist_array {
 sub get_artist {
 	my $str = shift;
 
-	$str =~ s/Feat\..*$//;
+	$str =~ s/Feat\..*$//i;
 
 	return get_artist_array($str);
 }
