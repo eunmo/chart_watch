@@ -44,29 +44,32 @@ my $rank = 1;
 
 print "[";
 
-for my $div ($dom->find('div[class*="row__title"]')->each) {
-	my $title_norm;
-	if ($div->find('h2')->first) {
-		my $title = $div->find('h2')->first->text;
-		$title_norm = normalize_title($title);
+my $title = $dom->find('div[class="chart-number-one__title"]')->first->text;
+my $artist = $dom->find('div[class="chart-number-one__artist"] a')->first->text;
+my $title_norm = normalize($title);
+my $artist_norm = normalize($artist);
+	
+print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\" : [\"$title_norm\"] }";
+$rank++;
+
+for my $div ($dom->find('div[class="chart-list-item__first-row"]')->each) {
+	if ($div->find('div[class="chart-list-item__title"]')->first) {
+		$title = $div->find('div[class="chart-list-item__title"]')->first->all_text;
+		$title_norm = normalize($title);
 	}
-	my $artist;
-	if ($div->find('a[data-tracklabel="Artist Name"]')->first) {
-		$artist = $div->find('a[data-tracklabel="Artist Name"]')->first->text;
-	} elsif ($div->find('h3')->first) {
-		$artist = $div->find('h3')->first->text;
-	} elsif ($div->find('span[class="chart-row__artist"]')->first) {
-	  $artist = $div->find('span[class="chart-row__artist"]')->first->text;
+	
+	if ($div->find('div[class="chart-list-item__artist"]')->first) {
+		$artist = $div->find('div[class="chart-list-item__artist"]')->first->all_text;
+		$artist_norm = normalize($artist);
 	}
-	my $artist_norm = normalize_artist($artist);
-	print ",\n" if $rank > 1;
-	print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\" : [\"$title_norm\"] }";
+
+	print ",\n{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\" : [\"$title_norm\"] }";
 	$rank++;
 }
 
 print "]";
 
-sub normalize_title($)
+sub normalize($)
 {
 	my $string = shift;
 	
@@ -74,16 +77,5 @@ sub normalize_title($)
 	$string =~ s/^\s+//g;
 	$string =~ s/[\'’"]/`/g;
 
-	return $string;
-}
-
-sub normalize_artist($)
-{
-	my $string = shift;
-	
-	$string =~ s/\s+$//g;
-	$string =~ s/^\s+//g;
-	$string =~ s/[\'’"]/`/g;
-	
 	return $string;
 }
