@@ -24,6 +24,10 @@
 		}).forEach(function (subDir) {
 			getRoutes(path.join(__dirname, subDir));
 		});
+  
+	router.get('/react/*', function (req, res) {
+    res.sendFile(path.resolve('build', 'index.html'));
+  });
 
   /* GET home page. */
   router.get('/', function (req, res) {
