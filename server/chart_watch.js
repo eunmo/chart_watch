@@ -20,11 +20,13 @@
 	app.use(bodyParser.json());
 
 	app.use(express.static(path.join(__dirname, '../client')));
-	app.use(express.static(path.join(__dirname, '../build')));
 	app.use(express.static(path.join(__dirname, '../uploads/img')));
 	app.use(express.static(path.join(__dirname, '../uploads')));
 
 	app.use('/', routes);
+
+	// build dir comes after routes to avoid duplication of index.html
+	app.use(express.static(path.join(__dirname, '../build')));
 
 	models.sequelize.sync({force: false}).then(function () {
 		var server = app.listen(3000, function () {
