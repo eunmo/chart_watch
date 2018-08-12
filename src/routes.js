@@ -1,10 +1,13 @@
 import React from 'react';
 import { BrowserRouter, Route, Link } from 'react-router-dom';
 
+import Monthly from './components/Monthly';
+
 const Routes = (props) => (
-	<BrowserRouter>
+	<BrowserRouter basename={props.basename}>
 		<div>
-			Start!
+			Chart Watch React
+			<Route path="/monthly/:month/" component={Monthly} />
 		</div>
 	</BrowserRouter>
 );

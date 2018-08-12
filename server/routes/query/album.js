@@ -131,5 +131,20 @@
 				res.json (albums);
 			});
 		});
+		
+		router.get('/api/album/monthly/:_month', function (req, res) {
+			const date = req.params._month;
+			const year = date.substring(0, 4);
+			const month = date.substring(4, 6);
+			var query = 
+				'SELECT id, title, `release`, format FROM Albums' +
+			  ' WHERE MONTH(`release`) = ' + month +
+				  ' AND YEAR(`release`) = ' + year;
+
+			db.promisifyQuery(query)
+			.then (function (rows) {
+				res.json(rows);
+			});
+		});
 	};
 }());
