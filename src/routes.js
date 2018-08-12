@@ -5,9 +5,11 @@ import Monthly from './components/Monthly';
 
 const Routes = (props) => (
 	<BrowserRouter basename={props.basename}>
-		<div>
-			Chart Watch React
-			<Route path="/monthly/:month/" component={Monthly} />
+		<div className="router-outer">
+			<div className="router-inner">
+				<Route path="/monthly/:month/" component={Monthly} />
+			</div>
+			<div className="router-inner logo"><Link to="/monthly/201808">㋠</Link></div>
 		</div>
 	</BrowserRouter>
 );

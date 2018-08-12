@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 import './style.css';
 
@@ -11,69 +12,118 @@ export default class Monthly extends Component {
 		const month = this.props.match.params.month.substring(4, 6);
 		const [weeks, days] = this.getDayGrid(year, month);
 
-		this.state = {year: year, month: month, weeks: weeks, days: days};
+		this.state = {year: year, month: month, weeks: weeks, days: days, width: 0, height: 0};
+		this.updateDimensions = this.updateDimensions.bind(this);
+		this.selectDay = this.selectDay.bind(this);
+	}
+
+	updateDimensions() {
+		this.setState({width: window.innerWidth, height: window.innerHeight});
+	}
+
+	componentWillMount() {
+		this.updateDimensions();
 	}
 
 	componentDidMount() {
-		this.fetch();
+		this.fetch(this.state.year, this.state.month);
+		window.addEventListener("resize", this.updateDimensions);
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener("resize", this.updateDimensions);
+	}
+
+	componentWillReceiveProps(nextProps) {
+		const year = nextProps.match.params.month.substring(0, 4);
+		const month = nextProps.match.params.month.substring(4, 6);
+
+		if (this.state.year !== year || this.state.month !== month) {
+			this.setState({year: year, month: month});
+			this.fetch(year, month);
+		}
+	}
+
+	getPrevMonth() {
+		return new Date(Date.UTC(this.state.year, this.state.month - 2, 1)).toISOString().split('-').slice(0, 2).join('');
+	}
+
+	getNextMonth() {
+		return new Date(Date.UTC(this.state.year, this.state.month, 1)).toISOString().split('-').slice(0, 2).join('');
 	}
 
 	render() {
 		const weeks = this.state.weeks;
-		console.log(weeks);
+		const style = {fontSize: '1.5em'};
 
 		return (
 			<div className="text-center">
-				<div>
-				{this.state.month} {this.state.year}
+				<div style={style}>
+					<Link to={'/monthly/' + this.getPrevMonth()}>◀</Link>
+					<span> {this.state.month} {this.state.year} </span>
+					<Link to={'/monthly/' + this.getNextMonth()}>▶</Link>
 				</div>
 				<div>
 					{weeks.map((week, index) => {
 						return (
-							<div key={index} className="flex-container">
-								{week.map((day, index) => {
+							<div key={index}>
+								<div className="flex-container">
+								{week.days.map((day, index) => {
 									var style = {width: '14%'};
 									var headerStyle = {lineHeight: '50px', fontSize: '1.2em'};
 									if (day === null)
 										return (<div key={index} className="flex-1" style={style}/>);
 
-									const albums = day.albums;
+									var albums = day.albums;
 
-									if (day.albums.length > 0)
-										headerStyle.fontWeight = 'bold';
+									if (this.state.width <= 543) {
+										albums = albums.slice(0, 1);
+										if (albums.length !== day.albums.length) {
+											headerStyle.textDecoration = 'underline';
+										}
+									}
 
-									if (index === 0)
-										headerStyle.color = 'red';
-
-									if (index === 6)
-										headerStyle.color = 'blue';
+									if (this.state.selectedDay === day)
+										albums = day.albums;
 
 									return (
 										<div key={index} className="flex-1" style={style}>
-											<div style={headerStyle}>{day.day}</div>
-											{albums.length > 0 &&
-												<div className="flex-container flex-wrap flex-center">
-													{albums.map(album => {
-														var size = 50;
-														var pixel = size + 'px';
-														var outerStyle = {display: 'flex', alignContent: 'center', maxHeight: pixel, maxWidth: pixel};
-														var innerStyle = {margin: 'auto', width: pixel, height: pixel, borderRadius: size/5 + 'px'};
-
-														return (
-															<div key={album.id} className="flex-1" style={outerStyle}>
-																<img src={'/' + album.id + '.jpg'} style={innerStyle} alt={album.id} />
-															</div>
-														);
-													})}
-												</div>
-											}
+											<div style={headerStyle} onClick={() => this.selectDay(day)}>{day.day}</div>
+											{this.getAlbums(albums)}
 										</div>
 									);
 								})}
+								</div>
 							</div>
 						);
 					})}
 				</div>
+			</div>
+		);
+	}
+
+	selectDay(day) {
+		this.setState({selectedDay: this.state.selectedDay === day ? null : day});
+	}
+
+	getAlbums(albums) {
+		if (albums.length === 0)
+			return null;
+
+		return (
+			<div className="flex-container flex-wrap flex-center">
+				{albums.map(album => {
+					var size = (this.state.width <= 543) ? 50 : 75;
+					var pixel = size + 'px';
+					var outerStyle = {display: 'flex', alignContent: 'center', maxHeight: pixel, maxWidth: pixel};
+					var innerStyle = {margin: 'auto', width: pixel, height: pixel, borderRadius: size/5 + 'px'};
+
+					return (
+						<div key={album.id} className="flex-1" style={outerStyle}>
+							<img src={'/' + album.id + '.jpg'} style={innerStyle} alt={album.id} />
+						</div>
+					);
+				})}
 			</div>
 		);
 	}
@@ -93,8 +143,8 @@ export default class Monthly extends Component {
 
 			dayO = {day: dateIndex, albums: []};
 			if (weeks[weekIndex] === undefined)
-				weeks[weekIndex] = [null, null, null, null, null, null, null];
-			weeks[weekIndex][day] = dayO;
+				weeks[weekIndex] = {days: [null, null, null, null, null, null, null]};
+			weeks[weekIndex].days[day] = dayO;
 			days[dateIndex] = dayO;
 
 			if (day === 6)
@@ -105,9 +155,7 @@ export default class Monthly extends Component {
 		return [weeks, days];
 	}
 
-	fetch() {
-		const year = this.state.year;
-		const month = this.state.month;
+	fetch(year, month) {
 		const that = this;
 		const url = '/api/album/monthly/' + year + month;
 

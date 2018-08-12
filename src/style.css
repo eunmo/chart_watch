@@ -1,5 +1,8 @@
 body {
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	background: linear-gradient(165deg, #1a2a6c, #b21f1f, #fdbb2d) fixed;
+	background-attachment: fixed;
+	color: white;
 }
 
 .text-center {
@@ -47,4 +50,25 @@ body {
 .flex-3 {
 	-webkit-flex: 3;
 	flex: 3;
+}
+
+a {
+	color: white;
+	text-decoration: none;
+}
+
+.router-outer {
+	position: relative;
+}
+
+.router-inner {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+}
+
+.logo {
+	font-size: 1.5em;
 }
