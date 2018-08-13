@@ -1,7 +1,7 @@
 body {
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	background: linear-gradient(165deg, #1a2a6c, #b21f1f, #fdbb2d) fixed;
-	background-attachment: fixed;
+	background: linear-gradient(165deg, #1a2a6c, #b21f1f, #fdbb2d, #b21f1f, #1a2a6c);
+	background-size: 100vw 200vh;
 	color: white;
 }
 
@@ -25,6 +25,13 @@ body {
 .flex-wrap {
   -webkit-flex-wrap: wrap;
   flex-wrap: wrap;
+}
+
+.flex-adaptive {
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-wrap: wrap;
+	flex-wrap: wrap;
 }
 
 .flex-space-between {
@@ -53,8 +60,16 @@ body {
 }
 
 a {
-	color: white;
+	color: pink;
 	text-decoration: none;
+}
+
+.show-mobile {
+	display: none;
+}
+
+.show-mobile-flex {
+	display: none;
 }
 
 .router-outer {
@@ -69,6 +84,25 @@ a {
 	left: 0;
 }
 
-.logo {
+.logo, .top {
 	font-size: 1.5em;
+}
+
+@media screen and (max-width: 543px) {
+	.hide-mobile {
+		display: none;
+	}
+
+	.show-mobile {
+		display: inline;
+	}
+
+	.show-mobile-flex {
+		display: flex;
+	}
+	
+	.flex-adaptive {
+		-webkit-flex-direction: column;
+		flex-direction: column;
+	}
 }

@@ -46,6 +46,23 @@
 			});
 	};
 
+	var getSongs = function (db, album) {
+		return db.album.getSongs([album.id])
+			.then(function (albumSongs) {
+				album.songs = albumSongs[album.id];
+				
+				var songs = album.songs;
+				var songIds = songs.map(song => { return song.id; });
+				var promises = [
+					db.song.fetchDetails(songs, songIds),
+					db.song.fetchArtists(songs, songIds),
+					db.song.fetchMinChartRank(songs, songIds),
+				];
+
+				return Promise.all(promises);
+			});
+	};
+
 	module.exports = function (router, _, db) {
 		router.get('/api/album/:_id', function (req, res) {
 			var id = req.params._id;
@@ -146,5 +163,22 @@
 				res.json(rows);
 			});
 		});
+		
+		router.get('/api/album/full/:_id', function (req, res) {
+			var id = req.params._id;
+			var promises = [];
+			var album = { id: id };
+
+			promises.push(getDetail(db, album));
+			promises.push(getArtist(db, album));
+			promises.push(getSongs(db, album));
+			promises.push(getChart(db, album));
+
+			Promise.all(promises)
+			.then(function () {
+				res.json(album);
+			});
+		});
+		
 	};
 }());

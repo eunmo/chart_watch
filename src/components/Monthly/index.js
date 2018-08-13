@@ -54,11 +54,10 @@ export default class Monthly extends Component {
 
 	render() {
 		const weeks = this.state.weeks;
-		const style = {fontSize: '1.5em'};
 
 		return (
 			<div className="text-center">
-				<div style={style}>
+				<div className="top">
 					<Link to={'/monthly/' + this.getPrevMonth()}>◀</Link>
 					<span> {this.state.month} {this.state.year} </span>
 					<Link to={'/monthly/' + this.getNextMonth()}>▶</Link>
@@ -119,8 +118,12 @@ export default class Monthly extends Component {
 					var innerStyle = {margin: 'auto', width: pixel, height: pixel, borderRadius: size/5 + 'px'};
 
 					return (
-						<div key={album.id} className="flex-1" style={outerStyle}>
-							<img src={'/' + album.id + '.jpg'} style={innerStyle} alt={album.id} />
+						<div key={album.id}>
+							<Link to={'/album/' + album.id}>
+								<div style={outerStyle}>
+									<img src={'/' + album.id + '.jpg'} style={innerStyle} alt={album.id} />
+								</div>
+							</Link>
 						</div>
 					);
 				})}
