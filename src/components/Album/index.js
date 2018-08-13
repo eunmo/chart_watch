@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 import './style.css';
 
@@ -36,10 +37,13 @@ export default class Album extends Component {
 		return (
 			<div>
 				<div className="top text-center">
-					{this.getFormat()}
+					&nbsp;
 				</div>
 				<div className="text-center" style={titleStyle}>
 					{TextUtil.normalize(album.title)}
+				</div>
+				<div className="text-center">
+					{this.getFormat()}
 				</div>
 				<div className="flex-container flex-adaptive">
 					<div className="flex-1 text-center">
@@ -77,6 +81,10 @@ export default class Album extends Component {
 
 	getChartView() {
 		const album = this.state.album;
+
+		if (album.charts.weeks.length === 0)
+			return null;
+
 		return (
 			<div className="flex-container flex-center">
 				<Chart data={album.charts} />
@@ -121,17 +129,20 @@ export default class Album extends Component {
 		);
 	}
 
-	getRankView(rank) {
+	getRankView(song) {
+		const rank = song.minRank;
 		if (rank === undefined)
 			return null;
 
-		if (rank > 5)
-			return '☆';
+		var symbol = '☆';
 
-		if (rank > 1)
-			return '★';
+		if (rank === 1) {
+			symbol = '★★';
+		} else if (rank >= 5) {
+			symbol = '★';
+		}
 
-		return '★★';
+		return <Link to={'/song/' + song.id}>{symbol}</Link>;
 	}
 
 	getTrackView(song) {
@@ -145,7 +156,7 @@ export default class Album extends Component {
 		return (
 			<div key={song.track} className="flex-container" style={style}>
 				<div className="text-center" style={rankStyle}>
-					{this.getRankView(song.minRank)}
+					{this.getRankView(song)}
 				</div>
 				<div className="text-center" style={trackStyle}>{song.track}</div>
 				<div className="flex-1">

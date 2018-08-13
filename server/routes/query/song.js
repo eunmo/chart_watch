@@ -34,6 +34,22 @@
 			});
 	};
 
+	var getFullAlbums = function (db, song) {
+		return db.song.getAlbums([song.id])
+			.then(function (albums) {
+				song.albums = albums[song.id];
+
+				var albums = song.albums;
+				var albumIds = albums.map(album => album.id);
+				var promises = [
+					db.album.fetchDetails(albums, albumIds),
+					db.album.fetchArtists(albums, albumIds),
+				];
+
+				return Promise.all(promises);
+			});
+	};
+
 	module.exports = function (router, _, db) {
 		router.get('/api/song/:_id', function (req, res) {
 			var id = req.params._id;
@@ -43,6 +59,22 @@
 			promises.push(getDetails(db, song));
 			promises.push(getArtists(db, song));
 			promises.push(getAlbums(db, song));
+			promises.push(getCharts(db, song));
+
+			Promise.all(promises)
+			.then(function () {
+				res.json(song);
+			});
+		});
+		
+		router.get('/api/song/full/:_id', function (req, res) {
+			var id = req.params._id;
+			var promises = [];
+			var song = { id: id };
+
+			promises.push(getDetails(db, song));
+			promises.push(getArtists(db, song));
+			promises.push(getFullAlbums(db, song));
 			promises.push(getCharts(db, song));
 
 			Promise.all(promises)

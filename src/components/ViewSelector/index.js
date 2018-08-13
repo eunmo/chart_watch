@@ -83,38 +83,50 @@ export default class ViewSelector extends Component {
 		return (
 			<div className="ViewSelector">
 				<div className="ViewSelector text-center flex-container">
-					{this.props.views.map((view, index) => {
-						var style = {
-							lineHeight: '30px',
-							backgroundColor: 'rgba(255, 255, 255, 0.2)',
-						};
-						var spacerStyle = {
-							width: '5px'
-						};
-
-						if (view.name === this.state.view) {
-							style.fontWeight = 'bold';
-						}
-
-						var sh = view.sh ? view.sh : view.name;
-						var array = [];
-						if (index > 0)
-							array[0] = <div key={index} style={spacerStyle} />;
-
-						array.push(
-							<div key={view.name} style={style} className="flex-1"
-								 onClick={() => this.selectView(view.name)}>
-								<span className="hide-mobile">{view.name}</span>
-								<span className="show-mobile">{sh}</span>
-							</div>
-						);
-
-						return array;
-					})}
+					{this.getHeaders()}
 				</div>
 				{this.getView()}
 			</div>
 		);
+	}
+
+	getHeaders() {
+		const views= this.props.views;
+		var validCount = views.filter(view => (view.view !== null)).length;
+
+		if (validCount === 1)
+			return <div>&nbsp;</div>;
+		
+		var array = [];
+		
+		this.props.views.forEach((view, index) => {
+			var style = {
+				lineHeight: '30px',
+				backgroundColor: 'rgba(255, 255, 255, 0.2)',
+			};
+			var spacerStyle = {
+				width: '5px'
+			};
+
+			if (view.name === this.state.view) {
+				style.fontWeight = 'bold';
+			}
+
+			var sh = view.sh ? view.sh : view.name;
+
+			if (index > 0)
+				array.push(<div key={index} style={spacerStyle} />);
+
+			array.push(
+				<div key={view.name} style={style} className="flex-1"
+				onClick={() => this.selectView(view.name)}>
+				<span className="hide-mobile">{view.name}</span>
+				<span className="show-mobile">{sh}</span>
+				</div>
+			);
+		});
+		
+		return array;
 	}
 	
 	selectView(view) {
