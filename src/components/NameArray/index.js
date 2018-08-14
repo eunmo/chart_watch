@@ -11,7 +11,7 @@ export default class NameArray extends Component {
 
 		return (
 			<span>
-				{array.map((artist, index) => {
+				{array.filter(e => e).map((artist, index) => {
 					return (
 						<span key={artist.id}>
 							{index > 0 && ', '}

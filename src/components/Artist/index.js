@@ -218,6 +218,10 @@ export default class Artist extends Component {
 
 		return albums.map(album => {
 			const songs = album.songs.filter(song => song.album === album);
+
+			if (songs.length === 0)
+				return null;
+
 			var allSame = true;
 			var showOnce = false;
 			var artistIds = songs[0].artists.map(artist => artist.id);
