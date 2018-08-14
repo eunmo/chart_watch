@@ -261,7 +261,7 @@ export default class Artist extends Component {
 							}
 						</div>,
 						<div key={'artist' + song.id} style={artistStyle}>
-							{showOnce || this.cmpIds(ids, album.albumArtists) || this.getArtistView('by', song.artists)}
+							{showOnce || this.cmpIds(ids, song.artists) || this.getArtistView('by', song.artists)}
 							{song.features.length > 0 && this.getArtistView('feat.', song.features)}
 						</div>
 					])}
@@ -280,7 +280,7 @@ export default class Artist extends Component {
 		const album = song.album;
 		var outerStyle = {marginBottom: '5px'};
 		var innerStyle = {lineHeight: '25px', marginLeft: '10px'};
-		var rankStyle = {width: '25px', textAlign: 'right', marginRight: '3px'};
+		var rankStyle = {width: '25px', textAlign: 'right', marginRight: '3px', minWidth: '25px'};
 		var artistStyle = {marginLeft: '28px'};
 
 		return (
