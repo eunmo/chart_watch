@@ -127,7 +127,7 @@ export default class Album extends Component {
 
 		if (rank === 1) {
 			symbol = '★★';
-		} else if (rank >= 5) {
+		} else if (rank <= 5) {
 			symbol = '★';
 		}
 

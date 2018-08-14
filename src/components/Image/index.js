@@ -7,8 +7,12 @@ export default class Image extends Component {
 	render() {
 		const id = this.props.id;
 		const size = this.props.size;
+		const borderRadiusMap = {
+			300: 15,
+			30: 15,
+		}
 		var pixel = size + 'px';
-		var borderRadius = size === 300 ? size/20 : size/5;
+		var borderRadius = borderRadiusMap[size] ? borderRadiusMap[size] : size/5;
 		var outerStyle = {display: 'flex', alignContent: 'center', maxHeight: pixel, maxWidth: pixel};
 		var innerStyle = {margin: 'auto', width: pixel, height: pixel, borderRadius: borderRadius + 'px'};
 
