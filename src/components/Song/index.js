@@ -37,7 +37,7 @@ export default class Album extends Component {
 		albums.sort((a, b) => a.release < b.release ? -1 : 1);
 
 		return (
-			<div>
+			<div className="Song">
 				<div className="top text-center">
 					&nbsp;
 				</div>
