@@ -236,12 +236,12 @@ export default class Artist extends Component {
 			<div key={album.id} className="flex-container" style={outerStyle}>
 				<Image id={album.id} size={50} />
 				<div className="flex-1" style={innerStyle}>
-					{showOnce &&
+					{showOnce && songs.length > 2 &&
 						<div className="flex-container flex-space-between" style={artistStyle}>
 							<div>{this.getArtistView('by', songs[0].artists)}</div>
-								<div>
-									<Release date={album.release} />
-								</div>
+							<div>
+								<Release date={album.release} />
+							</div>
 						</div>
 					}
 					{album.songs.filter(song => song.album === album).map((song, index) => [
@@ -254,7 +254,7 @@ export default class Artist extends Component {
 									</div>
 								</Link>
 							</div>
-							{showOnce === false && index === 0 &&
+							{(showOnce === false || songs.length === 2) && index === 0 &&
 								<div>
 									<Release date={album.release} />
 								</div>
@@ -265,6 +265,11 @@ export default class Artist extends Component {
 							{song.features.length > 0 && this.getArtistView('feat.', song.features)}
 						</div>
 					])}
+					{showOnce && songs.length === 2 &&
+						<div className="flex-container flex-space-between" style={artistStyle}>
+							<div>{this.getArtistView('by', songs[0].artists)}</div>
+						</div>
+					}
 				</div>
 			</div>
 			);
