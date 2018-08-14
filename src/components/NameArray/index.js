@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { NavLink } from 'react-router-dom';
 
 import './style.css';
 
@@ -8,46 +9,66 @@ export default class NameArray extends Component {
 	render() {
 		const array = this.props.array;
 
-		var string = '';
+		return (
+			<span>
+				{array.map((artist, index) => {
+					return (
+						<span key={artist.id}>
+							{index > 0 && ', '}
+							{this.getLink(artist)}
+							{this.getBs(artist)}
+						</span>
+					);
+				})}
+			</span>
+		);
+	}
 
-		array.forEach((artist, index) => {
-			if (index > 0)
-				string += ', ';
-			string += TextUtil.normalize(artist.name);
+	getBs(artist) {
+		if (artist.Bs === undefined)
+			return null;
+		
+		var Bs = [];
+		var type = '';
+		// display precedence -> a, p, c, m, u, f
+		if (artist.Bs.a) {
+			Bs = [artist.Bs.a];
+			type = 'aka ';
+		} else if (artist.Bs.p) {
+			Bs = artist.Bs.p;
+		} else if (artist.Bs.c) {
+			Bs = [artist.Bs.c];
+			type = 'cv ';
+		} else if (artist.Bs.m) {
+			Bs = [artist.Bs.m];
+		} else if (artist.Bs.u) {
+			Bs = [artist.Bs.u];
+		} else if (artist.Bs.f) {
+			Bs = [artist.Bs.f];
+		}
 
-			if (artist.Bs) {
-				var Bs = [];
-				var type = '';
-				// display precedence -> a, p, c, m, u, f
-				if (artist.Bs.a) {
-					Bs = [artist.Bs.a];
-					type = 'aka ';
-				} else if (artist.Bs.p) {
-					Bs = artist.Bs.p;
-				} else if (artist.Bs.c) {
-					Bs = [artist.Bs.c];
-					type = 'cv ';
-				} else if (artist.Bs.m) {
-					Bs = [artist.Bs.m];
-				} else if (artist.Bs.u) {
-					Bs = [artist.Bs.u];
-				} else if (artist.Bs.f) {
-					Bs = [artist.Bs.f];
-				}
+		if (Bs.length === 0)
+			return null;
 
-				if (Bs.length > 0) {
-					string += ' (' + type;
-						Bs.forEach((artist, index) => {
-							if (index > 0)
-								string += '+';
+		return (
+			<span>
+			 	{' ('}{type}{Bs.map((artist, index) => (
+					<span key={artist.id}>
+						{index > 0 && '+'}
+						{this.getLink(artist)}
+					</span>
+				))})
+			</span>
+		);
+	}
 
-							string += TextUtil.normalize(artist.name);
-						});
-					string += ')';
-				}
-			}
-		});
-
-		return <span>{string}</span>;
+	getLink(artist) {
+		var style = {color: 'aqua'};
+		var activeStyle = {color: 'white'};
+		return (
+			<NavLink to={'/artist/' + artist.id} style={style} activeStyle={activeStyle}>
+				{TextUtil.normalize(artist.name)}
+			</NavLink>
+		);
 	}
 }

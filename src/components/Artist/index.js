@@ -30,9 +30,11 @@ export default class Artist extends Component {
 	}
 	
 	componentWillReceiveProps(nextProps) {
-		const id = nextProps.id;
-		this.setState({id: id, artist: null});
-		this.fetch(id);
+		const id = nextProps.match.params.id;
+		if (id !== this.state.id) {
+			this.setState({id: id, artist: null});
+			this.fetch(id);
+		}
 	}
 
 	render() {
@@ -211,7 +213,7 @@ export default class Artist extends Component {
 		const albums = this.state.artist.albums;
 		var outerStyle = {marginBottom: '5px'};
 		var innerStyle = {lineHeight: '25px', marginLeft: '10px'};
-		var rankStyle = {width: '25px', textAlign: 'right', marginRight: '3px'};
+		var rankStyle = {width: '25px', textAlign: 'right', marginRight: '3px', minWidth: '25px'};
 		var artistStyle = {marginLeft: '28px'};
 
 		return albums.map(album => {
@@ -222,7 +224,7 @@ export default class Artist extends Component {
 
 			if (songs.length > 1 && this.cmpIds(ids, songs[0].artists) === false) {
 				songs.forEach(song => {
-					if (this.cmpIds(artistIds, album.albumArtists) === false) {
+					if (this.cmpIds(artistIds, song.artists) === false) {
 						allSame = false;
 					}
 				});
