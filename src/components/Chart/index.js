@@ -38,17 +38,39 @@ export default class Chart extends Component {
 
 		const yAxis = this.getYAxis(ranks);
 		const [xAxisTicks, xAxisMarkers] = this.getXAxis(months);
-		const [points, lines, legends] = this.getPoints(months, ranks);
+		const [points, lines] = this.getPoints(months, ranks);
 
 		return (
-			<svg width={size} height={size} style={style.svg}>
-				{yAxis}
-				{xAxisTicks}
-				{xAxisMarkers}
-				{lines}
-				{points}
-				{legends}
-			</svg>
+			<div>
+				<svg width={size} height={size} style={style.svg}>
+					{yAxis}
+					{xAxisTicks}
+					{xAxisMarkers}
+					{lines}
+					{points}
+				</svg>
+				<div className="flex-container flex-center">
+					<div style={style.legend} className="Chart-legend text-right">
+						<div>Chart</div>
+						<div>Peak</div>
+						<div>WoC</div>
+					</div>
+					{this.props.data.headers.map((header, index) => {
+						var style = {color: this.getColor(header)};
+
+						if (ranks.peaks[index] === 101)
+							return null;
+
+						return (
+							<div key={header} style={style} className="Chart-legend text-center">
+								<div>{this.getAbbr(header)}</div>
+								<div>{ranks.peaks[index]}</div>
+								<div>{ranks.wocs[index]}</div>
+							</div>
+						);
+					})}
+				</div>
+			</div>
 		);
 	}
 
@@ -71,7 +93,7 @@ export default class Chart extends Component {
 	getColor(type) {
 		const map = {
 			'billboard': '#ff0000',
-			'oricon': '#fbb034',
+			'oricon': '#1a2a6c',
 			'deutsche': '#ffdd00',
 			'uk': '#c1d82f',
 			'francais': '#00a4e4',
@@ -101,7 +123,6 @@ export default class Chart extends Component {
 		const headers = this.props.data.headers;
 		var points = [];
 		var lines = [];
-		var legends = [];
       
 		
 		headers.forEach((header, index) => {
@@ -137,19 +158,9 @@ export default class Chart extends Component {
 
 				prev = {week: date, x: x, y: y};
 			});
-
-			if (prev !== undefined) {
-				var x = prev.x;
-				var y = prev.y + 13;
-
-				legends.push(
-					//<circle key={'c' + index} cx={x} cy={y} r={10} fill={color} />,
-					<text key={'t' + index} x={x} y={y} style={textStyle}>{this.getAbbr(header)}</text>
-				);
-			}
 		});
 
-		return [points, lines, legends];
+		return [points, lines];
 	}
 
 	getYAxis(ranks) {
@@ -255,17 +266,25 @@ export default class Chart extends Component {
 	}
 
 	calculate() {
+		const headers = this.props.data.headers;
 		const weeks = this.props.data.weeks;
 		var months = {min: '300010', max: '100010'};
-		var ranks = {max: 0};
+		var ranks = {max: 0, peaks: [], wocs: []};
+
+		headers.forEach((header, index) => {
+			ranks.peaks[index] = 101;
+			ranks.wocs[index] = 0;
+		});
 
 		weeks.forEach(week => {
 			var month = week.week.split('-').slice(0, 2).join('');
 			var valid = false;
 
-			week.ranks.forEach(rank => {
+			week.ranks.forEach((rank, index) => {
 				if (rank !== '-' && rank <= 100) {
 					ranks.max = Math.max(ranks.max, rank);
+					ranks.peaks[index] = Math.min(ranks.peaks[index], rank);
+					ranks.wocs[index]++;
 					valid = true;
 				}
 			});
