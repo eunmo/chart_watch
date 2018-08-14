@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 import './style.css';
 
 import Chart from '../Chart';
+import Image from '../Image';
+import NameArray from '../NameArray';
+import Release from '../Release';
 import ViewSelector from '../ViewSelector';
 
 import TextUtil from '../../util/text';
@@ -48,10 +51,10 @@ export default class Album extends Component {
 				<div className="flex-container flex-adaptive">
 					<div className="flex-1 text-center">
 						<div className="flex-container flex-center">
-							{this.getAlbumImage()}
+							<Image id={this.state.album.id} size={300} />
 						</div>
-						<div style={titleStyle}>{this.getArtists(album.artists)}</div>
-						<div>{this.getRelease()}</div>
+						<div style={titleStyle}><NameArray array={album.artists} /></div>
+						<div><Release date={album.release} /></div>
 					</div>
 					<div className="flex-2">
 						<ViewSelector views={views} expand={true} />
@@ -115,20 +118,6 @@ export default class Album extends Component {
 		return date.toLocaleDateString();
 	}
 
-	getAlbumImage() {
-		const id = this.state.album.id;
-		var size = 300;
-		var pixel = size + 'px';
-		var outerStyle = {display: 'flex', alignContent: 'center', maxHeight: pixel, maxWidth: pixel};
-		var innerStyle = {margin: 'auto', width: pixel, height: pixel, borderRadius: size/20 + 'px'};
-
-		return (
-			<div key={id} className="flex-1" style={outerStyle}>
-				<img src={'/' + id + '.jpg'} style={innerStyle} alt={id} />
-			</div>
-		);
-	}
-
 	getRankView(song) {
 		const rank = song.minRank;
 		if (rank === undefined)
@@ -145,10 +134,22 @@ export default class Album extends Component {
 		return <Link to={'/song/' + song.id}>{symbol}</Link>;
 	}
 
+	cmpArtists(a, b) {
+		if (a.length !== b.length)
+			return false;
+
+		for (var i = 0; i < a.length; i++) {
+			if (a[i].id !== b[i].id)
+				return false;
+		}
+
+		return true;
+	}
+
 	getTrackView(song) {
-		var artists = this.getArtists(song.artists);
-		var features = this.getArtists(song.features);
-		var albumArtists = this.getArtists(this.state.album.artists);
+		var artists = song.artists;
+		var features = song.features;
+		var albumArtists = this.state.album.artists;
 		var style = {lineHeight: '21px'};
 		var rankStyle = {width: 30, textAlign: 'right'};
 		var trackStyle = {width: 20, fontSize: '0.8em', marginRight: '3px'};
@@ -161,8 +162,8 @@ export default class Album extends Component {
 				<div className="text-center" style={trackStyle}>{song.track}</div>
 				<div className="flex-1">
 					<div>{TextUtil.normalize(song.title)}</div>
-					{artists !== albumArtists && this.getArtistView('by', artists)}
-					{features !== '' && this.getArtistView('feat.', features)}
+					{this.cmpArtists(artists, albumArtists) === false && this.getArtistView('by', song.artists)}
+					{features.length > 0 && this.getArtistView('feat.', song.features)}
 				</div>
 			</div>
 		);
@@ -173,7 +174,7 @@ export default class Album extends Component {
 		return (
 			<div className="flex-container">
 				<div style={prefixStyle}><small>{prefix}</small></div>
-				<div className="flex-1">{artists}</div>
+				<div className="flex-1"><NameArray array={artists} /></div>
 			</div>
 		);
 	}

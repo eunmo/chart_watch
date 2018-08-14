@@ -127,11 +127,6 @@ export default class Chart extends Component {
 		
 		headers.forEach((header, index) => {
 			const color = this.getColor(header);
-			const textStyle = {
-				fill: color,
-				alignmentBaseline: 'middle',
-				textAnchor: 'middle',
-			};
 			const lineStyle = {stroke: color, strokeWidth: '1px'};
 			var prev;
 

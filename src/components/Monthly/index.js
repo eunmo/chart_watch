@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 
 import './style.css';
 
+import Image from '../Image';
+
 export default class Monthly extends Component {
 
 	constructor(props) {
@@ -112,18 +114,11 @@ export default class Monthly extends Component {
 		return (
 			<div className="flex-container flex-wrap flex-center">
 				{albums.map(album => {
-					var size = (this.state.width <= 543) ? 50 : 75;
-					var pixel = size + 'px';
-					var outerStyle = {display: 'flex', alignContent: 'center', maxHeight: pixel, maxWidth: pixel};
-					var innerStyle = {margin: 'auto', width: pixel, height: pixel, borderRadius: size/5 + 'px'};
+					const size = (this.state.width <= 543) ? 50 : 75;
 
 					return (
 						<div key={album.id}>
-							<Link to={'/album/' + album.id}>
-								<div style={outerStyle}>
-									<img src={'/' + album.id + '.jpg'} style={innerStyle} alt={album.id} />
-								</div>
-							</Link>
+							<Image id={album.id} size={size} />
 						</div>
 					);
 				})}

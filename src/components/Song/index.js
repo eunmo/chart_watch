@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 
 import './style.css';
 
 import Chart from '../Chart';
-
+import Image from '../Image';
+import NameArray from '../NameArray';
+import Release from '../Release';
 import TextUtil from '../../util/text';
 
-export default class Album extends Component {
+export default class Song extends Component {
 	
 	constructor(props) {
 		super(props);
@@ -45,7 +46,7 @@ export default class Album extends Component {
 					{TextUtil.normalize(song.title)}
 				</div>
 				<div className="text-center">
-					<small>by</small> {this.getArtists(song.artists)}
+					<small>by</small> <NameArray array={song.artists} />
 				</div>
 				{song.features.length > 0 &&
 				<div className="text-center">
@@ -78,57 +79,24 @@ export default class Album extends Component {
 	getAlbumView(album) {
 		var outerStyle = {marginBottom: '5px'};
 		var innerStyle = {lineHeight: '25px', marginLeft: '10px'};
-		var releaseStyle = {color: 'lightgray'};
 		return (
 			<div key={album.id} className="flex-container" style={outerStyle}>
-				{this.getAlbumImage(album)}
+				<Image id={album.id} size={50} />
 				<div className="flex-1" style={innerStyle}>
 					<div className="flex-container flex-space-between">
 						<div>
 							{TextUtil.normalize(album.title)}
 						</div>
 						<div>
-							<small style={releaseStyle}>{this.getRelease(album)}</small>
+							<Release date={album.release} />
 						</div>
 					</div>
 					<div>
-						<small>by</small> {this.getArtists(album.artists)}
+						<small>by</small> <NameArray array={album.artists} />
 					</div>
 				</div>
 			</div>
 		);
-	}
-	
-	getAlbumImage(album) {
-		const id = album.id;
-		var size = 50;
-		var pixel = size + 'px';
-		var outerStyle = {display: 'flex', alignContent: 'center', maxHeight: pixel, maxWidth: pixel};
-		var innerStyle = {margin: 'auto', width: pixel, height: pixel, borderRadius: size/5 + 'px'};
-
-		return (
-			<Link to={'/album/' + album.id}>
-				<div style={outerStyle}>
-					<img src={'/' + id + '.jpg'} style={innerStyle} alt={id} />
-				</div>
-			</Link>
-		);
-	}
-
-	getRelease(album) {
-		var date = new Date(album.release);
-		return date.toLocaleDateString();
-	}
-
-	getArtists(artists) {
-		var string = '';
-		artists.forEach((artist, index) => {
-			if (index > 0)
-				string += ', ';
-			string += TextUtil.normalize(artist.name);
-		});
-
-		return string;
 	}
 
 	fetch() {
