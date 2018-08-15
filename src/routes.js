@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Link } from 'react-router-dom';
 
+import Home from './components/Home';
 import Monthly from './components/Monthly';
 import Album from './components/Album';
 import Song from './components/Song';
@@ -20,6 +21,7 @@ const renders = {
 };
 
 const routes = [
+	{ path: '/', render: renders.purple, component: Home, exact: true },
 	{ path: '/monthly/:month', render: renders.purple, component: Monthly },
 	{ path: '/album/:id', render: renders.purple, component: Album },
 	{ path: '/song/:id', render: renders.purple, component: Song },
@@ -31,11 +33,11 @@ const Routes = (props) => (
 	<BrowserRouter basename={props.basename}>
 		<div className="router-outer">
 			<div className="router-inner">
-				{routes.map(route => (<Route path={route.path} key={route.path} component={route.component} />))}
+				{routes.map(route => (<Route path={route.path} key={route.path} component={route.component} exact={route.exact}/>))}
 				<br />
 			</div>
-			<div className="router-inner logo"><Link to="/monthly/201808">㋠</Link></div>
-			{routes.map(route => (<Route path={route.path} key={route.path} render={route.render} />))}
+			<div className="router-inner logo"><Link to="/">㋠</Link></div>
+			{/*routes.map(route => (<Route path={route.path} key={route.path} render={route.render} />))*/}
 		</div>
 	</BrowserRouter>
 );

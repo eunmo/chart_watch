@@ -31,10 +31,8 @@ export default class Artist extends Component {
 	
 	componentWillReceiveProps(nextProps) {
 		const id = nextProps.match.params.id;
-		if (id !== this.state.id) {
-			this.setState({id: id, artist: null});
-			this.fetch(id);
-		}
+		this.setState({id: id, artist: null});
+		this.fetch(id);
 	}
 
 	render() {
