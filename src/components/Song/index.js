@@ -39,8 +39,8 @@ export default class Song extends Component {
 
 		return (
 			<div className="Song">
-				<div className="top text-center">
-					&nbsp;
+				<div className="top text-right">
+					<a href={'/#/edit/song/' + song.id} className="gray"><small>Edit</small></a>
 				</div>
 				<div className="top text-center">
 					{TextUtil.normalize(song.title)}
@@ -50,7 +50,7 @@ export default class Song extends Component {
 				</div>
 				{song.features.length > 0 &&
 				<div className="text-center">
-					<small>feat.</small> {this.getArtists(song.features)}
+					<small>feat.</small> <NameArray array={song.features} />
 				</div>
 				}
 				<div className="flex-container flex-adaptive">

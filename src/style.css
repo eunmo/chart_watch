@@ -88,6 +88,10 @@ a {
 	font-size: 1.5em;
 }
 
+.gray {
+	color: gray;
+}
+
 @media screen and (max-width: 543px) {
 	.hide-mobile {
 		display: none;

@@ -62,7 +62,9 @@ export default class Artist extends Component {
 
 		return (
 			<div>
-				<div className="top">&nbsp;</div>
+				<div className="top text-right">
+					<a href={'/#/edit/artist/' + artist.id} className="gray"><small>Edit</small></a>
+				</div>
 				<div className="top text-center">
 					{TextUtil.normalize(artist.name)}
 				</div>
@@ -182,7 +184,7 @@ export default class Artist extends Component {
 		var rankStyle = {width: '50px', height: '50px', lineHeight: '50px', fontSize: '1.5em', backgroundColor: 'rgba(255, 255, 255, 0.2)', borderRadius: '25px', marginLeft: '10px'};
 
 		return (
-			<div key={single.id} className="flex-container" style={outerStyle}>
+			<div key={single.songs[0].id} className="flex-container" style={outerStyle}>
 				<Image id={album.id} size={50} />
 				<div style={rankStyle} className="text-center">
 					{single.rank.min}
@@ -191,8 +193,8 @@ export default class Artist extends Component {
 					<div className="flex-container flex-space-between">
 						<div>
 							{single.songs.map((song, index) => [
-								<span>{index > 0 && ' / '}</span>,
-								<Link to={'/single/' + song.id}>
+								<span key={'span' + index}>{index > 0 && ' / '}</span>,
+								<Link to={'/song/' + song.id} key={song.id}>
 									{TextUtil.normalize(song.title)}
 								</Link>
 							])}
@@ -404,8 +406,6 @@ export default class Artist extends Component {
 		});
 
 		if (artist.singleGroups.length > 0) {
-			var map = {};
-
 			artist.singleGroups.forEach(group => {
 				if (singles[group[0]]) {
 					var single = singles[group[0]];

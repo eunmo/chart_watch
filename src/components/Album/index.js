@@ -39,8 +39,8 @@ export default class Album extends Component {
 
 		return (
 			<div>
-				<div className="top text-center">
-					&nbsp;
+				<div className="top text-right">
+					<a href={'/#/edit/album/' + album.id} className="gray"><small>Edit</small></a>
 				</div>
 				<div className="text-center" style={titleStyle}>
 					{TextUtil.normalize(album.title)}
