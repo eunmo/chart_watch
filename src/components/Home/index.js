@@ -53,7 +53,7 @@ export default class Home extends Component {
 		array.push({link: 'monthly/' + date, num: summary.Albums, desc: 'Albums'});
 		
 		array.push({link: '', num: summary.SingleCharts, desc: 'Chart Weeks'});
-		array.push({link: '', num: summary.Songs, desc: 'Songs'});
+		array.push({link: 'play-history', num: summary.Songs, desc: 'Songs'});
 
 		return array;
 	}

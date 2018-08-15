@@ -6,6 +6,7 @@ import Chart from '../Chart';
 import Image from '../Image';
 import NameArray from '../NameArray';
 import Release from '../Release';
+
 import TextUtil from '../../util/text';
 
 export default class Song extends Component {
