@@ -94,7 +94,7 @@ export default class ViewSelector extends Component {
 		const views= this.props.views;
 		var validCount = views.filter(view => (view.view !== null)).length;
 
-		if (validCount === 1)
+		if (validCount === 1 && this.props.removeHeadersOnSingle)
 			return <div>&nbsp;</div>;
 		
 		var array = [];

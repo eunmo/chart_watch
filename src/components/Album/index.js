@@ -57,7 +57,7 @@ export default class Album extends Component {
 						<div><Release date={album.release} /></div>
 					</div>
 					<div className="flex-2">
-						<ViewSelector views={views} expand={true} />
+						<ViewSelector views={views} expand={true} removeHeadersOnSingle={true} />
 					</div>
 				</div>
 			</div>

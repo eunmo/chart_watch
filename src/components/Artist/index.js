@@ -19,9 +19,7 @@ export default class Artist extends Component {
 
 		this.state = {id: id, artist: null};
 
-		this.getAlbumView = this.getAlbumView.bind(this);
 		this.getSingleView = this.getSingleView.bind(this);
-		this.getFeatureView = this.getFeatureView.bind(this);
 		this.cmpSingle = this.cmpSingle.bind(this);
 	}
 	
@@ -44,18 +42,21 @@ export default class Artist extends Component {
 		const [directAlbums, otherAlbums] = this.getDirectAlbums();
 		const songs = this.getSongs();
 		const singles = this.getSingles(songs);
-		const features = this.getFeatures(otherAlbums);
+		var features = this.getFeatures(otherAlbums);
+
+		if (this.cmpIds(songs.map(s => s.id), features))
+			features = [];
 		
 		var views = [];
 
 		if (directAlbums.length > 0)
-			views.push({name: 'Albums', view: directAlbums.map(this.getAlbumView)});
+			views.push({name: 'Albums', view: this.getAlbumsView(directAlbums)});
 		if (singles.length > 0)
 			views.push({name: 'Singles', view: singles.map(this.getSingleView)});
 		if (songs.length > 0)
 			views.push({name: 'Songs', view: this.getSongsView(songs)});
 		if (features.length > 0)
-			views.push({name: 'Features', view: features.map(this.getFeatureView)});
+			views.push({name: 'Features', view: this.getFeaturesView(features)});
 		if (artist.As.length > 0 || artist.Bs !== undefined)
 			views.push({name: 'Relations', view: this.getRelationsView()});
 
@@ -217,6 +218,21 @@ export default class Artist extends Component {
 		var rankStyle = {width: '32px', textAlign: 'right', marginRight: '3px', minWidth: '32px'};
 		var artistStyle = {marginLeft: '35px'};
 
+		var globalMin = 11;
+
+		albums.forEach(album => {
+			album.songs.filter(song => song.album === album).forEach(song => {
+				if (song.rank)
+					globalMin = Math.min(song.rank.min, globalMin);
+			});
+		});
+
+		if (globalMin === 11) {
+			rankStyle.width = '7px';
+			rankStyle.minWidth = '7px';
+			artistStyle.marginLeft = '10px';
+		}
+
 		return albums.map(album => {
 			const songs = album.songs.filter(song => song.album === album);
 
@@ -281,37 +297,52 @@ export default class Artist extends Component {
 		});
 	}
 	
-	getFeatureView(song) {
-		const album = song.album;
+	getFeaturesView(songs) {
 		var outerStyle = {marginBottom: '5px'};
 		var innerStyle = {lineHeight: '25px'};
 		var rankStyle = {width: '32px', textAlign: 'right', marginRight: '3px', minWidth: '32px'};
 		var artistStyle = {marginLeft: '35px'};
 
-		return (
-			<div key={song.id} className="flex-container" style={outerStyle}>
-				<Image id={album.id} size={50} />
-				<div className="flex-1" style={innerStyle}>
-					<div className="flex-container flex-space-between">
-						<div>
-							<Link to={'/song/' + song.id}>
-								<div className="flex-container">
-									<div style={rankStyle}>{this.getRankView(song)}</div>
-									<div>{TextUtil.normalize(song.title)}</div>
-								</div>
-							</Link>
+		var globalMin = 11;
+
+		songs.forEach(song => {
+			if (song.rank)
+				globalMin = Math.min(song.rank.min, globalMin);
+		});
+
+		if (globalMin === 11) {
+			rankStyle.width = '7px';
+			rankStyle.minWidth = '7px';
+			artistStyle.marginLeft = '10px';
+		}
+
+		return songs.map(song => {
+			const album = song.album;
+			return (
+				<div key={song.id} className="flex-container" style={outerStyle}>
+					<Image id={album.id} size={50} />
+					<div className="flex-1" style={innerStyle}>
+						<div className="flex-container flex-space-between">
+							<div>
+								<Link to={'/song/' + song.id}>
+									<div className="flex-container">
+										<div style={rankStyle}>{this.getRankView(song)}</div>
+										<div>{TextUtil.normalize(song.title)}</div>
+									</div>
+								</Link>
+							</div>
+							<div>
+								<Release date={album.release} />
+							</div>
 						</div>
-						<div>
-							<Release date={album.release} />
+						<div style={artistStyle}>
+							{this.getArtistView('by', song.artists)}
+							{song.features.length > 0 && this.getArtistView('feat.', song.features)}
 						</div>
-					</div>
-					<div style={artistStyle}>
-						{this.getArtistView('by', song.artists)}
-						{song.features.length > 0 && this.getArtistView('feat.', song.features)}
 					</div>
 				</div>
-			</div>
-		);
+			);
+		});
 	}
 
 	getArtistView(prefix, artists) {
@@ -484,47 +515,58 @@ export default class Artist extends Component {
 		return true;
 	}
 	
-	getAlbumView(album) {
+	getAlbumsView(albums) {
 		const ids = [this.state.artist.id];
-		const cmpResult = this.cmpIds(ids, album.albumArtists);
 
 		var outerStyle = {marginBottom: '5px'};
 		var innerStyle = {lineHeight: '25px', marginLeft: '10px'};
-		var rankStyle = {width: '50px', height: '50px', lineHeight: '50px', fontSize: '1.5em', backgroundColor: 'rgba(255, 255, 255, 0.2)', borderRadius: '25px', marginLeft: '10px'};
-		var emptyRankStyle = {width: '50px', marginLeft: '10px'};
+		var rankStyle = {width: '50px', height: '50px', lineHeight: '50px', fontSize: '1.5em', backgroundColor: 'rgba(255, 255, 255, 0.2)', borderRadius: '25px', marginRight: '10px'};
+		var emptyRankStyle = {width: '50px', marginRight: '10px'};
 
-		var min = 11;
-		for (var i in album.rank) {
-			min = Math.min(min, album.rank[i].min);
-		}
+		var globalMin = 11;
 
-		return (
-			<div key={album.id} className="flex-container" style={outerStyle}>
-				<Image id={album.id} size={50} />
-				{min < 11 ?
-					<div style={rankStyle} className="text-center">
-						{min}
-					</div> :
-					<div style={emptyRankStyle} />
-				}
-				<div className="flex-1" style={innerStyle}>
-					<div className="flex-container flex-space-between">
-						<div>
-							{TextUtil.normalize(album.title)}
+		albums.forEach(album => {
+			var min = 11;
+			for (var i in album.rank) {
+				min = Math.min(min, album.rank[i].min);
+			}
+			globalMin = Math.min(min, globalMin);
+
+			if (min < 11)
+				album.rank.min = min;
+		});
+
+		return albums.map(album => {
+			const cmpResult = this.cmpIds(ids, album.albumArtists);
+			const min = album.rank ? album.rank.min : 11;
+
+			return (
+				<div key={album.id} className="flex-container" style={outerStyle}>
+					{globalMin < 11 &&
+						(min < 11 ?
+						<div style={rankStyle} className="text-center">{min}</div> :
+						<div style={emptyRankStyle} />)
+					}
+					<Image id={album.id} size={50} />
+					<div className="flex-1" style={innerStyle}>
+						<div className="flex-container flex-space-between">
+							<div>
+								{TextUtil.normalize(album.title)}
+							</div>
+							<div>
+								<Release date={album.release} />
+							</div>
 						</div>
 						<div>
-							<Release date={album.release} />
+							<small>{album.format}</small>
+							{cmpResult ||
+								<span><small> by</small> <NameArray array={album.albumArtists} /></span>
+							}
 						</div>
-					</div>
-					<div>
-						<small>{album.format}</small>
-						{cmpResult ||
-							<span><small> by</small> <NameArray array={album.albumArtists} /></span>
-						}
 					</div>
 				</div>
-			</div>
-		);
+			);
+		});
 	}
 
 	getDirectAlbums() {
