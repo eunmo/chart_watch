@@ -22,6 +22,7 @@ export default class Initial extends Component {
 	render() {
 		var artistRowStyle = { lineHeight: '30px', marginTop: '5px' };
 		var artistImageStyle = { width: '30px', marginRight: '5px', minWidth: '30px' };
+		var grayStyle = {color: 'gray'};
 
 		var view = null;
 		if (this.state.prefix === '') {
@@ -36,7 +37,7 @@ export default class Initial extends Component {
 								{initial}
 							</div>
 						))}
-						<div className="Initials-key text-center">⌫</div>
+						<div className="Initials-key text-center" style={grayStyle}>⌫</div>
 					</div>
 				</div>
 			);

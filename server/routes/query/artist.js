@@ -189,6 +189,35 @@
 		artistMap[artist.id].artists.push(artist);
 	};
 
+	var groupSingles = function (db, artist) {
+		var ids = artist.songIds;
+		var query = 
+			'SELECT SongId, `type`, min(`week`) as w, min(`order`) as o' +
+			' FROM SingleCharts WHERE SongId in (' + ids.join(',') + ')' +
+			' GROUP BY SongId, `type`';
+
+		return db.promisifyQuery(query)
+			.then (function (rows) {
+				var map = [];
+
+				rows.forEach(row => {
+					var key = row.type + row.w;
+					if (map[key] === undefined) {
+						map[key] = [];
+					}
+
+					map[key][row.o] = row.SongId;
+				});
+
+				var array = [];
+				for (var i in map) {
+					array.push(map[i]);
+				}
+
+				artist.singleGroups = array.filter(e => (e.length > 1));
+			});
+	};
+
 	module.exports = function (router, _, db) {
 		router.get('/api/artist/:_id', function (req, res) {
 			var id = parseInt(req.params._id);
@@ -214,6 +243,8 @@
 					promises.push(findSongDetails(db, artist, maps));
 					promises.push(findSongArtists(db, artist, maps));
 					promises.push(findSongChartSummary(db, artist, maps));
+					
+					promises.push(groupSingles(db, artist));
 
 					return Promise.all(promises)
 						.then(function () {

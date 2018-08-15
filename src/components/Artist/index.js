@@ -174,32 +174,35 @@ export default class Artist extends Component {
 		return symbol;
 	}
 	
-	getSingleView(song) {
-		const album = song.album;
+	getSingleView(single) {
+		const album = single.album;
 		var outerStyle = {marginBottom: '5px'};
 		var innerStyle = {lineHeight: '25px', marginLeft: '10px'};
 		var rankStyle = {width: '50px', height: '50px', lineHeight: '50px', fontSize: '1.5em', backgroundColor: 'rgba(255, 255, 255, 0.2)', borderRadius: '25px', marginLeft: '10px'};
 
 		return (
-			<div key={song.id} className="flex-container" style={outerStyle}>
+			<div key={single.id} className="flex-container" style={outerStyle}>
 				<Image id={album.id} size={50} />
 				<div style={rankStyle} className="text-center">
-					{song.rank.min}
+					{single.rank.min}
 				</div>
 				<div className="flex-1" style={innerStyle}>
 					<div className="flex-container flex-space-between">
 						<div>
-							<Link to={'/song/' + song.id}>
-								{TextUtil.normalize(song.title)}
-							</Link>
+							{single.songs.map((song, index) => [
+								<span>{index > 0 && ' / '}</span>,
+								<Link to={'/single/' + song.id}>
+									{TextUtil.normalize(song.title)}
+								</Link>
+							])}
 						</div>
 						<div>
 							<Release date={album.release} />
 						</div>
 					</div>
 					<div>
-						{this.getArtistView('by', song.artists)}
-						{song.features.length > 0 && this.getArtistView('feat.', song.features)}
+						{this.getArtistView('by', single.artists)}
+						{single.features.length > 0 && this.getArtistView('feat.', single.features)}
 					</div>
 				</div>
 			</div>
@@ -210,9 +213,9 @@ export default class Artist extends Component {
 		const ids = [this.state.artist.id];
 		const albums = this.state.artist.albums;
 		var outerStyle = {marginBottom: '5px'};
-		var innerStyle = {lineHeight: '25px', marginLeft: '10px'};
-		var rankStyle = {width: '25px', textAlign: 'right', marginRight: '3px', minWidth: '25px'};
-		var artistStyle = {marginLeft: '28px'};
+		var innerStyle = {lineHeight: '25px'};
+		var rankStyle = {width: '32px', textAlign: 'right', marginRight: '3px', minWidth: '32px'};
+		var artistStyle = {marginLeft: '35px'};
 
 		return albums.map(album => {
 			const songs = album.songs.filter(song => song.album === album);
@@ -281,9 +284,9 @@ export default class Artist extends Component {
 	getFeatureView(song) {
 		const album = song.album;
 		var outerStyle = {marginBottom: '5px'};
-		var innerStyle = {lineHeight: '25px', marginLeft: '10px'};
-		var rankStyle = {width: '25px', textAlign: 'right', marginRight: '3px', minWidth: '25px'};
-		var artistStyle = {marginLeft: '28px'};
+		var innerStyle = {lineHeight: '25px'};
+		var rankStyle = {width: '32px', textAlign: 'right', marginRight: '3px', minWidth: '32px'};
+		var artistStyle = {marginLeft: '35px'};
 
 		return (
 			<div key={song.id} className="flex-container" style={outerStyle}>
@@ -321,7 +324,7 @@ export default class Artist extends Component {
 		);
 	}
 
-	summarizeRank(song) {
+	createSingle(song) {
 		var min = 10;
 		var run = 0;
 		var count = 0;
@@ -340,21 +343,59 @@ export default class Artist extends Component {
 			}
 		}
 
-		song.rank.min = min;
-		song.rank.run = run + count;
-		song.rank.count = count;
+		song.rank = {min: min, run: run + count, count: count};
+
+		return {
+			songs: [song],
+			album: song.album,
+			artists: song.artists,
+			features: song.features,
+			rank: song.rank,
+		};
+	}
+
+	// b into a
+	mergeArtistArrays(a, b) {
+		b.forEach(artist => {
+			if (a.filter(a => (a.id === artist.id)).length === 0)
+				a.push(artist);
+		});
 	}
 
 	getSingles(songs) {
+		const artist = this.state.artist;
 		var singles = [];
 
 		songs.forEach(song => {
 			if (song.rank) {
-				this.summarizeRank(song);
-				singles.push(song);
+				singles[song.id] = this.createSingle(song);
 			}
 		});
 
+		if (artist.singleGroups.length > 0) {
+			var map = {};
+
+			artist.singleGroups.forEach(group => {
+				if (singles[group[0]]) {
+					var single = singles[group[0]];
+					var cur;
+					var songs = [];
+					group.forEach((songId, index) => {
+						cur = singles[songId];
+						songs[index] = singles[songId].songs[0];
+						this.mergeArtistArrays(single.artists, cur.artists);
+						this.mergeArtistArrays(single.features, cur.features);
+
+						if (index > 0)
+							singles[songId].merged = true;
+					})
+					single.songs = songs;
+				}
+			});
+
+			singles = singles.filter(s => (s.merged !== true));
+		}
+		
 		singles.sort(this.cmpSingle);
 
 		return singles;
@@ -449,10 +490,23 @@ export default class Artist extends Component {
 
 		var outerStyle = {marginBottom: '5px'};
 		var innerStyle = {lineHeight: '25px', marginLeft: '10px'};
+		var rankStyle = {width: '50px', height: '50px', lineHeight: '50px', fontSize: '1.5em', backgroundColor: 'rgba(255, 255, 255, 0.2)', borderRadius: '25px', marginLeft: '10px'};
+		var emptyRankStyle = {width: '50px', marginLeft: '10px'};
+
+		var min = 11;
+		for (var i in album.rank) {
+			min = Math.min(min, album.rank[i].min);
+		}
 
 		return (
 			<div key={album.id} className="flex-container" style={outerStyle}>
 				<Image id={album.id} size={50} />
+				{min < 11 ?
+					<div style={rankStyle} className="text-center">
+						{min}
+					</div> :
+					<div style={emptyRankStyle} />
+				}
 				<div className="flex-1" style={innerStyle}>
 					<div className="flex-container flex-space-between">
 						<div>
