@@ -5,6 +5,7 @@ import './style.css';
 
 import Chart from '../Chart';
 import Image from '../Image';
+import Loader from '../Loader';
 import NameArray from '../NameArray';
 import Release from '../Release';
 import ViewSelector from '../ViewSelector';
@@ -30,7 +31,8 @@ export default class Album extends Component {
 	render() {
 		const album = this.state.album;
 		if (album === null)
-			return null;
+			return <Loader />;
+
 		const titleStyle = {fontSize: '1.2em'};
 		var views = [
 			{name: 'Tracks', view: this.getTracksView()},

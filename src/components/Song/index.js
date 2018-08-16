@@ -4,6 +4,7 @@ import './style.css';
 
 import Chart from '../Chart';
 import Image from '../Image';
+import Loader from '../Loader';
 import NameArray from '../NameArray';
 import Release from '../Release';
 
@@ -26,7 +27,8 @@ export default class Song extends Component {
 	render() {
 		const song = this.state.song;
 		if (song === null)
-			return null;
+			return <Loader />;
+		
 		const headerStyle = {
 			width: '100%',
 			backgroundColor: 'rgba(255, 255, 255, 0.2)',

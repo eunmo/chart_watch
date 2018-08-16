@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import './style.css';
 
 import Image from '../Image';
+import Loader from '../Loader';
 import NameArray from '../NameArray';
 import Release from '../Release';
 import ViewSelector from '../ViewSelector';
@@ -37,7 +38,7 @@ export default class Artist extends Component {
 		const artist = this.state.artist;
 
 		if (artist === null)
-			return null;
+			return <Loader />;
 
 		const [directAlbums, otherAlbums] = this.getDirectAlbums();
 		const songs = this.getSongs();

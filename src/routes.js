@@ -8,6 +8,7 @@ import Song from './components/Song';
 import Initials from './components/Initials';
 import Artist from './components/Artist';
 import PlayHistory from './components/PlayHistory';
+import Loader from './components/Loader';
 
 const gradients = {
 	purple: 'linear-gradient(165deg, #1a2a6c, #b21f1f, #fd9b2d, #b21f1f, #1a2a6c)', // King Yna
@@ -29,6 +30,7 @@ const routes = [
 	{ path: '/initials', render: renders.purple, component: Initials },
 	{ path: '/artist/:id', render: renders.purple, component: Artist },
 	{ path: '/play-history', render: renders.purple, component: PlayHistory },
+	{ path: '/loader', render: renders.purple, component: Loader },
 ];
 
 const Routes = (props) => (
