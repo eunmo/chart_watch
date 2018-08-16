@@ -410,6 +410,10 @@ export default class Artist extends Component {
 					var songs = [];
 					group.forEach((songId, index) => {
 						cur = singles[songId];
+
+						if (cur === undefined)
+							return;
+
 						songs[index] = singles[songId].songs[0];
 						this.mergeArtistArrays(single.artists, cur.artists);
 						this.mergeArtistArrays(single.features, cur.features);
