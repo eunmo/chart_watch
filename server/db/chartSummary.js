@@ -69,5 +69,41 @@
 
 			return getChartSummary(db, query);
 		};
+
+		db.chartSummary.fetchAlbumsByType = function (albums, ids, type, week) {
+			var query = "  SELECT AlbumId as id, `type`, rank, count(*) as count " +
+									"    FROM AlbumCharts " +
+									"   WHERE AlbumId in (" + ids.join() + ") " +
+									"     AND `type` = '" + type + "' " +
+									"     AND `week` < '" + week.toISOString() + "' " +
+									"GROUP BY AlbumId, `type`, rank;";
+
+			console.log(query);
+
+			return getChartSummary(db, query)
+			.then(function (charts) {
+				albums.forEach(function(album) {
+					if (charts[album.id])
+						album.rank = true;
+				});
+			});
+		};
+
+		db.chartSummary.fetchSongsByType = function (songs, ids, type, week) {
+			var query = "  SELECT SongId as id, `type`, rank, count(*) as count " +
+									"    FROM SingleCharts " +
+									"   WHERE SongId in (" + ids.join() + ") " +
+									"     AND `type` = '" + type + "' " +
+									"     AND `week` < '" + week.toISOString() + "' " +
+									"GROUP BY SongId, `type`, rank;";
+
+			return getChartSummary(db, query)
+			.then(function (charts) {
+				songs.forEach(function(song) {
+					if (charts[song.id])
+						song.rank = true;
+				});
+			});
+		};
 	};
 }());

@@ -24,12 +24,12 @@ export default class PlayHistory extends Component {
 		var outerStyle = {marginBottom: '5px'};
 		var timestampStyle = {lineHeight: '25px', width: '50px', marginRight: '10px'};
 		var innerStyle = {lineHeight: '25px', marginLeft: '10px'};
-		var emptyNumStyle = {width: '20px'};
 		var numStyle = {width: '20px', background: 'rgba(255, 255, 255, 0.2)', borderRadius: '5px'};
 
 		return (
 			<div>
 				<div className="top text-center" onClick={() => this.fetch()}>Play History</div>
+				<div className="vertical-buffer" />
 				<div className="flex-container">
 					<div className="flex-1 hide-mobile" />
 					<div className="flex-3">
@@ -38,7 +38,7 @@ export default class PlayHistory extends Component {
 								<div style={timestampStyle} className="text-center">
 									<div className="gray">{this.getTime(song)}</div>
 									<div className="flex-container flex-space-between">
-										<div style={song.rank ? numStyle : emptyNumStyle}>{this.getMinRank(song)}</div>
+										<div style={this.getRankStyle(song.rank)}>{this.getMinRank(song)}</div>
 										<div style={numStyle}>{song.plays}</div>
 									</div>
 								</div>
@@ -54,6 +54,30 @@ export default class PlayHistory extends Component {
 				</div>
 			</div>
 		);
+	}
+
+	getRankStyle(rank) {
+		var style = {width: '20px'};
+
+		if (rank === undefined)
+			return style;
+		
+		var min = 11;
+
+		for (var i in rank) {
+			min = Math.min(min, rank[i].min);
+		}
+
+		style.borderRadius = '5px';
+
+		if (min <= 1)
+			style.backgroundColor = 'rgb(255, 45, 85)';
+		else if (min <= 5)
+			style.backgroundColor = 'rgb(88, 86, 214)';
+		else
+			style.backgroundColor = 'rgb(0, 122, 255)';
+
+		return style;
 	}
 
 	getMinRank(song) {

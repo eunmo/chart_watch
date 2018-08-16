@@ -16,11 +16,18 @@ export default class Image extends Component {
 		var outerStyle = {display: 'flex', alignContent: 'center', maxHeight: pixel, maxWidth: pixel};
 		var innerStyle = {margin: 'auto', width: pixel, height: pixel, borderRadius: borderRadius + 'px'};
 
+		var image = (
+			<div style={outerStyle}>
+				<img src={'/' + id + '.jpg'} style={innerStyle} alt={id} />
+			</div>
+		);
+
+		if (this.props.noLink)
+			return image;
+
 		return (
 			<Link to={'/album/' + id}>
-				<div style={outerStyle}>
-					<img src={'/' + id + '.jpg'} style={innerStyle} alt={id} />
-				</div>
+				{image}
 			</Link>
 		);
 	}

@@ -100,6 +100,13 @@ export default class TextUtil {
 		return string.replace(/`/g, '\'');
 	}
 
+	static capitalize(string) {
+    if (string.length < 3)
+      return string.toUpperCase();
+
+    return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+
 	// from https://stackoverflow.com/questions/990904/remove-accents-diacritics-in-a-string-in-javascript/37511463#37511463
 	static removeDiacritics(string) {
 		return string.replace(/[^\u0000-\u007E]/g, function(a){ 

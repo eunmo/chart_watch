@@ -52,7 +52,7 @@ export default class Home extends Component {
 		var date = new Date().toISOString().split('-').slice(0, 2).join('');
 		array.push({link: 'monthly/' + date, num: summary.Albums, desc: 'Albums'});
 		
-		array.push({link: '', num: summary.SingleCharts, desc: 'Chart Weeks'});
+		array.push({link: 'chart', num: summary.SingleCharts, desc: 'Chart Weeks'});
 		array.push({link: 'play-history', num: summary.Songs, desc: 'Songs'});
 
 		return array;

@@ -65,9 +65,15 @@ export default class NameArray extends Component {
 	getLink(artist) {
 		var style = {color: 'aqua'};
 		var activeStyle = {color: 'white'};
+		var text = TextUtil.normalize(artist.name);
+
+		if (this.props.noLink)
+			return text;
+
+
 		return (
 			<NavLink to={'/artist/' + artist.id} style={style} activeStyle={activeStyle}>
-				{TextUtil.normalize(artist.name)}
+				{text}
 			</NavLink>
 		);
 	}

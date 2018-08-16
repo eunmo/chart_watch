@@ -26,7 +26,6 @@
 					.then(function() {
 						res.json(weeks);
 					});
-				res.json(weeks);
 			});
 		});
 	};

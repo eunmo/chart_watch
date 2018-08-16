@@ -92,6 +92,24 @@ a {
 	color: gray;
 }
 
+.lightgray {
+	color: lightgray;
+}
+
+.overflow-hidden, .overflow-hidden div {
+	overflow: hidden;
+}
+
+.ellipsis {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.vertical-buffer {
+	height: 30px;
+}
+
 @media screen and (max-width: 543px) {
 	.hide-mobile {
 		display: none;
