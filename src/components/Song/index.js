@@ -2,11 +2,7 @@ import React, { Component } from 'react';
 
 import './style.css';
 
-import Chart from '../Chart';
-import Image from '../Image';
-import Loader from '../Loader';
-import NameArray from '../NameArray';
-import Release from '../Release';
+import { Chart, Image, Loader, NameArray, Release } from '../Common';
 
 import TextUtil from '../../util/text';
 

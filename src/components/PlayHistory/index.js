@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 
 import './style.css';
 
-import Image from '../Image';
-import NameArray from '../NameArray';
+import { Image, NameArray } from '../Common';
 
 import TextUtil from '../../util/text';
 

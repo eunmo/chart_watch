@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 
 import './style.css';
 
-import Image from '../Image';
-import NameArray from '../NameArray';
+import { Image, NameArray } from '../Common';
 
 import TextUtil from '../../util/text';
 

@@ -3,11 +3,7 @@ import { Link } from 'react-router-dom';
 
 import './style.css';
 
-import Image from '../Image';
-import Loader from '../Loader';
-import NameArray from '../NameArray';
-import Release from '../Release';
-import ViewSelector from '../ViewSelector';
+import { Image, Loader, NameArray, Release, ViewSelector } from '../Common';
 
 import TextUtil from '../../util/text';
 

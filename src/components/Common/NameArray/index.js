@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 
 import './style.css';
 
-import TextUtil from '../../util/text';
+import TextUtil from '../../../util/text';
 
 export default class NameArray extends Component {
 	render() {

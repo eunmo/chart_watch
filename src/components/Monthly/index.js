@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import './style.css';
 
-import Image from '../Image';
+import { Image } from '../Common';
 
 export default class Monthly extends Component {
 
