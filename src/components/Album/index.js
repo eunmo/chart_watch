@@ -104,7 +104,7 @@ export default class Album extends Component {
 			{name: 'Tracks', link: '/tracks', component: Tracks, data: this.getDataForTracksView(album)}
 		];
 
-		if (album.charts)
+		if (album.charts.weeks.length > 0)
 			views.push({name: 'Chart', link: '/chart', component: Chart, data: album.charts});
 
 		return views;
