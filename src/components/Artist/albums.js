@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './style.css';
 
-import { Image, NameArray, Release } from '../Common';
+import { ArtistView, Image, Release } from '../Common';
 
 import TextUtil from '../../util/text';
 
@@ -31,7 +31,6 @@ export default class ArtistAlbums extends Component {
 		});
 
 		return albums.map(album => {
-			const cmpResult = this.cmpIds(id, album.albumArtists);
 			const min = album.rank ? album.rank.min : 11;
 
 			return (
@@ -53,17 +52,11 @@ export default class ArtistAlbums extends Component {
 						</div>
 						<div>
 							<small>{album.format}</small>
-							{cmpResult ||
-								<span><small> by</small> <NameArray array={album.albumArtists} /></span>
-							}
+							<ArtistView filterIds={[id]} artists={album.albumArtists} isSpan={true}/>
 						</div>
 					</div>
 				</div>
 			);
 		});
-	}
-
-	cmpIds(id, artists) {
-		return artists.length === 1 && artists[0].id === id;
 	}
 }

@@ -1,3 +1,4 @@
+export {default as ArtistView} from './ArtistView';
 export {default as Chart} from './Chart';
 export {default as Image} from './Image';
 export {default as Loader} from './Loader';

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import './style.css';
 
-import { Image, NameArray, Release } from '../Common';
+import { ArtistView, Image, Release } from '../Common';
 
 import TextUtil from '../../util/text';
 
@@ -59,7 +59,7 @@ export default class ArtistSongs extends Component {
 				<div className="flex-1" style={innerStyle}>
 					{showOnce && songs.length > 2 &&
 						<div className="flex-container flex-space-between" style={artistStyle}>
-							<div>{this.getArtistView('by', songs[0].artists)}</div>
+							<ArtistView artists={songs[0].artists} />
 							<div>
 								<Release date={album.release} />
 							</div>
@@ -82,13 +82,13 @@ export default class ArtistSongs extends Component {
 							}
 						</div>,
 						<div key={'artist' + song.id} style={artistStyle}>
-							{showOnce || this.cmpId(id, song.artists) || this.getArtistView('by', song.artists)}
-							{song.features.length > 0 && this.getArtistView('feat.', song.features)}
+							{showOnce || <ArtistView filterIds={[id]} artists={song.artists} />}
+							<ArtistView prefix="feat." artists={song.features} />
 						</div>
 					])}
 					{showOnce && songs.length === 2 &&
 						<div className="flex-container flex-space-between" style={artistStyle}>
-							<div>{this.getArtistView('by', songs[0].artists)}</div>
+							<ArtistView artists={songs[0].artists} />
 						</div>
 					}
 				</div>
@@ -112,16 +112,6 @@ export default class ArtistSongs extends Component {
 		}
 
 		return symbol;
-	}
-
-	getArtistView(prefix, artists) {
-		var prefixStyle = {marginRight: '5px'};
-		return (
-			<div className="flex-container">
-				<div style={prefixStyle}><small>{prefix}</small></div>
-				<div className="flex-1"><NameArray array={artists} /></div>
-			</div>
-		);
 	}
 
 	cmpId(id, artists) {

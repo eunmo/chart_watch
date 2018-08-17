@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import './style.css';
 
-import { Image, NameArray, Release } from '../Common';
+import { ArtistView, Image, Release } from '../Common';
 
 import TextUtil from '../../util/text';
 
@@ -37,22 +37,12 @@ export default class ArtistSingles extends Component {
 							</div>
 						</div>
 						<div>
-							{this.getArtistView('by', single.artists)}
-							{single.features.length > 0 && this.getArtistView('feat.', single.features)}
+							<ArtistView artists={single.artists} />
+							<ArtistView prefix="feat." artists={single.features} />
 						</div>
 					</div>
 				</div>
 			);			
 		});
-	}
-
-	getArtistView(prefix, artists) {
-		var prefixStyle = {marginRight: '5px'};
-		return (
-			<div className="flex-container">
-				<div style={prefixStyle}><small>{prefix}</small></div>
-				<div className="flex-1"><NameArray array={artists} /></div>
-			</div>
-		);
 	}
 }

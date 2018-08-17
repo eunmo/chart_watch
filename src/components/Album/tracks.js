@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import './style.css';
 
-import { NameArray } from '../Common';
+import { ArtistView } from '../Common';
 
 import TextUtil from '../../util/text';
 
@@ -51,32 +51,8 @@ export default class AlbumTracks extends Component {
 		return <Link to={'/song/' + song.id}>{symbol}</Link>;
 	}
 
-	cmpArtists(a, b) {
-		if (a.length !== b.length)
-			return false;
-
-		for (var i = 0; i < a.length; i++) {
-			if (a[i].id !== b[i].id)
-				return false;
-		}
-
-		return true;
-	}
-
-	getArtistView(prefix, artists) {
-		var prefixStyle = {marginRight: '5px'};
-		return (
-			<div className="flex-container">
-				<div style={prefixStyle}><small>{prefix}</small></div>
-				<div className="flex-1"><NameArray array={artists} /></div>
-			</div>
-		);
-	}
-
 	getTrackView(song) {
-		var artists = song.artists;
-		var features = song.features;
-		var albumArtists = this.props.data.albumArtists;
+		const albumArtists = this.props.data.albumArtists;
 		var style = {lineHeight: '21px'};
 		var rankStyle = {width: 30, textAlign: 'right'};
 		var trackStyle = {width: 20, fontSize: '0.8em', marginRight: '3px'};
@@ -89,8 +65,8 @@ export default class AlbumTracks extends Component {
 				<div className="text-center" style={trackStyle}>{song.track}</div>
 				<div className="flex-1">
 					<div>{TextUtil.normalize(song.title)}</div>
-					{this.cmpArtists(artists, albumArtists) === false && this.getArtistView('by', song.artists)}
-					{features.length > 0 && this.getArtistView('feat.', song.features)}
+					<ArtistView filterIds={albumArtists.map(a => a.id)} artists={song.artists} />
+					<ArtistView prefix="feat." artists={song.features} />
 				</div>
 			</div>
 		);
