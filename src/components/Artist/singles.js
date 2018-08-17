@@ -10,6 +10,8 @@ import TextUtil from '../../util/text';
 export default class ArtistSingles extends Component {
 	
 	render() {
+		const id = this.props.data.id;
+
 		return this.props.data.singles.map(single => {
 			const album = single.album;
 			var outerStyle = {marginBottom: '5px'};
@@ -19,9 +21,7 @@ export default class ArtistSingles extends Component {
 			return (
 				<div key={single.songs[0].id} className="flex-container" style={outerStyle}>
 					<Image id={album.id} size={50} />
-					<div style={rankStyle} className="text-center">
-						{single.rank.min}
-					</div>
+					<div style={rankStyle} className="text-center">{single.rank.min}</div>
 					<div className="flex-1" style={innerStyle}>
 						<div className="flex-container flex-space-between">
 							<div>
@@ -37,7 +37,7 @@ export default class ArtistSingles extends Component {
 							</div>
 						</div>
 						<div>
-							<ArtistView artists={single.artists} />
+							<ArtistView filterIds={[id]} artists={single.artists} />
 							<ArtistView prefix="feat." artists={single.features} />
 						</div>
 					</div>

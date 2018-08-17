@@ -294,7 +294,7 @@ export default class Artist extends Component {
 		if (singles.length > 0)
 			views.push({
 				name: 'Singles', link: '/singles', component: Singles,
-				data: {singles: singles}
+				data: {singles: singles, id: artist.id}
 			});
 		if (songs.length > 0)
 			views.push({
