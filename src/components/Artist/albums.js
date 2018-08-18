@@ -21,6 +21,12 @@ export default class ArtistAlbums extends Component {
 
 		albums.forEach(album => {
 			var min = 11;
+
+			if (album.rank && album.rank.min) {
+				globalMin = Math.min(album.rank.min, globalMin);
+				return;
+			}
+
 			for (var i in album.rank) {
 				min = Math.min(min, album.rank[i].min);
 			}
