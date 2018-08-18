@@ -52,6 +52,7 @@ musicApp.directive('artistLink', function () {
 							Bs = [artist.Bs.u];
 						} else if (artist.Bs.f) {
 							Bs = [artist.Bs.f];
+							artist.Btype = 'ex-';
 						}
 					}
 

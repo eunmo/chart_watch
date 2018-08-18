@@ -45,6 +45,7 @@ export default class NameArray extends Component {
 			Bs = [artist.Bs.u];
 		} else if (artist.Bs.f) {
 			Bs = [artist.Bs.f];
+			type = 'ex-';
 		}
 
 		if (Bs.length === 0)
