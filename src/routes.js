@@ -40,7 +40,10 @@ const Routes = (props) => (
 				{routes.map(route => (<Route path={route.path} key={route.path} component={route.component} exact={route.exact}/>))}
 				<br />
 			</div>
-			<div className="router-inner logo"><Link to="/">㋠</Link></div>
+			<div className="router-inner logo">
+				<Route path="/" exact={true} render={() => <a href="/">㋠</a>} />
+				<Route path="/:path" render={() => <Link to="/">㋠</Link>} />
+			</div>
 			{/*routes.map(route => (<Route path={route.path} key={route.path} render={route.render} />))*/}
 		</div>
 	</BrowserRouter>
