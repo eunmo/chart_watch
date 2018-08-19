@@ -155,8 +155,6 @@ export default class Initial extends Component {
 
 		const url = '/api/initial/short/' + req;
 
-		console.log(url);
-
 		fetch(url)
 		.then(function(response) {
       return response.json();
