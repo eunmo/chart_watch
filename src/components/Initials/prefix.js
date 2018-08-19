@@ -26,7 +26,6 @@ export default class Initial extends Component {
 	render() {
 		var artistRowStyle = { lineHeight: '30px', marginTop: '5px' };
 		var artistImageStyle = { width: '30px', marginRight: '5px', minWidth: '30px' };
-		var grayStyle = {color: 'gray'};
 
 		if (this.state.artists === undefined)
 			return null;

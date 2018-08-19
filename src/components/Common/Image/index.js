@@ -15,10 +15,14 @@ export default class Image extends Component {
 		var borderRadius = borderRadiusMap[size] ? borderRadiusMap[size] : size/5;
 		var outerStyle = {display: 'flex', alignContent: 'center', maxHeight: pixel, maxWidth: pixel};
 		var innerStyle = {margin: 'auto', width: pixel, height: pixel, borderRadius: borderRadius + 'px'};
+		var url = '/' + id + '.jpg';
+
+    if (window.isWebkit)
+      url = 'cw-custom-scheme:/' + url;
 
 		var image = (
 			<div style={outerStyle}>
-				<img src={'/' + id + '.jpg'} style={innerStyle} alt={id} />
+				<img src={url} style={innerStyle} alt={id} />
 			</div>
 		);
 
