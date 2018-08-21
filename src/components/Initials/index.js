@@ -8,7 +8,7 @@ import Prefix from './prefix';
 export default class Initial extends Component {
 	
 	render() {
-		const initials = 'ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎABCDEFGHIJKLMNOPQRSTUVWXYZ#'.split('');
+		const initials = 'ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎABCDEFGHIJKLMNOPQRSTUVWXYZ#★'.split('');
 
 		var view = (
 			<div>
@@ -18,12 +18,11 @@ export default class Initial extends Component {
 				<div className="flex-container flex-center flex-wrap">
 					{initials.map(initial => (
 						<div key={initial} className="Initials-key text-center">
-							<Link to={'/initials/' + initial}>
+							<Link to={'/initials/' + this.filterLink(initial)}>
 								{initial}
 							</Link>
 						</div>
 					))}
-					<div className="Initials-key text-center gray">⌫</div>
 				</div>
 			</div>
 		);
@@ -40,5 +39,15 @@ export default class Initial extends Component {
 				<div className="flex-1 hide-mobile" />
 			</div>
 		);
+	}
+
+	filterLink(initial) {
+		if (initial === '#')
+			return '0-9';
+
+		if (initial === '★')
+			return 'Favorites';
+
+		return initial;
 	}
 }

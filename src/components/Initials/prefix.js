@@ -14,13 +14,13 @@ export default class Initial extends Component {
 
 		const initials = 'ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎABCDEFGHIJKLMNOPQRSTUVWXYZ#'.split('');
 
-		this.state = {initials: initials, prefix: this.props.match.params.prefix};
+		this.state = {initials: initials, link: this.props.match.params.prefix};
 		this.add = this.add.bind(this);
 		this.erase = this.erase.bind(this);
 	}
 	
 	componentDidMount() {
-		this.fetch(this.state.prefix);
+		this.fetch(this.state.link);
 	}
 	
 	render() {
@@ -37,7 +37,7 @@ export default class Initial extends Component {
 		return (
 			<div>
 				<div className="top text-center">
-					{filtered.length} Artists: {this.state.prefix}
+					{filtered.length}{this.state.link === 'Favorites' && ' Favorite'} Artists: {this.state.prefix}
 				</div>
 				<div className="flex-container flex-center flex-wrap">
 					{this.state.initials.map(initial => {
@@ -55,7 +55,7 @@ export default class Initial extends Component {
 							</div>
 						);
 					})}
-					{prefix.length === 1 ?
+					{prefix.length <= 1 ?
 						<div className="Initials-key text-center"><Link to="/initials">⌫</Link></div> :
 						<div onClick={() => this.erase()}  className="Initials-key text-center">⌫</div>
 					}
@@ -144,13 +144,20 @@ export default class Initial extends Component {
 
 		return a.nameNorm < b.nameNorm ? -1 : 1;
 	}
+
+	filterPrefix(prefix) {
+		if (prefix === '0-9')
+			return '#';
+
+		if (prefix === 'Favorites')
+			return '';
+
+		return prefix;
+	}
 	
 	fetch(initial) {
 		const that = this;
 		var req = initial;
-
-		if (req === '#')
-			req = '0-9';
 
 		const url = '/api/initial/short/' + req;
 
@@ -161,7 +168,7 @@ export default class Initial extends Component {
     .then(function(data) {
 			data.sort(that.cmpFn);
 			data.forEach(artist => { artist.initial = that.getInitial(artist.nameNorm); });
-      that.setState({prefix: initial, artists: data, filteredArtists: data});
+      that.setState({prefix: that.filterPrefix(initial), artists: data, filteredArtists: data});
     });
 	}
 }

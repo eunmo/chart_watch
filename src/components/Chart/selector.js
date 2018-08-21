@@ -51,7 +51,7 @@ export default class Selector extends Component {
 						{this.getChartAlbumView(entry)}
 						<div className="text-center">
 							<div>{abbrs[entry.chart]}</div>
-							<div className="gray">{this.getWeek(entry)}</div>
+							<div className="lightgray">{this.getWeek(entry)}</div>
 						</div>
 						{this.getChartSingleView(entry)}
 					</div>
