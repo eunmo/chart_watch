@@ -30,10 +30,15 @@ export default class DateUtil {
 		}
 	}
 
-	static toSaturday(date) {
+	static toSaturday(date, diff) {
 		var dateA = date.split('-').map(s => parseInt(s, 10));
+		var offset = 6;
+
+		if (diff)
+			offset += diff;
+			
 		date = new Date(Date.UTC(dateA[0], dateA[1] - 1, dateA[2]));
-		date = new Date(Date.UTC(dateA[0], dateA[1] - 1, dateA[2] + 6 - date.getDay()));
+		date = new Date(Date.UTC(dateA[0], dateA[1] - 1, dateA[2] + offset - date.getDay()));
 		return date.toISOString().substring(0, 10);
 	}
 };

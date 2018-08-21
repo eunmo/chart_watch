@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-import './style.css';
 
-import { Image, NameArray, Loader } from '../../Common';
+import { Image, NameArray, Loader } from '../Common';
 
-import TextUtil from '../../../util/text';
+import TextUtil from '../../util/text';
 		
 var charts = ['billboard', 'uk', 'deutsche', 'francais', 'oricon', 'gaon', 'melon'];
 var abbrs = {

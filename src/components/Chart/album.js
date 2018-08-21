@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-import './style.css';
+import { Image, NameArray, Loader } from '../Common';
 
-import { Image, NameArray, Loader } from '../../Common';
+import DateUtil from '../../util/date';
+import TextUtil from '../../util/text';
 
-import DateUtil from '../../../util/date';
-import TextUtil from '../../../util/text';
-
-export default class Single extends Component {
+export default class Album extends Component {
 
 	constructor(props) {
 		super(props);
@@ -40,24 +38,13 @@ export default class Single extends Component {
 		if (data === null)
 			return <Loader />;
 
-		var songs = [];
-		var rows = [];
-		var prevRow = {rank: 0};
+		var albums = [];
 
-		data.songs.forEach(song => { songs[song.id] = song; });
+		data.albums.forEach(album => { albums[album.id] = album; });
 		data.thisWeek.forEach(row => {
-			if (prevRow.rank !== row.rank) {
-				prevRow = {rank: row.rank, titles: [], songs: []};
-				rows.push(prevRow);
-			}
-				
-			if (row.id === null) {
-				prevRow.artist = row.artist;
-				prevRow.titles[row.order] = row.title;
-			} else {
-				prevRow.songs[row.order] = songs[row.id];
-				prevRow.lastWeek = songs[row.id].lastWeek;
-				prevRow.ranked |= songs[row.id].rank;
+			if (albums[row.AlbumId]) {
+				row.album = albums[row.AlbumId];
+				row.lastWeek = row.album.lastWeek;
 			}
 		});
 		
@@ -76,19 +63,24 @@ export default class Single extends Component {
 
 		return (
 			<div>
-				<div className="top text-center">{TextUtil.capitalize(chart)} Singles Chart</div>
-				<div className="text-center">
-					<span style={weekOfStyle}>Week of</span><input type="date" value={this.state.week} onChange={this.handleDateChange} style={inputStyle} min={minDate} max={maxDate} />
+				<div className="top text-center">{TextUtil.capitalize(chart)} Albums Chart</div>
+				<div className="flex-container">
+					<div className="flex-1 text-right">{this.getPrevLink(minDate)}</div>
+					<div className="text-center">
+						<span style={weekOfStyle}>Week of</span>
+						<input type="date" value={this.state.week} onChange={this.handleDateChange} style={inputStyle} min={minDate} max={maxDate} />
+					</div>
+					<div className="flex-1">{this.getNextLink(maxDate)}</div>
 				</div>
 				<div className="vertical-buffer" />
 				<div className="flex-container">
 					<div className="flex-1 hide-mobile" />
 					<div className="flex-3">
-						{rows.map(row =>
+						{data.thisWeek.map(row => 
 							<div key={row.rank} style={gridStyle}>
 								{this.getRankView(row)}
-								{row.songs.length ? 
-									<Image id={row.songs.map(s => s.albumId)[0]} size={50} /> :
+								{row.album ? 
+									<Image id={row.album.id} size={50} /> :
 									<div></div>
 								}
 								{this.getRowDetailView(row)}
@@ -98,6 +90,32 @@ export default class Single extends Component {
 					<div className="flex-1 hide-mobile" />
 				</div>
 			</div>
+		);
+	}
+
+	getPrevLink(minDate) {
+		const chart = this.state.chart;
+
+		if (this.state.week === minDate)
+			return ;
+
+		return (
+			<Link to={'/chart/single/' + chart + '/' + DateUtil.toSaturday(this.state.week, -7)}>
+				◀&nbsp;
+			</Link>
+		);
+	}
+
+	getNextLink(maxDate) {
+		const chart = this.state.chart;
+
+		if (this.state.week === maxDate)
+			return null;
+
+		return (
+			<Link to={'/chart/single/' + chart + '/' + DateUtil.toSaturday(this.state.week, 7)}>
+				&nbsp;▶
+			</Link>
 		);
 	}
 
@@ -134,7 +152,7 @@ export default class Single extends Component {
 			y -= 3;
 			newText = (
 				<text style={newTextStyle} x={25} y={37}>
-					{(row.songs.filter(s => s.ranked).length > 0) ? 're' : 'new'}
+					{(row.album && row.album.rank) ? 're' : 'new'}
 				</text>
 			);
 		}
@@ -153,48 +171,16 @@ export default class Single extends Component {
 		);
 	}
 
-	// b into a
-	mergeArtistArrays(a, b) {
-		b.forEach(artist => {
-			if (a.filter(a => (a.id === artist.id)).length === 0)
-				a.push(artist);
-		});
-	}
-
-	getArtists(row) {
-		var artists = [];
-		var features = [];
-
-		row.songs.forEach(song => {
-			this.mergeArtistArrays(artists, song.artists);
-			this.mergeArtistArrays(features, song.features);
-		});
-
-		return (
-			<span>
-				<NameArray array={artists} />
-				{features.length > 0 &&
-					<span> feat. <NameArray array={features} /></span>
-				}
-			</span>
-		);
-	}
-
 	getRowDetailView(row) {
-		const songs = row.songs;
+		const album = row.album;
 		var title = null;
 		var artist = null;
 
-		if (songs.length > 0) {
-			title = row.songs.map((song, index) => [
-				<span key={'span' + index}>{index > 0 && ' / '}</span>,
-				<Link to={'/song/' + song.id} key={song.id}>
-					{TextUtil.normalize(song.title)}
-				</Link>
-			]);
-			artist = this.getArtists(row);
+		if (album) {
+			title = TextUtil.normalize(row.album.title);
+			artist = <NameArray array={row.album.artists} />;
 		} else {
-			title = TextUtil.normalize(row.titles.join(' / '));
+			title = TextUtil.normalize(row.title);
 			artist = <span className="lightgray">{TextUtil.normalize(row.artist)}</span>;
 		}
 
@@ -208,7 +194,7 @@ export default class Single extends Component {
 
 	handleDateChange(event) {
 		const adjustedDate = DateUtil.toSaturday(event.target.value);
-		const url = '/chart/single/' + this.state.chart + '/' + adjustedDate;
+		const url = '/chart/album/' + this.state.chart + '/' + adjustedDate;
 
 		if (this.state.week !== adjustedDate) {
 			this.props.history.push(url);
@@ -217,7 +203,7 @@ export default class Single extends Component {
 
 	fetch(week) {
 		const that = this;
-		const url = '/api/chart/single/view/full/' + this.state.chart + '/' + week;
+		const url = '/api/chart/album/view/full/' + this.state.chart + '/' + week;
 
 		fetch(url)
 		.then(function(response) {

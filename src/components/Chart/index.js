@@ -1,10 +1,10 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import Selector from './Selector';
-import Album from './Album';
-import Single from './Single';
-import Current from './Current';
+import Selector from './selector';
+import Album from './album';
+import Single from './single';
+import Current from './current';
 
 const Chart = ({ match }) => (
   <Switch>
