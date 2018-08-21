@@ -55,10 +55,7 @@ export default class Initial extends Component {
 							</div>
 						);
 					})}
-					{prefix.length <= 1 ?
-						<div className="Initials-key text-center"><Link to="/initials">⌫</Link></div> :
-						<div onClick={() => this.erase()}  className="Initials-key text-center">⌫</div>
-					}
+					{this.getDeleteView()}
 				</div>
 				<div>
 					{filtered.map(artist => (
@@ -74,6 +71,19 @@ export default class Initial extends Component {
 				</div>
 			</div>
 		);
+	}
+
+	getDeleteView() {
+		const prefix = this.state.prefix;
+
+		var toAll = <div className="Initials-key text-center"><Link to="/initials">⌫</Link></div>;
+		var deleteChar = <div onClick={() => this.erase()}  className="Initials-key text-center">⌫</div>;
+
+		if ((this.state.link === 'Favorites' && prefix.length === 0) ||
+				prefix.length === 0)
+			return toAll;
+
+		return deleteChar;
 	}
 	
 	add(initial) {
