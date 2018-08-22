@@ -20,6 +20,9 @@ export default class Image extends Component {
     if (window.isWebkit)
       url = 'cw-custom-scheme:/' + url;
 
+		if (id === null || id === undefined)
+			return <div style={outerStyle}></div>;
+
 		var image = (
 			<div style={outerStyle}>
 				<img src={url} style={innerStyle} alt={id} />

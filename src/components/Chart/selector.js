@@ -80,15 +80,24 @@ export default class Selector extends Component {
 					<Image id={song.albumId} size={50} noLink={true}/>
 					<div>
 						<div className="ellipsis">{TextUtil.normalize(song.title)}</div>
-						<div className="ellipsis lightgray">
-							<NameArray array={song.artists} noLink={true}/>
-							{song.features.length > 0 &&
-								<span> ft. <NameArray array={song.features} noLink={true}/></span>}
-						</div>
+						<div className="ellipsis lightgray">{this.getSongArtists(song)}</div>
 					</div>
 				</div>
 			</Link>
 		);
+	}
+
+	getSongArtists(song) {
+		if (song.id === null)
+			return TextUtil.normalize(song.artist);
+
+		return (
+			<span>
+				<NameArray array={song.artists} noLink={true}/>
+				{song.features.length > 0 &&
+					<span> ft. <NameArray array={song.features} noLink={true}/></span>}
+			</span>
+		)
 	}
 
 	getChartAlbumView(entry) {
@@ -109,15 +118,22 @@ export default class Selector extends Component {
 				<div className="overflow-hidden text-right" style={gridStyle}>
 					<div>
 						<div className="ellipsis">{TextUtil.normalize(album.title)}</div>
-						<div className="ellipsis lightgray">
-							{album.format2 === 'Soundtrack' ? 'Soundtrack' :
-								<NameArray array={album.artists} noLink={true}/>}
-						</div>
+						<div className="ellipsis lightgray">{this.getAlbumArtists(album)}</div>
 					</div>
 					<Image id={album.id} size={50} noLink={true}/>
 				</div>
 			</Link>
 		);
+	}
+
+	getAlbumArtists(album) {
+		if (album.id === null)
+			return TextUtil.normalize(album.artist);
+
+		if (album.format2 === 'Soundtrack')
+			return 'Soundtrack';
+
+		return <NameArray array={album.artists} noLink={true}/>;
 	}
 
 	getWeek(entry) {

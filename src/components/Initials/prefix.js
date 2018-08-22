@@ -30,7 +30,6 @@ export default class Initial extends Component {
 		if (this.state.artists === undefined)
 			return null;
 
-		const prefix = this.state.prefix;
 		const filtered = this.filter();
 		const validMap = this.getValidKeys(filtered);
 		
