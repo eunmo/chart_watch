@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import './style.css';
 
-import { Image, NameArray } from '../Common';
+import { Image, Loader, NameArray } from '../Common';
 
 import TextUtil from '../../util/text';
 
@@ -28,7 +28,7 @@ export default class Initial extends Component {
 		var artistImageStyle = { width: '30px', marginRight: '5px', minWidth: '30px' };
 
 		if (this.state.artists === undefined)
-			return null;
+			return <Loader />;
 
 		const filtered = this.filter();
 		const validMap = this.getValidKeys(filtered);
