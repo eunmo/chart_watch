@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './style.css';
 
-import { Image, Loader, NameArray, Release, PageSelector } from '../Common';
+import { Dropdown, Image, Loader, NameArray, Release, PageSelector } from '../Common';
 import Tracks from './tracks';
 import Chart from './chart';
 
@@ -16,6 +16,7 @@ export default class Album extends Component {
 		const id = this.props.match.params.id;
 
 		this.state = {id: id, album: null};
+		this.play = this.play.bind(this);
 	}
 	
 	componentDidMount() {
@@ -43,7 +44,7 @@ export default class Album extends Component {
 		return (
 			<div>
 				<div className="top text-right">
-					<a href={'/#/edit/album/' + album.id} className="gray"><small>Edit</small></a>
+					<Dropdown array={this.getDropdownArray()} />
 				</div>
 				<div className="text-center" style={titleStyle}>
 					{TextUtil.normalize(album.title)}
@@ -65,6 +66,60 @@ export default class Album extends Component {
 				</div>
 			</div>
 		);
+	}
+
+	getSongsToPlay() {
+		const album = this.state.album;
+		var disks = [];
+		var songs = [];
+
+		album.songs.forEach(song => {
+			var disk = song.disk;
+
+			if (disks[disk] === undefined)
+				disks[disk] = {disk: disk, songs: []};
+			disks[disk].songs.push(song);
+		});
+
+		disks.sort((a, b) => { return a.disk - b.disk; });
+		disks.forEach(disk => { disk.songs.sort((a, b) => { return a.track - b.track; })});
+
+		disks.forEach(disk => {
+			disk.songs.forEach(song => {
+				var newSong = {
+					id: song.id,
+					title: song.title,
+					artists: song.artists,
+					features: song.features,
+					albumId: parseInt(album.id, 10),
+					plays: song.plays,
+				};
+
+				if (song.minRank)
+					newSong.minRank = song.minRank;
+
+				songs.push(newSong);
+			});
+		});
+
+		return songs;
+	}
+
+	play() {
+		if (window.isWebkit) {
+			var songs = JSON.stringify(this.getSongsToPlay());
+      window.webkit.messageHandlers.addSongs.postMessage(encodeURIComponent(songs));
+		} else {
+			console.log(this.getSongsToPlay());
+		}
+	}
+
+	getDropdownArray() {
+		const album = this.state.album;
+		return [
+			{name: 'Edit', href: '/#/edit/album/' + album.id},
+			{name: 'Play', onClick: this.play},
+		];
 	}
 
 	getFormat() {

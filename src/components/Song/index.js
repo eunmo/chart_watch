@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './style.css';
 
-import { Chart, Image, Loader, NameArray, Release } from '../Common';
+import { Chart, Dropdown, Image, Loader, NameArray, Release } from '../Common';
 
 import TextUtil from '../../util/text';
 
@@ -14,6 +14,7 @@ export default class Song extends Component {
 		const id = this.props.match.params.id;
 
 		this.state = {id: id, song: null};
+		this.play = this.play.bind(this);
 	}
 	
 	componentDidMount() {
@@ -39,7 +40,7 @@ export default class Song extends Component {
 		return (
 			<div className="Song">
 				<div className="top text-right">
-					<a href={'/#/edit/song/' + song.id} className="gray"><small>Edit</small></a>
+					<Dropdown array={this.getDropdownArray()} />
 				</div>
 				<div className="top text-center">
 					{TextUtil.normalize(song.title)}
@@ -73,6 +74,51 @@ export default class Song extends Component {
 				</div>
 			</div>
 		);
+	}
+	
+	getSongsToPlay() {
+		const song = this.state.song;
+		var newSong = {
+			id: parseInt(song.id, 10),
+			title: song.title,
+			artists: song.artists, 
+			features: song.features,
+			albumId: song.albums[0].id,
+			plays: song.plays
+		};
+
+		if (song.charts) {
+			var minRank = 101;
+
+			song.charts.weeks.forEach(week => {
+				week.ranks.forEach(rank => {
+					if (rank !== '-')
+						minRank = Math.min(rank, minRank);
+				});
+			});
+
+			if (minRank <= 10)
+				newSong.minRank = minRank;
+		}
+
+		return [newSong];
+	}
+
+	play() {
+		if (window.isWebkit) {
+			var songs = JSON.stringify(this.getSongsToPlay());
+      window.webkit.messageHandlers.addSongs.postMessage(encodeURIComponent(songs));
+		} else {
+			console.log(this.getSongsToPlay());
+		}
+	}
+
+	getDropdownArray() {
+		const song = this.state.song;
+		return [
+			{name: 'Edit', href: '/#/edit/song/' + song.id},
+			{name: 'Play', onClick: this.play},
+		];
 	}
 	
 	getAlbumView(album) {
