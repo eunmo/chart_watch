@@ -100,7 +100,7 @@ export default class Album extends Component {
 			return ;
 
 		return (
-			<Link to={'/chart/single/' + chart + '/' + DateUtil.toSaturday(this.state.week, -7)}>
+			<Link to={'/chart/album/' + chart + '/' + DateUtil.toSaturday(this.state.week, -7)}>
 				◀&nbsp;
 			</Link>
 		);
@@ -113,7 +113,7 @@ export default class Album extends Component {
 			return null;
 
 		return (
-			<Link to={'/chart/single/' + chart + '/' + DateUtil.toSaturday(this.state.week, 7)}>
+			<Link to={'/chart/album/' + chart + '/' + DateUtil.toSaturday(this.state.week, 7)}>
 				&nbsp;▶
 			</Link>
 		);
