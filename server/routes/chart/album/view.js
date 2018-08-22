@@ -48,6 +48,11 @@
 				var albums = [];
 				var nonMatches = {};
 
+				if (thisWeekRows.length === 0) {
+					res.json({thisWeek: [], albums: []});
+					return;
+				}
+
 				thisWeekRows.forEach(row => {
 					if (row.AlbumId !== null) {
 						albums[row.AlbumId] = {id: row.AlbumId};
@@ -66,19 +71,22 @@
 							albums[id].lastWeek = Math.min(albums[id].lastWeek, row.rank);
 					}
 
-					if (id === null) {
-						var nonMatch = nonMatches[row.artist + row.title];
-						
-						if (nonMatch !== undefined) {
-							if (nonMatch.lastWeek === undefined)
-								nonMatch.lastWeek = row.rank;
-							else
-								nonMatch.lastWeek = Math.min(nonMatch.lastWeek, row.rank);
-						}
+					var nonMatch = nonMatches[row.artist + row.title];
+
+					if (nonMatch !== undefined) {
+						if (nonMatch.lastWeek === undefined)
+							nonMatch.lastWeek = row.rank;
+						else
+							nonMatch.lastWeek = Math.min(nonMatch.lastWeek, row.rank);
 					}
 				});
 
 				var ids = albums.filter(a => a).map(a => a.id);
+				
+				if (ids.length === 0) {
+					res.json({thisWeek: thisWeekRows, albums: []});
+					return;
+				}
 
 				var promises = [];
 

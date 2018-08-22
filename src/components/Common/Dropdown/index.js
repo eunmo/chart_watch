@@ -36,12 +36,20 @@ export default class Dropdown extends Component {
 				<div className="Dropdown-content" style={contentStyle}>
 					{this.props.array.map(item => 
 						item.href ?
-						<a key={item.name} href={item.href}>{item.name}</a> :
-						<div key={item.name} onClick={() => this.clickItem(item)}>{item.name}</div>
+						<a key={item.name} href={item.href}>
+							{this.replaceSpace(item.name)}
+						</a> :
+						<div key={item.name} onClick={() => this.clickItem(item)}>
+							{this.replaceSpace(item.name)}
+						</div>
 					)}
 				</div>
 			</div>
 		);
+	}
+
+	replaceSpace(string) {
+		return string.replace(/ /g, '\u00A0');
 	}
 
 	clickItem(item) {
@@ -58,7 +66,8 @@ export default class Dropdown extends Component {
 	}
 
 	toggle(event) {
-		if (!(event.target.parentNode && event.target.parentNode.classList.contains('Dropdown-content')))
+		const parentNode = event.target.parentNode;
+		if (!(parentNode && parentNode.classList && parentNode.classList.contains('Dropdown-content')))
 			this.setState({expand: false});
 	}
 }

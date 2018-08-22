@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-import { Image, NameArray, Loader } from '../Common';
+import { Dropdown, Image, NameArray, Loader } from '../Common';
 
 import DateUtil from '../../util/date';
 import TextUtil from '../../util/text';
@@ -17,10 +17,13 @@ export default class Album extends Component {
 		this.state = {chart: chart, week: week, data: null};
 
 		this.handleDateChange = this.handleDateChange.bind(this);
+		this.fetch = this.fetch.bind(this);
+		this.match = this.match.bind(this);
+		this.clear = this.clear.bind(this);
 	}
 	
 	componentDidMount() {
-		this.fetch(this.state.week);
+		this.view(this.state.week);
 	}
 	
 	componentWillReceiveProps(nextProps) {
@@ -28,7 +31,7 @@ export default class Album extends Component {
 
 		if (this.state.week !== week) {
 			this.setState({week: week});
-			this.fetch(week);
+			this.view(week);
 		}
 	}
 	
@@ -63,7 +66,11 @@ export default class Album extends Component {
 
 		return (
 			<div>
-				<div className="top text-center">{TextUtil.capitalize(chart)} Albums Chart</div>
+				<div className="top flex-container">
+					<div className="flex-1" />
+					<div className="text-center">{TextUtil.capitalize(chart)} Albums Chart</div>
+					<div className="flex-1 text-right"><Dropdown array={this.getDropdownArray()} /></div>
+				</div>
 				<div className="flex-container">
 					<div className="flex-1 text-right">{this.getPrevLink(minDate)}</div>
 					<div className="text-center">
@@ -91,6 +98,16 @@ export default class Album extends Component {
 				</div>
 			</div>
 		);
+	}
+
+	getDropdownArray() {
+		const chart = this.state.chart;
+		return [
+			{name: 'Fetch', onClick: this.fetch},
+			{name: 'Match', onClick: this.match},
+			{name: 'Clear', onClick: this.clear},
+			{name: 'Old page', href: '/#/chart/album/' + chart + '/' + this.state.week},
+		];
 	}
 
 	getPrevLink(minDate) {
@@ -201,7 +218,35 @@ export default class Album extends Component {
 		}
 	}
 
-	fetch(week) {
+	update(type) {
+		const that = this;
+		var url = '/chart/album/' + type + '/' + this.state.chart;
+		var week = this.state.week.split('-');
+		url += '?year=' + week[0];
+		url += '&month=' + week[1];
+		url += '&day=' + week[2];
+
+		this.setState({data: null});
+
+		fetch(url)
+		.then(function(response) {
+			that.view(that.state.week);
+    })
+	}
+	
+	fetch() {
+		this.update('fetch');
+	}
+	
+	match() {
+		this.update('match');
+	}
+	
+	clear() {
+		this.update('clear');
+	}
+
+	view(week) {
 		const that = this;
 		const url = '/api/chart/album/view/full/' + this.state.chart + '/' + week;
 

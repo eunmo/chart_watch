@@ -63,6 +63,11 @@
 				var songs = [];
 				var nonMatches = {};
 
+				if (thisWeekRows.length === 0) {
+					res.json({thisWeek: [], songs: []});
+					return;
+				}
+
 				thisWeekRows.forEach(row => {
 					if (row.id != null) {
 						songs[row.id] = {id: row.id};
@@ -81,19 +86,22 @@
 							songs[id].lastWeek = Math.min(songs[id].lastWeek, row.rank);
 					}
 
-					if (id === null) {
-						var nonMatch = nonMatches[row.artist + row.title + row.order];
-						
-						if (nonMatch !== undefined) {
-							if (nonMatch.lastWeek === undefined)
-								nonMatch.lastWeek = row.rank;
-							else
-								nonMatch.lastWeek = Math.min(nonMatch.lastWeek, row.rank);
-						}
+					var nonMatch = nonMatches[row.artist + row.title + row.order];
+
+					if (nonMatch !== undefined) {
+						if (nonMatch.lastWeek === undefined)
+							nonMatch.lastWeek = row.rank;
+						else
+							nonMatch.lastWeek = Math.min(nonMatch.lastWeek, row.rank);
 					}
 				});
 
 				var ids = songs.filter(a => a).map(a => a.id);
+
+				if (ids.length === 0) {
+					res.json({thisWeek: thisWeekRows, songs: []});
+					return;
+				}
 
 				var promises = [];
 
