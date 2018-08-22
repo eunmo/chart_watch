@@ -79,7 +79,7 @@ export default class Initial extends Component {
 		var deleteChar = <div onClick={() => this.erase()}  className="Initials-key text-center">⌫</div>;
 
 		if ((this.state.link === 'Favorites' && prefix.length === 0) ||
-				prefix.length === 0)
+				prefix.length === 1)
 			return toAll;
 
 		return deleteChar;
