@@ -21,10 +21,14 @@ export default class PlayHistory extends Component {
 	}
 
 	render() {
-		var outerStyle = {marginBottom: '5px'};
-		var timestampStyle = {lineHeight: '25px', width: '50px', marginRight: '10px'};
-		var innerStyle = {lineHeight: '25px', marginLeft: '10px'};
 		var numStyle = {width: '20px', background: 'rgba(255, 255, 255, 0.2)', borderRadius: '5px'};
+		var gridStyle = {
+      display: 'grid',
+      gridTemplateColumns: '50px 50px 1fr',
+      gridColumnGap: '10px',
+      lineHeight: '25px',
+			marginBottom: '5px',
+    };
 
 		return (
 			<div>
@@ -34,8 +38,8 @@ export default class PlayHistory extends Component {
 					<div className="flex-1 hide-mobile" />
 					<div className="flex-3">
 						{this.state.songs.map(song => 
-							<div key={song.id} className="flex-container" style={outerStyle}>
-								<div style={timestampStyle} className="text-center">
+							<div key={song.id} style={gridStyle}>
+								<div className="text-center">
 									<div className="gray">{this.getTime(song)}</div>
 									<div className="flex-container flex-space-between">
 										<div style={this.getRankStyle(song.rank)}>{this.getMinRank(song)}</div>
@@ -43,9 +47,9 @@ export default class PlayHistory extends Component {
 									</div>
 								</div>
 								<Image id={song.albumId} size={50} />
-								<div className="flex-1" style={innerStyle}>
-									<div><Link to={'/song/' + song.id}>{TextUtil.normalize(song.title)}</Link></div>
-									<div><small>by</small> <NameArray array={song.artists} /></div>
+								<div className="overflow-hidden">
+									<div className="ellipsis"><Link to={'/song/' + song.id}>{TextUtil.normalize(song.title)}</Link></div>
+									<div className="ellipsis"><small>by</small> <NameArray array={song.artists} /></div>
 								</div>
 							</div>
 						)}

@@ -13,8 +13,8 @@ export default class Image extends Component {
 		}
 		var pixel = size + 'px';
 		var borderRadius = borderRadiusMap[size] ? borderRadiusMap[size] : size/5;
-		var outerStyle = {display: 'flex', alignContent: 'center', maxHeight: pixel, maxWidth: pixel};
-		var innerStyle = {margin: 'auto', width: pixel, height: pixel, borderRadius: borderRadius + 'px'};
+		var outerStyle = {display: 'flex', alignContent: 'center', height: pixel, width: pixel};
+		var innerStyle = {margin: 'auto', maxWidth: pixel, maxHeight: pixel, borderRadius: borderRadius + 'px'};
 		var url = '/' + id + '.jpg';
 
     if (window.isWebkit)
