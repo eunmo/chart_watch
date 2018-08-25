@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './style.css';
 
-import { Loader, PageSelector } from '../Common';
+import { Dropdown, Loader, PageSelector } from '../Common';
 
 import Albums from './albums';
 import Singles from './singles';
@@ -48,7 +48,7 @@ export default class Artist extends Component {
 		return (
 			<div>
 				<div className="top text-right">
-					<a href={'/#/edit/artist/' + artist.id} className="gray"><small>Edit</small></a>
+					<Dropdown array={this.getDropdownArray()} />
 				</div>
 				<div className="top text-center">
 					{TextUtil.normalize(artist.name)}
@@ -65,6 +65,14 @@ export default class Artist extends Component {
 				</div>
 			</div>
 		);
+	}
+
+	getDropdownArray() {
+		const artist = this.state.artist;
+		return [
+			{name: 'Edit', href: '/#/edit/artist/' + artist.id},
+			{name: 'Old Page', href: '/#/artist/' + artist.id},
+		];
 	}
 
 	createSingle(song) {
