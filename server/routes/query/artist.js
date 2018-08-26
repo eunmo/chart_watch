@@ -218,6 +218,25 @@
 			});
 	};
 
+	var getSinglePeaks = function (db, artist) {
+		var ids = artist.songIds;
+		var query = 
+			'SELECT a.SongId as id, min(`week`) as week ' +
+				'FROM SingleCharts a,' +
+							'(SELECT SongId, min(`rank`) as r' +
+							' FROM SingleCharts WHERE SongId in (' + ids.join(',') + ')' +
+							' AND `rank` <= 10' +
+							' GROUP BY SongId) b' +
+			' WHERE a.SongId = b.SongId' +
+				' AND a.`rank` = b.r' +
+			' GROUP BY a.SongId;';
+
+		return db.promisifyQuery(query)
+			.then (function (rows) {
+				artist.singlePeaks = rows;
+			});
+	};
+
 	module.exports = function (router, _, db) {
 		router.get('/api/artist/:_id', function (req, res) {
 			var id = parseInt(req.params._id);
@@ -245,6 +264,7 @@
 					promises.push(findSongChartSummary(db, artist, maps));
 					
 					promises.push(groupSingles(db, artist));
+					promises.push(getSinglePeaks(db, artist));
 
 					return Promise.all(promises)
 						.then(function () {

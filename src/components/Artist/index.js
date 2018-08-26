@@ -283,6 +283,16 @@ export default class Artist extends Component {
 		return desc;
 	}
 
+	formatSinglePeaks(artist) {
+		var map = {};
+
+		artist.singlePeaks.forEach(single => {
+			map[single.id] = single.week;
+		});
+
+		return map;
+	}
+
 	getViews(artist) { 
 		const [directAlbums, otherAlbums] = this.getDirectAlbums(artist);
 		const songs = this.getSongs(artist);
@@ -302,7 +312,7 @@ export default class Artist extends Component {
 		if (singles.length > 0)
 			views.push({
 				name: 'Singles', link: '/singles', component: Singles,
-				data: {singles: singles, id: artist.id}
+				data: {singles: singles, id: artist.id, peaks: this.formatSinglePeaks(artist)}
 			});
 		if (songs.length > 0)
 			views.push({

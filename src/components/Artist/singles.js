@@ -33,7 +33,7 @@ export default class ArtistSingles extends Component {
 								])}
 							</div>
 							<div>
-								<Release date={album.release} />
+								<Release date={this.getPeak(single)} />
 							</div>
 						</div>
 						<div>
@@ -44,5 +44,14 @@ export default class ArtistSingles extends Component {
 				</div>
 			);			
 		});
+	}
+
+	getPeak(single) {
+		const peaks = this.props.data.peaks;
+
+		if (peaks[single.songs[0].id])
+			return peaks[single.songs[0].id];
+
+		return single.album.release;
 	}
 }
