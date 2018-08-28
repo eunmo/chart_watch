@@ -53,6 +53,9 @@ export default class Song extends Component {
 					<small>feat.</small> <NameArray array={song.features} />
 				</div>
 				}
+				<div className="text-center">
+					<small className="lightgray">played</small> {song.plays} <small className="lightgray">times</small>
+				</div>
 				<div className="flex-container flex-adaptive">
 					<div className="flex-1">
 						<div className="flex-container">

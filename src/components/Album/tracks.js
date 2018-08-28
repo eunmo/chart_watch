@@ -56,10 +56,11 @@ export default class AlbumTracks extends Component {
 		var style = {lineHeight: '21px'};
 		var rankStyle = {width: 30, textAlign: 'right'};
 		var trackStyle = {width: 20, fontSize: '0.8em', marginRight: '3px'};
+		var playStyle = {width: 20, fontSize: '0.8em', textAlign: 'right', marginRight: '5px'};
 
 		return (
 			<div key={song.track} className="flex-container" style={style}>
-				<div className="text-center" style={rankStyle}>
+				<div style={rankStyle}>
 					{this.getRankView(song)}
 				</div>
 				<div className="text-center" style={trackStyle}>{song.track}</div>
@@ -67,6 +68,9 @@ export default class AlbumTracks extends Component {
 					<div>{TextUtil.normalize(song.title)}</div>
 					<ArtistView filterIds={albumArtists.map(a => a.id)} artists={song.artists} />
 					<ArtistView prefix="feat." artists={song.features} />
+				</div>
+				<div className="lightgray" style={playStyle}>
+					{song.plays}
 				</div>
 			</div>
 		);
