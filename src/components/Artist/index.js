@@ -122,6 +122,8 @@ export default class Artist extends Component {
 			}
 		});
 
+		singles = singles.filter(s => s);
+
 		if (artist.singleGroups.length > 0) {
 			artist.singleGroups.forEach(group => {
 				if (singles[group[0]]) {
