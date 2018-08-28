@@ -28,7 +28,7 @@ export default class Chart extends Component {
 	render() {
 		const size = this.state.size;
 		const style = {
-			svg: {backgroundColor: 'rgba(255, 255, 255, 0.2)'},
+			svg: {backgroundColor: 'rgba(255, 255, 255, 0.3)'},
 		};
 		
 		var [months, ranks] = this.calculate();
@@ -53,6 +53,7 @@ export default class Chart extends Component {
 					<div style={style.legend} className="Chart-legend text-right">
 						<div>Chart</div>
 						<div>Peak</div>
+						<div>Run</div>
 						<div>WoC</div>
 					</div>
 					{this.props.data.headers.map((header, index) => {
@@ -62,9 +63,10 @@ export default class Chart extends Component {
 							return null;
 
 						return (
-							<div key={header} style={style} className="Chart-legend text-center">
-								<div>{this.getAbbr(header)}</div>
+							<div key={header} className="Chart-legend text-center">
+								<div style={style}><b>{this.getAbbr(header)}</b></div>
 								<div>{ranks.peaks[index]}</div>
+								<div>{ranks.runs[index]}</div>
 								<div>{ranks.wocs[index]}</div>
 							</div>
 						);
@@ -264,10 +266,11 @@ export default class Chart extends Component {
 		const headers = this.props.data.headers;
 		const weeks = this.props.data.weeks;
 		var months = {min: '300010', max: '100010'};
-		var ranks = {max: 0, peaks: [], wocs: []};
+		var ranks = {max: 0, peaks: [], runs: [], wocs: []};
 
 		headers.forEach((header, index) => {
 			ranks.peaks[index] = 101;
+			ranks.runs[index] = 0;
 			ranks.wocs[index] = 0;
 		});
 
@@ -278,8 +281,12 @@ export default class Chart extends Component {
 			week.ranks.forEach((rank, index) => {
 				if (rank !== '-' && rank <= 100) {
 					ranks.max = Math.max(ranks.max, rank);
+					if (ranks.peaks[index] > rank)
+						ranks.runs[index] = 0;
 					ranks.peaks[index] = Math.min(ranks.peaks[index], rank);
 					ranks.wocs[index]++;
+					if (ranks.peaks[index] === rank)
+						ranks.runs[index]++;
 					valid = true;
 				}
 			});
