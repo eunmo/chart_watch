@@ -31,7 +31,11 @@ my $count = 1;
 
 print "[";
 
-for my $div ($dom->find('div[class*="title-artist"]')->each) {
+
+for my $tr ($dom->find('tr')->each) {
+	next if $tr->find('span[class="position"]')->size() == 0;
+	next if $tr->find('span[class="position"]')->first->text !~ $rank;
+for my $div ($tr->find('div[class*="title-artist"]')->each) {
 	my $title_norm;
 	if ($div->find('div[class="title"]')->first) {
 		my $title = $div->find('div[class="title"]')->first->find('a')->first->text;
@@ -45,6 +49,7 @@ for my $div ($dom->find('div[class*="title-artist"]')->each) {
 	print ",\n" if $rank > 1;
 	print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"title\": \"$title_norm\" }";
 	$rank++;
+}
 }
 
 print "]";
