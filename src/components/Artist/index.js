@@ -122,8 +122,6 @@ export default class Artist extends Component {
 			}
 		});
 
-		singles = singles.filter(s => s);
-
 		if (artist.singleGroups.length > 0) {
 			artist.singleGroups.forEach(group => {
 				if (singles[group[0]]) {
@@ -148,6 +146,8 @@ export default class Artist extends Component {
 			});
 
 			singles = singles.filter(s => (s.merged !== true));
+		} else {
+			singles = singles.filter(s => s);
 		}
 		
 		singles.sort(this.cmpSingle);
