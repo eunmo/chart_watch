@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import './style.css';
 
-import { Image, NameArray } from '../Common';
+import { Image, NameArray, PlayBar } from '../Common';
 
 import TextUtil from '../../util/text';
 
@@ -12,7 +12,7 @@ export default class PlayHistory extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {songs: []};
+		this.state = {songs: [], stats: []};
 		this.fetch = this.fetch.bind(this);
 	}
 
@@ -33,7 +33,7 @@ export default class PlayHistory extends Component {
 		return (
 			<div>
 				<div className="top text-center" onClick={() => this.fetch()}>Play History</div>
-				<div className="vertical-buffer" />
+				<PlayBar stats={this.state.stats} />
 				<div className="flex-container">
 					<div className="flex-1 hide-mobile" />
 					<div className="flex-3">
@@ -124,6 +124,14 @@ export default class PlayHistory extends Component {
     })
     .then(function(data) {
       that.setState({songs: data});
+    });
+
+		fetch('/stats/plays-by-song')
+		.then(function(response) {
+      return response.json();
+    })
+    .then(function(data) {
+      that.setState({stats: data});
     });
 	}
 }

@@ -64,6 +64,11 @@ for (my $i = 1; $i <= $count; $i++) {
 			print "{ \"rank\": $rank, \"artist\": \"$artist\", \"titles\": [";
 			my $titleCount = 1;
 			my @tokens = split(/\/|\|/, $title);
+
+			if ($title =~ "「イッツ・マイ・ターン」&「ライブ・ライフ」") {
+				@tokens = ("イッツ・マイ・ターン", "ライブ・ライフ");
+			}
+
 			foreach my $token (@tokens) {
 				my $token_norm = normalize_title($token);
 				print ", " if $titleCount > 1;	
