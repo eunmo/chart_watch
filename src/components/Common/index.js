@@ -7,3 +7,4 @@ export {default as NameArray} from './NameArray';
 export {default as PageSelector} from './PageSelector';
 export {default as PlayBar} from './PlayBar';
 export {default as Release} from './Release';
+export {default as WeekPicker} from './WeekPicker';

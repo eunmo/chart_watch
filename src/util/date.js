@@ -41,4 +41,12 @@ export default class DateUtil {
 		date = new Date(Date.UTC(dateA[0], dateA[1] - 1, dateA[2] + offset - date.getDay()));
 		return date.toISOString().substring(0, 10);
 	}
+
+	static getYear(date) {
+		return parseInt(date.substring(0, 4), 10);
+	}
+
+	static getMonth(date) {
+		return parseInt(date.substring(5, 7), 10);
+	}
 };

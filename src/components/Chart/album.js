@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 
-import { Dropdown, Image, NameArray, Loader } from '../Common';
+import { Dropdown, Image, NameArray, Loader, WeekPicker } from '../Common';
 
-import DateUtil from '../../util/date';
 import TextUtil from '../../util/text';
 
 export default class Album extends Component {
@@ -16,7 +14,6 @@ export default class Album extends Component {
 
 		this.state = {chart: chart, week: week, data: null};
 
-		this.handleDateChange = this.handleDateChange.bind(this);
 		this.fetch = this.fetch.bind(this);
 		this.match = this.match.bind(this);
 		this.clear = this.clear.bind(this);
@@ -58,11 +55,6 @@ export default class Album extends Component {
 			lineHeight: '25px',
 			marginBottom: '10px',
 		};
-		var weekOfStyle ={marginRight: '5px'};
-		var inputStyle = {background: 'rgba(255, 255, 255, 0.2)', border: '0px', fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Helvetica, Arial, sans-serif", color: 'white'};
-
-		const maxDate = DateUtil.getMaxDate(chart).toISOString().substring(0, 10);
-		const minDate = DateUtil.getMinDate(chart).toISOString().substring(0, 10);
 
 		return (
 			<div>
@@ -71,14 +63,7 @@ export default class Album extends Component {
 					<div className="text-center">{TextUtil.capitalize(chart)} Albums Chart</div>
 					<div className="flex-1 text-right"><Dropdown array={this.getDropdownArray()} /></div>
 				</div>
-				<div className="flex-container">
-					<div className="flex-1 text-right">{this.getPrevLink(minDate)}</div>
-					<div className="text-center">
-						<span style={weekOfStyle}>Week of</span>
-						<input type="date" value={this.state.week} onChange={this.handleDateChange} style={inputStyle} min={minDate} max={maxDate} />
-					</div>
-					<div className="flex-1">{this.getNextLink(maxDate)}</div>
-				</div>
+				<WeekPicker week={this.state.week} chart={chart} basename={'/chart/single'} />
 				<div className="vertical-buffer" />
 				<div className="flex-container">
 					<div className="flex-1 hide-mobile" />
@@ -108,32 +93,6 @@ export default class Album extends Component {
 			{name: 'Clear', onClick: this.clear},
 			{name: 'Old page', href: '/#/chart/album/' + chart + '/' + this.state.week},
 		];
-	}
-
-	getPrevLink(minDate) {
-		const chart = this.state.chart;
-
-		if (this.state.week === minDate)
-			return ;
-
-		return (
-			<Link to={'/chart/album/' + chart + '/' + DateUtil.toSaturday(this.state.week, -7)}>
-				◀&nbsp;
-			</Link>
-		);
-	}
-
-	getNextLink(maxDate) {
-		const chart = this.state.chart;
-
-		if (this.state.week === maxDate)
-			return null;
-
-		return (
-			<Link to={'/chart/album/' + chart + '/' + DateUtil.toSaturday(this.state.week, 7)}>
-				&nbsp;▶
-			</Link>
-		);
 	}
 
 	getRankView(row) {
@@ -207,15 +166,6 @@ export default class Album extends Component {
 				<div className="ellipsis">{artist}</div>
 			</div>
 		);
-	}
-
-	handleDateChange(event) {
-		const adjustedDate = DateUtil.toSaturday(event.target.value);
-		const url = '/chart/album/' + this.state.chart + '/' + adjustedDate;
-
-		if (this.state.week !== adjustedDate) {
-			this.props.history.push(url);
-		}
 	}
 
 	update(type) {
