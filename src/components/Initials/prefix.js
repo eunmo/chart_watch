@@ -17,6 +17,7 @@ export default class Initial extends Component {
 		this.state = {initials: initials, link: this.props.match.params.prefix};
 		this.add = this.add.bind(this);
 		this.erase = this.erase.bind(this);
+		this.cmpFn = this.cmpFn.bind(this);
 	}
 	
 	componentDidMount() {
@@ -95,9 +96,14 @@ export default class Initial extends Component {
 	}
 
 	filter() {
-		var filtered = this.state.artists.filter(artist => (artist.initial.startsWith(this.state.prefix)));
+		const prefix = this.state.prefix;
+		var exactMatch = this.state.artists.filter(artist => (artist.initial === prefix));
+		var prefixMatch = this.state.artists.filter(artist => (artist.initial !== prefix && artist.initial.startsWith(prefix)));
 
-		return filtered;
+		exactMatch.sort(this.cmpFn);
+		prefixMatch.sort(this.cmpFn);
+
+		return exactMatch.concat(prefixMatch);
 	}
 
 	getValidKeys(filtered) {
@@ -141,9 +147,13 @@ export default class Initial extends Component {
 		return initialized;
 	}
 
+	cmpFnU(a, b) {
+		return a.nameNorm.toUpperCase() < b.nameNorm.toUpperCase() ? -1 : 1;
+	}
+
 	cmpFn(a, b) {
 		if (a.maxAlbum === 0 && b.maxAlbum === 0)
-			return a.nameNorm < b.nameNorm ? -1 : 1;
+			return this.cmpFnU(a, b);
 
 		if (a.maxAlbum === 0)
 			return 1;
@@ -151,7 +161,7 @@ export default class Initial extends Component {
 		if (b.maxAlbum === 0)
 			return -1;
 
-		return a.nameNorm < b.nameNorm ? -1 : 1;
+		return this.cmpFnU(a, b);
 	}
 
 	filterPrefix(prefix) {
