@@ -63,7 +63,7 @@ export default class Album extends Component {
 					<div className="text-center">{TextUtil.capitalize(chart)} Albums Chart</div>
 					<div className="flex-1 text-right"><Dropdown array={this.getDropdownArray()} /></div>
 				</div>
-				<WeekPicker week={this.state.week} chart={chart} basename={'/chart/single'} />
+				<WeekPicker week={this.state.week} chart={chart} basename={'/chart/album'} />
 				<div className="vertical-buffer" />
 				<div className="flex-container">
 					<div className="flex-1 hide-mobile" />

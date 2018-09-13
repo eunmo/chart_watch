@@ -85,6 +85,15 @@
 			});
 		}
 
+		function getNewAlbums() {
+			var query =
+				"SELECT distinct AlbumId id From AlbumSongs a, Songs s" +
+				" WHERE a.SongId = s.id AND s.plays = 0";
+
+			return db.promisifyQuery(query)
+			.then(idRowsToArray);
+		}
+
 		function addArrayToMap(array, map) {
 			var id;
 
@@ -271,6 +280,14 @@
 				.then(function (array) {
 					result.seasonal = array;
 					addArrayToMap(array, songMap);
+				})
+			);
+
+			promises.push(
+				getNewAlbums()
+				.then(function (array) {
+					result.newAlbums = array;
+					addArrayToMap(array, albumMap);
 				})
 			);
 
