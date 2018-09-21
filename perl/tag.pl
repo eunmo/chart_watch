@@ -56,7 +56,7 @@ sub get_feat {
 sub get_artist_array {
 	my $str = shift;
 
-	my @rough_split = split(/[＆&,]/, $str);
+	my @rough_split = split(/[＆&,、]/, $str);
 	my @arr = ();
 
 	foreach $artist (@rough_split) {
