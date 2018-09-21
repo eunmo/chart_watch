@@ -16,6 +16,9 @@ export default class Chart extends Component {
 	createNewWeeksArray(array) {
 		var newArray = [];
 
+		if (array === undefined)
+			return newArray;
+
 		array.forEach(week => { newArray.push(week) });
 
 		return newArray.reverse();
@@ -94,11 +97,11 @@ export default class Chart extends Component {
 
 	getColor(type) {
 		const map = {
-			'billboard': '#ff0000',
-			'oricon': '#1a2a6c',
-			'deutsche': '#ffdd00',
-			'uk': '#c1d82f',
-			'francais': '#00a4e4',
+			'billboard': 'rgb(255, 204, 0)',
+			'oricon': 'rgb(76, 217, 100)',
+			'deutsche': 'rgb(90, 200, 250)',
+			'uk': 'rgb(0, 122, 255)',
+			'francais': 'rgb(88, 86, 214)',
 			'melon': 'black',
 			'gaon': 'white'
 		};
