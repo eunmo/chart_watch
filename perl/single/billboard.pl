@@ -24,28 +24,15 @@ if ($ld->ymd() =~ '2018-01-05') { #2018-01-03 (matches chart date 2017-12-23)
 
 my $ld_ymd = $ld->ymd();
 
-my $url = "http://www.billboard.com/charts/hot-100/$ld_ymd";
-#my $html = get("$url");
-my $browser = LWP::UserAgent->new();
-my @chrome_like_headers = (
-  'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
-  'Accept-Language' => 'en-US,en;q=0.9,ja;q=0.8,ko;q=0.7',
-  'Accept-Charset' => 'iso-8859-1,*,utf-8',
-  'Accept-Encoding' => 'gzip, deflate, br',
-  'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-	'Connection' => 'keep-alive',
-	'Upgrade-Insecure-Requests' => 1,
-	'Cookie' => 'SCOUTER=xtem39gaq7e39; PCID=14675479856998918986776; WMONID=gkvTQbFCj0d; charttutorial=true; POC=WP10',
-);
-my $response = $browser->get($url, @chrome_like_headers);
-my $html = $response->decoded_content;
+my $url = "https://www.billboard.com/charts/hot-100/$ld_ymd";
+my $html = qx{curl --silent $url};
 my $dom = Mojo::DOM->new($html);
 my $rank = 1;
 
 print "[";
 
 my $title = $dom->find('div[class="chart-number-one__title"]')->first->text;
-my $artist = $dom->find('div[class="chart-number-one__artist"] a')->first->text;
+my $artist = $dom->find('div[class="chart-number-one__artist"]')->first->all_text;
 my $title_norm = normalize($title);
 my $artist_norm = normalize($artist);
 	
