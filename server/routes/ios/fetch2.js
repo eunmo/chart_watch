@@ -224,6 +224,47 @@
 			return db.song.fetchMinChartRank(songMap, songIds);
 		}
 
+		function condenseIds(rows) {
+			var result = [];
+
+			if (rows.length === 0)
+				return result;
+
+			var cur, prev = rows[0].id;
+			var start = prev;
+
+			for (var i = 1; i < rows.length; i++) {
+				cur = rows[i].id;
+				if (prev + 1 !== cur) {
+					result.push([start, prev]);
+					start = cur;
+				}
+				prev = cur;
+			}
+
+			result.push([start, cur]);
+
+			return result;
+		}
+
+		function getSongIds(result) {
+			var query = "SELECT id FROM Songs ORDER BY id";
+
+			return db.promisifyQuery(query)
+			.then(function (rows) {
+				result.songIds = condenseIds(rows);
+			});
+		}
+
+		function getAlbumIds(result) {
+			var query = "SELECT id From Albums ORDER BY id";
+
+			return db.promisifyQuery(query)
+			.then(function (rows) {
+				result.albumIds = condenseIds(rows);
+			});
+		}
+
 		router.get('/ios/fetch2', function (req, res) {
 			var promises = [];
 			var result = {};
@@ -297,6 +338,8 @@
 
 					promises.push(getSongAlbums(songMap, albumMap));
 					promises.push(getAlbumSongs(albumMap, songMap));
+					promises.push(getSongIds(result));
+					promises.push(getAlbumIds(result));
 
 					return Promise.all(promises);
 				}).then(function () {
