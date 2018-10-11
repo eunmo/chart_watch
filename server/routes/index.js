@@ -26,7 +26,7 @@
 		});
   
 	router.get('/react/*', function (req, res) {
-    res.sendFile(path.resolve('build', 'index.html'));
+    res.sendFile(path.join(__dirname, '../../build/index.html'));
   });
 
   /* GET home page. */
