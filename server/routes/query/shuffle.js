@@ -30,13 +30,7 @@
 		}
 	};
 
-	var queries = [
-		{ query: "SELECT id FROM Songs;", code: 'A', callback: simpleRandom },
-		{ query: "SELECT id FROM Songs WHERE (plays <= 2) OR (plays < 10 AND id IN (SELECT distinct SongId FROM SingleCharts WHERE rank <= 10));", 
-			code: 'B', callback: simpleRandom },
-		{ query: "SELECT s.id,  11 - min(rank) as weight FROM Songs s, SingleCharts sc WHERE s.id = sc.SongId AND sc.rank <= 10 GROUP BY s.id;", 
-			code: 'C', callback: weightedRandom },
-		{ query:
+	const favoriteArtistQuery = 
 				"SELECT DISTINCT id " +
 				"  FROM (" +
 								"SELECT SongId id FROM Artists a, AlbumArtists aa, AlbumSongs s " +
@@ -49,9 +43,7 @@
  								" WHERE a.favorites = true AND a.id = b.b AND b.a = aa.ArtistId AND aa.AlbumId = s.AlbumId " +
 								"UNION " +
  								"SELECT SongId id FROM SongArtists sa, Artists a, ArtistRelations b " +
-								" WHERE a.favorites = true AND a.id = b.b AND b.a = sa.ArtistId) a;",
-			code: 'D', callback: simpleRandom }
-		];
+								" WHERE a.favorites = true AND a.id = b.b AND b.a = sa.ArtistId) a;";
 
 	var getSongIds = function (db, query, array, count) {
 		return db.promisifyQuery(query.query)
@@ -88,6 +80,16 @@
 			var limits = [];
 			var random;
 			var i;
+	
+			var queries = [
+				{ query: "SELECT id FROM Songs;", code: 'A', callback: simpleRandom },
+				{ query: "SELECT id FROM Songs WHERE plays <= 2;",
+					code: 'B', callback: simpleRandom },
+				{ query: "SELECT id FROM Songs WHERE plays < 10 AND id IN (SELECT distinct SongId FROM SingleCharts WHERE rank <= 10);", 
+					code: 'C', callback: simpleRandom },
+				{ query: db.season.getQuery(), code: 'D', callback: simpleRandom },
+				{ query: favoriteArtistQuery, code: 'E', callback: simpleRandom }
+			];
 
 			for (i in queries) {
 				limits[i] = 0;
