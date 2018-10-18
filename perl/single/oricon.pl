@@ -39,7 +39,7 @@ $count = 1 if $od_ymd < '20031122';
 
 my $you_date = $ld->ymd(' ');
 
-my $perl_dir = "/Users/eunmo/dev/chart_watch/perl/single";
+my $perl_dir = "/home/ubuntu/dev/chart_watch/perl/single";
 chdir $perl_dir;
 
 system "/bin/bash you.sh $you_date $count";

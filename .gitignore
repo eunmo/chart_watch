@@ -6,6 +6,7 @@ build
 *.swp
 resetdb.js
 db.json
+s3.json
 *.mp3
 *.jpg
 *.sh
