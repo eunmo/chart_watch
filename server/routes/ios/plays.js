@@ -4,68 +4,33 @@
 	var common = require('../../common/cwcommon');
 	var Promise = require('bluebird');
 
-	module.exports = function (router, models) {
+	module.exports = function (router, models, db) {
 
-		function pushSong (id, plays, lastPlayed) {
-			return models.Song.findOne({
-				where: { id: id }
-			})
-			.then(function (song) {
-				if (song.lastPlayed < lastPlayed) {
-					song.setDataValue('plays', plays);
-					song.setDataValue('lastPlayed', lastPlayed);
-					song.save();
-				}
-			});
+		function getUpdateQuery(song) {
+			var time = new Date(song.lastPlayed);
+			var lastPlayed = time.toISOString().slice(0, 19).replace('T', ' ');
+			var query = 'UPDATE Songs set plays = ' + song.plays +
+				', lastPlayed = "' + lastPlayed +
+				'" WHERE id = ' + song.id + ';';
+
+			return query;
 		}
 
-		router.put('/ios/plays/push', function (req, res) {
-			var input = req.body;
-			var promises = [];
-			var i, song;
-
-			for (i in input) {
-				song = input[i];
-
-				var lastPlayed = new Date(song.lastPlayed);
-				promises.push(pushSong(song.id, song.plays, lastPlayed));
-			}
-			
-			Promise.all(promises)
-			.then(function () {
-				res.sendStatus(200);
-			});
-		});
-
-		function pullSong (id, i, results) {
-			return models.Song.findOne({
-				where: { id: id }
-			})
-			.then(function (song) {
-				results[i] =
-					{ id: id, plays: song.plays };
-			})
-			.catch(function () {
-				return; // handles phantom songs
-			});
+		function getCheckQuery(songs) {
+			return 'SELECT id, plays FROM Songs where id in (' + songs.map(s => s.id).join(',') + ');';
 		}
-		
-		router.put('/ios/plays/pull', function (req, res) {
+
+		router.put('/ios/plays/sync', async function (req, res) {
 			var input = req.body;
-			var promises = [];
-			var results = [];
-			var i;
 
-			for (i in input) {
-				var id = input[i];
-
-				promises.push(pullSong(id, i, results));
+			if (input.length === 0) {
+				res.json([]);
+				return;
 			}
-			
-			Promise.all(promises)
-			.then(function () {
-				res.json(results);
-			});
+
+			var queries = input.map(getUpdateQuery).join('');
+			await db.promisifyQuery(queries);
+			db.jsonQuery(getCheckQuery(input), res);
 		});
 	};
 }());
