@@ -112,10 +112,18 @@
 		}
 
 		var findSongByArtist = function (artistId, title, chart) {
-			return models.sequelize.query("Select id, title from Songs where id in " +
-																		"(select SongId from SongArtists where ArtistId = " + artistId + ") " +
-																		"and (title = \"" + title + "\" or title like \"" + title + " (%)\")",
-																		{ type: models.sequelize.QueryTypes.SELECT })
+			var query = "Select id, title from Songs where id in " +
+									"(select SongId from SongArtists where ArtistId = " + artistId + ") " +
+									"and (title = \"" + title + "\" or title like \"" + title + " (%)\")";
+
+			if (chart === 'francais' && title.includes('Ã\?')) {
+				var titleRegex = title.replace(/Ã\?/g, '%');
+				query = "Select id, title from Songs where id in " +
+								"(select SongId from SongArtists where ArtistId = " + artistId + ") " +
+								"and (title like \"" + titleRegex + "\" or title like \"" + titleRegex + " (%)\")";
+			}
+
+			return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
 			.then(function (results) {
 				if (results.length > 0) {
 					return results;

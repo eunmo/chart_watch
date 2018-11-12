@@ -2,6 +2,7 @@ use LWP::Simple;
 use feature 'unicode_strings';
 use utf8;
 use Encode;
+use Encode::DoubleEncodedUTF8;
 use Mojo::DOM;
 use Mojo::Collection;
 use DateTime;
@@ -108,7 +109,8 @@ print "]";
 sub normalize_title($)
 {
 	my $string = shift;
-	$string = decode('utf-8', $string) unless utf8::is_utf8($string);
+	$string = decode('utf-8-de', $string);
+	#$string = decode('utf-8', $string) unless utf8::is_utf8($string);
 	
 	$string =~ s/\s+$//g;
 	$string =~ s/^\s+//g;
@@ -122,7 +124,8 @@ sub normalize_title($)
 sub normalize_artist($)
 {
 	my $string = shift;
-	$string = decode('utf-8', $string) unless utf8::is_utf8($string);
+	$string = decode('utf-8-de', $string);
+	#$string = decode('utf-8', $string) unless utf8::is_utf8($string);
 
 	$string =~ s/\|.*$//;
 	$string =~ s/\s+$//g;

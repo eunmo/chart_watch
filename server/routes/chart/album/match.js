@@ -11,6 +11,16 @@
 									"SELECT AlbumId as id from AlbumAliases " +
 									"WHERE alias = \"" + entry.title + "\" " +
 										"AND chart = \"" + entry.chart + "\";";
+			
+			if (entry.chart === 'francais' && entry.title.includes('Ã\?')) {
+				var titleRegex = entry.title.replace(/Ã\?/g, '%');
+				console.log(titleRegex);
+				query = "SELECT id FROM Albums WHERE title like \"" + titleRegex + "\" " +
+								"UNION " + 
+								"SELECT AlbumId as id from AlbumAliases " +
+								"WHERE alias = \"" + entry.title + "\" " +
+									"AND chart = \"" + entry.chart + "\";";
+			}
 
 			return models.sequelize.query (query,
 																		 { type: models.sequelize.QueryTypes.SELECT })
