@@ -98,6 +98,7 @@ export default class PageSelector extends Component {
 			var style = {
 				lineHeight: '30px',
 				backgroundColor: 'rgba(255, 255, 255, 0.2)',
+				display: 'block',
 			};
 			var spacerStyle = { width: '5px' };
 			var activeStyle = { fontWeight: 'bold' };
@@ -108,12 +109,10 @@ export default class PageSelector extends Component {
 				array.push(<div key={index} style={spacerStyle} />);
 
 			array.push(
-				<div key={view.name} style={style} className="flex-1">
-					<NavLink to={this.props.basename + view.link} activeStyle={activeStyle}>
-						<span className="hide-mobile">{view.name}</span>
-						<span className="show-mobile">{sh}</span>
-					</NavLink>
-				</div>
+				<NavLink key={view.name} to={this.props.basename + view.link} style={style} activeStyle={activeStyle} className="flex-1">
+					<span className="hide-mobile">{view.name}</span>
+					<span className="show-mobile">{sh}</span>
+				</NavLink>
 			);
 		});
 		
