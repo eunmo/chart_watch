@@ -11,7 +11,7 @@ const Chart = ({ match }) => (
     <Route path={`${match.url}`} exact={true} component={Selector} />
 		<Route path={`${match.url}/album/:chart/:week`} component={Album} />}
 		<Route path={`${match.url}/single/:chart/:week`} component={Single} />}
-		<Route path={`${match.url}/single/current`} component={Current} />}
+		<Route path={`${match.url}/current/single`} component={Current} />}
   </Switch>
 );
 

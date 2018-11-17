@@ -44,7 +44,7 @@ export default class Selector extends Component {
 				<div style={Object.assign({}, gridStyle, headerStyle)}>
 					<div className="text-right">Album</div>
 					<div></div>
-					<div><Link to={'/chart/single/current'}>Single</Link></div>
+					<div><Link to={'/chart/current/single'}>Single</Link></div>
 				</div>
 				{this.state.array.map(entry => (
 					<div style={gridStyle} key={entry.chart}>

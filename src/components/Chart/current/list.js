@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
+import { Image, NameArray } from '../../Common';
 
-import { Image, NameArray, Loader } from '../Common';
-
-import TextUtil from '../../util/text';
+import TextUtil from '../../../util/text';
 		
 var charts = ['billboard', 'uk', 'deutsche', 'francais', 'oricon', 'gaon', 'melon'];
 var abbrs = {
@@ -17,22 +16,16 @@ var abbrs = {
 	'melon': 'M'
 };
 
-export default class Current extends Component {
+export default class CurrentList extends Component {
 	
 	constructor(props) {
 		super(props);
 
-		this.state = {songs: null, filtered: []};
+		this.state = {songs: this.props.data.songs, filtered: []};
 	}
 	
-	componentDidMount() {
-		this.fetch();
-	}
-
 	render() {
 		const songs = this.state.songs;
-		if (songs === null)
-			return <Loader />;
 
 		const filtered = this.state.filtered.length > 0 ? this.state.filtered : songs;
 		
@@ -54,49 +47,41 @@ export default class Current extends Component {
 
 		return (
 			<div>
-				<div className="top text-center">Charts</div>
-				<br/>
-				<div className="flex-container">
-					<div className="flex-1 hide-mobile" />
-					<div className="flex-3">
-						<div style={gridStyle}>
-							{this.getHeaderView()}
-							<div style={spacerStyle} className="text-center">{filtered.length}</div>
-						</div>
-						{filtered.map((song, index) => {
-							var spacer = null;
-
-							if (index % 10 === 9) {
-								spacer = (
-									<div style={gridStyle} key={'header' + index}>
-										{index % 10 === 9 && this.getHeaderView()}
-										<div style={spacerStyle} className="text-center">{index + 1}</div>
-									</div>
-								);
-							}
-
-							return [
-								<div key={song.id} style={gridStyle}>
-									<div>{this.getRankView(song)}</div>
-										<Image id={song.albumId} size={50} />
-										<div className="overflow-hidden">
-											<div className="ellipsis">
-												<Link to={'/song/' + song.id}>{TextUtil.normalize(song.title)}</Link>
-											</div>
-											<div className="ellipsis">
-												<NameArray array={song.artists} />
-												{song.features.length > 0 &&
-													<span> feat. <NameArray array={song.features} /></span>
-												}
-											</div>
-										</div>
-									</div>,
-									spacer
-								];
-							})}
-					</div>
-					<div className="flex-1 hide-mobile" />
+				<div style={gridStyle}>
+					{this.getHeaderView()}
+					<div style={spacerStyle} className="text-center">{filtered.length}</div>
 				</div>
+				{filtered.map((song, index) => {
+					var spacer = null;
+
+					if (index % 10 === 9) {
+						spacer = (
+							<div style={gridStyle} key={'header' + index}>
+								{index % 10 === 9 && this.getHeaderView()}
+								<div style={spacerStyle} className="text-center">{index + 1}</div>
+							</div>
+						);
+					}
+
+					return [
+						<div key={song.id} style={gridStyle}>
+							<div>{this.getRankView(song)}</div>
+								<Image id={song.albumId} size={50} />
+								<div className="overflow-hidden">
+									<div className="ellipsis">
+										<Link to={'/song/' + song.id}>{TextUtil.normalize(song.title)}</Link>
+									</div>
+									<div className="ellipsis">
+										<NameArray array={song.artists} />
+										{song.features.length > 0 &&
+											<span> feat. <NameArray array={song.features} /></span>
+										}
+									</div>
+								</div>
+							</div>,
+							spacer
+						];
+					})}
 			</div>
 		);
 	}
@@ -176,18 +161,5 @@ export default class Current extends Component {
 			</div>
 		);
 
-	}
-
-	fetch() {
-		const that = this;
-		const url = '/chart/single/current';
-
-		fetch(url)
-		.then(function(response) {
-      return response.json();
-    })
-    .then(function(data) {
-      that.setState({songs: data});
-    });
 	}
 }
