@@ -109,23 +109,8 @@ musicApp.directive('imageSmall', function () {
 			return {
 				pre: function (scope, element, attrs) {
 					if (scope.albumId) {
-						scope.url = '/' + scope.albumId;
+						scope.url = '/' + scope.albumId + '.jpg';
 						scope.xsurl = scope.url; 
-
-						s = parseInt(scope.s);
-						if (s <= 40) {
-							scope.xsurl += '.80px';
-						}
-						else if (s <= 160) {
-							scope.xsurl += '.160px';
-						}
-						
-						if (s <= 200) {
-							scope.url += '.' + s + 'px';
-						}
-
-						scope.url += '.jpg';
-						scope.xsurl += '.jpg';
 					} else {
 						scope.url = scope.xsurl = 'null.jpg';
 					}
