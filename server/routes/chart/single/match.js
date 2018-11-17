@@ -120,7 +120,7 @@
 				var titleRegex = title.replace(/Ã\?/g, '%');
 				query = "Select id, title from Songs where id in " +
 								"(select SongId from SongArtists where ArtistId = " + artistId + ") " +
-								"and (title like \"" + titleRegex + "\" or title like \"" + titleRegex + " (%)\")";
+								"and (title like \"" + titleRegex + "\")";
 			}
 
 			return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
