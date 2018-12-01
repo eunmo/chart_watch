@@ -27,7 +27,6 @@ export default class Current extends Component {
 		return (
 			<div>
 				<div className="top text-center">Current Charts</div>
-				<br/>
 				<div className="flex-container">
 					<div className="flex-1 hide-mobile" />
 					<div className="flex-3">

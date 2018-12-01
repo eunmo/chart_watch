@@ -85,6 +85,8 @@
 				{ query: "SELECT id FROM Songs;", code: 'A', callback: simpleRandom },
 				{ query: "SELECT id FROM Songs WHERE plays <= 2;",
 					code: 'B', callback: simpleRandom },
+				{ query: "SELECT id FROM Songs WHERE plays <= 2;",
+					code: 'B', callback: simpleRandom },
 				{ query: "SELECT id FROM Songs WHERE plays < 10 AND id IN (SELECT distinct SongId FROM SingleCharts WHERE rank <= 10);", 
 					code: 'C', callback: simpleRandom },
 				{ query: db.season.getQuery(), code: 'D', callback: simpleRandom },
