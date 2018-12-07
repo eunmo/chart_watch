@@ -67,7 +67,7 @@ export default class CurrentGrid extends Component {
 			if (ranks[minRank] === undefined)
 				ranks[minRank] = {rank: minRank, albums: []};
 
-			if (ranks[minRank].albums.includes(song.ablumId))
+			if (ranks[minRank].albums.includes(song.albumId))
 				return;
 
 			ranks[minRank].albums.push(song.albumId);
