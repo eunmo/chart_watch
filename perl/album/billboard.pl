@@ -39,7 +39,7 @@ my $artist_norm = normalize_artist($artist);
 print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"title\": \"$title_norm\" }";
 $rank++;
 
-for my $div ($dom->find('div[class="chart-list-item__first-row"]')->each) {
+for my $div ($dom->find('div[class*="chart-list-item__first-row"]')->each) {
 	if ($div->find('div[class="chart-list-item__title"]')->first) {
 		$title = $div->find('div[class="chart-list-item__title"]')->first->all_text;
 		$title_norm = normalize_title($title);
