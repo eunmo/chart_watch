@@ -103,6 +103,23 @@ export default class CurrentList extends Component {
 		this.setState({filtered: filtered, selectedChart: chart});
 	}
 
+	filterByPlayCount() {
+		const songs = this.state.songs;
+
+		if (this.state.selectedChart === 'plays') {
+			this.setState({filtered: [], selectedChart: null});
+			return;
+		}
+		
+		var filtered = [];
+
+		songs.forEach((song, index) => { song.index = index; filtered.push(song) });
+
+		filtered.sort((a, b) => a.plays !== b.plays ? b.plays - a.plays : a.index - b.index);
+
+		this.setState({filtered: filtered, selectedChart: 'plays'});
+	}
+
 	getRankStyle(rank) {
 		var style = {width: '20px', borderRadius: '5px'};
 
@@ -157,7 +174,7 @@ export default class CurrentList extends Component {
 				{charts.map(chart => {
 					return <div key={chart} style={this.getRankStyle(100)} onClick={() => this.filterBy(chart)}>{abbrs[chart]}</div>;
 				})}
-				<div className="lightgray">P</div>
+				<div className="lightgray" onClick={() => this.filterByPlayCount()}>P</div>
 			</div>
 		);
 
