@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import './style.css';
+
 import { Image } from '../../Common';
 
 export default class CurrentGrid extends Component {
@@ -13,34 +15,17 @@ export default class CurrentGrid extends Component {
 	}
 
 	render() {
-		
-		var headerGridStyle = {
-			display: 'grid',
-			gridTemplateColumns: '1fr 25px 1fr',
-			gridColumnGap: '10px',
-			lineHeight: '20px',
-			marginTop: '10px',
-		};
-
-		var headerStyle = {
-			width: '100%',
-			textAlign: 'center',
-			borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
-			lineHeight: '0.1em',
-			margin: '10px 0 20px',
-		};
-
 		return (
 			<div>
 				{this.state.rankGroups.map(row => {
 					return (
 						<div key={row.rank}>
-							<div style={headerGridStyle}>
-								<div style={headerStyle} />
+							<div className="CurrentGrid-header">
+								<div className="CurrentGrid-line" />
 								<div className="text-center">{row.rank}{row.rank > 5 && '+'}</div>
-								<div style={headerStyle} />
+								<div className="CurrentGrid-line" />
 							</div>
-							<div className="flex-container flex-center">
+							<div className="flex-container flex-center flex-wrap">
 								{row.albums.map(albumId => 
 									<Image id={albumId} size={50} key={albumId} />
 								)}

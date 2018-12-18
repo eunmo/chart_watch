@@ -1,0 +1,25 @@
+.CurrentGrid-header {
+	display: grid;
+	grid-template-columns: 1fr 25px 1fr;
+	grid-column-gap: 10px;
+	line-height: 20px;
+	margin-top: 10px;
+}
+
+.CurrentGrid-line {
+	width: 100%;
+	text-align: center;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+	line-height: 0.1em;
+	margin: 10px 0 20px;
+}
+
+@media screen and (max-width: 543px) {
+	.CurrentGrid-header {
+		margin-top: 5px;
+	}
+
+	.CurrentGrid-line {
+		margin-bottom: 15px;
+	}
+}
