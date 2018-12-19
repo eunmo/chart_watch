@@ -141,11 +141,11 @@ export default class Single extends Component {
 	getDropdownArray() {
 		const chart = this.state.chart;
 		return [
-			{name: 'Play', onClick: this.play},
 			{name: 'Fetch', onClick: this.fetch},
 			{name: 'Match', onClick: this.match},
 			{name: 'Clear', onClick: this.clear},
 			{name: 'Old page', href: '/#/chart/single/' + chart + '/' + this.state.week},
+			{name: 'Play', onClick: this.play},
 		];
 	}
 
