@@ -11,7 +11,6 @@ binmode(STDOUT, ":utf8");
 my $yy = $ARGV[0];
 my $mm = $ARGV[1];
 my $dd = $ARGV[2];
-my $count = 6;
 
 my $od = DateTime->new( year => $yy, month => $mm, day => $dd );
 my $ld = DateTime->new( year => $yy, month => $mm, day => $dd )
@@ -35,14 +34,19 @@ if ($od_ymd == '20000101' ||
 	exit;
 }
 
+my $count = 6;
 $count = 1 if $od_ymd < '20031122';
+$count = 1 if $od_ymd >= '20181215';
+
+my $kbn = '11A';
+$kbn = 'C1A' if $od_ymd >= '20181215';
 
 my $you_date = $ld->ymd(' ');
 
 my $perl_dir = "/home/ubuntu/dev/chart_watch/perl/album";
 chdir $perl_dir;
 
-system "/bin/bash you.sh $you_date $count";
+system "/bin/bash you.sh $you_date $count $kbn";
 my $html_dir = "$perl_dir/html";
 
 my $rank = 1;
@@ -55,16 +59,31 @@ for (my $i = 1; $i <= $count; $i++) {
 	my $odd = 1;
 	my $artist, $title;
 	
-	for my $a ($dom->find('table[bgcolor="#C1C1C1"]')->first->find('a')->each) {
-		if ($odd % 2) {
-			$title = normalize_title(get_text($a->text));
-		} else {
-			$artist = normalize_artist(get_text($a->text));
-			print ",\n" if $rank > 1;
-			print "{ \"rank\": $rank, \"artist\": \"$artist\", \"title\" : \"$title\" }";
-			$rank++;
+	if ($od_ymd < '20181215') {
+		for my $a ($dom->find('table[bgcolor="#C1C1C1"]')->first->find('a')->each) {
+			if ($odd % 2) {
+				$title = normalize_title(get_text($a->text));
+			} else {
+				$artist = normalize_artist(get_text($a->text));
+				print ",\n" if $rank > 1;
+				print "{ \"rank\": $rank, \"artist\": \"$artist\", \"title\" : \"$title\" }";
+				$rank++;
+			}
+			$odd++;
 		}
-		$odd++;
+	} else {
+		for my $tr ($dom->find('table[bgcolor="#C1C1C1"]')->first->find('tr')->each) {
+			next if ++$odd <= 3;
+
+			if ($odd % 2 == 0) {
+				$title = normalize_title(get_text($tr->find('span')->[1]->text));
+			} else {
+				$artist = normalize_artist(get_text($tr->all_text));
+				print ",\n" if $rank > 1;
+				print "{ \"rank\": $rank, \"artist\": \"$artist\", \"title\" : \"$title\" }";
+				$rank++;
+			}
+		}
 	}
 }
 

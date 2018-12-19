@@ -34,15 +34,19 @@ if ($od_ymd == '20000101' ||
 	exit;
 }
 
-$count = 2;
+my $count = 2;
 $count = 1 if $od_ymd < '20031122';
+$count = 1 if $od_ymd >= '20181215';
+
+my $kbn = '111';
+$kbn = 'C11' if $od_ymd >= '20181215';
 
 my $you_date = $ld->ymd(' ');
 
 my $perl_dir = "/home/ubuntu/dev/chart_watch/perl/single";
 chdir $perl_dir;
 
-system "/bin/bash you.sh $you_date $count";
+system "/bin/bash you.sh $you_date $count $kbn";
 my $html_dir = "$perl_dir/html";
 
 my $rank = 1;
@@ -54,31 +58,60 @@ for (my $i = 1; $i <= $count; $i++) {
 	my $dom = Mojo::DOM->new(scalar slurp "$html_dir/$ld_ymd-$i.html");
 	my $odd = 1;
 	my $artist, $title;
-	
-	for my $a ($dom->find('table[bgcolor="#C1C1C1"]')->first->find('a')->each) {
-		if ($odd % 2) {
-			$title = normalize_title(get_text($a->text));
-		} else {
-			$artist = normalize_artist(get_text($a->text));
-			print ",\n" if $rank > 1;
-			print "{ \"rank\": $rank, \"artist\": \"$artist\", \"titles\": [";
-			my $titleCount = 1;
-			my @tokens = split(/\/|\|/, $title);
 
-			if ($title =~ "「イッツ・マイ・ターン」&「ライブ・ライフ」") {
-				@tokens = ("イッツ・マイ・ターン", "ライブ・ライフ");
-			}
+	if ($od_ymd < '20181215') {
+		for my $a ($dom->find('table[bgcolor="#C1C1C1"]')->first->find('a')->each) {
+			if ($odd % 2) {
+				$title = normalize_title(get_text($a->text));
+			} else {
+				$artist = normalize_artist(get_text($a->text));
+				print ",\n" if $rank > 1;
+				print "{ \"rank\": $rank, \"artist\": \"$artist\", \"titles\": [";
+				my $titleCount = 1;
+				my @tokens = split(/\/|\|/, $title);
 
-			foreach my $token (@tokens) {
-				my $token_norm = normalize_title($token);
-				print ", " if $titleCount > 1;	
-				print "\"$token_norm\"";
-				$titleCount++;
+				if ($title =~ "「イッツ・マイ・ターン」&「ライブ・ライフ」") {
+					@tokens = ("イッツ・マイ・ターン", "ライブ・ライフ");
+				}
+
+				foreach my $token (@tokens) {
+					my $token_norm = normalize_title($token);
+					print ", " if $titleCount > 1;	
+					print "\"$token_norm\"";
+					$titleCount++;
+				}
+				print "]}";
+				$rank++;
 			}
-			print "]}";
-			$rank++;
+			$odd++;
 		}
-		$odd++;
+	} else {
+		for my $tr ($dom->find('table[bgcolor="#C1C1C1"]')->first->find('tr')->each) {
+			next if ++$odd <= 3;
+
+			if ($odd % 2 == 0) {
+				$title = normalize_title(get_text($tr->find('span')->[1]->text));
+			} else {
+				$artist = normalize_artist(get_text($tr->all_text));
+				print ",\n" if $rank > 1;
+				print "{ \"rank\": $rank, \"artist\": \"$artist\", \"titles\": [";
+				my $titleCount = 1;
+				my @tokens = split(/\/|\|/, $title);
+
+				if ($title =~ "「イッツ・マイ・ターン」&「ライブ・ライフ」") {
+					@tokens = ("イッツ・マイ・ターン", "ライブ・ライフ");
+				}
+
+				foreach my $token (@tokens) {
+					my $token_norm = normalize_title($token);
+					print ", " if $titleCount > 1;	
+					print "\"$token_norm\"";
+					$titleCount++;
+				}
+				print "]}";
+				$rank++;
+			}
+		}
 	}
 }
 
