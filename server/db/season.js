@@ -81,7 +81,7 @@
 				"ORDER BY week DESC, rank;";
 
 			return query;
-		}
+		};
 	};
 }());
 		
