@@ -18,7 +18,7 @@ my $ld = DateTime->new( year => $yy, month => $mm, day => $dd )
 
 if ($ld->ymd() =~ '2018-01-05') { #2018-01-03 (matches chart date 2017-12-23)
 	$ld = $ld->subtract( days => 2 );
-} elsif ($ld->year() == 2018) {
+} elsif ($ld->year() >= 2018) {
 	$ld = $ld->subtract( weeks => 1 );
 }
 
