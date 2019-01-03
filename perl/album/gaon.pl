@@ -32,6 +32,13 @@ if ($year == 2017) {
 	} else {
 		$week -= 1;
 	}
+} elsif ($year == 2019) {
+	if ($week == 1) {
+		$year = 2018;
+		$week = 52;
+	} else {
+		$week -= 1;
+	}
 }
 $week++ if $year == 2011 && $yy == 2011;
 my $week_string = sprintf("%02d", $week);
