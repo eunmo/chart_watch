@@ -30,21 +30,6 @@
 		}
 	};
 
-	const favoriteArtistQuery = 
-				"SELECT DISTINCT id " +
-				"  FROM (" +
-								"SELECT SongId id FROM Artists a, AlbumArtists aa, AlbumSongs s " +
-	 							" WHERE a.favorites = true AND a.id = aa.ArtistId AND aa.AlbumId = s.AlbumId " +
-								"UNION " +
-						 		"SELECT SongId id FROM SongArtists sa, Artists a " +
-								" WHERE a.favorites = true AND a.id = sa.ArtistId " +
-								"UNION " +
-								"SELECT SongId id FROM Artists a, ArtistRelations b, AlbumArtists aa, AlbumSongs s " +
- 								" WHERE a.favorites = true AND a.id = b.b AND b.a = aa.ArtistId AND aa.AlbumId = s.AlbumId " +
-								"UNION " +
- 								"SELECT SongId id FROM SongArtists sa, Artists a, ArtistRelations b " +
-								" WHERE a.favorites = true AND a.id = b.b AND b.a = sa.ArtistId) a;";
-
 	var getSongIds = function (db, query, array, count) {
 		return db.promisifyQuery(query.query)
 		.then(function (rows) {
@@ -90,7 +75,7 @@
 				{ query: "SELECT id FROM Songs WHERE plays < 10 AND id IN (SELECT distinct SongId FROM SingleCharts WHERE rank <= 10);", 
 					code: 'C', callback: simpleRandom },
 				{ query: db.season.getQuery(), code: 'D', callback: simpleRandom },
-				{ query: favoriteArtistQuery, code: 'E', callback: simpleRandom }
+				{ query: db.song.queryForFavoriteArtists, code: 'E', callback: simpleRandom }
 			];
 
 			for (i in queries) {

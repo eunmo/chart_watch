@@ -110,6 +110,7 @@
 					var promises = [];
 					promises.push(db.song.fetchDetails(songs, ids));
 					promises.push(db.song.fetchChartSummary(songs, ids));
+					promises.push(db.song.fetchFavorite(songs));
 					return Promise.all(promises);
 				}).then(function () {
 					var songs = [];
@@ -118,7 +119,7 @@
 					for (var i in sortedSongs) {
 						song = sortedSongs[i];
 						if (song.curRank[0] <= 5 || 
-								(song.plays <= 10 && song.rank)) {
+								(song.plays <= 10 && (song.rank || song.favorite))) {
 							songs.push(song);
 						}
 					}

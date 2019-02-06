@@ -178,6 +178,21 @@
 			return db.promisifyQuery(query);
 		};
 
+		db.song.queryForFavoriteArtists = 
+			"SELECT DISTINCT id " +
+			"  FROM (" +
+							"SELECT SongId id FROM Artists a, AlbumArtists aa, AlbumSongs s " +
+ 							" WHERE a.favorites = true AND a.id = aa.ArtistId AND aa.AlbumId = s.AlbumId " +
+							"UNION " +
+					 		"SELECT SongId id FROM SongArtists sa, Artists a " +
+							" WHERE a.favorites = true AND a.id = sa.ArtistId " +
+							"UNION " +
+							"SELECT SongId id FROM Artists a, ArtistRelations b, AlbumArtists aa, AlbumSongs s " +
+							" WHERE a.favorites = true AND a.id = b.b AND b.a = aa.ArtistId AND aa.AlbumId = s.AlbumId " +
+							"UNION " +
+							"SELECT SongId id FROM SongArtists sa, Artists a, ArtistRelations b " +
+							" WHERE a.favorites = true AND a.id = b.b AND b.a = sa.ArtistId) a;";
+
 		db.song.fetchDetails = function (songs, ids) {
 			return db.song.getDetails(ids)
 				.then(function (rows) {
@@ -230,7 +245,7 @@
 				});
 		};
 		
-		db.song.fetchMinChartRank =  function (songs, ids) {
+		db.song.fetchMinChartRank = function (songs, ids) {
 			var query = "  SELECT SongId id, min(rank) rank " +
 									"    FROM SingleCharts " +
 									"   WHERE SongId in (" + ids.join() + ") " +
@@ -257,7 +272,7 @@
 				});
 		};
 
-		db.song.fetchChartSummary =  function (songs, ids) {
+		db.song.fetchChartSummary = function (songs, ids) {
 			return db.chartSummary.getSongs(ids)
 				.then(function (charts) {
 					var i, song;
@@ -268,6 +283,17 @@
 							song.rank = charts[song.id];
 						}
 					}
+				});
+		};
+		
+		db.song.fetchFavorite = function (songs) {
+			console.log(db.song.queryForFavoriteArtists);
+			return db.promisifyQuery(db.song.queryForFavoriteArtists)
+				.then(function (rows) {
+					var idMap = {};
+					rows.forEach(row => { idMap[row.id] = true; });
+					songs.forEach(song => { if (idMap[song.id]) song.favorite = true; });
+//					songs.forEach(song => { if (idMap[song.id]) console.log(song); });
 				});
 		};
 	};

@@ -17,20 +17,7 @@
 				promises.push(db.song.fetchChartSummary(songs, songIds));
 		
 				return Promise.all(promises)
-					.then(function() {
-						var filteredSongs = [];
-						var song;
-
-						for (var i in songs) {
-							song = songs[i];
-							if (song.curRank[0] <= 5 ||
-									(song.plays <= 10 && song.rank)) {
-								filteredSongs.push(song);
-							}
-						}
-
-						res.json(filteredSongs);
-					});
+					.then(function() { res.json(songs);});
 			});
 		});
 	};
