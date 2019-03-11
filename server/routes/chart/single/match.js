@@ -51,8 +51,7 @@
 				nameNorm = nameNorm.replace(/\/.*$/, '');
 			} else if (chart === 'francais') {
 				nameNorm = nameNorm.replace(/[,&＆].*$/, '');
-				nameNorm = nameNorm.replace(/\sfeat\..*$/, '');
-				nameNorm = nameNorm.replace(/\sFeat\..*$/, '');
+				nameNorm = nameNorm.replace(/\sfeat\..*$/i, '');
 				nameNorm = nameNorm.replace(/\sand\s.*$/, '');
 				nameNorm = nameNorm.replace(/\svs\.\s.*$/, '');
 				nameNorm = nameNorm.replace(/\svs\s.*$/, '');
