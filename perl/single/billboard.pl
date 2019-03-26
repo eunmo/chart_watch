@@ -31,14 +31,6 @@ my $rank = 1;
 
 print "[";
 
-my $title = $dom->find('div[class="chart-number-one__title"]')->first->text;
-my $artist = $dom->find('div[class="chart-number-one__artist"]')->first->all_text;
-my $title_norm = normalize($title);
-my $artist_norm = normalize($artist);
-	
-print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\" : [\"$title_norm\"] }";
-$rank++;
-
 for my $div ($dom->find('div[class*="chart-list-item__first-row"]')->each) {
 	if ($div->find('div[class="chart-list-item__title"]')->first) {
 		$title = $div->find('div[class="chart-list-item__title"]')->first->all_text;
@@ -50,7 +42,8 @@ for my $div ($dom->find('div[class*="chart-list-item__first-row"]')->each) {
 		$artist_norm = normalize($artist);
 	}
 
-	print ",\n{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\" : [\"$title_norm\"] }";
+	print ",\n" if $rank > 1;
+	print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\" : [\"$title_norm\"] }";
 	$rank++;
 }
 
