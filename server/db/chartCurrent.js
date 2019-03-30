@@ -92,6 +92,8 @@
 			return songs;
 		}
 
+		db.chartCurrent.getCurrentWeeks = getCurrentWeeks;
+
 		db.chartCurrent.getSortedSongs = function () {
 			var sortedSongs = [];
 

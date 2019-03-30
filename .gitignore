@@ -12,3 +12,4 @@ s3.json
 *.sh
 *.DS_Store
 server/sv.js
+!cron/*
