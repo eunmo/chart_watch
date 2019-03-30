@@ -3,6 +3,7 @@
 var path = require('path');
 var Promise = require('bluebird');
 var exec = Promise.promisify(require('child_process').exec);
+const Match = require('../../../util/match_single');
 
 module.exports = function (router, models, db) {
 
@@ -48,18 +49,29 @@ module.exports = function (router, models, db) {
 			if (matches)
 				return;
 
+			var values = [];
 			data.forEach(row => {
 				for (var i in row.titles) {
-					models.SingleChart.create({
-						type: chart.type,
-						week: nextWeek,
-						rank: row.rank,
-						order: i,
-						artist: row.artist,
-						title: row.titles[i]
-					});
+					values.push(
+						'(DEFAULT,' +
+						'\'' + chart.type + '\',' +
+						'\'' + nextWeek.toISOString().slice(0, 19).replace('T', ' ') + '\',' +
+						row.rank + ',' +
+						i + ',' +
+						'\'' + row.artist + '\',' +
+						'\'' + row.titles[i] + '\',' +
+						'curdate(),curdate())'
+					);
 				}
 			});
+
+			query = 'INSERT INTO `SingleCharts` ' +
+							'(`id`,`type`,`week`,`rank`,`order`,`artist`,`title`,`updatedAt`,`createdAt`) ' +
+							'VALUES ' +  values.join(',');
+
+			await db.promisifyQuery(query);
+
+			await Match.matchWeek(models, chart.type, nextWeek);
 		});
 
 		res.sendStatus(200);
