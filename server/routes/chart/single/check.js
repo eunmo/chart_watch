@@ -4,6 +4,7 @@ var path = require('path');
 var Promise = require('bluebird');
 var exec = Promise.promisify(require('child_process').exec);
 const Match = require('../../../util/match_single');
+const APN = require('../../../util/apn');
 
 module.exports = function (router, models, db) {
 
@@ -72,6 +73,8 @@ module.exports = function (router, models, db) {
 			await db.promisifyQuery(query);
 
 			await Match.matchWeek(models, chart.type, nextWeek);
+			
+			APN.notify(chart.type);
 		});
 
 		res.sendStatus(200);
