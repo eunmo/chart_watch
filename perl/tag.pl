@@ -55,6 +55,10 @@ sub get_feat {
 
 sub get_artist_array {
 	my $str = shift;
+	
+	if ($str =~ /King & Prince/) {
+		return ($str);
+	}
 
 	my @rough_split = split(/[＆&,、]/, $str);
 	my @arr = ();

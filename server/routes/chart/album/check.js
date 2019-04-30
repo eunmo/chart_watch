@@ -36,16 +36,16 @@ module.exports = function (router, models, db) {
 			if (curWeekRows.length !== data.length)
 				return;
 
-			var matches = true;
+			var diffCount = 0;
 
 			data.forEach((row, index) => {
 				const record = curWeekRows[index];
 				if (row.artist !== record.artist ||
 						row.title !== record.title)
-					matches = false;
+					diffCount++;
 			});
 
-			if (matches)
+			if (diffCount <= 10)
 				return;
 
 			var values = [];
