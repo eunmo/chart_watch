@@ -48,7 +48,7 @@ export default class AlbumTracks extends Component {
 			symbol = '★';
 		}
 
-		return <Link to={'/song/' + song.id}>{symbol}</Link>;
+		return symbol;
 	}
 
 	getTrackView(song) {
@@ -59,7 +59,7 @@ export default class AlbumTracks extends Component {
 		var playStyle = {width: 20, fontSize: '0.8em', textAlign: 'right', marginRight: '5px'};
 
 		return (
-			<div key={song.track} className="flex-container" style={style}>
+			<Link to={'/song/' + song.id} key={song.track} className="flex-container" style={style}>
 				<div style={rankStyle}>
 					{this.getRankView(song)}
 				</div>
@@ -72,7 +72,7 @@ export default class AlbumTracks extends Component {
 				<div className="lightgray" style={playStyle}>
 					{song.plays}
 				</div>
-			</div>
+			</Link>
 		);
 	}
 }

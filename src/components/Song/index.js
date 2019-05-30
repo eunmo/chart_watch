@@ -15,6 +15,7 @@ export default class Song extends Component {
 
 		this.state = {id: id, song: null};
 		this.play = this.play.bind(this);
+		this.download = this.download.bind(this);
 	}
 	
 	componentDidMount() {
@@ -116,11 +117,19 @@ export default class Song extends Component {
 		}
 	}
 
+	download() {
+		const song = this.state.song;
+		var dl = document.createElement('a');
+		dl.href = '/api/download/' + song.id;
+		dl.click();
+	}
+
 	getDropdownArray() {
 		const song = this.state.song;
 		return [
 			{name: 'Edit', href: '/#/edit/song/' + song.id},
 			{name: 'Play', onClick: this.play},
+			{name: 'Download', onClick: this.download},
 		];
 	}
 	

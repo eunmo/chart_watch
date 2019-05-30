@@ -17,6 +17,7 @@ export default class Album extends Component {
 
 		this.state = {id: id, album: null};
 		this.play = this.play.bind(this);
+		this.download = this.download.bind(this);
 	}
 	
 	componentDidMount() {
@@ -119,6 +120,7 @@ export default class Album extends Component {
 		return [
 			{name: 'Edit', href: '/#/edit/album/' + album.id},
 			{name: 'Play', onClick: this.play},
+			{name: 'Download', onClick: this.download},
 		];
 	}
 
@@ -163,6 +165,16 @@ export default class Album extends Component {
 			views.push({name: 'Chart', link: '/chart', component: Chart, data: album.charts});
 
 		return views;
+	}
+
+	download() {
+		this.state.album.songs.forEach((song, index) => {
+			setTimeout(() => {
+				var dl = document.createElement('a');
+				dl.href = '/api/download/' + song.id;
+				dl.click();
+			}, index * 1000);
+		});
 	}
 
 	fetch(id) {
