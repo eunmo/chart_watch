@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-	matchWeek: function (models, chartName, date) {
+	matchWeek: function (models, db, chartName, date) {
 
 		function findAlbum (entry) {
 			var query = "SELECT id FROM Albums WHERE title = \"" + entry.title + "\" " +
@@ -20,8 +20,7 @@ module.exports = {
 									"AND chart = \"" + entry.chart + "\";";
 			}
 
-			return models.sequelize.query (query,
-																		 { type: models.sequelize.QueryTypes.SELECT })
+			return db.promisifyQuery(query)
 			.then (function (albums) {
 				if (albums.length > 0) {
 					entry.candidateAlbums = albums;
@@ -37,8 +36,7 @@ module.exports = {
 										"AND ar.chart = \"" + entry.chart + "\" " +
 									  "AND aa.ArtistId = ar.ArtistId;";
 
-			return models.sequelize.query (query,
-																		 { type: models.sequelize.QueryTypes.SELECT })
+			return db.promisifyQuery(query)
 			.then (function (albums) {
 				if (albums.length > 0) {
 					entry.AlbumId = albums[0].AlbumId;
@@ -68,8 +66,7 @@ module.exports = {
 					return;
 			}
 
-			return models.sequelize.query (query,
-																		 { type: models.sequelize.QueryTypes.SELECT })
+			return db.promisifyQuery(query)
 			.then (function (albums) {
 				if (albums.length > 0) {
 					entry.AlbumId = albums[0].AlbumId;

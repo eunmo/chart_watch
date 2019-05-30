@@ -1,14 +1,13 @@
 'use strict';
 
 module.exports = {
-	matchWeek: function (models, chartName, date) {
+	matchWeek: function (models, db, chartName, date) {
 
 		function findArtistByName (name, chart) {
-			return models.sequelize.query("Select id from Artists " +
+			return db.promisifyQuery("Select id from Artists " +
 				"where name = \"" + name + "\" or nameNorm = \"" + name + "\" or " +
 				"id = (select ArtistId from ArtistAliases where alias = \"" + name +
-				"\" and chart = \"" + chart + "\")",
-				{ type: models.sequelize.QueryTypes.SELECT });
+				"\" and chart = \"" + chart + "\")");
 		}
 
 		function normalizeName (name, chart) {
@@ -120,16 +119,16 @@ module.exports = {
 					"and (title like \"" + titleRegex + "\")";
 			}
 
-			return models.sequelize.query(query, { type: models.sequelize.QueryTypes.SELECT })
+			return db.promisifyQuery(query)
 				.then(function (results) {
 					if (results.length > 0) {
 						return results;
 					} else {
-						return models.sequelize.query("Select id, title from Songs where id =" +
+						return db.promisifyQuery(
+							"Select id, title from Songs where id =" +
 							"(select SongId from SongAliases where SongId in" +
 							" (select SongId from SongArtists where ArtistId = " + artistId + ")" +
-							" and alias = \"" + title + "\" and chart = \"" + chart + "\")",
-							{ type: models.sequelize.QueryTypes.SELECT });
+							" and alias = \"" + title + "\" and chart = \"" + chart + "\")");
 
 					}
 				}).then(function (results) {
@@ -141,10 +140,10 @@ module.exports = {
 						titleNorm = titleNorm.trim();
 
 						if (titleNorm !== title) {
-							return models.sequelize.query("Select id, title from Songs where id in " +
+							return db.promisifyQuery(
+								"Select id, title from Songs where id in " +
 								"(select SongId from SongArtists where ArtistId = " + artistId + ") " +
-								"and title = \"" + titleNorm + "\"",
-								{ type: models.sequelize.QueryTypes.SELECT })
+								"and title = \"" + titleNorm + "\"");
 
 						} else {
 							return results;
@@ -156,21 +155,21 @@ module.exports = {
 		};
 
 		var findAlbumSongByArtist = function (artistId, title, chart) {
-			return models.sequelize.query("Select id, title from Songs where id in " +
+			return db.promisifyQuery(
+				"Select id, title from Songs where id in " +
 				"(select SongId from AlbumSongs where AlbumId in " +
 				"	(select AlbumId from AlbumArtists where ArtistId = " + artistId + ")) " +
-				"and (title = \"" + title + "\" or title like \"" + title + " (%)\")",
-				{ type: models.sequelize.QueryTypes.SELECT })
+				"and (title = \"" + title + "\" or title like \"" + title + " (%)\")")
 				.then(function (results) {
 					if (results.length > 0) {
 						return results;
 					} else {
-						return models.sequelize.query("Select id, title from Songs where id =" +
+						return db.promisifyQuery(
+							"Select id, title from Songs where id =" +
 							"(select SongId from SongAliases where SongId in" +
 							" (select SongId from AlbumSongs where AlbumId in " +
 							"	 (select AlbumId from AlbumArtists where ArtistId = " + artistId + ")) " +
-							" and alias = \"" + title + "\" and chart = \"" + chart + "\")",
-							{ type: models.sequelize.QueryTypes.SELECT });
+							" and alias = \"" + title + "\" and chart = \"" + chart + "\")");
 
 					}
 				}).then(function (results) {
@@ -182,11 +181,11 @@ module.exports = {
 						titleNorm = titleNorm.trim();
 
 						if (titleNorm !== title) {
-							return models.sequelize.query("Select id, title from Songs where id in " +
+							return db.promisifyQuery(
+								"Select id, title from Songs where id in " +
 								"(select SongId from AlbumSongs where AlbumId in " +
 								"	(select AlbumId from AlbumArtists where ArtistId = " + artistId + ")) " +
-								"and title = \"" + titleNorm + "\"",
-								{ type: models.sequelize.QueryTypes.SELECT })
+								"and title = \"" + titleNorm + "\"");
 
 						} else {
 							return results;
@@ -198,12 +197,12 @@ module.exports = {
 		};
 
 		var findSingleByArtist = function (artistId, title, chart) {
-			return models.sequelize.query("Select id, title from Songs where id = " +
+			return db.promisifyQuery(
+				"Select id, title from Songs where id = " +
 				"(select SongId from AlbumSongs where track = 1 and " + 
 				" albumId = (select id from Albums where id in " +
 				"(select AlbumId from AlbumArtists where ArtistId = " + artistId + " and " +
-				"(title = \"" + title + "\" or title like \"" + title + " (%)\"))))",
-				{ type: models.sequelize.QueryTypes.SELECT });
+				"(title = \"" + title + "\" or title like \"" + title + " (%)\"))))");
 		};
 
 		function findSongByFunction (artistId, title, titleNorm, chart, queryFunction) {

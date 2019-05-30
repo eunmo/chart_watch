@@ -20,7 +20,7 @@ module.exports = function (router, models, db) {
 		var week;
 		for (var i = 0; i < result.length; i++) {
 			week = result[i];
-			await Match.matchWeek(models, week.type, week.week);
+			await Match.matchWeek(models, db, week.type, week.week);
 		}
 
 		res.sendStatus(200);
