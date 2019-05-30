@@ -55,11 +55,15 @@ module.exports = {
 									       "ar.nameNorm = \"" + entry.artist + "\") " +
 									  "AND aa.ArtistId = ar.id;";
 					
-			if (entry.artist === 'Soundtrack' ||
-					entry.artist === 'Various Artists' ||
-					entry.artist === 'サウンドトラック' ||
-					entry.artist === 'MOTION PICTURE CAST RECORDING' ||
-					entry.artist === 'Multi Interprètes') {
+			if (false
+					|| entry.artist === 'Soundtrack'
+					|| entry.artist === 'Various Artists'
+					|| entry.artist === 'サウンドトラック'
+					|| entry.artist === 'MOTION PICTURE CAST RECORDING'
+					|| entry.artist === 'Multi Interprètes'
+					|| entry.artist === 'Original Broadway Cast'
+					|| entry.artist === 'Original Broadway Cast Recording'
+			) {
 					entry.AlbumId = entry.candidateAlbums[0].id;
 					return;
 			}
