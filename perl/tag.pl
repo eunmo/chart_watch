@@ -56,7 +56,10 @@ sub get_feat {
 sub get_artist_array {
 	my $str = shift;
 	
-	if ($str =~ /King & Prince/) {
+	if (0
+		|| $str =~ /King & Prince/
+		|| $str =~ /Tyler, The Creator/
+	) {
 		return ($str);
 	}
 
