@@ -14,10 +14,8 @@ module.exports = function (router, models, db) {
 			return;
 		}
 
-		const filename = songs[0].title + '.mp3';
-		const contentDisposition = 'attachment; filename=' + filename;
-		
-		res.set("Content-Type", "application/octet-stream");
+		const filename = encodeURI(songs[0].title) + '.mp3';
+		const contentDisposition = 'attachment; filename="' + filename + '"';
 
 		const url = 'https://s3-ap-northeast-1.amazonaws.com/eunmo-music/' + id;
 		request(url)
