@@ -67,7 +67,7 @@ module.exports = function (router, models, db) {
 
 			await db.promisifyQuery(query);
 
-			await Match.matchWeek(models, chart.type, nextWeek);
+			await Match.matchWeek(models, db, chart.type, nextWeek);
 		});
 
 		res.sendStatus(200);
