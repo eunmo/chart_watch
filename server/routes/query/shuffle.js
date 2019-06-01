@@ -11,29 +11,11 @@
 			array.push(rows[index].id);
 		}
 	};
-	
-	var weightedRandom = function (rows, array, count, code) {
-		var i, j, index;
-		var weightedArray = [];
-		var row;
-
-		for (i = 0; i < rows.length; i++) {
-			row = rows[i];
-			for (j = 0; j < row.weight; j++) {
-				weightedArray.push (row.id);
-			}
-		}
-
-		for (i = 0; i < count; i++) {
-			index = Math.floor (Math.random () * weightedArray.length);
-			array.push(weightedArray[index]);
-		}
-	};
 
 	var getSongIds = function (db, query, array, count) {
 		return db.promisifyQuery(query.query)
 		.then(function (rows) {
-			query.callback(rows, array, count, query.code);
+			simpleRandom(rows, array, count, query.code);
 		});
 	};
 	
@@ -63,28 +45,29 @@
 			var promises = [];
 			var songIds = [];
 			var limits = [];
-			var random;
-			var i;
+			var weights = [];
+			var query, random, i;
 	
 			var queries = [
-				{ query: "SELECT id FROM Songs;", code: 'A', callback: simpleRandom },
-				{ query: "SELECT id FROM Songs WHERE plays <= 2;",
-					code: 'B', callback: simpleRandom },
-				{ query: "SELECT id FROM Songs WHERE plays <= 2;",
-					code: 'B', callback: simpleRandom },
+				{ query: "SELECT id FROM Songs;", code: 'A' },
+				{ query: "SELECT id FROM Songs WHERE plays <= 2;", code: 'B', weight: 3 },
 				{ query: "SELECT id FROM Songs WHERE plays < 10 AND id IN (SELECT distinct SongId FROM SingleCharts WHERE rank <= 10);", 
-					code: 'C', callback: simpleRandom },
-				{ query: db.season.getQuery(), code: 'D', callback: simpleRandom },
-				{ query: db.song.queryForFavoriteArtists, code: 'E', callback: simpleRandom }
+					code: 'C' },
+				{ query: db.season.getQuery(), code: 'D' },
+				{ query: db.song.queryForFavoriteArtists, code: 'E' }
 			];
 
-			for (i in queries) {
-				limits[i] = 0;
-			}
+			queries.forEach((query, index) => {
+				limits[index] = 0;
+				var weight = query.weight ? query.weight : 1;
+				for (i = 0; i < weight; i++) {
+					weights.push(index);
+				}
+			});
 
 			for (i = 0; i < 100; i++) {
-				random = Math.floor(Math.random () * queries.length);
-				limits[random]++;
+				random = Math.floor(Math.random () * weights.length);
+				limits[weights[random]]++;
 			}
 
 			for (i in queries) {
