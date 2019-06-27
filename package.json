@@ -32,12 +32,12 @@
     "jshint": "^2.9.5",
     "react-scripts": "^1.1.4"
   },
-	"lint-staged": {
-		"{server,client,src}/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-			"prettier --single-quote --write",
-			"git add"
-	  ]
-	},
+  "lint-staged": {
+    "{server,client,src}/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --single-quote --write",
+      "git add"
+    ]
+  },
   "scripts": {
     "start": "PORT=3011 react-scripts start",
     "build": "react-scripts build",
