@@ -5,59 +5,60 @@ import './style.css';
 import { Image } from '../../Common';
 
 export default class CurrentGrid extends Component {
-	
-	constructor(props) {
-		super(props);
+  constructor(props) {
+    super(props);
 
-		var songs = this.props.data.songs;
-		
-		this.state = {rankGroups: this.groupAlbums(songs), filtered: []};
-	}
+    var songs = this.props.data.songs;
 
-	render() {
-		return (
-			<div>
-				{this.state.rankGroups.map(row => {
-					return (
-						<div key={row.rank}>
-							<div className="CurrentGrid-header">
-								<div className="CurrentGrid-line" />
-								<div className="text-center">{row.rank}{row.rank > 5 && '+'}</div>
-								<div className="CurrentGrid-line" />
-							</div>
-							<div className="flex-container flex-center flex-wrap">
-								{row.albums.map(albumId => 
-									<Image id={albumId} size={50} key={albumId} />
-								)}
-							</div>
-						</div>
-					);
-				})}
-			</div>
-		);
-	}
+    this.state = { rankGroups: this.groupAlbums(songs), filtered: [] };
+  }
 
-	groupAlbums(songs) {
-		var ranks = [];
+  render() {
+    return (
+      <div>
+        {this.state.rankGroups.map(row => {
+          return (
+            <div key={row.rank}>
+              <div className="CurrentGrid-header">
+                <div className="CurrentGrid-line" />
+                <div className="text-center">
+                  {row.rank}
+                  {row.rank > 5 && '+'}
+                </div>
+                <div className="CurrentGrid-line" />
+              </div>
+              <div className="flex-container flex-center flex-wrap">
+                {row.albums.map(albumId => (
+                  <Image id={albumId} size={50} key={albumId} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
-		songs.forEach(song => {
-			var minRank = song.curRank[0];
+  groupAlbums(songs) {
+    var ranks = [];
 
-			if (minRank > 10) {
-				minRank = 11;
-			} else if (minRank > 5) {
-				minRank = 6;
-			}
+    songs.forEach(song => {
+      var minRank = song.curRank[0];
 
-			if (ranks[minRank] === undefined)
-				ranks[minRank] = {rank: minRank, albums: []};
+      if (minRank > 10) {
+        minRank = 11;
+      } else if (minRank > 5) {
+        minRank = 6;
+      }
 
-			if (ranks[minRank].albums.includes(song.albumId))
-				return;
+      if (ranks[minRank] === undefined)
+        ranks[minRank] = { rank: minRank, albums: [] };
 
-			ranks[minRank].albums.push(song.albumId);
-		});
+      if (ranks[minRank].albums.includes(song.albumId)) return;
 
-		return ranks.filter(e => e);
-	}
+      ranks[minRank].albums.push(song.albumId);
+    });
+
+    return ranks.filter(e => e);
+  }
 }

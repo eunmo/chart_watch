@@ -1,25 +1,34 @@
 body {
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	background: linear-gradient(165deg, #1a2a6c, #b21f1f, #fd8b2d, #b21f1f, #1a2a6c);
-	background-size: 100vw 200vh;
-	color: white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Helvetica, Arial,
+    sans-serif;
+  background: linear-gradient(
+    165deg,
+    #1a2a6c,
+    #b21f1f,
+    #fd8b2d,
+    #b21f1f,
+    #1a2a6c
+  );
+  background-size: 100vw 200vh;
+  color: white;
 }
 
 .text-center {
-	text-align: center;
+  text-align: center;
 }
 
 .text-right {
-	text-align: right;
+  text-align: right;
 }
 
 .text-left {
-	text-align: left;
+  text-align: left;
 }
 
 .flex-container {
-	display: -webkit-flex;
-	display: flex;
+  display: -webkit-flex;
+  display: flex;
 }
 
 .flex-wrap {
@@ -28,10 +37,10 @@ body {
 }
 
 .flex-adaptive {
-	display: -webkit-flex;
-	display: flex;
-	-webkit-flex-wrap: wrap;
-	flex-wrap: wrap;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
 .flex-space-between {
@@ -45,86 +54,88 @@ body {
 }
 
 .flex-1 {
-	-webkit-flex: 1;
-	flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
 }
 
 .flex-2 {
-	-webkit-flex: 2;
-	flex: 2;
+  -webkit-flex: 2;
+  flex: 2;
 }
 
 .flex-3 {
-	-webkit-flex: 3;
-	flex: 3;
+  -webkit-flex: 3;
+  flex: 3;
 }
 
 a {
-	color: white;
-	text-decoration: none;
+  color: white;
+  text-decoration: none;
 }
 
 .show-mobile {
-	display: none;
+  display: none;
 }
 
 .show-mobile-flex {
-	display: none;
+  display: none;
 }
 
 .router-outer {
-	position: relative;
+  position: relative;
 }
 
 .router-inner {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
 }
 
-.logo, .top {
-	font-size: 1.5em;
+.logo,
+.top {
+  font-size: 1.5em;
 }
 
 .gray {
-	color: gray;
+  color: gray;
 }
 
 .lightgray {
-	color: lightgray;
+  color: lightgray;
 }
 
-.overflow-hidden, .overflow-hidden div {
-	overflow: hidden;
+.overflow-hidden,
+.overflow-hidden div {
+  overflow: hidden;
 }
 
 .ellipsis {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .vertical-buffer {
-	height: 30px;
+  height: 30px;
 }
 
 @media screen and (max-width: 543px) {
-	.hide-mobile {
-		display: none;
-	}
+  .hide-mobile {
+    display: none;
+  }
 
-	.show-mobile {
-		display: inline;
-	}
+  .show-mobile {
+    display: inline;
+  }
 
-	.show-mobile-flex {
-		display: flex;
-	}
-	
-	.flex-adaptive {
-		-webkit-flex-direction: column;
-		flex-direction: column;
-	}
+  .show-mobile-flex {
+    display: flex;
+  }
+
+  .flex-adaptive {
+    -webkit-flex-direction: column;
+    flex-direction: column;
+  }
 }

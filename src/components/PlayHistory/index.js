@@ -8,130 +8,138 @@ import { Image, NameArray, PlayBar } from '../Common';
 import TextUtil from '../../util/text';
 
 export default class PlayHistory extends Component {
-	
-	constructor(props) {
-		super(props);
+  constructor(props) {
+    super(props);
 
-		this.state = {songs: [], stats: []};
-		this.fetch = this.fetch.bind(this);
-	}
+    this.state = { songs: [], stats: [] };
+    this.fetch = this.fetch.bind(this);
+  }
 
-	componentDidMount() {
-		this.fetch();
-	}
+  componentDidMount() {
+    this.fetch();
+  }
 
-	render() {
-		var numStyle = {width: '20px', background: 'rgba(255, 255, 255, 0.2)', borderRadius: '5px'};
-		var gridStyle = {
+  render() {
+    var numStyle = {
+      width: '20px',
+      background: 'rgba(255, 255, 255, 0.2)',
+      borderRadius: '5px'
+    };
+    var gridStyle = {
       display: 'grid',
       gridTemplateColumns: '50px 50px 1fr',
       gridColumnGap: '10px',
       lineHeight: '25px',
-			marginBottom: '5px',
+      marginBottom: '5px'
     };
 
-		return (
-			<div>
-				<div className="top text-center" onClick={() => this.fetch()}>Play History</div>
-				<PlayBar stats={this.state.stats} />
-				<div className="flex-container">
-					<div className="flex-1 hide-mobile" />
-					<div className="flex-3">
-						{this.state.songs.map(song => 
-							<div key={song.id} style={gridStyle}>
-								<div className="text-center">
-									<div className="gray">{this.getTime(song)}</div>
-									<div className="flex-container flex-space-between">
-										<div style={this.getRankStyle(song.rank)}>{this.getMinRank(song)}</div>
-										<div style={numStyle}>{song.plays}</div>
-									</div>
-								</div>
-								<Image id={song.albumId} size={50} />
-								<div className="overflow-hidden">
-									<div className="ellipsis"><Link to={'/song/' + song.id}>{TextUtil.normalize(song.title)}</Link></div>
-									<div className="ellipsis"><small>by</small> <NameArray array={song.artists} /></div>
-								</div>
-							</div>
-						)}
-					</div>
-					<div className="flex-1 hide-mobile" />
-				</div>
-			</div>
-		);
-	}
+    return (
+      <div>
+        <div className="top text-center" onClick={() => this.fetch()}>
+          Play History
+        </div>
+        <PlayBar stats={this.state.stats} />
+        <div className="flex-container">
+          <div className="flex-1 hide-mobile" />
+          <div className="flex-3">
+            {this.state.songs.map(song => (
+              <div key={song.id} style={gridStyle}>
+                <div className="text-center">
+                  <div className="gray">{this.getTime(song)}</div>
+                  <div className="flex-container flex-space-between">
+                    <div style={this.getRankStyle(song.rank)}>
+                      {this.getMinRank(song)}
+                    </div>
+                    <div style={numStyle}>{song.plays}</div>
+                  </div>
+                </div>
+                <Image id={song.albumId} size={50} />
+                <div className="overflow-hidden">
+                  <div className="ellipsis">
+                    <Link to={'/song/' + song.id}>
+                      {TextUtil.normalize(song.title)}
+                    </Link>
+                  </div>
+                  <div className="ellipsis">
+                    <small>by</small> <NameArray array={song.artists} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="flex-1 hide-mobile" />
+        </div>
+      </div>
+    );
+  }
 
-	getRankStyle(rank) {
-		var style = {width: '20px'};
+  getRankStyle(rank) {
+    var style = { width: '20px' };
 
-		if (rank === undefined)
-			return style;
-		
-		var min = 11;
+    if (rank === undefined) return style;
 
-		for (var i in rank) {
-			min = Math.min(min, rank[i].min);
-		}
+    var min = 11;
 
-		style.borderRadius = '5px';
+    for (var i in rank) {
+      min = Math.min(min, rank[i].min);
+    }
 
-		if (min <= 1)
-			style.backgroundColor = 'rgb(255, 45, 85)';
-		else if (min <= 5)
-			style.backgroundColor = 'rgb(88, 86, 214)';
-		else
-			style.backgroundColor = 'rgb(0, 122, 255)';
+    style.borderRadius = '5px';
 
-		return style;
-	}
+    if (min <= 1) style.backgroundColor = 'rgb(255, 45, 85)';
+    else if (min <= 5) style.backgroundColor = 'rgb(88, 86, 214)';
+    else style.backgroundColor = 'rgb(0, 122, 255)';
 
-	getMinRank(song) {
-		var min = 11;
+    return style;
+  }
 
-		for (var i in song.rank) {
-			min = Math.min(min, song.rank[i].min);
-		}
+  getMinRank(song) {
+    var min = 11;
 
-		return min < 11 ? min : null;
-	}
+    for (var i in song.rank) {
+      min = Math.min(min, song.rank[i].min);
+    }
 
-	getTime(song) {
-		var date = new Date(song.lastPlayed);
-		var now = new Date();
+    return min < 11 ? min : null;
+  }
 
-		if (date.toLocaleDateString() === now.toLocaleDateString()) {
-			var hour = date.getHours();
-			var minute = date.getMinutes();
+  getTime(song) {
+    var date = new Date(song.lastPlayed);
+    var now = new Date();
 
-			if (minute < 10)
-				minute = '0' + minute;
+    if (date.toLocaleDateString() === now.toLocaleDateString()) {
+      var hour = date.getHours();
+      var minute = date.getMinutes();
 
-			return hour + ':' + minute;
-		} else {
-			var month = date.getMonth() + 1;
-			var day = date.getDate();
+      if (minute < 10) minute = '0' + minute;
 
-			return month + '/' + day;
-		}
-	}
+      return hour + ':' + minute;
+    } else {
+      var month = date.getMonth() + 1;
+      var day = date.getDate();
 
-	fetch() {
-		const that = this;
-		const url = '/api/lastPlayed';
+      return month + '/' + day;
+    }
+  }
 
-		fetch(url)
-		.then(function(response) {
-      return response.json();
-    })
-    .then(function(data) {
-      that.setState({songs: data});
-    });
+  fetch() {
+    const that = this;
+    const url = '/api/lastPlayed';
 
-		fetch('/stats/plays-by-song')
-		.then(function(response) {
-      return response.json();
-    })
-    .then(function(data) {
-      that.setState({stats: data});
-    });
-	}
+    fetch(url)
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        that.setState({ songs: data });
+      });
+
+    fetch('/stats/plays-by-song')
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        that.setState({ stats: data });
+      });
+  }
 }

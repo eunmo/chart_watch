@@ -1,91 +1,102 @@
-(function () {
-	'use strict';
+(function() {
+  'use strict';
 
-	var Promise = require('bluebird');
-	
-	var charts = ['billboard', 'oricon', 'deutsche', 'uk', 'francais', 'melon', 'gaon'];
+  var Promise = require('bluebird');
 
-	module.exports = function (router, _, db) {
-		
-		router.get('/api/season', function (req, res) {
-			var outParam = { weeks: {}, songs: [], charts: charts };
+  var charts = [
+    'billboard',
+    'oricon',
+    'deutsche',
+    'uk',
+    'francais',
+    'melon',
+    'gaon'
+  ];
 
-			db.season.getSongsOfThisWeek()
-				.then(function(rows) {
-					var i, j, row;
-					var weeks = outParam.weeks;
-					var songs = {};
-					var songIds = [];
-					var week, id, type, rank;
-					var curWeek;
+  module.exports = function(router, _, db) {
+    router.get('/api/season', function(req, res) {
+      var outParam = { weeks: {}, songs: [], charts: charts };
 
-					for (i in rows) {
-						row = rows[i];
-						week = row.week;
-						id = row.SongId;
-						type = row.type;
-						rank = row.rank;
+      db.season
+        .getSongsOfThisWeek()
+        .then(function(rows) {
+          var i, j, row;
+          var weeks = outParam.weeks;
+          var songs = {};
+          var songIds = [];
+          var week, id, type, rank;
+          var curWeek;
 
-						if (weeks[week] === undefined) {
-							weeks[week] = { week: week, songs: [] };
+          for (i in rows) {
+            row = rows[i];
+            week = row.week;
+            id = row.SongId;
+            type = row.type;
+            rank = row.rank;
 
-							for (j in charts) {
-								weeks[week].songs[j] = [];
-							}
-						}
+            if (weeks[week] === undefined) {
+              weeks[week] = { week: week, songs: [] };
 
-						curWeek = weeks[week];
-						curWeek.songs[charts.indexOf(type)][rank - 1] = id;
+              for (j in charts) {
+                weeks[week].songs[j] = [];
+              }
+            }
 
-						if (songs[id] === undefined) {
-							songs[id] = { id: id };
-							songIds.push(id);
-							outParam.songs.push(songs[id]);
-						}
-					}
+            curWeek = weeks[week];
+            curWeek.songs[charts.indexOf(type)][rank - 1] = id;
 
-					var promises = [];
-					songs = outParam.songs;
-					promises.push(db.song.fetchDetails(songs, songIds));
-					promises.push(db.song.fetchArtists(songs, songIds));
-					promises.push(db.song.fetchOldestAlbum(songs, songIds));
+            if (songs[id] === undefined) {
+              songs[id] = { id: id };
+              songIds.push(id);
+              outParam.songs.push(songs[id]);
+            }
+          }
 
-					return Promise.all(promises);
-				}).then(function () {
-					res.json(outParam);
-				});
-		});
-		
-		router.get('/api/season-detail', function (req, res) {
-			var outSongs = [];
+          var promises = [];
+          songs = outParam.songs;
+          promises.push(db.song.fetchDetails(songs, songIds));
+          promises.push(db.song.fetchArtists(songs, songIds));
+          promises.push(db.song.fetchOldestAlbum(songs, songIds));
 
-			db.season.getAllSongsOfThisWeek()
-				.then(function(rows) {
-					var i, j, row, id;
-					var songs = [];
-					var songIds = [];
-					
-					for (i in rows) {
-						row = rows[i];
-						id = row.id;
+          return Promise.all(promises);
+        })
+        .then(function() {
+          res.json(outParam);
+        });
+    });
 
-						if (songs[id] === undefined) {
-							songs[id] = { id: id };
-							songIds.push(id);
-							outSongs.push(songs[id]);
-						}
-					}
+    router.get('/api/season-detail', function(req, res) {
+      var outSongs = [];
 
-					var promises = [];
-					promises.push(db.song.fetchDetails(songs, songIds));
-					promises.push(db.song.fetchArtists(songs, songIds));
-					promises.push(db.song.fetchOldestAlbum(songs, songIds));
-					promises.push(db.song.fetchMinChartRank(songs, songIds));
+      db.season
+        .getAllSongsOfThisWeek()
+        .then(function(rows) {
+          var i, j, row, id;
+          var songs = [];
+          var songIds = [];
 
-					return Promise.all(promises);
-				}).then(function () {
-					res.json(outSongs);
-				});
-		});
-	};
-}());
+          for (i in rows) {
+            row = rows[i];
+            id = row.id;
+
+            if (songs[id] === undefined) {
+              songs[id] = { id: id };
+              songIds.push(id);
+              outSongs.push(songs[id]);
+            }
+          }
+
+          var promises = [];
+          promises.push(db.song.fetchDetails(songs, songIds));
+          promises.push(db.song.fetchArtists(songs, songIds));
+          promises.push(db.song.fetchOldestAlbum(songs, songIds));
+          promises.push(db.song.fetchMinChartRank(songs, songIds));
+
+          return Promise.all(promises);
+        })
+        .then(function() {
+          res.json(outSongs);
+        });
+    });
+  };
+})();

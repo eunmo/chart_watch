@@ -1,206 +1,215 @@
-(function () {
-	'use strict';
+(function() {
+  'use strict';
 
-	var Promise = require('bluebird');
-	
-	var charts = ['billboard', 'oricon', 'deutsche', 'uk', 'francais', 'melon', 'gaon'];
+  var Promise = require('bluebird');
 
-	module.exports = function (router, _, db) {
+  var charts = [
+    'billboard',
+    'oricon',
+    'deutsche',
+    'uk',
+    'francais',
+    'melon',
+    'gaon'
+  ];
 
-		function getMore (songs, needDetails) {
-			var songIds = [];
+  module.exports = function(router, _, db) {
+    function getMore(songs, needDetails) {
+      var songIds = [];
 
-			for (var i in songs) {
-				songIds.push(songs[i].id);
-			}
+      for (var i in songs) {
+        songIds.push(songs[i].id);
+      }
 
-			var promises = [];
-			promises.push(db.song.fetchArtists(songs, songIds));
-			promises.push(db.song.fetchOldestAlbum(songs, songIds));
+      var promises = [];
+      promises.push(db.song.fetchArtists(songs, songIds));
+      promises.push(db.song.fetchOldestAlbum(songs, songIds));
 
-			if (needDetails)
-				promises.push(db.song.fetchDetails(songs, songIds));
+      if (needDetails) promises.push(db.song.fetchDetails(songs, songIds));
 
-			return Promise.all(promises)
-				.then(function() {
-					return songs;
-				});
-		}
+      return Promise.all(promises).then(function() {
+        return songs;
+      });
+    }
 
-		function getSortedCurrentSongs () {
-			return db.chartCurrent.getSortedSongs()
-			.then(function (songs) {
-				return getMore(songs, false);
-			});
-		}
+    function getSortedCurrentSongs() {
+      return db.chartCurrent.getSortedSongs().then(function(songs) {
+        return getMore(songs, false);
+      });
+    }
 
-		function getCharted (count) {
-			var query =
-				"SELECT distinct SongId as id " +
-				"FROM Songs s, SingleCharts c " +
-				"WHERE s.id = c.SongId and rank <= 10 and plays < 10 " +
-				"ORDER BY SongId " +
-				"LIMIT " + count;
+    function getCharted(count) {
+      var query =
+        'SELECT distinct SongId as id ' +
+        'FROM Songs s, SingleCharts c ' +
+        'WHERE s.id = c.SongId and rank <= 10 and plays < 10 ' +
+        'ORDER BY SongId ' +
+        'LIMIT ' +
+        count;
 
-			return db.promisifyQuery(query)
-				.then(function (songs) {
-					return getMore(songs, true);
-				});
-		}
-		
-		function getUncharted (count) {
-			var query =
-				"SELECT id " +
-				"FROM Songs " +
-				"WHERE plays < 3 " +
-				"ORDER BY id " +
-				"LIMIT " + count;
-			
-			return db.promisifyQuery(query)
-				.then(function (songs) {
-					return getMore(songs, true);
-				});
-		}
+      return db.promisifyQuery(query).then(function(songs) {
+        return getMore(songs, true);
+      });
+    }
 
-		function getSeasonal (limit) {
+    function getUncharted(count) {
+      var query =
+        'SELECT id ' +
+        'FROM Songs ' +
+        'WHERE plays < 3 ' +
+        'ORDER BY id ' +
+        'LIMIT ' +
+        count;
 
-			return db.season.getAllSongsOfThisWeek()
-				.then(function (rows) {
-					var songMap = {};
-					var songs = [];
+      return db.promisifyQuery(query).then(function(songs) {
+        return getMore(songs, true);
+      });
+    }
 
-					for (var i in rows) {
-						if (songMap[rows[i].id] === undefined) {
-							songMap[rows[i].id] = rows[i];
-							songs.push(rows[i]);
-						}
-					}
+    function getSeasonal(limit) {
+      return db.season
+        .getAllSongsOfThisWeek()
+        .then(function(rows) {
+          var songMap = {};
+          var songs = [];
 
-					return getMore(songs, true);
-				}).then(function (array) {
-					array.sort(function (a, b) {
-						if (a.plays === b.plays) {
-							return a.id - b.id;
-						}
+          for (var i in rows) {
+            if (songMap[rows[i].id] === undefined) {
+              songMap[rows[i].id] = rows[i];
+              songs.push(rows[i]);
+            }
+          }
 
-						return a.plays - b.plays;
-					});
+          return getMore(songs, true);
+        })
+        .then(function(array) {
+          array.sort(function(a, b) {
+            if (a.plays === b.plays) {
+              return a.id - b.id;
+            }
 
-					return array;
-				});
-		}
+            return a.plays - b.plays;
+          });
 
-		function getCurrentAlbums () {
-			var query = "SELECT id FROM (";
+          return array;
+        });
+    }
 
-			for (var i in charts) {
-				var chart = charts[i];
-				if (i > 0)
-					query += " UNION ";
-				query += "SELECT SongId as id, AlbumId, disk, track FROM AlbumSongs";
-				query += " WHERE AlbumId in (SELECT AlbumId FROM AlbumCharts";
-				query +=                  " WHERE rank <= 5 and type = \"" +  chart + "\"";
-				query +=                  " AND week = (SELECT max(week) FROM AlbumCharts";
-				query +=                              " WHERE type = \"" + chart + "\"))";
-			}
+    function getCurrentAlbums() {
+      var query = 'SELECT id FROM (';
 
-			query += ") a ORDER BY AlbumId, disk, track;";
-			
-			return db.promisifyQuery(query)
-				.then(function (songs) {
-					return getMore(songs, true);
-				});
-		}
+      for (var i in charts) {
+        var chart = charts[i];
+        if (i > 0) query += ' UNION ';
+        query += 'SELECT SongId as id, AlbumId, disk, track FROM AlbumSongs';
+        query += ' WHERE AlbumId in (SELECT AlbumId FROM AlbumCharts';
+        query += ' WHERE rank <= 5 and type = "' + chart + '"';
+        query += ' AND week = (SELECT max(week) FROM AlbumCharts';
+        query += ' WHERE type = "' + chart + '"))';
+      }
 
-		function getFavoriteAlbums () {
-			var curDate = new Date();
-			var limitDate = new Date(Date.UTC(curDate.getFullYear() - 1, curDate.getMonth(), curDate.getDate()));
-			var albumQuery =
-				"SELECT AlbumId, `release` FROM (" +
-					"SELECT AlbumId FROM AlbumArtists a, Artists b " +
-					"	WHERE a.ArtistId = b.id AND b.favorites = true " +
-					" UNION " +
-					"SELECT AlbumId FROM AlbumArtists a, ArtistRelations b, Artists c " +
-					" WHERE a.ArtistId = b.a AND b.b = c.id AND c.favorites = true" +
-				") a, Albums b " +
-				" WHERE a.AlbumId = b.id " +
-				"   AND `release` >= '" + limitDate.toISOString() + "' " +
-				"	ORDER BY `release` DESC";
+      query += ') a ORDER BY AlbumId, disk, track;';
 
-			return db.promisifyQuery(albumQuery)
-				.then(function (albumIds) {
-					var ids = [];
+      return db.promisifyQuery(query).then(function(songs) {
+        return getMore(songs, true);
+      });
+    }
 
-					for (var i in albumIds) {
-						ids.push(albumIds[i].AlbumId);
-					}
+    function getFavoriteAlbums() {
+      var curDate = new Date();
+      var limitDate = new Date(
+        Date.UTC(
+          curDate.getFullYear() - 1,
+          curDate.getMonth(),
+          curDate.getDate()
+        )
+      );
+      var albumQuery =
+        'SELECT AlbumId, `release` FROM (' +
+        'SELECT AlbumId FROM AlbumArtists a, Artists b ' +
+        '	WHERE a.ArtistId = b.id AND b.favorites = true ' +
+        ' UNION ' +
+        'SELECT AlbumId FROM AlbumArtists a, ArtistRelations b, Artists c ' +
+        ' WHERE a.ArtistId = b.a AND b.b = c.id AND c.favorites = true' +
+        ') a, Albums b ' +
+        ' WHERE a.AlbumId = b.id ' +
+        "   AND `release` >= '" +
+        limitDate.toISOString() +
+        "' " +
+        '	ORDER BY `release` DESC';
 
-					var query =
-						"SELECT SongId as id FROM AlbumSongs " +
-						" WHERE AlbumId in (" + ids.join() + ") " +
-					  " ORDER BY FIELD(AlbumId, " + ids.join() + "), disk, track";
+      return db
+        .promisifyQuery(albumQuery)
+        .then(function(albumIds) {
+          var ids = [];
 
-					return db.promisifyQuery(query);
-				}).then(function (songs) {
-					return getMore(songs, true);
-				});
-		}
+          for (var i in albumIds) {
+            ids.push(albumIds[i].AlbumId);
+          }
 
-		router.get('/ios/fetch', function (req, res) {
-			var promises = [];
-			var result = {};
+          var query =
+            'SELECT SongId as id FROM AlbumSongs ' +
+            ' WHERE AlbumId in (' +
+            ids.join() +
+            ') ' +
+            ' ORDER BY FIELD(AlbumId, ' +
+            ids.join() +
+            '), disk, track';
 
-			var chartedLimit = 200;
-		 	var unchartedLimit = 200;
-			var seasonalLimit = 5;
+          return db.promisifyQuery(query);
+        })
+        .then(function(songs) {
+          return getMore(songs, true);
+        });
+    }
 
-			promises.push(
-				getSortedCurrentSongs()
-				.then( function (array) {
-					result.current = array;
-				})
-			);
+    router.get('/ios/fetch', function(req, res) {
+      var promises = [];
+      var result = {};
 
-			promises.push(
-				getCurrentAlbums()
-				.then( function (array) {
-					result.album = array;
-				})
-			);
-			
-			promises.push(
-				getCharted(chartedLimit)
-				.then( function (array) {
-					result.charted = array;
-				})
-			);
+      var chartedLimit = 200;
+      var unchartedLimit = 200;
+      var seasonalLimit = 5;
 
-			promises.push(
-				getUncharted(unchartedLimit)
-				.then( function (array) {
-					result.uncharted = array;
-				})
-			);
+      promises.push(
+        getSortedCurrentSongs().then(function(array) {
+          result.current = array;
+        })
+      );
 
-			promises.push(
-				getSeasonal(seasonalLimit)
-				.then( function (array) {
-					result.seasonal = array;
-				})
-			);
+      promises.push(
+        getCurrentAlbums().then(function(array) {
+          result.album = array;
+        })
+      );
 
-			promises.push(
-				getFavoriteAlbums()
-				.then( function (array) {
-					result.favorite = array;
-				})
-			);
+      promises.push(
+        getCharted(chartedLimit).then(function(array) {
+          result.charted = array;
+        })
+      );
 
-			Promise.all(promises)
-			.then ( function () {
-				res.json(result);
-			});
-			
-		});
-	};
-}());
+      promises.push(
+        getUncharted(unchartedLimit).then(function(array) {
+          result.uncharted = array;
+        })
+      );
+
+      promises.push(
+        getSeasonal(seasonalLimit).then(function(array) {
+          result.seasonal = array;
+        })
+      );
+
+      promises.push(
+        getFavoriteAlbums().then(function(array) {
+          result.favorite = array;
+        })
+      );
+
+      Promise.all(promises).then(function() {
+        res.json(result);
+      });
+    });
+  };
+})();

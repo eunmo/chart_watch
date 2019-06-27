@@ -1,25 +1,25 @@
-(function () {
-	"use strict";
-		
-	var getSeasonalWeeks = function (date) {
-		var dates = "";
-		var mm = date.getMonth();
-		var dd = date.getDate();
-		var append = false;
+(function() {
+  'use strict';
 
-		for (var yy = date.getFullYear() - 1; yy >= 2000; yy--) {
-			date = new Date(Date.UTC(yy, mm, dd));
-			date.setDate(date.getDate() + (6 - date.getDay()));
+  var getSeasonalWeeks = function(date) {
+    var dates = '';
+    var mm = date.getMonth();
+    var dd = date.getDate();
+    var append = false;
 
-			if (append) {
-				dates += ",";
-			}
+    for (var yy = date.getFullYear() - 1; yy >= 2000; yy--) {
+      date = new Date(Date.UTC(yy, mm, dd));
+      date.setDate(date.getDate() + (6 - date.getDay()));
 
-			dates += "'" + date.toISOString() + "'";
-			append = true;
-		}
+      if (append) {
+        dates += ',';
+      }
 
-		/*
+      dates += "'" + date.toISOString() + "'";
+      append = true;
+    }
+
+    /*
 		var i;
 		
 		for (var yy = date.getFullYear() - 1; yy >= 2000; yy--) {
@@ -42,46 +42,57 @@
 		}
 		*/
 
-		return dates;
-	};
+    return dates;
+  };
 
-	module.exports = function (db) {
-		db.season = {};
+  module.exports = function(db) {
+    db.season = {};
 
-		db.season.getSongsOfThisWeek = function () {
-			var weeks = getSeasonalWeeks(new Date());
-			var query =
-				"SELECT week, SongId, type, rank " +
-				"FROM SingleCharts " +
-				"WHERE rank <= " + 5 + " " +
-				"AND week IN (" + weeks + ") AND `order` = 0 AND SongId is not null;";
+    db.season.getSongsOfThisWeek = function() {
+      var weeks = getSeasonalWeeks(new Date());
+      var query =
+        'SELECT week, SongId, type, rank ' +
+        'FROM SingleCharts ' +
+        'WHERE rank <= ' +
+        5 +
+        ' ' +
+        'AND week IN (' +
+        weeks +
+        ') AND `order` = 0 AND SongId is not null;';
 
-			return db.promisifyQuery(query);
-		};
+      return db.promisifyQuery(query);
+    };
 
-		db.season.getAllSongsOfThisWeek = function () {
-			var weeks = getSeasonalWeeks(new Date());
-			var query =
-				"SELECT SongId as id " +
-				"FROM SingleCharts " +
-				"WHERE rank <= " + 5 + " " +
-				"AND week IN (" + weeks + ") AND SongId is not null " +
-				"ORDER BY week DESC, rank;";
+    db.season.getAllSongsOfThisWeek = function() {
+      var weeks = getSeasonalWeeks(new Date());
+      var query =
+        'SELECT SongId as id ' +
+        'FROM SingleCharts ' +
+        'WHERE rank <= ' +
+        5 +
+        ' ' +
+        'AND week IN (' +
+        weeks +
+        ') AND SongId is not null ' +
+        'ORDER BY week DESC, rank;';
 
-			return db.promisifyQuery(query);
-		};
-		
-		db.season.getQuery = function () {
-			var weeks = getSeasonalWeeks(new Date());
-			var query =
-				"SELECT SongId as id " +
-				"FROM SingleCharts " +
-				"WHERE rank <= " + 10 + " " +
-				"AND week IN (" + weeks + ") AND SongId is not null " +
-				"ORDER BY week DESC, rank;";
+      return db.promisifyQuery(query);
+    };
 
-			return query;
-		};
-	};
-}());
-		
+    db.season.getQuery = function() {
+      var weeks = getSeasonalWeeks(new Date());
+      var query =
+        'SELECT SongId as id ' +
+        'FROM SingleCharts ' +
+        'WHERE rank <= ' +
+        10 +
+        ' ' +
+        'AND week IN (' +
+        weeks +
+        ') AND SongId is not null ' +
+        'ORDER BY week DESC, rank;';
+
+      return query;
+    };
+  };
+})();

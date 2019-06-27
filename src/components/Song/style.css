@@ -1,12 +1,12 @@
 @media screen and (max-width: 543px) {
-	.Song-albums {
-		width: 300px;
-	}
+  .Song-albums {
+    width: 300px;
+  }
 }
 
 @media screen and (min-width: 544px) {
-	.Song-albums {
-		-webkit-flex: 3;
-		flex: 3;
-	}
+  .Song-albums {
+    -webkit-flex: 3;
+    flex: 3;
+  }
 }

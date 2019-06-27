@@ -1,137 +1,140 @@
-(function () {
-	'use strict';
+(function() {
+  'use strict';
 
-	var Promise = require('bluebird');
+  var Promise = require('bluebird');
 
-	var simpleRandom = function (rows, array, count, code) {
-		var i, index;
+  var simpleRandom = function(rows, array, count, code) {
+    var i, index;
 
-		for (i = 0; i < count; i++) {
-			index = Math.floor(Math.random () * rows.length);
-			array.push(rows[index].id);
-		}
-	};
+    for (i = 0; i < count; i++) {
+      index = Math.floor(Math.random() * rows.length);
+      array.push(rows[index].id);
+    }
+  };
 
-	var getSongIds = function (db, query, array, count) {
-		return db.promisifyQuery(query.query)
-		.then(function (rows) {
-			simpleRandom(rows, array, count, query.code);
-		});
-	};
-	
-	var getDetails = function (db, doc) {
-		return db.song.getDetails(doc.ids)
-			.then(function (rows) {
-				var i, row, song;
-				var	details = {};
+  var getSongIds = function(db, query, array, count) {
+    return db.promisifyQuery(query.query).then(function(rows) {
+      simpleRandom(rows, array, count, query.code);
+    });
+  };
 
-				for (i in rows) {
-					row = rows[i];
-					details[row.id] = row;
-				}
+  var getDetails = function(db, doc) {
+    return db.song.getDetails(doc.ids).then(function(rows) {
+      var i, row, song;
+      var details = {};
 
-				for (i in doc.songs) {
-					song = doc.songs[i];
-					row = details[song.id];
+      for (i in rows) {
+        row = rows[i];
+        details[row.id] = row;
+      }
 
-					song.title = row.title;
-					song.plays = row.plays;
-				}
-			});
-	};
-		
-	module.exports = function (router, _, db) {
-		function getRandomSongs () {
-			var promises = [];
-			var songIds = [];
-			var limits = [];
-			var weights = [];
-			var query, random, i;
-	
-			var queries = [
-				{ query: "SELECT id FROM Songs;", code: 'A' },
-				{ query: "SELECT id FROM Songs WHERE plays <= 2;", code: 'B', weight: 3 },
-				{ query: "SELECT id FROM Songs WHERE plays < 10 AND id IN (SELECT distinct SongId FROM SingleCharts WHERE rank <= 10);", 
-					code: 'C' },
-				{ query: db.season.getQuery(), code: 'D' },
-				{ query: db.song.queryForFavoriteArtists, code: 'E' }
-			];
+      for (i in doc.songs) {
+        song = doc.songs[i];
+        row = details[song.id];
 
-			queries.forEach((query, index) => {
-				limits[index] = 0;
-				var weight = query.weight ? query.weight : 1;
-				for (i = 0; i < weight; i++) {
-					weights.push(index);
-				}
-			});
+        song.title = row.title;
+        song.plays = row.plays;
+      }
+    });
+  };
 
-			for (i = 0; i < 100; i++) {
-				random = Math.floor(Math.random () * weights.length);
-				limits[weights[random]]++;
-			}
+  module.exports = function(router, _, db) {
+    function getRandomSongs() {
+      var promises = [];
+      var songIds = [];
+      var limits = [];
+      var weights = [];
+      var query, random, i;
 
-			for (i in queries) {
-				promises.push(getSongIds(db, queries[i], songIds, limits[i]));
-			}
+      var queries = [
+        { query: 'SELECT id FROM Songs;', code: 'A' },
+        {
+          query: 'SELECT id FROM Songs WHERE plays <= 2;',
+          code: 'B',
+          weight: 3
+        },
+        {
+          query:
+            'SELECT id FROM Songs WHERE plays < 10 AND id IN (SELECT distinct SongId FROM SingleCharts WHERE rank <= 10);',
+          code: 'C'
+        },
+        { query: db.season.getQuery(), code: 'D' },
+        { query: db.song.queryForFavoriteArtists, code: 'E' }
+      ];
 
-			return Promise.all (promises)
-				.then(function () {
-					var songs = {};
-					var ids = [];
-					var i, id;
+      queries.forEach((query, index) => {
+        limits[index] = 0;
+        var weight = query.weight ? query.weight : 1;
+        for (i = 0; i < weight; i++) {
+          weights.push(index);
+        }
+      });
 
-					for (i in songIds) {
-						id = songIds[i];
+      for (i = 0; i < 100; i++) {
+        random = Math.floor(Math.random() * weights.length);
+        limits[weights[random]]++;
+      }
 
-						if (songs[id] === undefined) {
-							songs[id] = { id: id };
-							ids.push(id);
-						}
-					}
+      for (i in queries) {
+        promises.push(getSongIds(db, queries[i], songIds, limits[i]));
+      }
 
-					return { ids: ids, songs: songs };
-				});
-		}
+      return Promise.all(promises).then(function() {
+        var songs = {};
+        var ids = [];
+        var i, id;
 
-		function fillSongs (doc) {
-			var promises = [];
+        for (i in songIds) {
+          id = songIds[i];
 
-			promises.push(getDetails(db, doc));
-			promises.push(db.song.fetchArtists(doc.songs, doc.ids));
-			promises.push(db.song.fetchOldestAlbum(doc.songs, doc.ids));
-			promises.push(db.song.fetchMinChartRank(doc.songs, doc.ids));
+          if (songs[id] === undefined) {
+            songs[id] = { id: id };
+            ids.push(id);
+          }
+        }
 
-			return Promise.all (promises)
-				.then(function () {
-					return doc;
-				});
-		}
+        return { ids: ids, songs: songs };
+      });
+    }
 
-		function trimSongArray (doc) {
-			var newSongs = [];
-			var shuffle = [];
-			var i;
-			var index;
+    function fillSongs(doc) {
+      var promises = [];
 
-			for (i in doc.songs) {
-				newSongs.push (doc.songs[i]);
-			}
+      promises.push(getDetails(db, doc));
+      promises.push(db.song.fetchArtists(doc.songs, doc.ids));
+      promises.push(db.song.fetchOldestAlbum(doc.songs, doc.ids));
+      promises.push(db.song.fetchMinChartRank(doc.songs, doc.ids));
 
-			while (newSongs.length > 0) {
-				index = Math.floor (Math.random () * newSongs.length);
-				shuffle.push (newSongs.splice (index, 1)[0]);
-			}
+      return Promise.all(promises).then(function() {
+        return doc;
+      });
+    }
 
-			return shuffle;
-		}
+    function trimSongArray(doc) {
+      var newSongs = [];
+      var shuffle = [];
+      var i;
+      var index;
 
-		router.get('/shuffle', function (req, res) {
-			getRandomSongs ()
-			.then (fillSongs)
-			.then (trimSongArray)
-			.then (function (doc) {
-				res.json (doc);
-			});
-		});
-	};
-}());
+      for (i in doc.songs) {
+        newSongs.push(doc.songs[i]);
+      }
+
+      while (newSongs.length > 0) {
+        index = Math.floor(Math.random() * newSongs.length);
+        shuffle.push(newSongs.splice(index, 1)[0]);
+      }
+
+      return shuffle;
+    }
+
+    router.get('/shuffle', function(req, res) {
+      getRandomSongs()
+        .then(fillSongs)
+        .then(trimSongArray)
+        .then(function(doc) {
+          res.json(doc);
+        });
+    });
+  };
+})();

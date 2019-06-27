@@ -1,101 +1,113 @@
-(function () {
-	"use strict";
-	
-	var common = require('../common/cwcommon');
+(function() {
+  'use strict';
 
-	var charts = ['billboard', 'oricon', 'deutsche', 'uk', 'francais', 'melon', 'gaon'];
-		
-	var initWeek = function (weeks, week) {
-		var weekNum;
+  var common = require('../common/cwcommon');
 
-		weekNum = common.weekToNum(week);
+  var charts = [
+    'billboard',
+    'oricon',
+    'deutsche',
+    'uk',
+    'francais',
+    'melon',
+    'gaon'
+  ];
 
-		if (weeks[weekNum] === undefined) {
-			weeks[weekNum] = {
-				week: week,
-				ranks: []
-			};
-		}
+  var initWeek = function(weeks, week) {
+    var weekNum;
 
-		return weekNum;
-	};
-		
-	var weeksToArray = function (weeks) {
-		var results = [];
+    weekNum = common.weekToNum(week);
 
-		var weekCmp = function (a, b) {
-			return b.week - a.week;
-		};
+    if (weeks[weekNum] === undefined) {
+      weeks[weekNum] = {
+        week: week,
+        ranks: []
+      };
+    }
 
-		for (var i in weeks) {
-			results.push(weeks[i]);
-		}
-		
-		results.sort(weekCmp);
+    return weekNum;
+  };
 
-		return results;
-	};
-	
-	var getChartWeeks = function (db, query) {
-		return db.promisifyQuery(query)
-			.then(function (rows) {
-				var chartFound = [];
-				var weeks = {};
-				var row;
-				var i, j, k;
-				var count = 0;
-				var chartMap = {};
-				var chartIndex;
-				var weekNum;
-				var chartHeader = [];
-				var result = {};
+  var weeksToArray = function(weeks) {
+    var results = [];
 
-				for (j in charts) {
-					chartFound[j] = false;
-				}
+    var weekCmp = function(a, b) {
+      return b.week - a.week;
+    };
 
-				for (i in rows) {
-					row = rows[i];
-					chartFound[charts.indexOf(row.type)] = true;
-					initWeek(weeks, row.week);
-				}
+    for (var i in weeks) {
+      results.push(weeks[i]);
+    }
 
-				for (j in charts) {
-					if (chartFound[j]) {
-						chartMap[charts[j]] = count;
-						for (k in weeks) {
-							weeks[k].ranks[count] = '-';
-						}
-						chartHeader[count] = charts[j];
-						count++;
-					}
-				}
-				
-				for (i in rows) {
-					row = rows[i];
-					chartIndex = chartMap[row.type];
-					weekNum = common.weekToNum(row.week);
-					weeks[weekNum].ranks[chartIndex] = row.rank;
-				}
+    results.sort(weekCmp);
 
-				return { headers: chartHeader, weeks: weeksToArray(weeks) };
-			});
-	};
-	
-	module.exports = function (db) {
-		db.chartWeeks = {};
+    return results;
+  };
 
-		db.chartWeeks.getOneAlbum = function (id) {
-			var query = "SELECT `type`, week, rank FROM AlbumCharts WHERE AlbumId = " + id + ";";
+  var getChartWeeks = function(db, query) {
+    return db.promisifyQuery(query).then(function(rows) {
+      var chartFound = [];
+      var weeks = {};
+      var row;
+      var i, j, k;
+      var count = 0;
+      var chartMap = {};
+      var chartIndex;
+      var weekNum;
+      var chartHeader = [];
+      var result = {};
 
-			return getChartWeeks(db, query);
-		};
+      for (j in charts) {
+        chartFound[j] = false;
+      }
 
-		db.chartWeeks.getOneSong = function (id) {
-			var query = "SELECT `type`, week, rank FROM SingleCharts WHERE SongId = " + id + ";";
+      for (i in rows) {
+        row = rows[i];
+        chartFound[charts.indexOf(row.type)] = true;
+        initWeek(weeks, row.week);
+      }
 
-			return getChartWeeks(db, query);
-		};
-	};
-}());
-	
+      for (j in charts) {
+        if (chartFound[j]) {
+          chartMap[charts[j]] = count;
+          for (k in weeks) {
+            weeks[k].ranks[count] = '-';
+          }
+          chartHeader[count] = charts[j];
+          count++;
+        }
+      }
+
+      for (i in rows) {
+        row = rows[i];
+        chartIndex = chartMap[row.type];
+        weekNum = common.weekToNum(row.week);
+        weeks[weekNum].ranks[chartIndex] = row.rank;
+      }
+
+      return { headers: chartHeader, weeks: weeksToArray(weeks) };
+    });
+  };
+
+  module.exports = function(db) {
+    db.chartWeeks = {};
+
+    db.chartWeeks.getOneAlbum = function(id) {
+      var query =
+        'SELECT `type`, week, rank FROM AlbumCharts WHERE AlbumId = ' +
+        id +
+        ';';
+
+      return getChartWeeks(db, query);
+    };
+
+    db.chartWeeks.getOneSong = function(id) {
+      var query =
+        'SELECT `type`, week, rank FROM SingleCharts WHERE SongId = ' +
+        id +
+        ';';
+
+      return getChartWeeks(db, query);
+    };
+  };
+})();

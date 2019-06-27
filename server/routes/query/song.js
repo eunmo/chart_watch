@@ -1,86 +1,79 @@
-(function () {
-	'use strict';
+(function() {
+  'use strict';
 
-	var Promise = require('bluebird');
+  var Promise = require('bluebird');
 
-	var getDetails = function (db, song) {
-		return db.song.getDetails([song.id])
-			.then(function (rows) {
-				var row = rows[0];
-				song.title = row.title;
-				song.plays = row.plays;
-			});
-	};
-	
-	var getArtists = function (db, song) {
-		return db.song.getArtists([song.id])
-			.then(function (artists) {
-				song.artists = artists[song.id].artists;
-				song.features = artists[song.id].features;
-			});
-	};
-	
-	var getAlbums = function (db, song) {
-		return db.song.getAlbums([song.id])
-			.then(function (albums) {
-				song.albums = albums[song.id];
-			});
-	};
+  var getDetails = function(db, song) {
+    return db.song.getDetails([song.id]).then(function(rows) {
+      var row = rows[0];
+      song.title = row.title;
+      song.plays = row.plays;
+    });
+  };
 
-	var getCharts = function (db, song) {
-		return db.chartWeeks.getOneSong(song.id)
-			.then(function (charts) {
-				song.charts = charts;
-			});
-	};
+  var getArtists = function(db, song) {
+    return db.song.getArtists([song.id]).then(function(artists) {
+      song.artists = artists[song.id].artists;
+      song.features = artists[song.id].features;
+    });
+  };
 
-	var getFullAlbums = function (db, song) {
-		return db.song.getAlbums([song.id])
-			.then(function (albums) {
-				song.albums = albums[song.id];
+  var getAlbums = function(db, song) {
+    return db.song.getAlbums([song.id]).then(function(albums) {
+      song.albums = albums[song.id];
+    });
+  };
 
-				var albums = song.albums;
-				var albumIds = albums.map(album => album.id);
-				var promises = [
-					db.album.fetchDetails(albums, albumIds),
-					db.album.fetchArtists(albums, albumIds),
-				];
+  var getCharts = function(db, song) {
+    return db.chartWeeks.getOneSong(song.id).then(function(charts) {
+      song.charts = charts;
+    });
+  };
 
-				return Promise.all(promises);
-			});
-	};
+  var getFullAlbums = function(db, song) {
+    return db.song.getAlbums([song.id]).then(function(albums) {
+      song.albums = albums[song.id];
 
-	module.exports = function (router, _, db) {
-		router.get('/api/song/:_id', function (req, res) {
-			var id = req.params._id;
-			var promises = [];
-			var song = { id: id };
+      var albums = song.albums;
+      var albumIds = albums.map(album => album.id);
+      var promises = [
+        db.album.fetchDetails(albums, albumIds),
+        db.album.fetchArtists(albums, albumIds)
+      ];
 
-			promises.push(getDetails(db, song));
-			promises.push(getArtists(db, song));
-			promises.push(getAlbums(db, song));
-			promises.push(getCharts(db, song));
+      return Promise.all(promises);
+    });
+  };
 
-			Promise.all(promises)
-			.then(function () {
-				res.json(song);
-			});
-		});
-		
-		router.get('/api/song/full/:_id', function (req, res) {
-			var id = req.params._id;
-			var promises = [];
-			var song = { id: id };
+  module.exports = function(router, _, db) {
+    router.get('/api/song/:_id', function(req, res) {
+      var id = req.params._id;
+      var promises = [];
+      var song = { id: id };
 
-			promises.push(getDetails(db, song));
-			promises.push(getArtists(db, song));
-			promises.push(getFullAlbums(db, song));
-			promises.push(getCharts(db, song));
+      promises.push(getDetails(db, song));
+      promises.push(getArtists(db, song));
+      promises.push(getAlbums(db, song));
+      promises.push(getCharts(db, song));
 
-			Promise.all(promises)
-			.then(function () {
-				res.json(song);
-			});
-		});
-	};
-}());
+      Promise.all(promises).then(function() {
+        res.json(song);
+      });
+    });
+
+    router.get('/api/song/full/:_id', function(req, res) {
+      var id = req.params._id;
+      var promises = [];
+      var song = { id: id };
+
+      promises.push(getDetails(db, song));
+      promises.push(getArtists(db, song));
+      promises.push(getFullAlbums(db, song));
+      promises.push(getCharts(db, song));
+
+      Promise.all(promises).then(function() {
+        res.json(song);
+      });
+    });
+  };
+})();

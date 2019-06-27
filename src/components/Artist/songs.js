@@ -8,125 +8,139 @@ import { ArtistView, Image, Release } from '../Common';
 import TextUtil from '../../util/text';
 
 export default class ArtistSongs extends Component {
-	
-	render() {
-		const id = this.props.data.id;
-		const albums = this.props.data.albums;
+  render() {
+    const id = this.props.data.id;
+    const albums = this.props.data.albums;
 
-		var outerStyle = {marginBottom: '5px'};
-		var innerStyle = {lineHeight: '25px'};
-		var rankStyle = {width: '32px', textAlign: 'right', marginRight: '3px', minWidth: '32px'};
-		var artistStyle = {marginLeft: '35px'};
+    var outerStyle = { marginBottom: '5px' };
+    var innerStyle = { lineHeight: '25px' };
+    var rankStyle = {
+      width: '32px',
+      textAlign: 'right',
+      marginRight: '3px',
+      minWidth: '32px'
+    };
+    var artistStyle = { marginLeft: '35px' };
 
-		var globalMin = 11;
+    var globalMin = 11;
 
-		albums.forEach(album => {
-			album.songs.filter(song => song.album === album).forEach(song => {
-				if (song.rank)
-					globalMin = Math.min(song.rank.min, globalMin);
-			});
-		});
+    albums.forEach(album => {
+      album.songs
+        .filter(song => song.album === album)
+        .forEach(song => {
+          if (song.rank) globalMin = Math.min(song.rank.min, globalMin);
+        });
+    });
 
-		if (globalMin === 11) {
-			rankStyle.width = '7px';
-			rankStyle.minWidth = '7px';
-			artistStyle.marginLeft = '10px';
-		}
+    if (globalMin === 11) {
+      rankStyle.width = '7px';
+      rankStyle.minWidth = '7px';
+      artistStyle.marginLeft = '10px';
+    }
 
-		return albums.map(album => {
-			const songs = album.songs.filter(song => song.album === album);
+    return albums.map(album => {
+      const songs = album.songs.filter(song => song.album === album);
 
-			if (songs.length === 0)
-				return null;
+      if (songs.length === 0) return null;
 
-			var allSame = true;
-			var showOnce = false;
-			var artistIds = songs[0].artists.map(artist => artist.id);
+      var allSame = true;
+      var showOnce = false;
+      var artistIds = songs[0].artists.map(artist => artist.id);
 
-			if (songs.length > 1 && this.cmpId(id, songs[0].artists) === false) {
-				songs.forEach(song => {
-					if (this.cmpIds(artistIds, song.artists) === false) {
-						allSame = false;
-					}
-				});
+      if (songs.length > 1 && this.cmpId(id, songs[0].artists) === false) {
+        songs.forEach(song => {
+          if (this.cmpIds(artistIds, song.artists) === false) {
+            allSame = false;
+          }
+        });
 
-				showOnce = allSame;
-			}
+        showOnce = allSame;
+      }
 
-			return (
-			<div key={album.id} className="flex-container" style={outerStyle}>
-				<Image id={album.id} size={50} />
-				<div className="flex-1" style={innerStyle}>
-					{showOnce && songs.length > 2 &&
-						<div className="flex-container flex-space-between" style={artistStyle}>
-							<ArtistView artists={songs[0].artists} />
-							<div>
-								<Release date={album.release} />
-							</div>
-						</div>
-					}
-					{album.songs.filter(song => song.album === album).map((song, index) => [
-						<div key={'title' + song.id} className="flex-container flex-space-between">
-							<div>
-								<Link to={'/song/' + song.id}>
-									<div className="flex-container">
-										<div style={rankStyle}>{this.getRankView(song)}</div>
-										<div>{TextUtil.normalize(song.title)}</div>
-									</div>
-								</Link>
-							</div>
-							{(showOnce === false || songs.length === 2) && index === 0 &&
-								<div>
-									<Release date={album.release} />
-								</div>
-							}
-						</div>,
-						<div key={'artist' + song.id} style={artistStyle}>
-							{showOnce || <ArtistView filterIds={[id]} artists={song.artists} />}
-							<ArtistView prefix="feat." artists={song.features} />
-						</div>
-					])}
-					{showOnce && songs.length === 2 &&
-						<div className="flex-container flex-space-between" style={artistStyle}>
-							<ArtistView artists={songs[0].artists} />
-						</div>
-					}
-				</div>
-			</div>
-			);
-		});
-	}
+      return (
+        <div key={album.id} className="flex-container" style={outerStyle}>
+          <Image id={album.id} size={50} />
+          <div className="flex-1" style={innerStyle}>
+            {showOnce && songs.length > 2 && (
+              <div
+                className="flex-container flex-space-between"
+                style={artistStyle}
+              >
+                <ArtistView artists={songs[0].artists} />
+                <div>
+                  <Release date={album.release} />
+                </div>
+              </div>
+            )}
+            {album.songs
+              .filter(song => song.album === album)
+              .map((song, index) => [
+                <div
+                  key={'title' + song.id}
+                  className="flex-container flex-space-between"
+                >
+                  <div>
+                    <Link to={'/song/' + song.id}>
+                      <div className="flex-container">
+                        <div style={rankStyle}>{this.getRankView(song)}</div>
+                        <div>{TextUtil.normalize(song.title)}</div>
+                      </div>
+                    </Link>
+                  </div>
+                  {(showOnce === false || songs.length === 2) && index === 0 && (
+                    <div>
+                      <Release date={album.release} />
+                    </div>
+                  )}
+                </div>,
+                <div key={'artist' + song.id} style={artistStyle}>
+                  {showOnce || (
+                    <ArtistView filterIds={[id]} artists={song.artists} />
+                  )}
+                  <ArtistView prefix="feat." artists={song.features} />
+                </div>
+              ])}
+            {showOnce && songs.length === 2 && (
+              <div
+                className="flex-container flex-space-between"
+                style={artistStyle}
+              >
+                <ArtistView artists={songs[0].artists} />
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    });
+  }
 
-	getRankView(song) {
-		if (song.rank === undefined)
-			return null;
+  getRankView(song) {
+    if (song.rank === undefined) return null;
 
-		var rank = song.rank.min;
+    var rank = song.rank.min;
 
-		var symbol = '☆';
+    var symbol = '☆';
 
-		if (rank === 1) {
-			symbol = '★★';
-		} else if (rank <= 5) {
-			symbol = '★';
-		}
+    if (rank === 1) {
+      symbol = '★★';
+    } else if (rank <= 5) {
+      symbol = '★';
+    }
 
-		return symbol;
-	}
+    return symbol;
+  }
 
-	cmpId(id, artists) {
-		return artists.length === 1 && artists[0].id === id;
-	}
+  cmpId(id, artists) {
+    return artists.length === 1 && artists[0].id === id;
+  }
 
-	cmpIds(ids, artists) {
-		if (ids.length !== artists.length)
-			return false;
+  cmpIds(ids, artists) {
+    if (ids.length !== artists.length) return false;
 
-		for (var i = 0; i < ids.length; i++) {
-			if (ids[i] !== artists[i].id)
-				return false;
-		}
+    for (var i = 0; i < ids.length; i++) {
+      if (ids[i] !== artists[i].id) return false;
+    }
 
-		return true;
-	}
+    return true;
+  }
 }

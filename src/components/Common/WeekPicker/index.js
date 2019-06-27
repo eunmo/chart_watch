@@ -6,197 +6,208 @@ import './style.css';
 import DateUtil from '../../../util/date';
 
 export default class WeekPicker extends Component {
-	
-	constructor(props) {
-		super(props);
-		
-		const chart = props.chart;
-		const maxDate = DateUtil.getMaxDate(chart).toISOString().substring(0, 10);
-		const minDate = DateUtil.getMinDate(chart).toISOString().substring(0, 10);
+  constructor(props) {
+    super(props);
 
-		this.state = {
-			year: DateUtil.getYear(props.week),
-			maxDate: maxDate,
-			minDate: minDate,
-			open: false,
-			type: 'week',
-		};
+    const chart = props.chart;
+    const maxDate = DateUtil.getMaxDate(chart)
+      .toISOString()
+      .substring(0, 10);
+    const minDate = DateUtil.getMinDate(chart)
+      .toISOString()
+      .substring(0, 10);
 
-		this.toggle = this.toggle.bind(this);
-		this.toggleType = this.toggleType.bind(this);
-		this.selectYear = this.selectYear.bind(this);
-	}
-	
-	componentWillReceiveProps(nextProps) {
-		this.setState({ year: DateUtil.getYear(nextProps.week), open: false });
-	}
+    this.state = {
+      year: DateUtil.getYear(props.week),
+      maxDate: maxDate,
+      minDate: minDate,
+      open: false,
+      type: 'week'
+    };
 
-	render() {
-		return (
-			<div>
-				<div className="flex-container">
-					<div className="flex-1 text-right">{this.getPrevLink()}</div>
-					<div className="text-center" onClick={this.toggle}>
-						Week of {this.formatWeekOf(this.props.week)}
-					</div>
-					<div className="flex-1">{this.getNextLink()}</div>
-				</div>
-				{this.state.open && this.getPicker()}
-			</div>
-		);
-	}
+    this.toggle = this.toggle.bind(this);
+    this.toggleType = this.toggleType.bind(this);
+    this.selectYear = this.selectYear.bind(this);
+  }
 
-	getPicker() {
-		const gridStyle = {
-			display: 'grid',
-			gridTemplateColumns: '1fr 50px 50px 50px 50px 50px 1fr',
-			gridColumnGap: '10px',
-			lineHeight: '25px',
-			marginBottom: '10px',
-		};
-		const activeStyle = { fontWeight: 'bold' };
-		const yearStyle = { lineHeight: '30px', margin: '5px', fontSize: '1.2em' };
+  componentWillReceiveProps(nextProps) {
+    this.setState({ year: DateUtil.getYear(nextProps.week), open: false });
+  }
 
-		return (
-			<div>
-				<div className="text-center" style={yearStyle} onClick={this.toggleType}>
-					{this.state.year}
-				</div>
-				{this.state.type === 'year' && this.getYears().map((yearRow, index) => (
-					<div key={index} style={gridStyle}>
-						<div/>
-						{yearRow.map(year =>
-							<div key={year} className="text-center" onClick={() => this.selectYear(year)}>
-								{year}
-							</div>
-						)}
-					</div>
-				))}
-				{this.state.type === 'week' && this.getMonths().map(month => (
-					<div key={month} style={gridStyle}>
-						<div/>
-						{this.getWeeks(month).map(week =>
-							<div key={week} className="text-center">
-								<NavLink to={this.getLink(week)} activeStyle={activeStyle} >
-									{this.formatWeek(week)}
-								</NavLink>
-							</div>
-						)}
-					</div>
-				))}
-			</div>
-		);
-	}
-	
-	getLink(date) {
-		return this.props.basename + '/' + this.props.chart + '/' + date;
-	}
+  render() {
+    return (
+      <div>
+        <div className="flex-container">
+          <div className="flex-1 text-right">{this.getPrevLink()}</div>
+          <div className="text-center" onClick={this.toggle}>
+            Week of {this.formatWeekOf(this.props.week)}
+          </div>
+          <div className="flex-1">{this.getNextLink()}</div>
+        </div>
+        {this.state.open && this.getPicker()}
+      </div>
+    );
+  }
 
-	getPrevLink() {
-		if (this.props.week === this.state.minDate)
-			return ;
+  getPicker() {
+    const gridStyle = {
+      display: 'grid',
+      gridTemplateColumns: '1fr 50px 50px 50px 50px 50px 1fr',
+      gridColumnGap: '10px',
+      lineHeight: '25px',
+      marginBottom: '10px'
+    };
+    const activeStyle = { fontWeight: 'bold' };
+    const yearStyle = { lineHeight: '30px', margin: '5px', fontSize: '1.2em' };
 
-		return (
-			<Link to={this.getLink(DateUtil.toSaturday(this.props.week, -7))}>
-				◀&nbsp;
-			</Link>
-		);
-	}
+    return (
+      <div>
+        <div
+          className="text-center"
+          style={yearStyle}
+          onClick={this.toggleType}
+        >
+          {this.state.year}
+        </div>
+        {this.state.type === 'year' &&
+          this.getYears().map((yearRow, index) => (
+            <div key={index} style={gridStyle}>
+              <div />
+              {yearRow.map(year => (
+                <div
+                  key={year}
+                  className="text-center"
+                  onClick={() => this.selectYear(year)}
+                >
+                  {year}
+                </div>
+              ))}
+            </div>
+          ))}
+        {this.state.type === 'week' &&
+          this.getMonths().map(month => (
+            <div key={month} style={gridStyle}>
+              <div />
+              {this.getWeeks(month).map(week => (
+                <div key={week} className="text-center">
+                  <NavLink to={this.getLink(week)} activeStyle={activeStyle}>
+                    {this.formatWeek(week)}
+                  </NavLink>
+                </div>
+              ))}
+            </div>
+          ))}
+      </div>
+    );
+  }
 
-	getNextLink() {
-		if (this.props.week === this.state.maxDate)
-			return null;
+  getLink(date) {
+    return this.props.basename + '/' + this.props.chart + '/' + date;
+  }
 
-		return (
-			<Link to={this.getLink(DateUtil.toSaturday(this.props.week, 7))}>
-				&nbsp;▶
-			</Link>
-		);
-	}
+  getPrevLink() {
+    if (this.props.week === this.state.minDate) return;
 
-	formatWeekOf(week) {
-		var weekA = week.split('-');
-		weekA.push(weekA.shift());
-		return weekA.join('/');
-	}
+    return (
+      <Link to={this.getLink(DateUtil.toSaturday(this.props.week, -7))}>
+        ◀&nbsp;
+      </Link>
+    );
+  }
 
-	formatWeek(week) {
-		return week.split('-').slice(1, 3).join('/');
-	}
+  getNextLink() {
+    if (this.props.week === this.state.maxDate) return null;
 
-	toggle() {
-		this.setState({ open: !this.state.open });
-	}
+    return (
+      <Link to={this.getLink(DateUtil.toSaturday(this.props.week, 7))}>
+        &nbsp;▶
+      </Link>
+    );
+  }
 
-	toggleType() {
-		if (this.state.type === 'week') {
-			this.setState({ type: 'year' });
-		} else {
-			this.setState({ type: 'week' });
-		}
-	}
+  formatWeekOf(week) {
+    var weekA = week.split('-');
+    weekA.push(weekA.shift());
+    return weekA.join('/');
+  }
 
-	selectYear(year) {
-		this.setState({ year: year, type: 'week' });
-	}
+  formatWeek(week) {
+    return week
+      .split('-')
+      .slice(1, 3)
+      .join('/');
+  }
 
-	getYears() {
-		const minYear = DateUtil.getYear(this.state.minDate);
-		const maxYear = DateUtil.getYear(this.state.maxDate);
+  toggle() {
+    this.setState({ open: !this.state.open });
+  }
 
-		var rows = [];
-		var years = [];
+  toggleType() {
+    if (this.state.type === 'week') {
+      this.setState({ type: 'year' });
+    } else {
+      this.setState({ type: 'week' });
+    }
+  }
 
-		for (var i = minYear; i <= maxYear; i++) {
-			years.push(i);
+  selectYear(year) {
+    this.setState({ year: year, type: 'week' });
+  }
 
-			if (i % 5 === 4) {
-				rows.push(years);
-				years = [];
-			}
-		}
+  getYears() {
+    const minYear = DateUtil.getYear(this.state.minDate);
+    const maxYear = DateUtil.getYear(this.state.maxDate);
 
-		if (years.length > 0)
-			rows.push(years);
+    var rows = [];
+    var years = [];
 
-		return rows;
-	}
+    for (var i = minYear; i <= maxYear; i++) {
+      years.push(i);
 
-	getMonths() {
-		const year = this.state.year;
-		const maxYear = DateUtil.getYear(this.state.maxDate);
-		var months = [];
-		var i;
-		var lastMonth = 12;
+      if (i % 5 === 4) {
+        rows.push(years);
+        years = [];
+      }
+    }
 
-		if (year === maxYear) {
-			lastMonth = DateUtil.getMonth(this.state.maxDate);
-		}
+    if (years.length > 0) rows.push(years);
 
-		for (i = 1; i <= lastMonth; i++) {
-			months.push(i);
-		}
+    return rows;
+  }
 
-		return months;
-	}
+  getMonths() {
+    const year = this.state.year;
+    const maxYear = DateUtil.getYear(this.state.maxDate);
+    var months = [];
+    var i;
+    var lastMonth = 12;
 
-	getWeeks(month) {
-		const year = this.state.year;
-		var weeks = [];
-		var i, week;
+    if (year === maxYear) {
+      lastMonth = DateUtil.getMonth(this.state.maxDate);
+    }
 
-		for (i = 0; i < 5; i++) {
-			week = DateUtil.toSaturday(year + '-' + month + '-1', i * 7);
+    for (i = 1; i <= lastMonth; i++) {
+      months.push(i);
+    }
 
-			if (DateUtil.getMonth(week) !== month)
-				break;
+    return months;
+  }
 
-			if (week > this.state.maxDate)
-				break;
+  getWeeks(month) {
+    const year = this.state.year;
+    var weeks = [];
+    var i, week;
 
-			weeks.push(week);
-		}
+    for (i = 0; i < 5; i++) {
+      week = DateUtil.toSaturday(year + '-' + month + '-1', i * 7);
 
-		return weeks;
-	}
+      if (DateUtil.getMonth(week) !== month) break;
+
+      if (week > this.state.maxDate) break;
+
+      weeks.push(week);
+    }
+
+    return weeks;
+  }
 }

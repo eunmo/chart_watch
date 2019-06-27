@@ -9,9 +9,9 @@ import Current from './current';
 const Chart = ({ match }) => (
   <Switch>
     <Route path={`${match.url}`} exact={true} component={Selector} />
-		<Route path={`${match.url}/album/:chart/:week`} component={Album} />}
-		<Route path={`${match.url}/single/:chart/:week`} component={Single} />}
-		<Route path={`${match.url}/current/single`} component={Current} />}
+    <Route path={`${match.url}/album/:chart/:week`} component={Album} />}
+    <Route path={`${match.url}/single/:chart/:week`} component={Single} />}
+    <Route path={`${match.url}/current/single`} component={Current} />}
   </Switch>
 );
 

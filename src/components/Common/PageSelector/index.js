@@ -4,138 +4,157 @@ import { Route, Switch, Redirect, NavLink } from 'react-router-dom';
 import './style.css';
 
 export default class PageSelector extends Component {
-	
-	constructor(props) {
-		super(props);
-		
-		this.state = {width: 0, height: 0};
-		
-		this.updateDimensions = this.updateDimensions.bind(this);
-	}
+  constructor(props) {
+    super(props);
 
-	updateDimensions() {
-		this.setState({width: window.innerWidth, height: window.innerHeight});
-	}
+    this.state = { width: 0, height: 0 };
 
-	componentWillMount() {
-		this.updateDimensions();
-	}
+    this.updateDimensions = this.updateDimensions.bind(this);
+  }
 
-	componentDidMount() {
-		window.addEventListener("resize", this.updateDimensions);
-	}
+  updateDimensions() {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
+  }
 
-	componentWillUnmount() {
-		window.removeEventListener("resize", this.updateDimensions);
-	}
-	
-	render() {
-		if (this.props.expand && this.state.width > 543) {
-			return this.getExpandedView();
-		} else {
-			return this.getDefaultView();
-		}
-	}
+  componentWillMount() {
+    this.updateDimensions();
+  }
 
-	getExpandedView() {
-		const views = this.props.views;
-		const rowLimits = this.props.rows ? this.props.rows : [views.length];
+  componentDidMount() {
+    window.addEventListener('resize', this.updateDimensions);
+  }
 
-		var i, rowLimit, j, view, inner;
-		var rows = [];
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateDimensions);
+  }
 
-		j = 0;
-		for (i = 0; i < rowLimits.length; i++) {
-			rowLimit = rowLimits[i];
-			inner = [];
+  render() {
+    if (this.props.expand && this.state.width > 543) {
+      return this.getExpandedView();
+    } else {
+      return this.getDefaultView();
+    }
+  }
 
-			for ( ; j < rowLimit; j++) {
-				view = views[j];
-				inner.push(<div key={view.name} className="flex-1"><view.component data={view.data} /></div>);
-			}
+  getExpandedView() {
+    const views = this.props.views;
+    const rowLimits = this.props.rows ? this.props.rows : [views.length];
 
-			rows.push(<div key={i} className="flex-container flex-container-wrap">{inner}</div>);
-		}
+    var i, rowLimit, j, view, inner;
+    var rows = [];
 
-		return rows;
-	}
+    j = 0;
+    for (i = 0; i < rowLimits.length; i++) {
+      rowLimit = rowLimits[i];
+      inner = [];
 
-	getDefaultView() {
-		const basename = this.props.basename;
-		const views= this.props.views;
+      for (; j < rowLimit; j++) {
+        view = views[j];
+        inner.push(
+          <div key={view.name} className="flex-1">
+            <view.component data={view.data} />
+          </div>
+        );
+      }
 
-		return (
-			<div className="PageSelector">
-				<div className="PageSelector text-center flex-container">
-					{this.getHeaders()}
-				</div>
-				<Switch>
-					<Redirect from={basename} to={basename + views[0].link} exact={true} />
-					{views.map(view => 
-						<Route key={view.name} path={basename + view.link} component={
-							class ViewComponent extends Component {
-								render() {
-									return <view.component data={view.data} />;
-								}
-							}
-						}/>
-					)}
-				</Switch>
-			</div>
-		);
-	}
+      rows.push(
+        <div key={i} className="flex-container flex-container-wrap">
+          {inner}
+        </div>
+      );
+    }
 
-	getHeaders() {
-		const views= this.props.views;
-		var validCount = views.length;
+    return rows;
+  }
 
-		if (validCount === 1 && this.props.removeHeadersOnSingle)
-			return <div>&nbsp;</div>;
-		
-		var array = [];
-		
-		this.props.views.forEach((view, index) => {
-			var style = {
-				lineHeight: '30px',
-				backgroundColor: 'rgba(255, 255, 255, 0.2)',
-				display: 'block',
-			};
-			var spacerStyle = { width: '5px' };
-			var activeStyle = { fontWeight: 'bold' };
+  getDefaultView() {
+    const basename = this.props.basename;
+    const views = this.props.views;
 
-			var sh = view.sh ? view.sh : view.name;
+    return (
+      <div className="PageSelector">
+        <div className="PageSelector text-center flex-container">
+          {this.getHeaders()}
+        </div>
+        <Switch>
+          <Redirect
+            from={basename}
+            to={basename + views[0].link}
+            exact={true}
+          />
+          {views.map(view => (
+            <Route
+              key={view.name}
+              path={basename + view.link}
+              component={
+                class ViewComponent extends Component {
+                  render() {
+                    return <view.component data={view.data} />;
+                  }
+                }
+              }
+            />
+          ))}
+        </Switch>
+      </div>
+    );
+  }
 
-			if (index > 0)
-				array.push(<div key={index} style={spacerStyle} />);
+  getHeaders() {
+    const views = this.props.views;
+    var validCount = views.length;
 
-			array.push(
-				<NavLink key={view.name} to={this.props.basename + view.link} style={style} activeStyle={activeStyle} className="flex-1">
-					<span className="hide-mobile">{view.name}</span>
-					<span className="show-mobile">{sh}</span>
-				</NavLink>
-			);
-		});
-		
-		return array;
-	}
-	
-	selectView(view) {
-		if (view !== this.state.view) {
-			this.setState({view: view});
-		}
-	}
+    if (validCount === 1 && this.props.removeHeadersOnSingle)
+      return <div>&nbsp;</div>;
 
-	getView() {
-		var i, view;
+    var array = [];
 
-		for (i = 0; i < this.props.views.length; i++) {
-			view = this.props.views[i];
-			if (view.name === this.state.view) {
-				return view.view;
-			}
-		}
+    this.props.views.forEach((view, index) => {
+      var style = {
+        lineHeight: '30px',
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        display: 'block'
+      };
+      var spacerStyle = { width: '5px' };
+      var activeStyle = { fontWeight: 'bold' };
 
-		return null;
-	}
+      var sh = view.sh ? view.sh : view.name;
+
+      if (index > 0) array.push(<div key={index} style={spacerStyle} />);
+
+      array.push(
+        <NavLink
+          key={view.name}
+          to={this.props.basename + view.link}
+          style={style}
+          activeStyle={activeStyle}
+          className="flex-1"
+        >
+          <span className="hide-mobile">{view.name}</span>
+          <span className="show-mobile">{sh}</span>
+        </NavLink>
+      );
+    });
+
+    return array;
+  }
+
+  selectView(view) {
+    if (view !== this.state.view) {
+      this.setState({ view: view });
+    }
+  }
+
+  getView() {
+    var i, view;
+
+    for (i = 0; i < this.props.views.length; i++) {
+      view = this.props.views[i];
+      if (view.name === this.state.view) {
+        return view.view;
+      }
+    }
+
+    return null;
+  }
 }
-

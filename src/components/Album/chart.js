@@ -5,18 +5,15 @@ import './style.css';
 import { Chart } from '../Common';
 
 export default class AlbumChart extends Component {
+  render() {
+    const charts = this.props.data;
 
-	render() {
-		const charts = this.props.data;
+    if (charts.weeks.length === 0) return null;
 
-		if (charts.weeks.length === 0)
-			return null;
-
-		return (
-			<div className="flex-container flex-center">
-				<Chart data={charts} />
-			</div>
-		);
-	}
+    return (
+      <div className="flex-container flex-center">
+        <Chart data={charts} />
+      </div>
+    );
+  }
 }
-	

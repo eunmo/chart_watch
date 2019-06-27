@@ -5,171 +5,183 @@ import { Image, NameArray } from '../Common';
 
 import TextUtil from '../../util/text';
 
-var charts = ['billboard', 'uk', 'deutsche', 'francais', 'oricon', 'gaon', 'melon'];
+var charts = [
+  'billboard',
+  'uk',
+  'deutsche',
+  'francais',
+  'oricon',
+  'gaon',
+  'melon'
+];
 var abbrs = {
-	'billboard': 'US',
-	'uk': 'UK', 
-	'deutsche': 'DE',
-	'francais': 'FR',
-	'oricon': 'JP',
-	'gaon': 'KR',
-	'melon': 'Melon'
+  billboard: 'US',
+  uk: 'UK',
+  deutsche: 'DE',
+  francais: 'FR',
+  oricon: 'JP',
+  gaon: 'KR',
+  melon: 'Melon'
 };
 
 export default class Selector extends Component {
-	
-	constructor(props) {
-		super(props);
+  constructor(props) {
+    super(props);
 
-		this.state = {array: []};
-	}
-	
-	componentDidMount() {
-		this.fetch();
-	}
+    this.state = { array: [] };
+  }
 
-	render() {
-		var gridStyle = {
-			display: 'grid',
-			gridTemplateColumns: '1fr 50px 1fr',
-			gridColumnGap: '10px',
-			lineHeight: '25px',
-			marginBottom: '10px',
-		};
-		var headerStyle = { fontSize: '1.2em', lineHeight: '50px' };
+  componentDidMount() {
+    this.fetch();
+  }
 
-		return (
-			<div>
-				<div className="top text-center">Charts</div>
-				<div style={Object.assign({}, gridStyle, headerStyle)}>
-					<div className="text-right">Album</div>
-					<div></div>
-					<div><Link to={'/chart/current/single'}>Single</Link></div>
-				</div>
-				{this.state.array.map(entry => (
-					<div style={gridStyle} key={entry.chart}>
-						{this.getChartAlbumView(entry)}
-						<div className="text-center">
-							<div>{abbrs[entry.chart]}</div>
-							<div className="lightgray">{this.getWeek(entry)}</div>
-						</div>
-						{this.getChartSingleView(entry)}
-					</div>
-				))}
-			</div>
-		);
-	}
+  render() {
+    var gridStyle = {
+      display: 'grid',
+      gridTemplateColumns: '1fr 50px 1fr',
+      gridColumnGap: '10px',
+      lineHeight: '25px',
+      marginBottom: '10px'
+    };
+    var headerStyle = { fontSize: '1.2em', lineHeight: '50px' };
 
-	getChartSingleView(entry) {
-		const single = entry.single;
-		if (single === undefined)
-			return <div></div>;
-		
-		var gridStyle = {
-			display: 'grid',
-			gridTemplateColumns: '50px 1fr',
-			gridColumnGap: '10px',
-		};
+    return (
+      <div>
+        <div className="top text-center">Charts</div>
+        <div style={Object.assign({}, gridStyle, headerStyle)}>
+          <div className="text-right">Album</div>
+          <div></div>
+          <div>
+            <Link to={'/chart/current/single'}>Single</Link>
+          </div>
+        </div>
+        {this.state.array.map(entry => (
+          <div style={gridStyle} key={entry.chart}>
+            {this.getChartAlbumView(entry)}
+            <div className="text-center">
+              <div>{abbrs[entry.chart]}</div>
+              <div className="lightgray">{this.getWeek(entry)}</div>
+            </div>
+            {this.getChartSingleView(entry)}
+          </div>
+        ))}
+      </div>
+    );
+  }
 
-		const url = '/chart/single/' + entry.chart + '/' + entry.week.substring(0, 10);
-		const song = single.songs[0];
+  getChartSingleView(entry) {
+    const single = entry.single;
+    if (single === undefined) return <div></div>;
 
-		return (
-			<Link to={url}>
-				<div className="overflow-hidden" style={gridStyle}>
-					<Image id={song.albumId} size={50} noLink={true}/>
-					<div>
-						<div className="ellipsis">{TextUtil.normalize(song.title)}</div>
-						<div className="ellipsis lightgray">{this.getSongArtists(song)}</div>
-					</div>
-				</div>
-			</Link>
-		);
-	}
+    var gridStyle = {
+      display: 'grid',
+      gridTemplateColumns: '50px 1fr',
+      gridColumnGap: '10px'
+    };
 
-	getSongArtists(song) {
-		if (song.id === null)
-			return TextUtil.normalize(song.artist);
+    const url =
+      '/chart/single/' + entry.chart + '/' + entry.week.substring(0, 10);
+    const song = single.songs[0];
 
-		return (
-			<span>
-				<NameArray array={song.artists} noLink={true}/>
-				{song.features.length > 0 &&
-					<span> ft. <NameArray array={song.features} noLink={true}/></span>}
-			</span>
-		)
-	}
+    return (
+      <Link to={url}>
+        <div className="overflow-hidden" style={gridStyle}>
+          <Image id={song.albumId} size={50} noLink={true} />
+          <div>
+            <div className="ellipsis">{TextUtil.normalize(song.title)}</div>
+            <div className="ellipsis lightgray">
+              {this.getSongArtists(song)}
+            </div>
+          </div>
+        </div>
+      </Link>
+    );
+  }
 
-	getChartAlbumView(entry) {
-		const album = entry.album;
-		if (album === undefined)
-			return <div></div>;
-		
-		var gridStyle = {
-			display: 'grid',
-			gridTemplateColumns: '1fr 50px',
-			gridColumnGap: '10px',
-		};
-		
-		const url = '/chart/album/' + entry.chart + '/' + entry.week.substring(0, 10);
+  getSongArtists(song) {
+    if (song.id === null) return TextUtil.normalize(song.artist);
 
-		return (
-			<Link to={url}>
-				<div className="overflow-hidden text-right" style={gridStyle}>
-					<div>
-						<div className="ellipsis">{TextUtil.normalize(album.title)}</div>
-						<div className="ellipsis lightgray">{this.getAlbumArtists(album)}</div>
-					</div>
-					<Image id={album.id} size={50} noLink={true}/>
-				</div>
-			</Link>
-		);
-	}
+    return (
+      <span>
+        <NameArray array={song.artists} noLink={true} />
+        {song.features.length > 0 && (
+          <span>
+            {' '}
+            ft. <NameArray array={song.features} noLink={true} />
+          </span>
+        )}
+      </span>
+    );
+  }
 
-	getAlbumArtists(album) {
-		if (album.id === null)
-			return TextUtil.normalize(album.artist);
+  getChartAlbumView(entry) {
+    const album = entry.album;
+    if (album === undefined) return <div></div>;
 
-		if (album.format2 === 'Soundtrack')
-			return 'Soundtrack';
+    var gridStyle = {
+      display: 'grid',
+      gridTemplateColumns: '1fr 50px',
+      gridColumnGap: '10px'
+    };
 
-		return <NameArray array={album.artists} noLink={true}/>;
-	}
+    const url =
+      '/chart/album/' + entry.chart + '/' + entry.week.substring(0, 10);
 
-	getWeek(entry) {
-		return entry.week.substring(5, 10).replace('-', '/');
-	}
+    return (
+      <Link to={url}>
+        <div className="overflow-hidden text-right" style={gridStyle}>
+          <div>
+            <div className="ellipsis">{TextUtil.normalize(album.title)}</div>
+            <div className="ellipsis lightgray">
+              {this.getAlbumArtists(album)}
+            </div>
+          </div>
+          <Image id={album.id} size={50} noLink={true} />
+        </div>
+      </Link>
+    );
+  }
 
-	group(data) {
-		var array = [];
+  getAlbumArtists(album) {
+    if (album.id === null) return TextUtil.normalize(album.artist);
 
-		charts.forEach((chart, index) => {
-			var entry = {chart: chart};
-			data.singles.forEach(single => {
-				if (single.type === chart)
-					entry.single = single;
-			});
-			data.albums.forEach(album => {
-				if (album.type === chart)
-					entry.album = album.album;
-			});
-			entry.week = entry.single.week;
-			array[index] = entry;
-		});
+    if (album.format2 === 'Soundtrack') return 'Soundtrack';
 
-		return array;
-	}
-	
-	fetch() {
-		const that = this;
-		const url = '/api/chart/summary';
+    return <NameArray array={album.artists} noLink={true} />;
+  }
 
-		fetch(url)
-		.then(function(response) {
-      return response.json();
-    })
-    .then(function(data) {
-      that.setState({array: that.group(data)});
+  getWeek(entry) {
+    return entry.week.substring(5, 10).replace('-', '/');
+  }
+
+  group(data) {
+    var array = [];
+
+    charts.forEach((chart, index) => {
+      var entry = { chart: chart };
+      data.singles.forEach(single => {
+        if (single.type === chart) entry.single = single;
+      });
+      data.albums.forEach(album => {
+        if (album.type === chart) entry.album = album.album;
+      });
+      entry.week = entry.single.week;
+      array[index] = entry;
     });
-	}
+
+    return array;
+  }
+
+  fetch() {
+    const that = this;
+    const url = '/api/chart/summary';
+
+    fetch(url)
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        that.setState({ array: that.group(data) });
+      });
+  }
 }
