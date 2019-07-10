@@ -13,15 +13,13 @@ my $mm = $ARGV[1];
 my $dd = $ARGV[2];
 
 my $od = DateTime->new( year => $yy, month => $mm, day => $dd );
-my $ld = DateTime->new( year => $yy, month => $mm, day => $dd )
-								 ->truncate( to => 'week' )
-								 ->add( weeks => 2);
+my $ld = DateTime->new( year => $yy, month => $mm, day => $dd )->truncate( to => 'week' )->add( weeks => 2);
 my $od_ymd = $od->ymd('');
 my $ld_ymd = $ld->ymd('-');
 
 if ($od_ymd < '20181215') {
-	print "[]";
-	exit;
+  print "[]";
+  exit;
 }
 
 my $rank = 1;
@@ -31,58 +29,62 @@ print "[";
 
 for (my $i = 1; $i <= $pageCount; $i++) {
 
-	my $url = "https://www.oricon.co.jp/rank/cos/w/$ld_ymd/";
-	$url .= "p/$i/" if $i > 1;
-	my $html = get($url);
-	my $dom = Mojo::DOM->new($html);
+  my $url = "https://www.oricon.co.jp/rank/cos/w/$ld_ymd/";
+  $url .= "p/$i/" if $i > 1;
+  my $html = get($url);
+  my $dom = Mojo::DOM->new($html);
 
-	for my $div ($dom->find('section[class="box-rank-entry"] div[class="wrap-text"]')->each) {
-		$title = $div->find('h2[class="title"]')->first->text;
-		$artist = $div->find('p[class="name"]')->first->text;
-		$title_norm = normalize_title($title);
-		$artist_norm = normalize_artist($artist);
-		
-		print ",\n" if $rank > 1;
-		print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\": [";
-		
-		$count = 1;
-		my @tokens = split(/\//, $title_norm);
-		foreach my $token (@tokens) {
-			my $token_norm = normalize_title($token);
-			print ", " if $count > 1;	
-			print "\"$token_norm\"";
-			$count++;
-		}
-		print "]}";
-		$rank++;
-	}
+  for my $div ($dom->find('section[class="box-rank-entry"] div[class="wrap-text"]')->each) {
+    $title = $div->find('h2[class="title"]')->first->text;
+    $artist = $div->find('p[class="name"]')->first->text;
+    $title_norm = normalize_title($title);
+    $artist_norm = normalize_artist($artist);
+
+    print ",\n" if $rank > 1;
+    print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"titles\": [";
+
+    $count = 1;
+    my @tokens = split(/\//, $title_norm);
+    foreach my $token (@tokens) {
+      my $token_norm = normalize_title($token);
+      print ", " if $count > 1;	
+      print "\"$token_norm\"";
+      $count++;
+    }
+    print "]}";
+    $rank++;
+
+    last if $rank > $pageCount * 10;
+  }
 }
 
 print "]";
 
 sub normalize_title($)
 {
-	my $string = shift;
+  my $string = shift;
 
-	$string =~ s/\s+$//g;
-	$string =~ s/^\s+//g;
-	$string =~ s/[\'’"`]/`/g;
-	$string =~ s/\\/¥/g;
+  $string =~ s/\s+$//g;
+  $string =~ s/^\s+//g;
+  $string =~ s/[\'’"`]/`/g;
+  $string =~ s/\\/¥/g;
 
-	if ($string eq 'THE IDOLM@STER MILLION THE@TER GENERATION 12 D/Zeal (ハーモニクス)') {
-		$string = "ハーモニクス";
-	}
+  if ($string eq 'THE IDOLM@STER MILLION THE@TER GENERATION 12 D/Zeal (ハーモニクス)') {
+    $string = 'ハーモニクス';
+  } elsif ($string eq 'G4 (JUST FINE)') {
+    $string = 'JUST FINE/はじまりのうた/COLORS/YOUR SONG';
+  }
 
-	return $string;
+  return $string;
 }
 
 sub normalize_artist($)
 {
-	my $string = shift;
+  my $string = shift;
 
-	$string =~ s/\s+$//g;
-	$string =~ s/^\s+//g;
-	$string =~ s/[\'’"`]/`/g;
+  $string =~ s/\s+$//g;
+  $string =~ s/^\s+//g;
+  $string =~ s/[\'’"`]/`/g;
 
-	return $string;
+  return $string;
 }
