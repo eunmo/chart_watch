@@ -72,7 +72,7 @@ sub normalize_title($)
   if ($string eq 'THE IDOLM@STER MILLION THE@TER GENERATION 12 D/Zeal (ハーモニクス)') {
     $string = 'ハーモニクス';
   } elsif ($string eq 'G4 (JUST FINE)') {
-    $string = 'JUST FINE/はじまりのうた/COLORS/YOUR SONG';
+    $string = 'JUST FINE/はじまりのうた/COLORS/YOUR SONG feat. MISIA';
   }
 
   return $string;
