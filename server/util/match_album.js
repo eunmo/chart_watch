@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  matchWeek: function(models, db, chartName, date) {
+  matchWeek: function(db, chartName, date) {
     function findAlbum(entry) {
       var query =
         'SELECT id FROM Albums WHERE title = "' +
@@ -121,36 +121,45 @@ module.exports = {
         })
         .then(function() {
           if (entry.AlbumId !== null) {
-            return models.AlbumChart.update(
-              { AlbumId: entry.AlbumId },
-              { where: { id: entry.id } }
+            return (
+              `UPDATE AlbumCharts ` +
+              `SET AlbumId=${entry.AlbumId} ` +
+              `WHERE id=${entry.id};`
             );
           }
         });
     }
 
-    return models.AlbumChart.findAll({
-      where: { type: chartName, week: date }
-    }).then(function(charts) {
-      var promises = [];
-      var chartRow;
-      var entry;
+    return db
+      .promisifyQuery(
+        `SELECT * FROM AlbumCharts WHERE \`type\`='${chartName}' AND \`week\`='${date.toISOString()}';`
+      )
+      .then(function(charts) {
+        var promises = [];
+        var chartRow;
+        var entry;
 
-      for (var i in charts) {
-        chartRow = charts[i];
+        for (var i in charts) {
+          chartRow = charts[i];
 
-        if (chartRow.AlbumId === null) {
-          entry = {
-            id: chartRow.id,
-            artist: chartRow.artist,
-            title: chartRow.title,
-            chart: chartName
-          };
-          promises.push(matchChart(entry));
+          if (chartRow.AlbumId === null) {
+            entry = {
+              id: chartRow.id,
+              artist: chartRow.artist,
+              title: chartRow.title,
+              chart: chartName
+            };
+            promises.push(matchChart(entry));
+          }
         }
-      }
 
-      return Promise.all(promises);
-    });
+        return Promise.all(promises).then(queries => {
+          let query = queries.join('');
+
+          if (query !== '') {
+            return db.promisifyQuery(query);
+          }
+        });
+      });
   }
 };

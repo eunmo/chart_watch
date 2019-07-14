@@ -4,7 +4,7 @@
   var path = require('path');
   var fs = require('fs');
 
-  module.exports = function(router, models, db) {
+  module.exports = function(router, _, db) {
     function getRoutes(__dirname, skipCurIndex) {
       fs.readdirSync(__dirname)
         .filter(function(file) {
@@ -15,7 +15,7 @@
           );
         })
         .forEach(function(file) {
-          require(path.join(__dirname, file))(router, models, db);
+          require(path.join(__dirname, file))(router, _, db);
         });
     }
 

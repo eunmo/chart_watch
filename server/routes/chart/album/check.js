@@ -5,7 +5,7 @@ var Promise = require('bluebird');
 var exec = Promise.promisify(require('child_process').exec);
 const Match = require('../../../util/match_album');
 
-module.exports = function(router, models, db) {
+module.exports = function(router, _, db) {
   let check = async function(chart) {
     const curWeek = new Date(chart.week);
     var nextWeek = new Date(chart.week);
@@ -84,7 +84,7 @@ module.exports = function(router, models, db) {
 
     await db.promisifyQuery(query);
 
-    await Match.matchWeek(models, db, chart.type, nextWeek);
+    await Match.matchWeek(db, chart.type, nextWeek);
   };
   router.get('/chart/album/check', async function(req, res) {
     var current = await db.chartCurrent.getCurrentWeeks('AlbumCharts');

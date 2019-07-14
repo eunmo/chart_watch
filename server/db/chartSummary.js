@@ -90,8 +90,6 @@
         "' " +
         'GROUP BY AlbumId, `type`, rank;';
 
-      console.log(query);
-
       return getChartSummary(db, query).then(function(charts) {
         albums.forEach(function(album) {
           if (charts[album.id]) album.rank = true;

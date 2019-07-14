@@ -4,7 +4,7 @@
   var common = require('../../common/cwcommon');
   var Promise = require('bluebird');
 
-  module.exports = function(router, models, db) {
+  module.exports = function(router, _, db) {
     function getUpdateQuery(song) {
       var time = new Date(song.lastPlayed);
       var lastPlayed = time

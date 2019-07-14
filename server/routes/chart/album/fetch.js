@@ -5,53 +5,49 @@
   var Promise = require('bluebird');
   var exec = Promise.promisify(require('child_process').exec);
 
-  module.exports = function(router, models) {
-    function addChartEntry(row, chartName, date) {
-      models.AlbumChart.create({
-        type: chartName,
-        week: date,
-        rank: row.rank,
-        artist: row.artist,
-        title: row.title
-      });
-    }
-
-    router.get('/chart/album/fetch/:_chart', function(req, res) {
+  module.exports = function(router, _, db) {
+    router.get('/chart/album/fetch/:_chart', async function(req, res) {
       var chartName = req.params._chart;
       var year = req.query.year;
       var month = req.query.month;
       var day = req.query.day;
       var date = new Date(Date.UTC(year, month - 1, day));
+      var week = date.toISOString().substring(0, 10);
+
+      let charts = await db.promisifyQuery(
+        `SELECT * FROM AlbumCharts WHERE \`type\`='${chartName}' AND \`week\`='${week}';`
+      );
+
+      if (charts.length > 0) {
+        res.sendStatus(200);
+        return;
+      }
 
       var dateStr = year + ' ' + month + ' ' + day;
-      var execStr =
-        'perl ' +
-        path.join(__dirname, '../../../../perl/album', chartName + '.pl') +
-        ' ' +
-        dateStr;
+      var execStr = `perl ${path.join(
+        __dirname,
+        '../../../../perl/album',
+        chartName + '.pl'
+      )} ${dateStr}`;
+      let [stdout, stderr] = await exec(execStr);
+      var rawData = JSON.parse(stdout);
 
-      models.AlbumChart.findAll({
-        where: { type: chartName, week: date }
-      }).then(function(charts) {
-        if (charts.length === 0) {
-          exec(execStr).spread(function(stdout, stderr) {
-            var rawData = JSON.parse(stdout);
+      if (rawData.length === 0) {
+        res.sendStatus(200);
+        return;
+      }
 
-            if (rawData.length === 0) {
-              res.sendStatus(200);
-              return;
-            }
+      var values = rawData.map(
+        row =>
+          `(DEFAULT, '${chartName}', '${week}', ${row.rank}, '${row.artist}', '${row.title}', curdate(), curdate())`
+      );
 
-            for (var i in rawData) {
-              addChartEntry(rawData[i], chartName, date);
-            }
-
-            res.sendStatus(200);
-          });
-        } else {
-          res.sendStatus(200);
-        }
-      });
+      await db.promisifyQuery(
+        'INSERT INTO AlbumCharts ' +
+          '(id,type,week,`rank`,artist,title,updatedAt,createdAt) ' +
+          `VALUES ${values.join(',')}`
+      );
+      res.sendStatus(200);
     });
   };
 })();

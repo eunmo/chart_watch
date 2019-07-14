@@ -3,7 +3,7 @@
 var Promise = require('bluebird');
 const Match = require('../../../util/match_album');
 
-module.exports = function(router, models, db) {
+module.exports = function(router, _, db) {
   router.get('/chart/album/batch', async function(req, res) {
     const date = new Date();
     const year = 2000 + date.getHours();
@@ -21,7 +21,7 @@ module.exports = function(router, models, db) {
     var week;
     for (var i = 0; i < result.length; i++) {
       week = result[i];
-      await Match.matchWeek(models, db, week.type, week.week);
+      await Match.matchWeek(db, week.type, week.week);
     }
 
     res.sendStatus(200);

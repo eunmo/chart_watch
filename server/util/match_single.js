@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-  matchWeek: function(models, db, chartName, date) {
+  matchWeek: function(db, chartName, date) {
     function findArtistByName(name, chart) {
       return db.promisifyQuery(
         'Select id from Artists ' +
@@ -496,38 +496,50 @@ module.exports = {
         })
         .then(function() {
           if (entry.song !== null) {
-            return models.SingleChart.update(
-              { SongId: entry.song.id },
-              { where: { id: entry.id } }
+            return (
+              `UPDATE SingleCharts ` +
+              `SET SongId=${entry.song.id} ` +
+              `WHERE id=${entry.id};`
             );
           }
         });
     }
 
-    /// actual code
-    return models.SingleChart.findAll({
-      where: { type: chartName, week: date }
-    }).then(function(charts) {
-      var promises = [];
-      var chartRow;
-      var entry;
+    // actual code
+    var week = date.toISOString().substring(0, 10);
+    return db
+      .promisifyQuery(
+        `SELECT * FROM SingleCharts WHERE \`type\`='${chartName}' AND \`week\`='${week}';`
+      )
+      .then(function(charts) {
+        var promises = [];
+        var chartRow;
+        var entry;
+        var queries = [];
 
-      for (var i in charts) {
-        chartRow = charts[i];
+        for (var i in charts) {
+          chartRow = charts[i];
 
-        if (chartRow.SongId === null) {
-          entry = {
-            id: chartRow.id,
-            artist: chartRow.artist,
-            title: chartRow.title,
-            chart: chartName,
-            date: date
-          };
-          promises.push(matchChart(entry));
+          if (chartRow.SongId === null) {
+            entry = {
+              id: chartRow.id,
+              artist: chartRow.artist,
+              title: chartRow.title,
+              chart: chartName,
+              date: date
+            };
+
+            promises.push(matchChart(entry));
+          }
         }
-      }
 
-      return Promise.all(promises);
-    });
+        return Promise.all(promises).then(queries => {
+          let query = queries.join('');
+
+          if (query !== '') {
+            return db.promisifyQuery(query);
+          }
+        });
+      });
   }
 };

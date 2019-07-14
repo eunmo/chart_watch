@@ -21,13 +21,11 @@
   var db = { pool: pool };
 
   db.handleQuery = function(query, callback) {
-    db.pool.getConnection(function(err, connection) {
-      connection.query(query, function(err, rows) {
-        connection.release();
-        if (!err) {
-          callback(rows);
-        }
-      });
+    db.pool.query(query, function(error, results, fields) {
+      if (error) {
+        return reject(error);
+      }
+      callback(results);
     });
   };
 
@@ -39,14 +37,11 @@
 
   db.promisifyQuery = function(query) {
     return new Promise(function(resolve, reject) {
-      db.pool.getConnection(function(err, connection) {
-        connection.query(query, function(err, rows) {
-          connection.release();
-          if (err) {
-            return reject(err);
-          }
-          resolve(rows);
-        });
+      db.pool.query(query, function(error, results, fields) {
+        if (error) {
+          return reject(error);
+        }
+        resolve(results);
       });
     });
   };

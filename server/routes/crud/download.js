@@ -2,7 +2,7 @@
 
 var request = require('request');
 
-module.exports = function(router, models, db) {
+module.exports = function(router, _, db) {
   router.get('/api/download/:_id', async (req, res) => {
     var id = req.params._id;
 
