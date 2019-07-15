@@ -3,7 +3,7 @@
 
   var Promise = require('bluebird');
 
-  var simpleRandom = function(rows, array, count, code) {
+  var simpleRandom = function(rows, array, count) {
     var i, index;
 
     for (i = 0; i < count; i++) {
@@ -14,7 +14,7 @@
 
   var getSongIds = function(db, query, array, count) {
     return db.promisifyQuery(query.query).then(function(rows) {
-      simpleRandom(rows, array, count, query.code);
+      simpleRandom(rows, array, count);
     });
   };
 
