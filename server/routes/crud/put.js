@@ -95,17 +95,8 @@
     });
 
     function addAlbumCover(id, url) {
-      var sizes = [160, 80, 40, 30];
       var imgPath = path.join(imageDir, id + '.jpg');
       var execStr = 'curl "' + url + '" -o ' + imgPath + '; ';
-
-      for (var i in sizes) {
-        var size = sizes[i];
-        var smallImgPath = path.join(imageDir, id + '.' + size + 'px.jpg');
-        execStr +=
-          'convert ' + imgPath + ' -resize ' + size + ' ' + smallImgPath + '; ';
-      }
-
       return exec(execStr);
     }
 
