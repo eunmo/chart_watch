@@ -364,14 +364,14 @@ musicApp.controller('EditArtistCtrl', function(
     artist.editRelations = [];
     artist.editAliases = [];
 
-    for (i in artist.b) {
-      var b = artist.b[i];
+    for (i in artist.bs) {
+      var b = artist.bs[i];
       artistRelation = b.ArtistRelation;
       artist.editRelations[i] = {
         name: b.name,
         id: b.id,
-        type: b.ArtistRelation.type,
-        order: b.ArtistRelation.order,
+        type: b.type,
+        order: b.order,
         deleted: false,
         created: false
       };
@@ -388,6 +388,7 @@ musicApp.controller('EditArtistCtrl', function(
       };
     }
 
+    artist.favorites = artist.favorites === 1;
     $scope.artist = artist;
   });
 
@@ -397,12 +398,6 @@ musicApp.controller('EditArtistCtrl', function(
     artist.nameNorm = artist.nameNorm.replace(/\'/g, '`');
     $http.put('api/edit/artist', $scope.artist).then(function(res) {
       $location.url('/artist/' + res.data);
-    });
-  };
-
-  $scope.deleteArtist = function() {
-    $http.delete('api/artist/' + $routeParams.id).then(function(res) {
-      $location.url('/');
     });
   };
 
@@ -594,7 +589,7 @@ musicApp.controller('EditSongCtrl', function(
         order: artist.order,
         name: artist.name,
         id: artist.ArtistId,
-        feat: artist.feat === 1 ? true : false,
+        feat: artist.feat === 1,
         deleted: false,
         created: false
       };

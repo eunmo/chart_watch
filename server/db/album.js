@@ -165,5 +165,27 @@
         }
       });
     };
+
+    db.album.add = async function(title, release, format) {
+      console.log(release);
+      let releaseD = new Date(release);
+      let releaseDate = releaseD.toISOString().substring(0, 10);
+      let formatS = format === null ? 'NULL' : `'${format}'`;
+
+      await db.promisifyQuery(
+        'INSERT INTO Albums (id, title, titleNorm, `release`, format, createdAt, updatedAt) ' +
+          `VALUES (DEFAULT, '${title}', '${title}', '${releaseDate}', ${formatS}, curdate(), curdate())`
+      );
+
+      let albums = await db.promisifyQuery(
+        `SELECT id FROM Albums WHERE title='${title}' AND \`release\`='${releaseDate}'`
+      );
+
+      if (albums.length === 0) {
+        throw new Error('Cannot create album!');
+      }
+
+      return albums[0].id;
+    };
   };
 })();

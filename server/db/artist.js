@@ -146,5 +146,38 @@
 
       throw new Error(`cannot find or create artist ${name}`);
     };
+
+    db.artist.findOrCreateForUpload = async function(name, nameNorm) {
+      let ids = await db.promisifyQuery(
+        `SELECT ArtistId as id FROM ArtistAliases WHERE alias='${name}' AND chart='upload'`
+      );
+
+      if (ids.length > 0) {
+        return ids[0].id;
+      }
+
+      ids = await db.promisifyQuery(
+        `SELECT id FROM Artists WHERE name='${name}' OR nameNorm='${nameNorm}'`
+      );
+
+      if (ids.length > 0) {
+        return ids[0].id;
+      }
+
+      await db.promisifyQuery(
+        'INSERT INTO Artists (id, name, nameNorm, createdAt, updatedAt) ' +
+          `VALUES (DEFAULT, '${name}', '${nameNorm}', curdate(), curdate())`
+      );
+
+      ids = await db.promisifyQuery(
+        `SELECT id FROM Artists WHERE name='${name}'`
+      );
+
+      if (ids.length > 0) {
+        return ids[0].id;
+      }
+
+      throw new Error(`cannot find or create artist ${name}`);
+    };
   };
 })();
