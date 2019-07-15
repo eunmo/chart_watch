@@ -113,5 +113,38 @@
         }
       });
     };
+
+    db.artist.findOrCreate = async function(name) {
+      let ids = await db.promisifyQuery(
+        `SELECT id FROM Artists WHERE name='${name}'`
+      );
+
+      if (ids.length > 0) {
+        return ids[0].id;
+      }
+
+      ids = await db.promisifyQuery(
+        `SELECT id FROM Artists WHERE nameNorm='${name}'`
+      );
+
+      if (ids.length > 0) {
+        return ids[0].id;
+      }
+
+      await db.promisifyQuery(
+        'INSERT INTO Artists (id, name, nameNorm, createdAt, updatedAt) ' +
+          `VALUES (DEFAULT, '${name}', '${name}', curdate(), curdate())`
+      );
+
+      ids = await db.promisifyQuery(
+        `SELECT id FROM Artists WHERE name='${name}'`
+      );
+
+      if (ids.length > 0) {
+        return ids[0].id;
+      }
+
+      throw new Error(`cannot find or create artist ${name}`);
+    };
   };
 })();

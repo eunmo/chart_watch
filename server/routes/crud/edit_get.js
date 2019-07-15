@@ -1,41 +1,71 @@
 (function() {
   'use strict';
-  module.exports = function(router, models) {
-    router.get('/api/edit/artist/:_id', function(req, res) {
+  module.exports = function(router, models, db) {
+    router.get('/api/edit/artist/:_id', async function(req, res) {
       var id = req.params._id;
-      models.Artist.findOne({
-        where: { id: id },
-        include: [
-          { model: models.Artist, as: 'B' },
-          { model: models.ArtistAlias }
-        ]
-      }).then(function(artist) {
-        res.json(artist);
-      });
+
+      let artists = await db.promisifyQuery(
+        `SELECT * FROM Artists WHERE id=${id}`
+      );
+      let artist = artists[0];
+
+      let bs = await db.artist.getBs([id]);
+      artist.b = bs[id];
+
+      artist.aliases = await db.promisifyQuery(
+        `SELECT * FROM ArtistAliases WHERE ArtistId=${id}`
+      );
+
+      res.json(artist);
     });
 
-    router.get('/api/edit/album/:_id', function(req, res) {
+    router.get('/api/edit/album/:_id', async function(req, res) {
       var id = req.params._id;
-      models.Album.findOne({
-        where: { id: id },
-        include: [
-          { model: models.Artist },
-          { model: models.Song },
-          { model: models.AlbumAlias }
-        ]
-      }).then(function(album) {
-        res.json(album);
-      });
+
+      let albums = await db.promisifyQuery(
+        `SELECT * FROM Albums WHERE id=${id}`
+      );
+      let album = albums[0];
+
+      album.artists = await db.promisifyQuery(
+        'SELECT `order`, ArtistId, name ' +
+          'FROM AlbumArtists a, Artists b ' +
+          `WHERE a.AlbumId=${id} ` +
+          'AND a.ArtistId=b.id'
+      );
+
+      album.songs = await db.promisifyQuery(
+        'SELECT disk, track, SongId, title ' +
+          'FROM AlbumSongs a, Songs b ' +
+          `WHERE a.AlbumId=${id} ` +
+          'AND a.SongId=b.id'
+      );
+
+      album.aliases = await db.promisifyQuery(
+        `SELECT * FROM AlbumAliases WHERE AlbumId=${id}`
+      );
+
+      res.json(album);
     });
 
-    router.get('/api/edit/song/:_id', function(req, res) {
+    router.get('/api/edit/song/:_id', async function(req, res) {
       var id = req.params._id;
-      models.Song.findOne({
-        where: { id: id },
-        include: [{ model: models.Artist }, { model: models.SongAlias }]
-      }).then(function(song) {
-        res.json(song);
-      });
+
+      let songs = await db.promisifyQuery(`SELECT * FROM Songs WHERE id=${id}`);
+      let song = songs[0];
+
+      song.artists = await db.promisifyQuery(
+        'SELECT `order`, feat, ArtistId, name ' +
+          'FROM SongArtists a, Artists b ' +
+          `WHERE a.SongId=${id} ` +
+          'AND a.ArtistId=b.id'
+      );
+
+      song.aliases = await db.promisifyQuery(
+        `SELECT * FROM SongAliases WHERE SongId=${id}`
+      );
+
+      res.json(song);
     });
   };
 })();

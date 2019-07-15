@@ -7,7 +7,7 @@
 
   var imageDir = path.join(__dirname, '../../../uploads/img');
 
-  module.exports = function(router, models) {
+  module.exports = function(router, models, db) {
     function addArtistRelation(artistId, relation) {
       return models.Artist.findOrCreate({
         where: { name: relation.name },
@@ -344,86 +344,35 @@
       });
     });
 
-    function addSongArtist(songId, artistName, order, feat) {
-      return models.Artist.findOrCreate({
-        where: { name: artistName },
-        defaults: { nameNorm: artistName }
-      }).spread(function(artist, created) {
-        return models.SongArtist.findOrCreate({
-          where: { SongId: songId, ArtistId: artist.id },
-          defaults: { order: order, feat: feat }
-        });
-      });
-    }
-
-    function deleteSongArtist(songId, artistId) {
-      return models.SongArtist.destroy({
-        where: { SongId: songId, ArtistId: artistId }
-      });
-    }
-
-    function updateSongArtist(songId, artistId, order, feat) {
-      return models.SongArtist.update(
-        {
-          order: order,
-          feat: feat
-        },
-        { where: { SongId: songId, ArtistId: artistId } }
-      );
-    }
-
-    function addSongAlias(songId, alias, chart) {
-      return models.SongAlias.findOrCreate({
-        where: { SongId: songId, alias: alias, chart: chart }
-      });
-    }
-
-    function deleteSongAlias(songId, alias, chart) {
-      return models.SongAlias.destroy({
-        where: { SongId: songId, alias: alias, chart: chart }
-      });
-    }
-
-    function updateSongAlias(id, alias, chart) {
-      return models.SongAlias.update(
-        {
-          alias: alias,
-          chart: chart
-        },
-        {
-          where: { id: id }
-        }
-      );
-    }
-
-    router.put('/api/edit/song', function(req, res) {
+    router.put('/api/edit/song', async function(req, res) {
       var input = req.body;
       var id = input.id;
       var promises = [];
+      var queries = [
+        'UPDATE Songs ' +
+          `SET title='${input.title}', plays='${input.plays}' ` +
+          `WHERE id=${id}`
+      ];
 
+      var newArtistValues = [];
       for (var i in input.editArtists) {
         var editArtist = input.editArtists[i];
         if (editArtist.created) {
-          if (editArtist.name !== null) {
-            promises.push(
-              addSongArtist(
-                id,
-                editArtist.name,
-                editArtist.order,
-                editArtist.feat
-              )
-            );
-          }
+          var artistId = await db.artist.findOrCreate(editArtist.name);
+          queries.push(
+            'INSERT INTO SongArtists (`order`, feat, createdAt, updatedAt, SongId, ArtistId) ' +
+              `VALUES (${editArtist.order}, ${editArtist.feat}, curdate(), curdate(), ${id}, ${artistId})`
+          );
         } else if (editArtist.deleted) {
-          promises.push(deleteSongArtist(id, editArtist.id));
+          queries.push(
+            'DELETE FROM SongArtists ' +
+              `WHERE SongId=${id} AND ArtistId=${editArtist.id}`
+          );
         } else {
-          promises.push(
-            updateSongArtist(
-              id,
-              editArtist.id,
-              editArtist.order,
-              editArtist.feat
-            )
+          queries.push(
+            'UPDATE SongArtists ' +
+              `SET \`order\`=${editArtist.order}, feat=${editArtist.feat} ` +
+              `WHERE SongId=${id} AND ArtistId=${editArtist.id}`
           );
         }
       }
@@ -432,76 +381,37 @@
         var editAlias = input.editAliases[i];
         if (editAlias.created) {
           if (editAlias.alias !== null && editAlias.chart !== null) {
-            promises.push(addSongAlias(id, editAlias.alias, editAlias.chart));
+            queries.push(
+              'INSERT INTO SongAliases (id, alias, chart, createdAt, updatedAt, SongId) ' +
+                `VALUES (DEFAULT, '${editAlias.alias}', '${editAlias.chart}', curdate(), curdate(), ${id})`
+            );
           }
         } else if (editAlias.deleted) {
-          promises.push(deleteSongAlias(id, editAlias.alias, editAlias.chart));
+          queries.push('DELETE FROM SongAliases ' + `WHERE id=${editAlias.id}`);
         } else {
-          promises.push(
-            updateSongAlias(editAlias.id, editAlias.alias, editAlias.chart)
+          queries.push(
+            'UPDATE SongAliases ' +
+              `SET alias='${editAlias.alias}', chart='${editAlias.chart}' ` +
+              `WHERE id=${editAlias.id}`
           );
         }
       }
 
-      Promise.all(promises)
-        .then(function() {
-          return models.Song.update(
-            {
-              title: input.title,
-              titleNorm: input.titleNorm,
-              plays: input.plays
-            },
-            { where: { id: id } }
-          );
-        })
-        .then(function(array) {
-          return models.SongArtist.findAll({
-            where: { SongId: id }
-          });
-        })
-        .then(function(songArtistArray) {
-          for (var i in songArtistArray) {
-            var songArtistRow = songArtistArray[i];
-            if (!songArtistRow.feat && songArtistRow.order === 0) {
-              res.json(songArtistRow.ArtistId);
-            }
-          }
-        });
+      await db.promisifyQuery(queries.join(';'));
+      res.sendStatus(200);
     });
 
-    router.put('/api/play/song', function(req, res) {
-      var input = req.body;
-      var id = input.id;
-      var date = new Date();
-
-      models.Song.findOne({
-        where: { id: id }
-      }).then(function(song) {
-        song.increment('plays');
-        song.setDataValue('lastPlayed', date);
-        song.save();
-        res.sendStatus(200);
-      });
-    });
-
-    function addAlbumChartNote(note) {
-      return models.AlbumChartNote.findOrCreate({
-        where: { artist: note.artist, title: note.title },
-        defaults: { note: note.note }
-      });
-    }
-
-    router.put('/api/add/album-chart-note', function(req, res) {
-      var input = req.body;
+    router.put('/api/add/album-chart-note', async function(req, res) {
+      var note = req.body;
       var promises = [];
 
-      for (var i in input) {
-        promises.push(addAlbumChartNote(input[i]));
-      }
+      await db.promisifyQuery(
+        'REPLACE INTO AlbumChartNotes ' +
+          '(id, artist, title, note, createdAt, updatedAt) ' +
+          `VALUES (DEFAULT, '${note.artist}', '${note.title}', '${note.note}', curdate(), curdate())`
+      );
 
-      Promise.all(promises).then(function() {
-        res.sendStatus(200);
-      });
+      res.sendStatus(200);
     });
   };
 })();

@@ -364,8 +364,8 @@ musicApp.controller('EditArtistCtrl', function(
     artist.editRelations = [];
     artist.editAliases = [];
 
-    for (i in artist.B) {
-      var b = artist.B[i];
+    for (i in artist.b) {
+      var b = artist.b[i];
       artistRelation = b.ArtistRelation;
       artist.editRelations[i] = {
         name: b.name,
@@ -377,8 +377,8 @@ musicApp.controller('EditArtistCtrl', function(
       };
     }
 
-    for (i in artist.ArtistAliases) {
-      var alias = artist.ArtistAliases[i];
+    for (i in artist.aliases) {
+      var alias = artist.aliases[i];
       artist.editAliases[i] = {
         id: alias.id,
         alias: alias.alias,
@@ -456,32 +456,31 @@ musicApp.controller('EditAlbumCtrl', function(
     album.newSongs = [];
     album.editAliases = [];
 
-    for (i in album.Artists) {
-      var artist = album.Artists[i];
-      var albumArtist = artist.AlbumArtist;
+    console.log(album);
+
+    for (i in album.artists) {
+      var artist = album.artists[i];
       album.editArtists[i] = {
-        order: albumArtist.order,
+        order: artist.order,
         name: artist.name,
-        id: artist.id,
+        id: artist.ArtistId,
         deleted: false,
         created: false
       };
     }
 
-    for (i in album.Songs) {
-      var song = album.Songs[i];
-      var albumSong = song.AlbumSong;
+    for (i in album.songs) {
+      var song = album.songs[i];
       album.editSongs[i] = {
-        disk: albumSong.disk,
-        track: albumSong.track,
+        disk: song.disk,
+        track: song.track,
         title: song.title,
-        id: song.id,
-        plays: song.plays
+        id: song.SongId
       };
     }
 
-    for (i in album.AlbumAliases) {
-      var alias = album.AlbumAliases[i];
+    for (i in album.aliases) {
+      var alias = album.aliases[i];
       album.editAliases[i] = {
         id: alias.id,
         alias: alias.alias,
@@ -589,21 +588,22 @@ musicApp.controller('EditSongCtrl', function(
     song.editArtists = [];
     song.editAliases = [];
 
-    for (var i in song.Artists) {
-      var artist = song.Artists[i];
-      var songArtist = artist.SongArtist;
+    console.log(song);
+
+    for (var i in song.artists) {
+      var artist = song.artists[i];
       song.editArtists[i] = {
-        order: songArtist.order,
+        order: artist.order,
         name: artist.name,
-        id: artist.id,
-        feat: songArtist.feat,
+        id: artist.ArtistId,
+        feat: artist.feat === 1 ? true : false,
         deleted: false,
         created: false
       };
     }
 
-    for (i in song.SongAliases) {
-      var alias = song.SongAliases[i];
+    for (i in song.aliases) {
+      var alias = song.aliases[i];
       song.editAliases[i] = {
         id: alias.id,
         alias: alias.alias,
@@ -632,8 +632,8 @@ musicApp.controller('EditSongCtrl', function(
     }
     song.editArtists = artists;
 
-    $http.put('api/edit/song', $scope.song).then(function(res) {
-      $location.url('/artist/' + res.data);
+    $http.put('api/edit/song', song).then(function(res) {
+      $location.url('/song/' + song.id);
     });
   };
 
@@ -1451,14 +1451,12 @@ musicApp.controller('AddAlbumChartNoteCtrl', function(
   $scope,
   $http
 ) {
-  $scope.notes = [];
-
   $scope.newNote = function() {
-    $scope.notes.push({
+    $scope.note = {
       artist: null,
       title: null,
       note: null
-    });
+    };
   };
 
   $scope.newNote();
@@ -1474,21 +1472,16 @@ musicApp.controller('AddAlbumChartNoteCtrl', function(
 
   $scope.submit = function() {
     var notes = [];
-    var note;
+    var note = $scope.note;
 
-    for (var i in $scope.notes) {
-      note = $scope.notes[i];
-      if (note.artist !== null && note.title !== null && note.note !== null) {
-        note.artist = note.artist.replace(/\'/g, '`');
-        note.title = note.title.replace(/\'/g, '`');
-        notes.push(note);
-      }
+    if (note.artist !== null && note.title !== null && note.note !== null) {
+      note.artist = note.artist.replace(/\'/g, '`');
+      note.title = note.title.replace(/\'/g, '`');
+
+      $http.put('api/add/album-chart-note', note).then(function(res) {
+        $scope.newNote();
+      });
     }
-
-    $http.put('api/add/album-chart-note', notes).then(function(res) {
-      $scope.notes = [];
-      $scope.newNote();
-    });
   };
 });
 
