@@ -47,19 +47,18 @@
       var query, random, i;
 
       var queries = [
-        { query: 'SELECT id FROM Songs;', code: 'A' },
+        { query: 'SELECT id FROM Songs;' },
         {
           query: 'SELECT id FROM Songs WHERE plays <= 2;',
-          code: 'B',
           weight: 3
         },
+        { query: 'SELECT id FROM Songs WHERE plays <= 3;' },
         {
           query:
-            'SELECT id FROM Songs WHERE plays < 10 AND id IN (SELECT distinct SongId FROM SingleCharts WHERE rank <= 10);',
-          code: 'C'
+            'SELECT id FROM Songs WHERE plays < 10 AND id IN (SELECT distinct SongId FROM SingleCharts WHERE rank <= 10);'
         },
-        { query: db.season.getQuery(), code: 'D' },
-        { query: db.song.queryForFavoriteArtists, code: 'E' }
+        { query: db.season.getQuery() },
+        { query: db.song.queryForFavoriteArtists }
       ];
 
       queries.forEach((query, index) => {
