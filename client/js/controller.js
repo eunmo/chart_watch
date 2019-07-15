@@ -344,7 +344,7 @@ musicApp.controller('AddArtistAlbumCtrl', function(
     album.newSongs = newSongs;
 
     $http.put('api/add/album', $scope.album).then(function(res) {
-      $location.url('/artist/' + res.data);
+      $location.url('/album/' + res.data);
     });
   };
 });
@@ -456,8 +456,6 @@ musicApp.controller('EditAlbumCtrl', function(
     album.newSongs = [];
     album.editAliases = [];
 
-    console.log(album);
-
     for (i in album.artists) {
       var artist = album.artists[i];
       album.editArtists[i] = {
@@ -507,7 +505,7 @@ musicApp.controller('EditAlbumCtrl', function(
     for (i in album.editSongs) {
       var song = album.editSongs[i];
       song.title = song.title.replace(/\'/g, '`');
-      if (song.title !== album.Songs[i].title) song.edited = true;
+      if (song.title !== album.songs[i].title) song.edited = true;
     }
 
     var newSongs = [];
@@ -529,8 +527,8 @@ musicApp.controller('EditAlbumCtrl', function(
       alias.alias = alias.alias.replace(/\'/g, '`');
     }
 
-    $http.put('api/edit/album', $scope.album).then(function(res) {
-      $location.url('/artist/' + res.data);
+    $http.put('api/edit/album', album).then(function(res) {
+      $location.url('/album/' + album.id);
     });
   };
 

@@ -142,56 +142,6 @@
       });
     });
 
-    function addAlbumArtist(albumId, artistName, order) {
-      return models.Artist.findOrCreate({
-        where: { name: artistName },
-        defaults: { nameNorm: artistName }
-      }).spread(function(artist, created) {
-        return models.AlbumArtist.findOrCreate({
-          where: { AlbumId: albumId, ArtistId: artist.id },
-          defaults: { order: order }
-        });
-      });
-    }
-
-    function deleteAlbumArtist(albumId, artistId) {
-      return models.AlbumArtist.destroy({
-        where: { AlbumId: albumId, ArtistId: artistId }
-      });
-    }
-
-    function updateAlbumArtist(albumId, artistId, order, feat) {
-      return models.AlbumArtist.update(
-        {
-          order: order
-        },
-        { where: { AlbumId: albumId, ArtistId: artistId } }
-      );
-    }
-
-    function updateAlbumSong(id, editSong) {
-      return models.Song.update(
-        {
-          title: editSong.title,
-          titleNorm: editSong.title
-        },
-        { where: { id: editSong.id } }
-      );
-    }
-
-    function addAlbumSong(id, newSong) {
-      return models.Song.findOne({
-        where: { id: newSong.id }
-      }).then(function(array) {
-        if (array !== null) {
-          return models.AlbumSong.findOrCreate({
-            where: { AlbumId: id, disk: newSong.disk, track: newSong.track },
-            defaults: { SongId: newSong.id }
-          });
-        }
-      });
-    }
-
     function addAlbumCover(id, url) {
       var sizes = [160, 80, 40, 30];
       var imgPath = path.join(imageDir, id + '.jpg');
@@ -207,147 +157,133 @@
       return exec(execStr);
     }
 
-    function addAlbumAlias(artistId, alias, chart) {
-      return models.AlbumAlias.findOrCreate({
-        where: { AlbumId: artistId, alias: alias, chart: chart }
-      });
-    }
-
-    function deleteAlbumAlias(artistId, alias, chart) {
-      return models.AlbumAlias.destroy({
-        where: { AlbumId: artistId, alias: alias, chart: chart }
-      });
-    }
-
-    function updateAlbumAlias(id, alias, chart) {
-      return models.AlbumAlias.update(
-        {
-          alias: alias,
-          chart: chart
-        },
-        {
-          where: { id: id }
-        }
+    async function addNewSongs(albumId, newSong, queries) {
+      let songs = await db.promisifyQuery(
+        `SELECT id from Songs where id=${newSong.id}`
       );
+      if (songs.length > 0) {
+        queries.push(
+          'INSERT INTO AlbumSongs (disk, track, createdAt, updatedAt, SongId, AlbumId) ' +
+            `VALUES (${newSong.disk}, ${newSong.track}, curdate(), curdate(), ${newSong.id}, ${albumId})`
+        );
+      }
     }
 
-    router.put('/api/edit/album', function(req, res) {
+    router.put('/api/edit/album', async function(req, res) {
       var input = req.body;
       var id = input.id;
-      var promises = [];
-      var i;
+      let release = new Date(input.releaseDate);
+      let releaseDate = release.toISOString().substring(0, 10);
+      let format2 = input.format2 !== null ? `'${input.format2}'` : 'NULL';
 
-      for (i in input.editArtists) {
+      var queries = [
+        'UPDATE Albums ' +
+          `SET title='${input.title}', \`release\`='${releaseDate}', format='${input.format}', format2=${format2} ` +
+          `WHERE id=${id}`
+      ];
+
+      var newArtistValues = [];
+      for (var i in input.editArtists) {
         var editArtist = input.editArtists[i];
         if (editArtist.created) {
-          if (editArtist.name !== null) {
-            promises.push(
-              addAlbumArtist(id, editArtist.name, editArtist.order)
-            );
-          }
+          var artistId = await db.artist.findOrCreate(editArtist.name);
+          queries.push(
+            'INSERT INTO AlbumArtists (`order`, createdAt, updatedAt, AlbumId, ArtistId) ' +
+              `VALUES (${editArtist.order}, curdate(), curdate(), ${id}, ${artistId})`
+          );
         } else if (editArtist.deleted) {
-          promises.push(deleteAlbumArtist(id, editArtist.id));
+          queries.push(
+            'DELETE FROM AlbumArtists ' +
+              `WHERE AlbumId=${id} AND ArtistId=${editArtist.id}`
+          );
         } else {
-          promises.push(updateAlbumArtist(id, editArtist.id, editArtist.order));
+          queries.push(
+            'UPDATE AlbumArtists ' +
+              `SET \`order\`=${editArtist.order} ` +
+              `WHERE AlbumId=${id} AND ArtistId=${editArtist.id}`
+          );
         }
       }
 
       for (i in input.editSongs) {
         var editSong = input.editSongs[i];
-        if (editSong.edited) promises.push(updateAlbumSong(id, editSong));
+        if (editSong.edited) {
+          queries.push(
+            `UPDATE Songs SET title='${editSong.title}' WHERE id=${editSong.id}`
+          );
+        }
       }
 
       for (i in input.newSongs) {
-        promises.push(addAlbumSong(id, input.newSongs[i]));
-      }
-
-      if (input.cover !== null) {
-        promises.push(addAlbumCover(id, input.cover));
+        await addNewSongs(id, input.newSongs[i], queries);
       }
 
       for (i in input.editAliases) {
         var editAlias = input.editAliases[i];
         if (editAlias.created) {
           if (editAlias.alias !== null && editAlias.chart !== null) {
-            promises.push(addAlbumAlias(id, editAlias.alias, editAlias.chart));
+            queries.push(
+              'INSERT INTO AlbumAliases (id, alias, chart, createdAt, updatedAt, AlbumId) ' +
+                `VALUES (DEFAULT, '${editAlias.alias}', '${editAlias.chart}', curdate(), curdate(), ${id})`
+            );
           }
         } else if (editAlias.deleted) {
-          promises.push(deleteAlbumAlias(id, editAlias.alias, editAlias.chart));
+          queries.push(
+            'DELETE FROM AlbumAliases ' + `WHERE id=${editAlias.id}`
+          );
         } else {
-          promises.push(
-            updateAlbumAlias(editAlias.id, editAlias.alias, editAlias.chart)
+          queries.push(
+            'UPDATE AlbumAliases ' +
+              `SET alias='${editAlias.alias}', chart='${editAlias.chart}' ` +
+              `WHERE id=${editAlias.id}`
           );
         }
       }
 
-      Promise.all(promises)
-        .then(function() {
-          return models.Album.update(
-            {
-              title: input.title,
-              titleNorm: input.titleNorm,
-              release: new Date(input.releaseDate),
-              format: input.format,
-              format2: input.format2
-            },
-            { where: { id: id } }
-          );
-        })
-        .then(function(array) {
-          return models.AlbumArtist.findAll({
-            where: { AlbumId: id }
-          });
-        })
-        .then(function(albumArtistArray) {
-          for (var i in albumArtistArray) {
-            var albumArtistRow = albumArtistArray[i];
-            if (albumArtistRow.order === 0) {
-              res.json(albumArtistRow.ArtistId);
-            }
-          }
-        });
+      if (input.cover !== null) {
+        await addAlbumCover(id, input.cover);
+      }
+
+      await db.promisifyQuery(queries.join(';'));
+      res.sendStatus(200);
     });
 
-    function addAlbumArtistById(albumId, artistId, order) {
-      return models.AlbumArtist.findOrCreate({
-        where: { AlbumId: albumId, ArtistId: artistId },
-        defaults: { order: order }
-      });
-    }
-
-    router.put('/api/add/album', function(req, res) {
+    router.put('/api/add/album', async function(req, res) {
       var input = req.body;
+      let release = new Date(input.releaseDate);
+      let releaseDate = release.toISOString().substring(0, 10);
 
-      models.Album.create({
-        title: input.title,
-        titleNorm: input.title,
-        release: new Date(input.releaseDate),
-        format: input.format
-      }).then(function(album) {
-        var promises = [];
-        var id = album.id;
-        var i;
+      await db.promisifyQuery(
+        'INSERT INTO Albums (id, title, titleNorm, `release`, format, createdAt, updatedAt) ' +
+          `VALUES (DEFAULT, '${input.title}', '${input.title}', '${releaseDate}', '${input.format}', curdate(), curdate())`
+      );
 
-        promises.push(addAlbumArtistById(id, input.artist, 0));
+      let albums = await db.promisifyQuery(
+        `SELECT id FROM Albums WHERE title='${input.title}' AND \`release\`='${releaseDate}'`
+      );
+      let id = albums[0].id;
 
-        for (i in input.newSongs) {
-          promises.push(addAlbumSong(id, input.newSongs[i]));
-        }
+      var queries = [
+        'INSERT INTO AlbumArtists (`order`, createdAt, updatedAt, AlbumId, ArtistId) ' +
+          `VALUES (0, curdate(), curdate(), ${id}, ${input.artist})`
+      ];
 
-        if (input.cover !== null) {
-          promises.push(addAlbumCover(id, input.cover));
-        }
+      for (var i in input.newSongs) {
+        await addNewSongs(id, input.newSongs[i], queries);
+      }
 
-        Promise.all(promises).then(function() {
-          res.json(input.artist);
-        });
-      });
+      if (input.cover !== null) {
+        await addAlbumCover(id, input.cover);
+      }
+
+      console.log(queries);
+      await db.promisifyQuery(queries.join(';'));
+      res.json(id);
     });
 
     router.put('/api/edit/song', async function(req, res) {
       var input = req.body;
       var id = input.id;
-      var promises = [];
       var queries = [
         'UPDATE Songs ' +
           `SET title='${input.title}', plays='${input.plays}' ` +
