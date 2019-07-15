@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     router.get('/api/edit/artist/:_id', async function(req, res) {
       var id = req.params._id;
 

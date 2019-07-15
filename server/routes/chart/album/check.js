@@ -5,7 +5,7 @@ var Promise = require('bluebird');
 var exec = Promise.promisify(require('child_process').exec);
 const Match = require('../../../util/match_album');
 
-module.exports = function(router, _, db) {
+module.exports = function(router, db) {
   let check = async function(chart) {
     const curWeek = new Date(chart.week);
     var nextWeek = new Date(chart.week);

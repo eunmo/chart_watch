@@ -60,7 +60,7 @@
     });
   };
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     router.get('/api/album/:_id', function(req, res) {
       var id = req.params._id;
       var promises = [];

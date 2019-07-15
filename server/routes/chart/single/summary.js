@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     router.get('/chart/single/summary', function(req, res) {
       db.chartCurrent.getSingleSummary().then(function(weeks) {
         var songIds = [];

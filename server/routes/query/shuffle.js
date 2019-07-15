@@ -38,7 +38,7 @@
     });
   };
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     function getRandomSongs() {
       var promises = [];
       var songIds = [];

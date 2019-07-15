@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     router.get('/chart/single/current', function(req, res) {
       db.chartCurrent.getSortedSongs().then(function(songs) {
         var songIds = [];

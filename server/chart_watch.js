@@ -8,7 +8,6 @@
   var bodyParser = require('body-parser');
 
   var routes = require('./routes/index');
-  var models = require('./models/index');
 
   var app = express();
 
@@ -28,10 +27,8 @@
   // build dir comes after routes to avoid duplication of index.html
   app.use(express.static(path.join(__dirname, '../build')));
 
-  models.sequelize.sync({ force: false }).then(function() {
-    var server = app.listen(3010, function() {
-      console.log('Express server listening on port ' + server.address().port);
-    });
+  var server = app.listen(3010, function() {
+    console.log('Express server listening on port ' + server.address().port);
   });
 
   module.exports = app;

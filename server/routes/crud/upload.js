@@ -15,7 +15,7 @@
   var tagScript = path.join(__dirname, '../../../perl/tag.pl');
   var imgScript = path.join(__dirname, '../../../perl/img.pl');
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     async function getArtistIdMap(tag) {
       let map = {};
 
@@ -163,7 +163,6 @@
           if (file.size > 0) files.push(file);
         })
         .on('end', async function() {
-          console.log('-> upload done');
           if (files.length === 0) {
             res.json(null);
           } else {

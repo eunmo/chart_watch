@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     function formatResult(rows, res) {
       var weekMap = {};
       var songMap = {};

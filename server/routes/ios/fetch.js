@@ -13,7 +13,7 @@
     'gaon'
   ];
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     function getMore(songs, needDetails) {
       var songIds = [];
 

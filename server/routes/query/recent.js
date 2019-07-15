@@ -27,7 +27,7 @@
     });
   };
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     function getLastPlayed(limit) {
       var columns = ', lastPlayed';
       var filter =

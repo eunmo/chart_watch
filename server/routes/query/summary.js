@@ -1,10 +1,9 @@
 (function() {
   'use strict';
 
-  var Sequelize = require('sequelize');
   var Promise = require('bluebird');
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     function getTableSummary(table, summary) {
       var query = 'SELECT count(*) as count FROM ' + table + ';';
 

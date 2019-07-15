@@ -13,7 +13,7 @@
     'gaon'
   ];
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     function idRowsToArray(rows) {
       var array = [];
 

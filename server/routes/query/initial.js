@@ -1,7 +1,6 @@
 (function() {
   'use strict';
 
-  var Sequelize = require('sequelize');
   var Promise = require('bluebird');
 
   var getAlbumSummary = function(db, artists, ids) {
@@ -147,7 +146,7 @@
     return query;
   };
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     router.get('/api/initial/:_initial', function(req, res) {
       var initial = req.params._initial;
       var queryOption = {};

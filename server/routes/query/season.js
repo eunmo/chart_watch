@@ -13,7 +13,7 @@
     'gaon'
   ];
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     router.get('/api/season', function(req, res) {
       var outParam = { weeks: {}, songs: [], charts: charts };
 

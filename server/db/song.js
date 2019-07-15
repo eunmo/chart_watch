@@ -298,7 +298,6 @@
     };
 
     db.song.fetchFavorite = function(songs) {
-      console.log(db.song.queryForFavoriteArtists);
       return db
         .promisifyQuery(db.song.queryForFavoriteArtists)
         .then(function(rows) {
@@ -309,7 +308,6 @@
           songs.forEach(song => {
             if (idMap[song.id]) song.favorite = true;
           });
-          //					songs.forEach(song => { if (idMap[song.id]) console.log(song); });
         });
     };
   };

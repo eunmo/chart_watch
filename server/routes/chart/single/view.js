@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     function getQuery(chart, date) {
       var query =
         'SELECT `rank`, `order`, artist, title, SongId as id ' +

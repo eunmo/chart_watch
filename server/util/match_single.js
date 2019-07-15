@@ -444,8 +444,6 @@ module.exports = {
         titleNorm = normalizeTitle(artistId, title, chart, date);
       }
 
-      if (entry.artistId === 389) console.log(entry);
-
       return findSongByFunction(
         artistId,
         title,

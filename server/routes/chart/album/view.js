@@ -3,7 +3,7 @@
 
   var Promise = require('bluebird');
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     function getQuery(chart, date) {
       var query =
         'SELECT `rank`, artist, title, AlbumId ' +

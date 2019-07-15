@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     router.get('/chart/missing/album/:_rank', function(req, res) {
       var query =
         '(SELECT name, rank, a.title, count, chart, week, note FROM ' +

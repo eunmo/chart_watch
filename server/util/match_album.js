@@ -18,7 +18,6 @@ module.exports = {
 
       if (entry.chart === 'francais' && entry.title.includes('Ã?')) {
         var titleRegex = entry.title.replace(/Ã\?/g, '%');
-        console.log(titleRegex);
         query =
           'SELECT id FROM Albums WHERE title like "' +
           titleRegex +

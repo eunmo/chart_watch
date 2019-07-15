@@ -3,7 +3,7 @@
 var Promise = require('bluebird');
 const Match = require('../../../util/match_album');
 
-module.exports = function(router, _, db) {
+module.exports = function(router, db) {
   router.get('/chart/album/match/:_chart', async function(req, res) {
     var chartName = req.params._chart;
     var year = req.query.year;

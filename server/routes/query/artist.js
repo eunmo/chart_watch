@@ -1,7 +1,6 @@
 (function() {
   'use strict';
 
-  var Sequelize = require('sequelize');
   var Promise = require('bluebird');
 
   var songCmp = function(a, b) {
@@ -234,7 +233,7 @@
     });
   };
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     router.get('/api/artist/:_id', function(req, res) {
       var id = parseInt(req.params._id);
       var artist = { id: id };

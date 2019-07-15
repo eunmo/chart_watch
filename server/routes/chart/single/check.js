@@ -6,7 +6,7 @@ var exec = Promise.promisify(require('child_process').exec);
 const Match = require('../../../util/match_single');
 const APN = require('../../../util/apn');
 
-module.exports = function(router, _, db) {
+module.exports = function(router, db) {
   let check = async function(chart) {
     const curWeek = new Date(chart.week);
     var nextWeek = new Date(chart.week);

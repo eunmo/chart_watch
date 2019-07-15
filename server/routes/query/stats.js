@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     router.get('/stats/plays-by-song', function(req, res) {
       var query =
         'SELECT plays, rank, count(*) as count ' +

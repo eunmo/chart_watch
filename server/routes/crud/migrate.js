@@ -10,7 +10,7 @@
 
   var uploadDir = path.join(__dirname, '../../../uploads/temp');
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     function moveToS3(id, filePath) {
       var fileBuffer = fs.readFileSync(filePath);
       var s3 = new AWS.S3(s3config);

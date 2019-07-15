@@ -7,7 +7,7 @@
 
   var imageDir = path.join(__dirname, '../../../uploads/img');
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     async function mergeArtists(toId, fromId) {
       var queries = [
         `UPDATE SongArtists SET ArtistId=${toId} WHERE ArtistId=${fromId}`,

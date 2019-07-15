@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  module.exports = function(router, _, db) {
+  module.exports = function(router, db) {
     router.get('/chart/single/clear/:_chart', async function(req, res) {
       var chartName = req.params._chart;
       var year = req.query.year;

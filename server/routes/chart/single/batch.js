@@ -3,7 +3,7 @@
 var Promise = require('bluebird');
 const Match = require('../../../util/match_single');
 
-module.exports = function(router, _, db) {
+module.exports = function(router, db) {
   router.get('/chart/single/batch', async function(req, res) {
     const date = new Date();
     const year = 2000 + date.getHours();
@@ -13,8 +13,6 @@ module.exports = function(router, _, db) {
       " WHERE `week` LIKE '" +
       year +
       "%';";
-
-    console.log(query);
 
     var result = await db.promisifyQuery(query);
 
