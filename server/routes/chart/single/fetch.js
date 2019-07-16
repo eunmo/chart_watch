@@ -2,8 +2,7 @@
   'use strict';
 
   var path = require('path');
-  var Promise = require('bluebird');
-  var exec = Promise.promisify(require('child_process').exec);
+  const exec = require('../../../util/exec');
 
   module.exports = function(router, db) {
     router.get('/chart/single/fetch/:_chart', async function(req, res) {
@@ -29,8 +28,7 @@
         '../../../../perl/single',
         chartName + '.pl'
       )} ${dateStr}`;
-      let [stdout, stderr] = await exec(execStr);
-      var rawData = JSON.parse(stdout);
+      let rawData = await exec.toJSON(execStr);
 
       if (rawData.length === 0) {
         res.sendStatus(200);

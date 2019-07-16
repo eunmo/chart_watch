@@ -1,9 +1,8 @@
 (function() {
   'use strict';
 
-  var Promise = require('bluebird');
   var path = require('path');
-  var exec = Promise.promisify(require('child_process').exec);
+  const exec = require('../../util/exec');
 
   var imageDir = path.join(__dirname, '../../../uploads/img');
 
@@ -94,10 +93,10 @@
       res.json(id);
     });
 
-    function addAlbumCover(id, url) {
+    async function addAlbumCover(id, url) {
       var imgPath = path.join(imageDir, id + '.jpg');
       var execStr = 'curl "' + url + '" -o ' + imgPath + '; ';
-      return exec(execStr);
+      await exec.simple(execStr);
     }
 
     async function addNewSongs(albumId, newSong, queries) {

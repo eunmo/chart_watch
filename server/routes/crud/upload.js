@@ -6,9 +6,9 @@
   var path = require('path');
   var fs = require('fs');
   var Promise = require('bluebird');
-  var exec = Promise.promisify(require('child_process').exec);
   var AWS = require('aws-sdk');
   var s3config = require('../../../s3.json');
+  const exec = require('../../util/exec');
 
   var uploadDir = path.join(__dirname, '../../../uploads/temp');
   var imageDir = path.join(__dirname, '../../../uploads/img');
@@ -75,8 +75,7 @@
     async function handleUpload(file) {
       var filePath = file.path;
       var execTagStr = 'perl ' + tagScript + ' ' + filePath;
-      let [stdout, stderr] = await exec(execTagStr);
-      let tag = JSON.parse(stdout);
+      let tag = await exec.toJSON(execTagStr);
 
       let artistIdMap = await getArtistIdMap(tag);
 
@@ -96,7 +95,7 @@
 
         var imgPath = path.join(imageDir, `${albumId}.jpg`);
         var execImgStr = `perl ${imgScript} ${filePath} ${imgPath}`;
-        await exec(execImgStr);
+        await exec.simple(execImgStr);
 
         var albumArtistValues = tag.albumArtist.map(
           (artist, index) =>

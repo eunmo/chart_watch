@@ -4,9 +4,9 @@
   var path = require('path');
   var fs = require('fs');
   var Promise = require('bluebird');
-  var exec = Promise.promisify(require('child_process').exec);
   var AWS = require('aws-sdk');
   var s3config = require('../../../s3.json');
+  const exec = require('../../util/exec');
 
   var uploadDir = path.join(__dirname, '../../../uploads/temp');
 
@@ -44,7 +44,7 @@
         id = '' + rows[i].id;
         file = path.join(uploadDir, id);
         url = 'http://1.235.106.140:3000/music/' + id + '.mp3';
-        await exec('curl -o ' + file + ' ' + url);
+        await exec.simple('curl -o ' + file + ' ' + url);
         await moveToS3(id, file);
         if (i % 10 === 0) {
           time = new Date();

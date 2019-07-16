@@ -1,10 +1,9 @@
 'use strict';
 
 var path = require('path');
-var Promise = require('bluebird');
-var exec = Promise.promisify(require('child_process').exec);
 const Match = require('../../../util/match_single');
 const APN = require('../../../util/apn');
+const exec = require('../../../util/exec');
 
 module.exports = function(router, db) {
   let check = async function(chart) {
@@ -22,8 +21,7 @@ module.exports = function(router, db) {
       ' ' +
       dateStr;
 
-    const [stdout, stderr] = await exec(execStr);
-    const data = JSON.parse(stdout);
+    const data = await exec.toJSON(execStr);
 
     if (data.length <= 10) return;
 
