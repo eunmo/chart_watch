@@ -114,8 +114,8 @@
       let maxSongId = curMaxSongIds[0].max;
 
       await db.promisifyQuery(
-        'INSERT INTO Songs (id, title, titleNorm, time, bitrate)' +
-          `VALUES (DEFAULT, '${tag.title}', '${tag.titleNorm}', ${tag.time}, ${tag.bitrate})`
+        'INSERT INTO Songs (id, title, time, bitrate)' +
+          `VALUES (DEFAULT, '${tag.title}', ${tag.time}, ${tag.bitrate})`
       );
 
       let songs = await db.promisifyQuery(
