@@ -39,8 +39,8 @@
     }
 
     function getRecentlyAdded(limit) {
-      var columns = ', createdAt as lastPlayed';
-      var filter = 'ORDER BY createdAt DESC LIMIT ' + limit;
+      var columns = ', curdate() as lastPlayed';
+      var filter = 'ORDER BY id DESC LIMIT ' + limit;
 
       return db.song.get(columns, filter).then(function(rows) {
         return getExternals(db, rows);

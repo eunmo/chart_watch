@@ -52,8 +52,8 @@
               ? editRelation.order
               : null;
             queries.push(
-              'INSERT INTO ArtistRelations (type, `order`, createdAt, updatedAt, A, B) ' +
-                `VALUES ('${editRelation.type}', ${order}, curdate(), curdate(), ${id}, ${artistId})`
+              'INSERT INTO ArtistRelations (type, `order`, A, B) ' +
+                `VALUES ('${editRelation.type}', ${order}, ${id}, ${artistId})`
             );
           }
         } else if (editRelation.deleted) {
@@ -74,8 +74,8 @@
         if (editAlias.created) {
           if (editAlias.alias !== null && editAlias.chart !== null) {
             queries.push(
-              'INSERT INTO ArtistAliases (id, alias, chart, createdAt, updatedAt, ArtistId) ' +
-                `VALUES (DEFAULT, '${editAlias.alias}', '${editAlias.chart}', curdate(), curdate(), ${id})`
+              'INSERT INTO ArtistAliases (id, alias, chart, ArtistId) ' +
+                `VALUES (DEFAULT, '${editAlias.alias}', '${editAlias.chart}', ${id})`
             );
           }
         } else if (editAlias.deleted) {
@@ -105,8 +105,8 @@
       );
       if (songs.length > 0) {
         queries.push(
-          'INSERT INTO AlbumSongs (disk, track, createdAt, updatedAt, SongId, AlbumId) ' +
-            `VALUES (${newSong.disk}, ${newSong.track}, curdate(), curdate(), ${newSong.id}, ${albumId})`
+          'INSERT INTO AlbumSongs (disk, track, SongId, AlbumId) ' +
+            `VALUES (${newSong.disk}, ${newSong.track}, ${newSong.id}, ${albumId})`
         );
       }
     }
@@ -130,8 +130,8 @@
         if (editArtist.created) {
           var artistId = await db.artist.findOrCreate(editArtist.name);
           queries.push(
-            'INSERT INTO AlbumArtists (`order`, createdAt, updatedAt, AlbumId, ArtistId) ' +
-              `VALUES (${editArtist.order}, curdate(), curdate(), ${id}, ${artistId})`
+            'INSERT INTO AlbumArtists (`order`, AlbumId, ArtistId) ' +
+              `VALUES (${editArtist.order}, ${id}, ${artistId})`
           );
         } else if (editArtist.deleted) {
           queries.push(
@@ -165,8 +165,8 @@
         if (editAlias.created) {
           if (editAlias.alias !== null && editAlias.chart !== null) {
             queries.push(
-              'INSERT INTO AlbumAliases (id, alias, chart, createdAt, updatedAt, AlbumId) ' +
-                `VALUES (DEFAULT, '${editAlias.alias}', '${editAlias.chart}', curdate(), curdate(), ${id})`
+              'INSERT INTO AlbumAliases (id, alias, chart, AlbumId) ' +
+                `VALUES (DEFAULT, '${editAlias.alias}', '${editAlias.chart}', ${id})`
             );
           }
         } else if (editAlias.deleted) {
@@ -196,8 +196,8 @@
       let id = await db.album.add(input.title, input.releaseDate, input.format);
 
       var queries = [
-        'INSERT INTO AlbumArtists (`order`, createdAt, updatedAt, AlbumId, ArtistId) ' +
-          `VALUES (0, curdate(), curdate(), ${id}, ${input.artist})`
+        'INSERT INTO AlbumArtists (`order`, AlbumId, ArtistId) ' +
+          `VALUES (0, ${id}, ${input.artist})`
       ];
 
       for (var i in input.newSongs) {
@@ -227,8 +227,8 @@
         if (editArtist.created) {
           var artistId = await db.artist.findOrCreate(editArtist.name);
           queries.push(
-            'INSERT INTO SongArtists (`order`, feat, createdAt, updatedAt, SongId, ArtistId) ' +
-              `VALUES (${editArtist.order}, ${editArtist.feat}, curdate(), curdate(), ${id}, ${artistId})`
+            'INSERT INTO SongArtists (`order`, feat, SongId, ArtistId) ' +
+              `VALUES (${editArtist.order}, ${editArtist.feat}, ${id}, ${artistId})`
           );
         } else if (editArtist.deleted) {
           queries.push(
@@ -249,8 +249,8 @@
         if (editAlias.created) {
           if (editAlias.alias !== null && editAlias.chart !== null) {
             queries.push(
-              'INSERT INTO SongAliases (id, alias, chart, createdAt, updatedAt, SongId) ' +
-                `VALUES (DEFAULT, '${editAlias.alias}', '${editAlias.chart}', curdate(), curdate(), ${id})`
+              'INSERT INTO SongAliases (id, alias, chart, SongId) ' +
+                `VALUES (DEFAULT, '${editAlias.alias}', '${editAlias.chart}', ${id})`
             );
           }
         } else if (editAlias.deleted) {
@@ -274,8 +274,8 @@
 
       await db.promisifyQuery(
         'REPLACE INTO AlbumChartNotes ' +
-          '(id, artist, title, note, createdAt, updatedAt) ' +
-          `VALUES (DEFAULT, '${note.artist}', '${note.title}', '${note.note}', curdate(), curdate())`
+          '(id, artist, title, note) ' +
+          `VALUES (DEFAULT, '${note.artist}', '${note.title}', '${note.note}')`
       );
 
       res.sendStatus(200);

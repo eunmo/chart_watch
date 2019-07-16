@@ -69,14 +69,13 @@ module.exports = function(router, db) {
           "'," +
           "'" +
           row.title +
-          "'," +
-          'curdate(),curdate())'
+          "')"
       );
     });
 
     query =
       'INSERT INTO `AlbumCharts` ' +
-      '(`id`,`type`,`week`,`rank`,`artist`,`title`,`updatedAt`,`createdAt`) ' +
+      '(`id`,`type`,`week`,`rank`,`artist`,`title`) ' +
       'VALUES ' +
       values.join(',');
 

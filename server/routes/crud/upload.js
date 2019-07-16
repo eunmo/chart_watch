@@ -98,11 +98,10 @@
         await exec.simple(execImgStr);
 
         var albumArtistValues = tag.albumArtist.map(
-          (artist, index) =>
-            `(${index}, curdate(), curdate(), ${albumId}, ${artistIdMap[artist]})`
+          (artist, index) => `(${index}, ${albumId}, ${artistIdMap[artist]})`
         );
         await db.promisifyQuery(
-          'INSERT INTO AlbumArtists (`order`, createdAt, updatedAt, AlbumId, ArtistId) ' +
+          'INSERT INTO AlbumArtists (`order`, AlbumId, ArtistId) ' +
             `VALUES ${albumArtistValues.join(',')}`
         );
       } else {
@@ -115,8 +114,8 @@
       let maxSongId = curMaxSongIds[0].max;
 
       await db.promisifyQuery(
-        'INSERT INTO Songs (id, title, titleNorm, time, bitrate, createdAt, updatedAt)' +
-          `VALUES (DEFAULT, '${tag.title}', '${tag.titleNorm}', ${tag.time}, ${tag.bitrate}, curdate(), curdate())`
+        'INSERT INTO Songs (id, title, titleNorm, time, bitrate)' +
+          `VALUES (DEFAULT, '${tag.title}', '${tag.titleNorm}', ${tag.time}, ${tag.bitrate})`
       );
 
       let songs = await db.promisifyQuery(
@@ -125,25 +124,24 @@
       let songId = songs[0].id;
 
       var songArtists = tag.artist.map(
-        (artist, index) =>
-          `(${index}, 0, curdate(), curdate(), ${songId}, ${artistIdMap[artist]})`
+        (artist, index) => `(${index}, 0, ${songId}, ${artistIdMap[artist]})`
       );
 
       if (tag.feat.length > 0) {
         songArtists = songArtists.concat(
           tag.feat.map(
             (artist, index) =>
-              `(${index}, 1, curdate(), curdate(), ${songId}, ${artistIdMap[artist]})`
+              `(${index}, 1, ${songId}, ${artistIdMap[artist]})`
           )
         );
       }
 
       let disk = tag.disk === 0 ? 1 : tag.disk;
       await db.promisifyQuery(
-        'INSERT INTO SongArtists (`order`, feat, createdAt, updatedAt, SongId, ArtistId) ' +
+        'INSERT INTO SongArtists (`order`, feat, SongId, ArtistId) ' +
           `VALUES ${songArtists.join(',')};` +
-          'INSERT INTO AlbumSongs (disk, track, createdAt, updatedAt, SongId, AlbumId) ' +
-          `VALUES (${disk}, ${tag.track}, curdate(), curdate(), ${songId}, ${albumId})`
+          'INSERT INTO AlbumSongs (disk, track, SongId, AlbumId) ' +
+          `VALUES (${disk}, ${tag.track}, ${songId}, ${albumId})`
       );
 
       await moveFile(file, songId);

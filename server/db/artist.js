@@ -132,8 +132,8 @@
       }
 
       await db.promisifyQuery(
-        'INSERT INTO Artists (id, name, nameNorm, createdAt, updatedAt) ' +
-          `VALUES (DEFAULT, '${name}', '${name}', curdate(), curdate())`
+        'INSERT INTO Artists (id, name, nameNorm) ' +
+          `VALUES (DEFAULT, '${name}', '${name}')`
       );
 
       ids = await db.promisifyQuery(
@@ -165,8 +165,8 @@
       }
 
       await db.promisifyQuery(
-        'INSERT INTO Artists (id, name, nameNorm, createdAt, updatedAt) ' +
-          `VALUES (DEFAULT, '${name}', '${nameNorm}', curdate(), curdate())`
+        'INSERT INTO Artists (id, name, nameNorm) ' +
+          `VALUES (DEFAULT, '${name}', '${nameNorm}')`
       );
 
       ids = await db.promisifyQuery(

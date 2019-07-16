@@ -37,12 +37,12 @@
 
       var values = rawData.map(
         row =>
-          `(DEFAULT, '${chartName}', '${week}', ${row.rank}, '${row.artist}', '${row.title}', curdate(), curdate())`
+          `(DEFAULT, '${chartName}', '${week}', ${row.rank}, '${row.artist}', '${row.title}')`
       );
 
       await db.promisifyQuery(
         'INSERT INTO AlbumCharts ' +
-          '(id,type,week,`rank`,artist,title,updatedAt,createdAt) ' +
+          '(id,type,week,`rank`,artist,title) ' +
           `VALUES ${values.join(',')}`
       );
       res.sendStatus(200);

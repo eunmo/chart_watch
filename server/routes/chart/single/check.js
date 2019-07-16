@@ -74,15 +74,14 @@ module.exports = function(router, db) {
             "'," +
             "'" +
             row.titles[i] +
-            "'," +
-            'curdate(),curdate())'
+            "')"
         );
       }
     });
 
     query =
       'INSERT INTO `SingleCharts` ' +
-      '(`id`,`type`,`week`,`rank`,`order`,`artist`,`title`,`updatedAt`,`createdAt`) ' +
+      '(`id`,`type`,`week`,`rank`,`order`,`artist`,`title`) ' +
       'VALUES ' +
       values.join(',');
 

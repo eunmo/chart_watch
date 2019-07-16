@@ -39,14 +39,14 @@
         row.titles
           .map(
             (title, index) =>
-              `(DEFAULT, '${chartName}', '${week}', ${row.rank}, ${index}, '${row.artist}', '${title}', curdate(), curdate())`
+              `(DEFAULT, '${chartName}', '${week}', ${row.rank}, ${index}, '${row.artist}', '${title}')`
           )
           .join('')
       );
 
       await db.promisifyQuery(
         'INSERT INTO SingleCharts ' +
-          '(id,type,week,`rank`,`order`,artist,title,updatedAt,createdAt) ' +
+          '(id,type,week,`rank`,`order`,artist,title) ' +
           `VALUES ${values.join(',')}`
       );
       res.sendStatus(200);

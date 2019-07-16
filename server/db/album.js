@@ -173,8 +173,8 @@
       let formatS = format === null ? 'NULL' : `'${format}'`;
 
       await db.promisifyQuery(
-        'INSERT INTO Albums (id, title, titleNorm, `release`, format, createdAt, updatedAt) ' +
-          `VALUES (DEFAULT, '${title}', '${title}', '${releaseDate}', ${formatS}, curdate(), curdate())`
+        'INSERT INTO Albums (id, title, titleNorm, `release`, format) ' +
+          `VALUES (DEFAULT, '${title}', '${title}', '${releaseDate}', ${formatS})`
       );
 
       let albums = await db.promisifyQuery(
