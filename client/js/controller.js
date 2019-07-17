@@ -493,7 +493,6 @@ musicApp.controller('EditAlbumCtrl', function(
     var album = $scope.album;
     var i;
     album.title = album.title.replace(/\'/g, '`');
-    album.titleNorm = album.titleNorm.replace(/\'/g, '`');
 
     if (album.format2 === 'Null') album.format2 = null;
 
@@ -613,7 +612,6 @@ musicApp.controller('EditSongCtrl', function(
     var song = $scope.song;
     var artists = [];
     song.title = song.title.replace(/\'/g, '`');
-    song.titleNorm = song.titleNorm.replace(/\'/g, '`');
 
     /* remove artists without a name */
     for (var i in song.editArtists) {
