@@ -48,6 +48,7 @@ module.exports = {
         nameNorm = nameNorm.replace(/\sfeat\..*$/, '');
         nameNorm = nameNorm.replace(/\sand\s.*$/, '');
         nameNorm = nameNorm.replace(/\s\+\s.*$/, '');
+        nameNorm = nameNorm.replace(/\sx\s.*$/, '');
       } else if (chart === 'uk') {
         nameNorm = nameNorm.replace(/[&＆].*$/, '');
         nameNorm = nameNorm.replace(/\sFT\s.*$/, '');
