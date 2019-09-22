@@ -7,18 +7,18 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "apn": "^2.2.0",
-    "aws-sdk": "~2.493.0",
+    "aws-sdk": "~2.533.0",
     "bluebird": "~3.5.5",
     "body-parser": "~1.19.0",
-    "ejs": "~2.6.2",
+    "ejs": "~2.7.1",
     "express": "~4.17.1",
     "formidable": "^1.2.1",
-    "husky": "^3.0.0",
-    "lint-staged": "^9.2.0",
+    "husky": "^3.0.5",
+    "lint-staged": "^9.2.5",
     "mysql": "~2.17.1",
     "prettier": "^1.18.2",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
     "request": "^2.88.0"
@@ -29,7 +29,7 @@
     "gulp-nodemon": "^2.4.2",
     "gulp-watch": "^5.0.1",
     "jshint": "^2.10.2",
-    "react-scripts": "^3.0.1"
+    "react-scripts": "^3.1.2"
   },
   "lint-staged": {
     "{server,client,src}/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
@@ -43,10 +43,31 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
+  "eslintConfig": {
+    "extends": [ "react-app" ],
+    "rules": {
+    },
+    "env": {
+      "browser": true,
+      "es6": true
+    }
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
   },
-  "proxy": "http://localhost:3010"
+  "proxy": "http://localhost:3010",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }

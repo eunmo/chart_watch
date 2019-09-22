@@ -86,13 +86,7 @@ export default class PageSelector extends Component {
             <Route
               key={view.name}
               path={basename + view.link}
-              component={
-                class ViewComponent extends Component {
-                  render() {
-                    return <view.component data={view.data} />;
-                  }
-                }
-              }
+              render={props => <view.component data={view.data} />}
             />
           ))}
         </Switch>
