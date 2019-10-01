@@ -12,14 +12,12 @@ my $mm = $ARGV[1];
 my $dd = $ARGV[2];
 
 my $ld = DateTime->new( year => $yy, month => $mm, day => $dd )
-								 ->truncate( to => 'week' )
-								 ->add( weeks => 2)
-								 ->add( days => 4 ); # need confirmation
+		 ->truncate( to => 'week' )->add( weeks => 2)->add( days => 4 ); # need confirmation
 
 if ($ld->ymd() =~ '2018-01-05') { #2018-01-03 (matches chart date 2017-12-23)
-	$ld = $ld->subtract( days => 2 );
+  $ld = $ld->subtract( days => 2 );
 } elsif ($ld->year() >= 2018) {
-	$ld = $ld->subtract( weeks => 1 );
+  $ld = $ld->subtract( weeks => 1 );
 }
 
 my $ld_ymd = $ld->ymd();
@@ -31,43 +29,36 @@ my $rank = 1;
 
 print "[";
 
-for my $div ($dom->find('div[class*="chart-list-item__first-row"]')->each) {
-	if ($div->find('div[class="chart-list-item__title"]')->first) {
-		$title = $div->find('div[class="chart-list-item__title"]')->first->all_text;
-		$title_norm = normalize_title($title);
-	}
-	
-	if ($div->find('div[class="chart-list-item__artist"]')->first) {
-		$artist = $div->find('div[class="chart-list-item__artist"]')->first->all_text;
-		$artist_norm = normalize_artist($artist);
-	}
+for my $span ($dom->find('span[class="chart-element__information"]')->each) {
+  $title = normalize_title($span->find('span[class*="chart-element__information__song"]')->first->all_text);
+  $artist = normalize_artist($span->find('span[class*="chart-element__information__artist"]')->first->all_text);
 
-	print ",\n" if $rank > 1;
-	print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"title\": \"$title_norm\" }";
-	$rank++;
+  print ",\n" if $rank > 1;
+  print "{ \"rank\": $rank, \"artist\": \"$artist\", \"title\": \"$title\" }";
+  $rank++;
 }
 
 print "]";
 
 sub normalize_title($)
 {
-	my $string = shift;
-	
-	$string =~ s/\s+$//g;
-	$string =~ s/^\s+//g;
-	$string =~ s/[\'’"]/`/g;
-	$string =~ s/\\/\//g;
+  my $string = shift;
 
-	return $string;
+  $string =~ s/\s+$//g;
+  $string =~ s/^\s+//g;
+  $string =~ s/[\'’"]/`/g;
+  $string =~ s/\\/\//g;
+
+  return $string;
 }
 
 sub normalize_artist($)
 {
-	my $string = shift;
-	
-	$string =~ s/\s+$//g;
-	$string =~ s/^\s+//g;
-	$string =~ s/[\'’"]/`/g;
-	
-	return $string;
+  my $string = shift;
+
+  $string =~ s/\s+$//g;
+  $string =~ s/^\s+//g;
+  $string =~ s/[\'’"]/`/g;
+
+  return $string;
 }
