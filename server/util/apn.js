@@ -19,7 +19,7 @@ module.exports = {
 
     // Replace deviceToken with your particular token:
     let deviceToken =
-      '10D6C907BD1DF280EFCF2866A63E0A1A9724C7428E0AD6269E9638049669FD4E';
+      'c072f8cfb29f7b8f3fb54e9d73e7d7e1f722fef326763a78e308c04dacf566fe';
 
     // Prepare the notifications
     let notification = new apn.Notification();
