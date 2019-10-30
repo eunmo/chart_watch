@@ -36,6 +36,7 @@ module.exports = {
         nameNorm = nameNorm.replace(/\sFeat\..*$/, '');
         nameNorm = nameNorm.replace(/\s\+\s.*$/, '');
       } else if (chart === 'oricon') {
+        nameNorm = nameNorm.replace(/,.*$/, '');
         nameNorm = nameNorm.replace(/\sfeat\..*$/, '');
         nameNorm = nameNorm.replace(/\swith\s.*$/, '');
         nameNorm = nameNorm.replace(/\svs\s.*$/, '');
