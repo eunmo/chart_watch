@@ -535,16 +535,17 @@ musicApp.controller('EditAlbumCtrl', function(
   };
 
   $scope.addArtist = function() {
+    var editArtists = $scope.album.editArtists;
     if (
-      $scope.album.editArtists[$scope.album.editArtists.length - 1].name !==
-      null
+      editArtists.length === 0 ||
+      editArtists[editArtists.length - 1].name !== null
     ) {
       var artist = {
         name: null,
         deleted: false,
         created: true
       };
-      $scope.album.editArtists.push(artist);
+      editArtists.push(artist);
     }
   };
 
