@@ -143,6 +143,7 @@
             song = sortedSongs[i];
             if (
               song.curRank[0] <= 5 ||
+              (song.curRank[0] <= 10 && song.favorite) ||
               (song.plays <= 10 && (song.rank || song.favorite))
             ) {
               songs.push(song);
