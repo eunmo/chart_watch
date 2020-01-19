@@ -25,174 +25,177 @@ print $json;
 $mp3->close();
 
 sub remove_feat {
-	my $str = shift;
+  my $str = shift;
 
-	$str =~ s/\s+\(feat.*?\)//i;
-	$str =~ s/\s+\(with.*?\)//i;
-	$str =~ s/^Title,\s+//; #don't know why some files are parsed like this
+  $str =~ s/\s+\(feat.*?\)//i;
+  $str =~ s/\s+\(with.*?\)//i;
+  $str =~ s/^Title,\s+//; #don't know why some files are parsed like this
 
-	return $str;
+  return $str;
 }
 
 sub get_feat {
-	my $title = shift;
-	my $artist = shift;
-	my $feat_str;
+  my $title = shift;
+  my $artist = shift;
+  my $feat_str;
 
-	if ($title =~ /\((feat|with)(.*?)\)/i) {
-		$feat_str = $2;
-	} elsif ($artist =~ /feat(.*?)$/i) {
-		$feat_str = $1;
-	} else {
-		return ();
-	}
+  if ($title =~ /\((feat|with)(.*?)\)/i) {
+    $feat_str = $2;
+  } elsif ($artist =~ /feat(.*?)$/i) {
+    $feat_str = $1;
+  } else {
+    return ();
+  }
 
-	$feat_str =~ s/^\.//;
-	$feat_str =~ s/^uring//i;
+  $feat_str =~ s/^\.//;
+  $feat_str =~ s/^uring//i;
 
-	return get_artist_array($feat_str);
+  return get_artist_array($feat_str);
 }
 
 sub get_artist_array {
-	my $str = shift;
-	
-	if (0
-		|| $str =~ /King & Prince/
-		|| $str =~ /Tyler, The Creator/
-	) {
-		return ($str);
-	}
+  my $str = shift;
 
-	my @rough_split = split(/[＆&,、]/, $str);
-	my @arr = ();
+  if (0
+    || $str =~ /King & Prince/
+    || $str =~ /Tyler, The Creator/
+    || $str =~ /Dan + Shay/
+    || $str =~ /Earth, Wind & Fire/
+    || $str =~ /BOYS AND MEN/
+  ) {
+    return ($str);
+  }
 
-	foreach $artist (@rough_split) {
-		while ($artist =~ /(.*?) And (.*)/) {
-			push(@arr, normalize($1));
-			$artist = $2;
-		}
-		push(@arr, normalize($artist));
-	}
+  my @rough_split = split(/[＆&,、]/, $str);
+  my @arr = ();
 
-	return @arr;
+  foreach $artist (@rough_split) {
+    while ($artist =~ /(.*?) And (.*)/) {
+      push(@arr, normalize($1));
+      $artist = $2;
+    }
+    push(@arr, normalize($artist));
+  }
+
+  return @arr;
 }
 
 sub get_artist {
-	my $str = shift;
+  my $str = shift;
 
-	$str =~ s/Feat\..*$//i;
+  $str =~ s/Feat\..*$//i;
 
-	return get_artist_array($str);
+  return get_artist_array($str);
 }
 
 sub parse_tags {
-	my $mp3 = shift;
-	my $id3v2 = shift;
-	my $info = shift;
+  my $mp3 = shift;
+  my $id3v2 = shift;
+  my $info = shift;
 
-	my %tag;
+  my %tag;
 
-	my $title = convert_text($mp3->title());
-	my $artist = convert_text($mp3->artist());
-	my @artist_arr = get_artist(convert_text($artist));
-	my @feat_arr = get_feat($title, $artist);
-	my @album_artist_arr = get_artist_array(convert_text($id3v2->get_frame("TPE2")));
+  my $title = convert_text($mp3->title());
+  my $artist = convert_text($mp3->artist());
+  my @artist_arr = get_artist(convert_text($artist));
+  my @feat_arr = get_feat($title, $artist);
+  my @album_artist_arr = get_artist_array(convert_text($id3v2->get_frame("TPE2")));
 
-	if (!@album_artist_arr) {
-		@album_artist_arr = @artist_arr;
-	}
+  if (!@album_artist_arr) {
+    @album_artist_arr = @artist_arr;
+  }
 
-	my @norm_artist_arr = normalize_array_for_sort(@artist_arr); 
-	my @norm_feat_arr = normalize_array_for_sort(@feat_arr); 
-	my @norm_album_artist_arr = normalize_array_for_sort(@album_artist_arr); 
+  my @norm_artist_arr = normalize_array_for_sort(@artist_arr); 
+  my @norm_feat_arr = normalize_array_for_sort(@feat_arr); 
+  my @norm_album_artist_arr = normalize_array_for_sort(@album_artist_arr); 
 
-	$tag{"artist"} = \@artist_arr;
-	$tag{"feat"} = \@feat_arr;
-	$tag{"albumArtist"} = \@album_artist_arr;
-	$tag{"artistNorm"} = \@norm_artist_arr;
-	$tag{"featNorm"} = \@norm_feat_arr;
-	$tag{"albumArtistNorm"} = \@norm_album_artist_arr;
+  $tag{"artist"} = \@artist_arr;
+  $tag{"feat"} = \@feat_arr;
+  $tag{"albumArtist"} = \@album_artist_arr;
+  $tag{"artistNorm"} = \@norm_artist_arr;
+  $tag{"featNorm"} = \@norm_feat_arr;
+  $tag{"albumArtistNorm"} = \@norm_album_artist_arr;
 
-	my $title_wo_feat = normalize(remove_feat($title));
+  my $title_wo_feat = normalize(remove_feat($title));
 
-	$tag{"title"} = $title_wo_feat;
-	$tag{"titleNorm"} = normalize_for_sort($title_wo_feat);
-	
-	my $album = normalize(convert_text($mp3->album()));
+  $tag{"title"} = $title_wo_feat;
+  $tag{"titleNorm"} = normalize_for_sort($title_wo_feat);
 
-	$tag{"album"} = $album;
-	$tag{"albumNorm"} = normalize_for_sort($album);
+  my $album = normalize(convert_text($mp3->album()));
 
-	$tag{"track"} = convert_number($mp3->track1()) + 0;
-	$tag{"disk"} = convert_number($mp3->disk1()) + 0;
+  $tag{"album"} = $album;
+  $tag{"albumNorm"} = normalize_for_sort($album);
 
-	my $date = convert_number($mp3->year()) + 0;
+  $tag{"track"} = convert_number($mp3->track1()) + 0;
+  $tag{"disk"} = convert_number($mp3->disk1()) + 0;
 
-	if ($date < 10000) {
-		$tag{"day"} = 1;
-		$tag{"month"} = 0;
-		$tag{"year"} = $date;
-	} else {
-		$tag{"day"} = $date % 100;
-		$date = floor($date / 100);
-		$tag{"month"} = ($date % 100) - 1;
-		$date = floor($date / 100);
-		$tag{"year"} = $date;
-	}
-	
-	$tag{"genre"} = normalize(convert_text($mp3->genre()));
-	$tag{"time"} = ceil($info->{SECS});
-	$tag{"bitrate"} = $info->{BITRATE};
+  my $date = convert_number($mp3->year()) + 0;
 
-	return %tag;
+  if ($date < 10000) {
+    $tag{"day"} = 1;
+    $tag{"month"} = 0;
+    $tag{"year"} = $date;
+  } else {
+    $tag{"day"} = $date % 100;
+    $date = floor($date / 100);
+    $tag{"month"} = ($date % 100) - 1;
+    $date = floor($date / 100);
+    $tag{"year"} = $date;
+  }
+
+  $tag{"genre"} = normalize(convert_text($mp3->genre()));
+  $tag{"time"} = ceil($info->{SECS});
+  $tag{"bitrate"} = $info->{BITRATE};
+
+  return %tag;
 }
 
 sub convert_number {
-	my $num = shift;
+  my $num = shift;
 
-	return 0 if (!defined $num || $num eq "");
-	return $num;
+  return 0 if (!defined $num || $num eq "");
+  return $num;
 }
 
 sub convert_text {
-	my $text = shift;
+  my $text = shift;
 
-	return "" if (!defined $text || $text eq "");
+  return "" if (!defined $text || $text eq "");
 
-	my $enc = guess_encoding($text, qw/cp949 utf-8/);
+  my $enc = guess_encoding($text, qw/cp949 utf-8/);
 
-	$text = decode($enc->name, $text) unless utf8::is_utf8($text);
-	return $text;
+  $text = decode($enc->name, $text) unless utf8::is_utf8($text);
+  return $text;
 }
 
 sub normalize_array_for_sort {
-	my @in_arr = @_;
-	my @out_arr  = ();
+  my @in_arr = @_;
+  my @out_arr  = ();
 
-	foreach $str (@in_arr) {
-		push(@out_arr, normalize_for_sort($str));
-	}
+  foreach $str (@in_arr) {
+    push(@out_arr, normalize_for_sort($str));
+  }
 
-	return @out_arr;
+  return @out_arr;
 }
 
 sub normalize_for_sort {
-	my $str = shift;
+  my $str = shift;
 
-	$str =~ s/^a\s+//i;
-	$str =~ s/^the\s+//i;
+  $str =~ s/^a\s+//i;
+  $str =~ s/^the\s+//i;
 
-	return $str;
+  return $str;
 }
 
 sub normalize {
-	my $str = shift;
+  my $str = shift;
 
-	$str =~ s/^\s+//;
-	$str =~ s/\s+$//;
-	$str =~ s/\'/`/g;
-	$str =~ s/\"/`/g;
-	$str =~ s/ :/:/g;
+  $str =~ s/^\s+//;
+  $str =~ s/\s+$//;
+  $str =~ s/\'/`/g;
+  $str =~ s/\"/`/g;
+  $str =~ s/ :/:/g;
 
-	return $str;
+  return $str;
 }
