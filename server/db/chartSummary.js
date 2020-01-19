@@ -56,8 +56,8 @@
         '   WHERE AlbumId in (' +
         ids.join() +
         ') ' +
-        '     AND rank <= 10 ' +
-        'GROUP BY AlbumId, `type`, rank;';
+        '     AND `rank` <= 10 ' +
+        'GROUP BY AlbumId, `type`, `rank`;';
 
       return getChartSummary(db, query);
     };
@@ -69,7 +69,7 @@
         '   WHERE SongId in (' +
         ids.join() +
         ') ' +
-        '     AND rank <= 10 ' +
+        '     AND `rank` <= 10 ' +
         'GROUP BY SongId, `type`, `rank`;';
 
       return getChartSummary(db, query);
@@ -77,7 +77,7 @@
 
     db.chartSummary.fetchAlbumsByType = function(albums, ids, type, week) {
       var query =
-        '  SELECT AlbumId as id, `type`, rank, count(*) as count ' +
+        '  SELECT AlbumId as id, `type`, `rank`, count(*) as count ' +
         '    FROM AlbumCharts ' +
         '   WHERE AlbumId in (' +
         ids.join() +
