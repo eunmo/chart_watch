@@ -84,6 +84,7 @@ module.exports = {
         entry.artist === 'サウンドトラック' ||
         entry.artist === 'MOTION PICTURE CAST RECORDING' ||
         entry.artist === 'Multi Interprètes' ||
+        entry.artist === 'MULTI INTERPRÈTES' ||
         entry.artist === 'Original Broadway Cast' ||
         entry.artist === 'Original Broadway Cast Recording'
       ) {
