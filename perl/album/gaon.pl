@@ -19,26 +19,19 @@ $date = $date->add( weeks => 1) if ($yy == 2010);
 my $year = $date->week_year();
 my $week = $date->week_number();
 if ($year == 2017) {
-	if ($week == 1) {
-		$year = 2016;
-		$week = 53;
-	} else {
-		$week -= 1;
-	}
-} elsif ($year == 2018) {
-	if ($week == 1) {
-		$year = 2017;
-		$week = 52;
-	} else {
-		$week -= 1;
-	}
-} elsif ($year == 2019) {
-	if ($week == 1) {
-		$year = 2018;
-		$week = 52;
-	} else {
-		$week -= 1;
-	}
+  if ($week == 1) {
+    $year = 2016;
+    $week = 53;
+  } else {
+    $week -= 1;
+  }
+} elsif ($year >= 2018 && $year <= 2020) {
+  if ($week == 1) {
+    $year -= 1;
+    $week = 52;
+  } else {
+    $week -= 1;
+  }
 }
 $week++ if $year == 2011 && $yy == 2011;
 my $week_string = sprintf("%02d", $week);
@@ -51,37 +44,37 @@ my $rank = 1;
 print "[";
 
 for my $div ($dom->find('td[class*="subject"]')->each) {
-	my $title = $div->find('p')->first->text;
-	my $artist = $div->find('p[class~="singer"]')->first->attr('title');
-	my $title_norm = normalize_title($title);
-	my $artist_norm = normalize_artist($artist);
-	print ",\n" if $rank > 1;
-	print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"title\": \"$title_norm\" }";
-	$rank++;
+  my $title = $div->find('p')->first->text;
+  my $artist = $div->find('p[class~="singer"]')->first->attr('title');
+  my $title_norm = normalize_title($title);
+  my $artist_norm = normalize_artist($artist);
+  print ",\n" if $rank > 1;
+  print "{ \"rank\": $rank, \"artist\": \"$artist_norm\", \"title\": \"$title_norm\" }";
+  $rank++;
 }
 
 print "]";
 
 sub normalize_title($)
 {
-	my $string = shift;
-	
-	$string =~ s/\s+$//g;
-	$string =~ s/^\s+//g;
-	$string =~ s/[\'’′]/`/g;
-	$string =~ s/\\/₩/g;
+  my $string = shift;
 
-	return $string;
+  $string =~ s/\s+$//g;
+  $string =~ s/^\s+//g;
+  $string =~ s/[\'’′]/`/g;
+  $string =~ s/\\/₩/g;
+
+  return $string;
 }
 
 sub normalize_artist($)
 {
-	my $string = shift;
+  my $string = shift;
 
-	$string =~ s/\|.*$//;
-	$string =~ s/\s+$//g;
-	$string =~ s/^\s+//g;
-	$string =~ s/[\'’′]/`/g;
+  $string =~ s/\|.*$//;
+  $string =~ s/\s+$//g;
+  $string =~ s/^\s+//g;
+  $string =~ s/[\'’′]/`/g;
 
-	return $string;
+  return $string;
 }
