@@ -55,7 +55,7 @@
         { query: 'SELECT id FROM Songs WHERE plays <= 3;' },
         {
           query:
-            'SELECT id FROM Songs WHERE plays < 10 AND id IN (SELECT distinct SongId FROM SingleCharts WHERE rank <= 10);'
+            'SELECT id FROM Songs WHERE plays < 10 AND id IN (SELECT distinct SongId FROM SingleCharts WHERE `rank` <= 10);'
         },
         { query: db.season.getQuery() },
         { query: db.song.queryForFavoriteArtists }

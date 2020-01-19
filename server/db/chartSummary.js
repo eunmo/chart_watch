@@ -51,7 +51,7 @@
 
     db.chartSummary.getAlbums = function(ids) {
       var query =
-        '  SELECT AlbumId as id, `type`, rank, count(*) as count ' +
+        '  SELECT AlbumId as id, `type`, `rank`, count(*) as count ' +
         '    FROM AlbumCharts ' +
         '   WHERE AlbumId in (' +
         ids.join() +
@@ -64,13 +64,13 @@
 
     db.chartSummary.getSongs = function(ids) {
       var query =
-        '  SELECT SongId as id, `type`, rank, count(*) as count ' +
+        '  SELECT SongId as id, `type`, `rank`, count(*) as count ' +
         '    FROM SingleCharts ' +
         '   WHERE SongId in (' +
         ids.join() +
         ') ' +
         '     AND rank <= 10 ' +
-        'GROUP BY SongId, `type`, rank;';
+        'GROUP BY SongId, `type`, `rank`;';
 
       return getChartSummary(db, query);
     };
@@ -88,7 +88,7 @@
         "     AND `week` < '" +
         week.toISOString() +
         "' " +
-        'GROUP BY AlbumId, `type`, rank;';
+        'GROUP BY AlbumId, `type`, `rank`;';
 
       return getChartSummary(db, query).then(function(charts) {
         albums.forEach(function(album) {
@@ -99,7 +99,7 @@
 
     db.chartSummary.fetchSongsByType = function(songs, ids, type, week) {
       var query =
-        '  SELECT SongId as id, `type`, rank, count(*) as count ' +
+        '  SELECT SongId as id, `type`, `rank`, count(*) as count ' +
         '    FROM SingleCharts ' +
         '   WHERE SongId in (' +
         ids.join() +
@@ -110,7 +110,7 @@
         "     AND `week` < '" +
         week.toISOString() +
         "' " +
-        'GROUP BY SongId, `type`, rank;';
+        'GROUP BY SongId, `type`, `rank`;';
 
       return getChartSummary(db, query).then(function(charts) {
         songs.forEach(function(song) {

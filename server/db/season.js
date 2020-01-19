@@ -51,9 +51,9 @@
     db.season.getSongsOfThisWeek = function() {
       var weeks = getSeasonalWeeks(new Date());
       var query =
-        'SELECT week, SongId, type, rank ' +
+        'SELECT week, SongId, type, `rank` ' +
         'FROM SingleCharts ' +
-        'WHERE rank <= ' +
+        'WHERE `rank` <= ' +
         5 +
         ' ' +
         'AND week IN (' +
@@ -68,13 +68,13 @@
       var query =
         'SELECT SongId as id ' +
         'FROM SingleCharts ' +
-        'WHERE rank <= ' +
+        'WHERE `rank` <= ' +
         5 +
         ' ' +
         'AND week IN (' +
         weeks +
         ') AND SongId is not null ' +
-        'ORDER BY week DESC, rank;';
+        'ORDER BY week DESC, `rank`;';
 
       return db.promisifyQuery(query);
     };
@@ -84,13 +84,13 @@
       var query =
         'SELECT SongId as id ' +
         'FROM SingleCharts ' +
-        'WHERE rank <= ' +
+        'WHERE `rank` <= ' +
         10 +
         ' ' +
         'AND week IN (' +
         weeks +
         ') AND SongId is not null ' +
-        'ORDER BY week DESC, rank;';
+        'ORDER BY week DESC, `rank`;';
 
       return query;
     };

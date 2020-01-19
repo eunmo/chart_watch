@@ -171,17 +171,17 @@
 
       if (play == 100) {
         whereClause = 'WHERE plays >= 100 ';
-        orderByClause = 'ORDER BY plays DESC, ISNULL(rank), rank, id ';
+        orderByClause = 'ORDER BY plays DESC, ISNULL(`rank`), `rank`, id ';
       } else {
         whereClause = 'WHERE plays = ' + play + ' ';
-        orderByClause = 'ORDER BY ISNULL(rank), rank, id ';
+        orderByClause = 'ORDER BY ISNULL(`rank`), `rank`, id ';
       }
 
       var query =
         'SELECT id, title, plays, lastPlayed ' +
-        '  FROM Songs a LEFT JOIN (SELECT SongId, min(rank) as rank ' +
+        '  FROM Songs a LEFT JOIN (SELECT SongId, min(`rank`) as `rank` ' +
         '  FROM SingleCharts ' +
-        ' WHERE rank <= 10 ' +
+        ' WHERE `rank` <= 10 ' +
         'GROUP BY SongId) b ' +
         '    ON a.id = b.SongId ' +
         whereClause +
@@ -257,12 +257,12 @@
 
     db.song.fetchMinChartRank = function(songs, ids) {
       var query =
-        '  SELECT SongId id, min(rank) rank ' +
+        '  SELECT SongId id, min(`rank`) `rank` ' +
         '    FROM SingleCharts ' +
         '   WHERE SongId in (' +
         ids.join() +
         ') ' +
-        '     AND rank <= 10 ' +
+        '     AND `rank` <= 10 ' +
         'GROUP BY SongId;';
 
       return db.promisifyQuery(query).then(function(rows) {

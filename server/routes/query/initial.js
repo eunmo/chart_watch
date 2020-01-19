@@ -85,7 +85,7 @@
       'AND sa.ArtistId in (' +
       ids.toString() +
       ') ' +
-      'AND sc.rank <= 10 ' +
+      'AND sc.`rank` <= 10 ' +
       'GROUP BY ArtistId;';
 
     return db.promisifyQuery(query).then(function(rows) {

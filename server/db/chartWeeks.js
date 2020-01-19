@@ -94,7 +94,7 @@
 
     db.chartWeeks.getOneAlbum = function(id) {
       var query =
-        'SELECT `type`, week, rank FROM AlbumCharts WHERE AlbumId = ' +
+        'SELECT `type`, week, `rank` FROM AlbumCharts WHERE AlbumId = ' +
         id +
         ';';
 
@@ -103,7 +103,7 @@
 
     db.chartWeeks.getOneSong = function(id) {
       var query =
-        'SELECT `type`, week, rank FROM SingleCharts WHERE SongId = ' +
+        'SELECT `type`, week, `rank` FROM SingleCharts WHERE SongId = ' +
         id +
         ';';
 

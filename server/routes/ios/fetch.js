@@ -42,7 +42,7 @@
       var query =
         'SELECT distinct SongId as id ' +
         'FROM Songs s, SingleCharts c ' +
-        'WHERE s.id = c.SongId and rank <= 10 and plays < 10 ' +
+        'WHERE s.id = c.SongId and `rank` <= 10 and plays < 10 ' +
         'ORDER BY SongId ' +
         'LIMIT ' +
         count;
@@ -103,7 +103,7 @@
         if (i > 0) query += ' UNION ';
         query += 'SELECT SongId as id, AlbumId, disk, track FROM AlbumSongs';
         query += ' WHERE AlbumId in (SELECT AlbumId FROM AlbumCharts';
-        query += ' WHERE rank <= 5 and type = "' + chart + '"';
+        query += ' WHERE `rank` <= 5 and type = "' + chart + '"';
         query += ' AND week = (SELECT max(week) FROM AlbumCharts';
         query += ' WHERE type = "' + chart + '"))';
       }
