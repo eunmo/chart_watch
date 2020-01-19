@@ -26,13 +26,8 @@
       getRoutes(path.join(__dirname, subDir));
     });
 
-  router.get('/react/*', function(req, res) {
+  router.get('/*', function(req, res) {
     res.sendFile(path.join(__dirname, '../../build/index.html'));
-  });
-
-  /* GET home page. */
-  router.get('/', function(req, res) {
-    res.render('index');
   });
 
   module.exports = router;

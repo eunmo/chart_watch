@@ -18,14 +18,11 @@
 
   app.use(bodyParser.json());
 
-  app.use(express.static(path.join(__dirname, '../client')));
+  app.use(express.static(path.join(__dirname, '../build')));
   app.use(express.static(path.join(__dirname, '../uploads/img')));
   app.use(express.static(path.join(__dirname, '../uploads')));
 
   app.use('/', routes);
-
-  // build dir comes after routes to avoid duplication of index.html
-  app.use(express.static(path.join(__dirname, '../build')));
 
   var server = app.listen(3010, function() {
     console.log('Express server listening on port ' + server.address().port);
